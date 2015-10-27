@@ -1,0 +1,5 @@
+public/files/*
+protected/settings.php
+composer.phar
+composer.lock
+composer.json
