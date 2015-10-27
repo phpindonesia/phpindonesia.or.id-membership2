@@ -1,0 +1,37 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+  - 5.6
+  - hhvm
+
+matrix:
+  include:
+    # older releases
+    - php: 5.5
+      env: SOLARIUM_VERSION=2.* DOCTRINE_ORM_VERSION=2.3.*
+    # dev versions
+    - php: 5.5
+      env: COMPOSER_STABILITY=dev
+
+services: mongodb
+
+before_install:
+  # Add the MongoDB ODM when we can fulfil its ext-mongo dependency
+  - 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi'
+  - 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then composer require doctrine/mongodb-odm "~1.0@dev" --dev --no-update; fi'
+  # Force using dev versions for HHVM as the Doctrine HHVM support is not yet released
+  - 'if [[ "$COMPOSER_STABILITY" == "dev" || "$TRAVIS_PHP_VERSION" = "hhvm" ]]; then sed -i ''s/"pagerfanta\/pagerfanta"/"pagerfanta\/pagerfanta","minimum-stability": "dev"/g'' composer.json; fi'
+  - sh -c "if [ $DOCTRINE_ORM_VERSION ]; then composer require doctrine/orm:${DOCTRINE_ORM_VERSION} --dev --no-update; fi"
+  - sh -c "if [ $SOLARIUM_VERSION ]; then composer require solarium/solarium:${SOLARIUM_VERSION} --dev --no-update; fi"
+
+install:
+  - composer install
+
+script: vendor/bin/phpunit --coverage-clover=coverage.clover
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
