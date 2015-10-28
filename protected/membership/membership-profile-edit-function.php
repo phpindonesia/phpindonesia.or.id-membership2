@@ -57,7 +57,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
                         if (move_uploaded_file($_FILES['photo']['tmp_name'], $this->getContainer()->get('settings')['upload_photo_profile_path'].$new_fname)) {
                             $members_profiles['photo'] = $new_fname;
                             if ($_SESSION['MembershipAuth']['photo'] != null) {
-                                unlink($this->getContainer()->get('settings')['upload_photo_profile_path']);
+                                unlink($this->getContainer()->get('settings')['upload_photo_profile_path'].$_SESSION['MembershipAuth']['photo']);
                             }
 
                         } else {
