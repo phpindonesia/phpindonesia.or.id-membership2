@@ -34,7 +34,8 @@ $app->add(function ($request, $response, $next) use ($app) {
 	    $path = $uri->getPath();
 	}
 
-	$request_path = $base_path.$path;
+	// $request_path = $base_path.$path;
+	$request_path = $path;
 
 	$contain = false;
     if ($request_path != '/apps/membership') {
