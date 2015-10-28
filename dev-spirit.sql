@@ -818,7 +818,7 @@ CREATE TABLE `roles_access` (
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(16) NOT NULL,
+  `username` varchar(32) NOT NULL,
   `password` varchar(32) NOT NULL,
   `email` varchar(32) NOT NULL,
   `province_id` int(11) NOT NULL,
