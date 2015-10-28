@@ -103,3 +103,23 @@ $container['days_range'] = function ($container) {
 
 	return $days_range;
 };
+
+$container['errorHandler'] = function ($container) {
+    if ($container->get('settings')['mode'] == 'production') {
+
+        return function ($request, $response, $exception) use ($container) {
+            $response_n = $container['response']
+            ->withStatus(500)
+            ->withHeader('Content-Type', 'text/html');
+
+            return $container->get('view')->render(
+                $response_n,
+                'error/error500',
+                array('message' => $exception->getMessage())
+            );
+        };
+
+    } else if ($container->get('settings')['mode'] == 'development') {
+        return new \Slim\Handlers\Error;
+    }
+};
