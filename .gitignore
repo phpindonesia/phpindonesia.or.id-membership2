@@ -1,5 +1,12 @@
 public/files/*
 protected/settings.php
 composer.phar
-composer.lock
-composer.json
+# composer.lock
+# composer.json
+
+# Sorry but I hate current approach,
+# here I have to ignore this dir
+vendor/
+
+# Ignore sublime-text project file
+*.sublime-*
