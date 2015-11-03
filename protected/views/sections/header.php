@@ -71,11 +71,11 @@
 						if (!isset($_SESSION['MembershipAuth'])):
 						?>
 						<li class="menu-item-simple-parent">
-							<a href="http://www.phpindonesia.or.id/apps/membership">Anggota</a>
+							<a href="<?=$this->uri_path_for('membership-index')?>">Anggota</a>
 							<ul class="sub-menu">
-								<li><a href="http://www.phpindonesia.or.id/apps/membership/login">Login</a></li>
-								<li><a href="http://www.phpindonesia.or.id/apps/membership/register">Register</a></li>
-								<li><a href="http://www.phpindonesia.or.id/apps/membership/forgot-password">Forgot Password</a></li>
+								<li><a href="<?=$this->uri_path_for('membership-login')?>">Login</a></li>
+								<li><a href="<?=$this->uri_path_for('membership-register')?>">Register</a></li>
+								<li><a href="<?=$this->uri_path_for('membership-forgot-password')?>">Forgot Password</a></li>
 							</ul>
 						</li>
 						<?php
