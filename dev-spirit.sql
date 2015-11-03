@@ -255,7 +255,7 @@ CREATE TABLE `regionals` (
 -- ----------------------------
 -- Records of regionals
 -- ----------------------------
-INSERT INTO `regionals` VALUES ('1', 'NANGGROE ACEH DARUSSALAM', null, '11', '00');
+INSERT INTO `regionals` VALUES ('1', 'ACEH', null, '11', '00');
 INSERT INTO `regionals` VALUES ('2', 'KAB. ACEH SELATAN', '1', '11', '01');
 INSERT INTO `regionals` VALUES ('3', 'KAB. ACEH TENGGARA', '1', '11', '02');
 INSERT INTO `regionals` VALUES ('4', 'KAB. ACEH TIMUR', '1', '11', '03');
