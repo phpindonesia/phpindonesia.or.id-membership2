@@ -244,515 +244,566 @@ CREATE TABLE `members_socmeds` (
 -- ----------------------------
 DROP TABLE IF EXISTS `regionals`;
 CREATE TABLE `regionals` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `regional_name` varchar(64) NOT NULL,
   `parent_id` int(11) DEFAULT NULL,
-  `province_code` varchar(4) NOT NULL,
-  `city_code` varchar(4) DEFAULT NULL,
+  `province_code` char(2) NOT NULL,
+  `city_code` char(2) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=499 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=549 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of regionals
 -- ----------------------------
-INSERT INTO `regionals` VALUES ('1', 'NANGGROE ACEH DARUSSALAM', null, '11', '00');
-INSERT INTO `regionals` VALUES ('2', 'KAB. ACEH SELATAN', '1', '11', '01');
-INSERT INTO `regionals` VALUES ('3', 'KAB. ACEH TENGGARA', '1', '11', '02');
-INSERT INTO `regionals` VALUES ('4', 'KAB. ACEH TIMUR', '1', '11', '03');
-INSERT INTO `regionals` VALUES ('5', 'KAB. ACEH TENGAH', '1', '11', '04');
-INSERT INTO `regionals` VALUES ('6', 'KAB. ACEH BARAT', '1', '11', '05');
-INSERT INTO `regionals` VALUES ('7', 'KAB. ACEH BESAR', '1', '11', '06');
-INSERT INTO `regionals` VALUES ('8', 'KAB. PIDIE', '1', '11', '07');
-INSERT INTO `regionals` VALUES ('9', 'KAB. ACEH UTARA', '1', '11', '08');
-INSERT INTO `regionals` VALUES ('10', 'KAB. SIMEULUE', '1', '11', '09');
-INSERT INTO `regionals` VALUES ('11', 'KAB. ACEH SINGKIL', '1', '11', '10');
-INSERT INTO `regionals` VALUES ('12', 'KAB. BIREUEN', '1', '11', '11');
-INSERT INTO `regionals` VALUES ('13', 'KAB. ACEH BARAT DAYA', '1', '11', '12');
-INSERT INTO `regionals` VALUES ('14', 'KAB. GAYO LUES', '1', '11', '13');
-INSERT INTO `regionals` VALUES ('15', 'KAB. ACEH JAYA', '1', '11', '14');
-INSERT INTO `regionals` VALUES ('16', 'KAB. NAGAN RAYA', '1', '11', '15');
-INSERT INTO `regionals` VALUES ('17', 'KAB. ACEH TAMIANG', '1', '11', '16');
-INSERT INTO `regionals` VALUES ('18', 'KAB. BENER MERIAH', '1', '11', '17');
-INSERT INTO `regionals` VALUES ('19', 'KAB. PIDIE JAYA', '1', '11', '18');
-INSERT INTO `regionals` VALUES ('20', 'KOTA BANDA ACEH', '1', '11', '19');
-INSERT INTO `regionals` VALUES ('21', 'KOTA SABANG', '1', '11', '20');
-INSERT INTO `regionals` VALUES ('22', 'KOTA LHOKSEUMAWE', '1', '11', '21');
-INSERT INTO `regionals` VALUES ('23', 'KOTA LANGSA', '1', '11', '22');
-INSERT INTO `regionals` VALUES ('24', 'KOTA SUBULUSSALAM', '1', '11', '23');
-INSERT INTO `regionals` VALUES ('25', 'SUMATERA UTARA', null, '12', '00');
-INSERT INTO `regionals` VALUES ('26', 'KAB. TAPANULI TENGAH', '25', '12', '01');
-INSERT INTO `regionals` VALUES ('27', 'KAB. TAPANULI UTARA', '25', '12', '02');
-INSERT INTO `regionals` VALUES ('28', 'KAB. TAPANULI SELATAN', '25', '12', '03');
-INSERT INTO `regionals` VALUES ('29', 'KAB. NIAS', '25', '12', '04');
-INSERT INTO `regionals` VALUES ('30', 'KAB. LANGKAT', '25', '12', '05');
-INSERT INTO `regionals` VALUES ('31', 'KAB. KARO', '25', '12', '06');
-INSERT INTO `regionals` VALUES ('32', 'KAB. DELI SERDANG', '25', '12', '07');
-INSERT INTO `regionals` VALUES ('33', 'KAB. SIMALUNGUN', '25', '12', '08');
-INSERT INTO `regionals` VALUES ('34', 'KAB. ASAHAN', '25', '12', '09');
-INSERT INTO `regionals` VALUES ('35', 'KAB. LABUHAN BATU', '25', '12', '10');
-INSERT INTO `regionals` VALUES ('36', 'KAB. DAIRI', '25', '12', '11');
-INSERT INTO `regionals` VALUES ('37', 'KAB. TOBA SAMOSIR', '25', '12', '12');
-INSERT INTO `regionals` VALUES ('38', 'KAB. MANDAILING NATAL', '25', '12', '13');
-INSERT INTO `regionals` VALUES ('39', 'KAB. NIAS SELATAN', '25', '12', '14');
-INSERT INTO `regionals` VALUES ('40', 'KAB. PAKPAK BHARAT', '25', '12', '15');
-INSERT INTO `regionals` VALUES ('41', 'KAB HUMBANG HASUNDUTAN', '25', '12', '16');
-INSERT INTO `regionals` VALUES ('42', 'KAB. SAMOSIR', '25', '12', '17');
-INSERT INTO `regionals` VALUES ('43', 'KAB. SERDANG BEDAGAI', '25', '12', '18');
-INSERT INTO `regionals` VALUES ('44', 'KAB. BATU BARA', '25', '12', '19');
-INSERT INTO `regionals` VALUES ('45', 'KAB. PADANG LAWAS UTARA', '25', '12', '20');
-INSERT INTO `regionals` VALUES ('46', 'KAB. PADANG LAWAS', '25', '12', '21');
-INSERT INTO `regionals` VALUES ('47', 'KOTA MEDAN', '25', '12', '22');
-INSERT INTO `regionals` VALUES ('48', 'KOTA PEMATANG SIANTAR', '25', '12', '23');
-INSERT INTO `regionals` VALUES ('49', 'KOTA SIBOLGA', '25', '12', '24');
-INSERT INTO `regionals` VALUES ('50', 'KOTA TANJUNG BALAI', '25', '12', '25');
-INSERT INTO `regionals` VALUES ('51', 'KOTA BINJAI', '25', '12', '26');
-INSERT INTO `regionals` VALUES ('52', 'KOTA TEBING TINGGI', '25', '12', '27');
-INSERT INTO `regionals` VALUES ('53', 'KOTA PADANG SIDEMPUAN', '25', '12', '28');
-INSERT INTO `regionals` VALUES ('54', 'SUMATERA BARAT', null, '13', '00');
-INSERT INTO `regionals` VALUES ('55', 'KAB. PESISIR SELATAN', '54', '13', '01');
-INSERT INTO `regionals` VALUES ('56', 'KAB. SOLOK', '54', '13', '02');
-INSERT INTO `regionals` VALUES ('57', 'KAB. SW.LUNTO\'SIJUNJUNG', '54', '13', '03');
-INSERT INTO `regionals` VALUES ('58', 'KAB. TANAH DATAR', '54', '13', '04');
-INSERT INTO `regionals` VALUES ('59', 'KAB. PADANG PARIAMAN', '54', '13', '05');
-INSERT INTO `regionals` VALUES ('60', 'KAB. AGAM', '54', '13', '06');
-INSERT INTO `regionals` VALUES ('61', 'KAB. LIMA PULUH. KOTA', '54', '13', '07');
-INSERT INTO `regionals` VALUES ('62', 'KAB. PASAMAN', '54', '13', '08');
-INSERT INTO `regionals` VALUES ('63', 'KAB. KEPULAUAN MENTAWAI', '54', '13', '09');
-INSERT INTO `regionals` VALUES ('64', 'KAB. DHARMASRAYA', '54', '13', '10');
-INSERT INTO `regionals` VALUES ('65', 'KAB. SOLOK SELATAN', '54', '13', '11');
-INSERT INTO `regionals` VALUES ('66', 'KAB. PASAMAN BARAT', '54', '13', '12');
-INSERT INTO `regionals` VALUES ('67', 'KOTA PADANG', '54', '13', '13');
-INSERT INTO `regionals` VALUES ('68', 'KOTA SOLOK', '54', '13', '14');
-INSERT INTO `regionals` VALUES ('69', 'KOTA SAWAHLUNTO', '54', '13', '15');
-INSERT INTO `regionals` VALUES ('70', 'KOTA PADANG PANJANG', '54', '13', '16');
-INSERT INTO `regionals` VALUES ('71', 'KOTA BUKITTINGGI', '54', '13', '17');
-INSERT INTO `regionals` VALUES ('72', 'KOTA PAYAKUMBUH', '54', '13', '18');
-INSERT INTO `regionals` VALUES ('73', 'KOTA PARIAMAN', '54', '13', '19');
-INSERT INTO `regionals` VALUES ('74', 'RIAU', null, '14', '00');
-INSERT INTO `regionals` VALUES ('75', 'KAB. KAMPAR', '74', '14', '01');
-INSERT INTO `regionals` VALUES ('76', 'KAB. INDRAGIRI HULU', '74', '14', '02');
-INSERT INTO `regionals` VALUES ('77', 'KAB. BENGKALIS', '74', '14', '03');
-INSERT INTO `regionals` VALUES ('78', 'KAB. INDRAGIRI HILIR', '74', '14', '04');
-INSERT INTO `regionals` VALUES ('79', 'KAB. PELALAWAN', '74', '14', '05');
-INSERT INTO `regionals` VALUES ('80', 'KAB. ROKAN HULU', '74', '14', '06');
-INSERT INTO `regionals` VALUES ('81', 'KAB. ROKAN HILIR', '74', '14', '07');
-INSERT INTO `regionals` VALUES ('82', 'KAB. SIAK', '74', '14', '08');
-INSERT INTO `regionals` VALUES ('83', 'KAB. KUANTAN SINGINGI', '74', '14', '09');
-INSERT INTO `regionals` VALUES ('84', 'KOTA PEKANBARU', '74', '14', '10');
-INSERT INTO `regionals` VALUES ('85', 'KOTA DUMAI', '74', '14', '11');
-INSERT INTO `regionals` VALUES ('86', 'JAMBI', null, '15', '00');
-INSERT INTO `regionals` VALUES ('87', 'KAB. KERINCI', '86', '15', '01');
-INSERT INTO `regionals` VALUES ('88', 'KAB. MERANGIN', '86', '15', '02');
-INSERT INTO `regionals` VALUES ('89', 'KAB. SAROLANGUN', '86', '15', '03');
-INSERT INTO `regionals` VALUES ('90', 'KAB. BATANGHARI', '86', '15', '04');
-INSERT INTO `regionals` VALUES ('91', 'KAB. MUARO JAMBI', '86', '15', '05');
-INSERT INTO `regionals` VALUES ('92', 'KAB TANJUNG JABUNG BARAT', '86', '15', '06');
-INSERT INTO `regionals` VALUES ('93', 'KAB TANJUNG JABUNG TIMUR', '86', '15', '07');
-INSERT INTO `regionals` VALUES ('94', 'KAB. BUNGO', '86', '15', '08');
-INSERT INTO `regionals` VALUES ('95', 'KAB. TEBO', '86', '15', '09');
-INSERT INTO `regionals` VALUES ('96', 'KOTA JAMBI', '86', '15', '10');
-INSERT INTO `regionals` VALUES ('97', 'SUMATERA SELATAN', null, '16', '00');
-INSERT INTO `regionals` VALUES ('98', 'KAB. OGAN KOMERING ULU', '97', '16', '01');
-INSERT INTO `regionals` VALUES ('99', 'KAB. OGAN KOMERING ILIR', '97', '16', '02');
-INSERT INTO `regionals` VALUES ('100', 'KAB. MUARA ENIM', '97', '16', '03');
-INSERT INTO `regionals` VALUES ('101', 'KAB. LAHAT', '97', '16', '04');
-INSERT INTO `regionals` VALUES ('102', 'KAB. MUSI RAWAS', '97', '16', '05');
-INSERT INTO `regionals` VALUES ('103', 'KAB. MUSI BANYUASIN', '97', '16', '06');
-INSERT INTO `regionals` VALUES ('104', 'KAB. BANYUASIN', '97', '16', '07');
-INSERT INTO `regionals` VALUES ('105', 'KAB. OKU TIMUR', '97', '16', '08');
-INSERT INTO `regionals` VALUES ('106', 'KAB. OKU SELATAN', '97', '16', '09');
-INSERT INTO `regionals` VALUES ('107', 'KAB. OGAN ILIR', '97', '16', '10');
-INSERT INTO `regionals` VALUES ('108', 'KAB. EMPAT LAWANG', '97', '16', '11');
-INSERT INTO `regionals` VALUES ('109', 'KOTA PALEMBANG', '97', '16', '12');
-INSERT INTO `regionals` VALUES ('110', 'KOTA PAGAR ALAM', '97', '16', '13');
-INSERT INTO `regionals` VALUES ('111', 'KOTA LUBUK LINGGAU', '97', '16', '14');
-INSERT INTO `regionals` VALUES ('112', 'KOTA PRABUMULIH', '97', '16', '15');
-INSERT INTO `regionals` VALUES ('113', 'BENGKULU', null, '17', '00');
-INSERT INTO `regionals` VALUES ('114', 'KAB. BENGKULU SELATAN', '113', '17', '01');
-INSERT INTO `regionals` VALUES ('115', 'KAB. REJANG LEBONG', '113', '17', '02');
-INSERT INTO `regionals` VALUES ('116', 'KAB. BENGKULU UTARA', '113', '17', '03');
-INSERT INTO `regionals` VALUES ('117', 'KAB. KAUR', '113', '17', '04');
-INSERT INTO `regionals` VALUES ('118', 'KAB. SELUMA', '113', '17', '05');
-INSERT INTO `regionals` VALUES ('119', 'KAB. MUKO MUKO', '113', '17', '06');
-INSERT INTO `regionals` VALUES ('120', 'KAB. LEBONG', '113', '17', '07');
-INSERT INTO `regionals` VALUES ('121', 'KAB. KEPAHIANG', '113', '17', '08');
-INSERT INTO `regionals` VALUES ('122', 'KOTA BENGKULU', '113', '17', '09');
-INSERT INTO `regionals` VALUES ('123', 'LAMPUNG', null, '18', '00');
-INSERT INTO `regionals` VALUES ('124', 'KAB. LAMPUNG SELATAN', '123', '18', '01');
-INSERT INTO `regionals` VALUES ('125', 'KAB. LAMPUNG TENGAH', '123', '18', '02');
-INSERT INTO `regionals` VALUES ('126', 'KAB. LAMPUNG UTARA', '123', '18', '03');
-INSERT INTO `regionals` VALUES ('127', 'KAB. LAMPUNG BARAT', '123', '18', '04');
-INSERT INTO `regionals` VALUES ('128', 'KAB. TULANG BAWANG', '123', '18', '05');
-INSERT INTO `regionals` VALUES ('129', 'KAB. TANGGAMUS', '123', '18', '06');
-INSERT INTO `regionals` VALUES ('130', 'KAB. LAMPUNG TIMUR', '123', '18', '07');
-INSERT INTO `regionals` VALUES ('131', 'KAB. WAY KANAN', '123', '18', '08');
-INSERT INTO `regionals` VALUES ('132', 'KAB. PESAWARAN', '123', '18', '09');
-INSERT INTO `regionals` VALUES ('133', 'KOTA BANDAR LAMPUNG', '123', '18', '10');
-INSERT INTO `regionals` VALUES ('134', 'KOTA METRO', '123', '18', '11');
-INSERT INTO `regionals` VALUES ('135', 'KEP. BANGKA BELITUNG', null, '19', '00');
-INSERT INTO `regionals` VALUES ('136', 'KAB. BANGKA', '135', '19', '01');
-INSERT INTO `regionals` VALUES ('137', 'KAB. BELITUNG', '135', '19', '02');
-INSERT INTO `regionals` VALUES ('138', 'KAB. BANGKA SELATAN', '135', '19', '03');
-INSERT INTO `regionals` VALUES ('139', 'KAB. BANGKA TENGAH', '135', '19', '04');
-INSERT INTO `regionals` VALUES ('140', 'KAB. BANGKA BARAT', '135', '19', '05');
-INSERT INTO `regionals` VALUES ('141', 'KAB. BELITUNG TIMUR', '135', '19', '06');
-INSERT INTO `regionals` VALUES ('142', 'KOTA PANGKAL PINANG', '135', '19', '07');
-INSERT INTO `regionals` VALUES ('143', 'KEP. RIAU', null, '21', '00');
-INSERT INTO `regionals` VALUES ('144', 'KAB. BINTAN', '143', '21', '01');
-INSERT INTO `regionals` VALUES ('145', 'KAB. KARIMUN', '143', '21', '02');
-INSERT INTO `regionals` VALUES ('146', 'KAB. NATUNA', '143', '21', '03');
-INSERT INTO `regionals` VALUES ('147', 'KAB. LINGGA', '143', '21', '04');
-INSERT INTO `regionals` VALUES ('148', 'KOTA BATAM', '143', '21', '05');
-INSERT INTO `regionals` VALUES ('149', 'KOTA TANJUNG PINANG', '143', '21', '06');
-INSERT INTO `regionals` VALUES ('150', 'DKI JAKARTA', null, '31', '00');
-INSERT INTO `regionals` VALUES ('151', 'KAB. ADM. KEP. SERIBU', '150', '31', '01');
-INSERT INTO `regionals` VALUES ('152', 'KODYA JAKARTA PUSAT', '150', '31', '02');
-INSERT INTO `regionals` VALUES ('153', 'KODYA JAKARTA UTARA', '150', '31', '03');
-INSERT INTO `regionals` VALUES ('154', 'KODYA JAKARTA BARAT', '150', '31', '04');
-INSERT INTO `regionals` VALUES ('155', 'KODYA JAKARTA SELATAN', '150', '31', '05');
-INSERT INTO `regionals` VALUES ('156', 'KODYA JAKARTA TIMUR', '150', '31', '06');
-INSERT INTO `regionals` VALUES ('157', 'JAWA BARAT', null, '32', '00');
-INSERT INTO `regionals` VALUES ('158', 'KAB. BOGOR', '157', '32', '01');
-INSERT INTO `regionals` VALUES ('159', 'KAB. SUKABUMI', '157', '32', '02');
-INSERT INTO `regionals` VALUES ('160', 'KAB. CIANJUR', '157', '32', '03');
-INSERT INTO `regionals` VALUES ('161', 'KAB. BANDUNG', '157', '32', '04');
-INSERT INTO `regionals` VALUES ('162', 'KAB. GARUT', '157', '32', '05');
-INSERT INTO `regionals` VALUES ('163', 'KAB. TASIKMALAYA', '157', '32', '06');
-INSERT INTO `regionals` VALUES ('164', 'KAB. CIAMIS', '157', '32', '07');
-INSERT INTO `regionals` VALUES ('165', 'KAB. KUNINGAN', '157', '32', '08');
-INSERT INTO `regionals` VALUES ('166', 'KAB. CIREBON', '157', '32', '09');
-INSERT INTO `regionals` VALUES ('167', 'KAB. MAJALENGKA', '157', '32', '10');
-INSERT INTO `regionals` VALUES ('168', 'KAB. SUMEDANG', '157', '32', '11');
-INSERT INTO `regionals` VALUES ('169', 'KAB. INDRAMAYU', '157', '32', '12');
-INSERT INTO `regionals` VALUES ('170', 'KAB. SUBANG', '157', '32', '13');
-INSERT INTO `regionals` VALUES ('171', 'KAB. PURWAKARTA', '157', '32', '14');
-INSERT INTO `regionals` VALUES ('172', 'KAB. KARAWANG', '157', '32', '15');
-INSERT INTO `regionals` VALUES ('173', 'KAB. BEKASI', '157', '32', '16');
-INSERT INTO `regionals` VALUES ('174', 'KAB. BANDUNG BARAT', '157', '32', '17');
-INSERT INTO `regionals` VALUES ('175', 'KOTA BOGOR', '157', '32', '18');
-INSERT INTO `regionals` VALUES ('176', 'KOTA SUKABUMI', '157', '32', '19');
-INSERT INTO `regionals` VALUES ('177', 'KOTA BANDUNG', '157', '32', '20');
-INSERT INTO `regionals` VALUES ('178', 'KOTA CIREBON', '157', '32', '21');
-INSERT INTO `regionals` VALUES ('179', 'KOTA BEKASI', '157', '32', '22');
-INSERT INTO `regionals` VALUES ('180', 'KOTA DEPOK', '157', '32', '23');
-INSERT INTO `regionals` VALUES ('181', 'KOTA CIMAHI', '157', '32', '24');
-INSERT INTO `regionals` VALUES ('182', 'KOTA TASIKMALAYA', '157', '32', '25');
-INSERT INTO `regionals` VALUES ('183', 'KOTA BANJAR', '157', '32', '26');
-INSERT INTO `regionals` VALUES ('184', 'JAWA TENGAH', null, '33', '00');
-INSERT INTO `regionals` VALUES ('185', 'KAB. CILACAP', '184', '33', '01');
-INSERT INTO `regionals` VALUES ('186', 'KAB. BANYUMAS', '184', '33', '02');
-INSERT INTO `regionals` VALUES ('187', 'KAB. PURBALINGGA', '184', '33', '03');
-INSERT INTO `regionals` VALUES ('188', 'KAB. BANJARNEGARA', '184', '33', '04');
-INSERT INTO `regionals` VALUES ('189', 'KAB. KEBUMEN', '184', '33', '05');
-INSERT INTO `regionals` VALUES ('190', 'KAB. PURWOREJO', '184', '33', '06');
-INSERT INTO `regionals` VALUES ('191', 'KAB. WONOSOBO', '184', '33', '07');
-INSERT INTO `regionals` VALUES ('192', 'KAB. MAGELANG', '184', '33', '08');
-INSERT INTO `regionals` VALUES ('193', 'KAB. BOYOLALI', '184', '33', '09');
-INSERT INTO `regionals` VALUES ('194', 'KAB. KLATEN', '184', '33', '10');
-INSERT INTO `regionals` VALUES ('195', 'KAB. SUKOHARJO', '184', '33', '11');
-INSERT INTO `regionals` VALUES ('196', 'KAB. WONOGIRI', '184', '33', '12');
-INSERT INTO `regionals` VALUES ('197', 'KAB. KARANGANYAR', '184', '33', '13');
-INSERT INTO `regionals` VALUES ('198', 'KAB. SRAGEN', '184', '33', '14');
-INSERT INTO `regionals` VALUES ('199', 'KAB. GROBOGAN', '184', '33', '15');
-INSERT INTO `regionals` VALUES ('200', 'KAB. BLORA', '184', '33', '16');
-INSERT INTO `regionals` VALUES ('201', 'KAB. REMBANG', '184', '33', '17');
-INSERT INTO `regionals` VALUES ('202', 'KAB. PATI', '184', '33', '18');
-INSERT INTO `regionals` VALUES ('203', 'KAB. KUDUS', '184', '33', '19');
-INSERT INTO `regionals` VALUES ('204', 'KAB. JEPARA', '184', '33', '20');
-INSERT INTO `regionals` VALUES ('205', 'KAB. DEMAK', '184', '33', '21');
-INSERT INTO `regionals` VALUES ('206', 'KAB. SEMARANG', '184', '33', '22');
-INSERT INTO `regionals` VALUES ('207', 'KAB. TEMANGGUNG', '184', '33', '23');
-INSERT INTO `regionals` VALUES ('208', 'KAB. KENDAL', '184', '33', '24');
-INSERT INTO `regionals` VALUES ('209', 'KAB. BATANG', '184', '33', '25');
-INSERT INTO `regionals` VALUES ('210', 'KAB. PEKALONGAN', '184', '33', '26');
-INSERT INTO `regionals` VALUES ('211', 'KAB. PEMALANG', '184', '33', '27');
-INSERT INTO `regionals` VALUES ('212', 'KAB. TEGAL', '184', '33', '28');
-INSERT INTO `regionals` VALUES ('213', 'KAB. BREBES', '184', '33', '29');
-INSERT INTO `regionals` VALUES ('214', 'KOTA MAGELANG', '184', '33', '30');
-INSERT INTO `regionals` VALUES ('215', 'KOTA SURAKARTA', '184', '33', '31');
-INSERT INTO `regionals` VALUES ('216', 'KOTA SALATIGA', '184', '33', '32');
-INSERT INTO `regionals` VALUES ('217', 'KOTA SEMARANG', '184', '33', '33');
-INSERT INTO `regionals` VALUES ('218', 'KOTA PEKALONGAN', '184', '33', '34');
-INSERT INTO `regionals` VALUES ('219', 'KOTA TEGAL', '184', '33', '35');
-INSERT INTO `regionals` VALUES ('220', 'DAERAH ISTIMEWA YOGYAKARTA', null, '34', '00');
-INSERT INTO `regionals` VALUES ('221', 'KAB. KULON PROGO', '220', '34', '01');
-INSERT INTO `regionals` VALUES ('222', 'KAB. BANTUL', '220', '34', '02');
-INSERT INTO `regionals` VALUES ('223', 'KAB. GUNUNG KIDUL', '220', '34', '03');
-INSERT INTO `regionals` VALUES ('224', 'KAB. SLEMAN', '220', '34', '04');
-INSERT INTO `regionals` VALUES ('225', 'KOTA YOGYAKARTA', '220', '34', '05');
-INSERT INTO `regionals` VALUES ('226', 'JAWA TIMUR', null, '35', '00');
-INSERT INTO `regionals` VALUES ('227', 'KAB. PACITAN', '226', '35', '01');
-INSERT INTO `regionals` VALUES ('228', 'KAB. PONOROGO', '226', '35', '02');
-INSERT INTO `regionals` VALUES ('229', 'KAB. TRENGGALEK', '226', '35', '03');
-INSERT INTO `regionals` VALUES ('230', 'KAB. TULUNGAGUNG', '226', '35', '04');
-INSERT INTO `regionals` VALUES ('231', 'KAB. BLITAR', '226', '35', '05');
-INSERT INTO `regionals` VALUES ('232', 'KAB. KEDIRI', '226', '35', '06');
-INSERT INTO `regionals` VALUES ('233', 'KAB. MALANG', '226', '35', '07');
-INSERT INTO `regionals` VALUES ('234', 'KAB. LUMAJANG', '226', '35', '08');
-INSERT INTO `regionals` VALUES ('235', 'KAB. JEMBER', '226', '35', '09');
-INSERT INTO `regionals` VALUES ('236', 'KAB. BANYUWANGI', '226', '35', '10');
-INSERT INTO `regionals` VALUES ('237', 'KAB. BONDOWOSO', '226', '35', '11');
-INSERT INTO `regionals` VALUES ('238', 'KAB. SITUBONDO', '226', '35', '12');
-INSERT INTO `regionals` VALUES ('239', 'KAB. PROBOLINGGO', '226', '35', '13');
-INSERT INTO `regionals` VALUES ('240', 'KAB. PASURUAN', '226', '35', '14');
-INSERT INTO `regionals` VALUES ('241', 'KAB. SIDOARJO', '226', '35', '15');
-INSERT INTO `regionals` VALUES ('242', 'KAB. MOJOKERTO', '226', '35', '16');
-INSERT INTO `regionals` VALUES ('243', 'KAB. JOMBANG', '226', '35', '17');
-INSERT INTO `regionals` VALUES ('244', 'KAB. NGANJUK', '226', '35', '18');
-INSERT INTO `regionals` VALUES ('245', 'KAB. MADIUN', '226', '35', '19');
-INSERT INTO `regionals` VALUES ('246', 'KAB. MAGETAN', '226', '35', '20');
-INSERT INTO `regionals` VALUES ('247', 'KAB. NGAWI', '226', '35', '21');
-INSERT INTO `regionals` VALUES ('248', 'KAB. BOJONEGORO', '226', '35', '22');
-INSERT INTO `regionals` VALUES ('249', 'KAB. TUBAN', '226', '35', '23');
-INSERT INTO `regionals` VALUES ('250', 'KAB. LAMONGAN', '226', '35', '24');
-INSERT INTO `regionals` VALUES ('251', 'KAB. GRESIK', '226', '35', '25');
-INSERT INTO `regionals` VALUES ('252', 'KAB. BANGKALAN', '226', '35', '26');
-INSERT INTO `regionals` VALUES ('253', 'KAB. SAMPANG', '226', '35', '27');
-INSERT INTO `regionals` VALUES ('254', 'KAB. PAMEKASAN', '226', '35', '28');
-INSERT INTO `regionals` VALUES ('255', 'KAB. SUMENEP', '226', '35', '29');
-INSERT INTO `regionals` VALUES ('256', 'KOTA KEDIRI', '226', '35', '30');
-INSERT INTO `regionals` VALUES ('257', 'KOTA BLITAR', '226', '35', '31');
-INSERT INTO `regionals` VALUES ('258', 'KOTA MALANG', '226', '35', '32');
-INSERT INTO `regionals` VALUES ('259', 'KOTA PROBOLINGGO', '226', '35', '33');
-INSERT INTO `regionals` VALUES ('260', 'KOTA PASURUAN', '226', '35', '34');
-INSERT INTO `regionals` VALUES ('261', 'KOTA MOJOKERTO', '226', '35', '35');
-INSERT INTO `regionals` VALUES ('262', 'KOTA MADIUN', '226', '35', '36');
-INSERT INTO `regionals` VALUES ('263', 'KOTA SURABAYA', '226', '35', '37');
-INSERT INTO `regionals` VALUES ('264', 'KOTA BATU', '226', '35', '38');
-INSERT INTO `regionals` VALUES ('265', 'BANTEN', null, '36', '00');
-INSERT INTO `regionals` VALUES ('266', 'KAB. PANDEGLANG', '265', '36', '01');
-INSERT INTO `regionals` VALUES ('267', 'KAB. LEBAK', '265', '36', '02');
-INSERT INTO `regionals` VALUES ('268', 'KAB. TANGERANG', '265', '36', '03');
-INSERT INTO `regionals` VALUES ('269', 'KAB. SERANG', '265', '36', '04');
-INSERT INTO `regionals` VALUES ('270', 'KOTA TANGERANG', '265', '36', '05');
-INSERT INTO `regionals` VALUES ('271', 'KOTA CILEGON', '265', '36', '06');
-INSERT INTO `regionals` VALUES ('272', 'KOTA SERANG', '265', '36', '07');
-INSERT INTO `regionals` VALUES ('273', 'BALI', null, '51', '00');
-INSERT INTO `regionals` VALUES ('274', 'KAB. JEMBRANA', '273', '51', '01');
-INSERT INTO `regionals` VALUES ('275', 'KAB. TABANAN', '273', '51', '02');
-INSERT INTO `regionals` VALUES ('276', 'KAB. BADUNG', '273', '51', '03');
-INSERT INTO `regionals` VALUES ('277', 'KAB. GIANYAR', '273', '51', '04');
-INSERT INTO `regionals` VALUES ('278', 'KAB. KLUNGKUNG', '273', '51', '05');
-INSERT INTO `regionals` VALUES ('279', 'KAB. BANGLI', '273', '51', '06');
-INSERT INTO `regionals` VALUES ('280', 'KAB. KARANGASEM', '273', '51', '07');
-INSERT INTO `regionals` VALUES ('281', 'KAB. BULELENG', '273', '51', '08');
-INSERT INTO `regionals` VALUES ('282', 'KOTA DENPASAR', '273', '51', '09');
-INSERT INTO `regionals` VALUES ('283', 'NUSA TENGGARA BARAT', null, '52', '00');
-INSERT INTO `regionals` VALUES ('284', 'KAB. LOMBOK BARAT', '283', '52', '01');
-INSERT INTO `regionals` VALUES ('285', 'KAB. LOMBOK TENGAH', '283', '52', '02');
-INSERT INTO `regionals` VALUES ('286', 'KAB. LOMBOK TIMUR', '283', '52', '03');
-INSERT INTO `regionals` VALUES ('287', 'KAB. SUMBAWA', '283', '52', '04');
-INSERT INTO `regionals` VALUES ('288', 'KAB. DOMPU', '283', '52', '05');
-INSERT INTO `regionals` VALUES ('289', 'KAB. BIMA', '283', '52', '06');
-INSERT INTO `regionals` VALUES ('290', 'KAB. SUMBAWA BARAT', '283', '52', '07');
-INSERT INTO `regionals` VALUES ('291', 'KOTA MATARAM', '283', '52', '08');
-INSERT INTO `regionals` VALUES ('292', 'KOTA BIMA', '283', '52', '09');
-INSERT INTO `regionals` VALUES ('293', 'NUSA TENGGARA TIMUR', null, '53', '00');
-INSERT INTO `regionals` VALUES ('294', 'KAB. KUPANG', '293', '53', '01');
-INSERT INTO `regionals` VALUES ('295', 'KAB TIMOR TENGAH SELATAN', '293', '53', '02');
-INSERT INTO `regionals` VALUES ('296', 'KAB. TIMOR TENGAH UTARA', '293', '53', '03');
-INSERT INTO `regionals` VALUES ('297', 'KAB. BELU', '293', '53', '04');
-INSERT INTO `regionals` VALUES ('298', 'KAB. ALOR', '293', '53', '05');
-INSERT INTO `regionals` VALUES ('299', 'KAB. FLORES TIMUR', '293', '53', '06');
-INSERT INTO `regionals` VALUES ('300', 'KAB. SIKKA', '293', '53', '07');
-INSERT INTO `regionals` VALUES ('301', 'KAB. ENDE', '293', '53', '08');
-INSERT INTO `regionals` VALUES ('302', 'KAB. NGADA', '293', '53', '09');
-INSERT INTO `regionals` VALUES ('303', 'KAB. MANGGARAI', '293', '53', '10');
-INSERT INTO `regionals` VALUES ('304', 'KAB. SUMBA TIMUR', '293', '53', '11');
-INSERT INTO `regionals` VALUES ('305', 'KAB. SUMBA BARAT', '293', '53', '12');
-INSERT INTO `regionals` VALUES ('306', 'KAB. LEMBATA', '293', '53', '13');
-INSERT INTO `regionals` VALUES ('307', 'KAB. ROTE NDAO', '293', '53', '14');
-INSERT INTO `regionals` VALUES ('308', 'KAB. MANGGARAI BARAT', '293', '53', '15');
-INSERT INTO `regionals` VALUES ('309', 'KAB. NAGEKEO', '293', '53', '16');
-INSERT INTO `regionals` VALUES ('310', 'KAB. SUMBA TENGAH', '293', '53', '17');
-INSERT INTO `regionals` VALUES ('311', 'KAB. SUMBA BARAT DAYA', '293', '53', '18');
-INSERT INTO `regionals` VALUES ('312', 'KAB. MANGGARAI TIMUR', '293', '53', '19');
-INSERT INTO `regionals` VALUES ('313', 'KOTA KUPANG', '293', '53', '20');
-INSERT INTO `regionals` VALUES ('314', 'KALIMANTAN BARAT', null, '61', '00');
-INSERT INTO `regionals` VALUES ('315', 'KAB. SAMBAS', '314', '61', '01');
-INSERT INTO `regionals` VALUES ('316', 'KAB. PONTIANAK', '314', '61', '02');
-INSERT INTO `regionals` VALUES ('317', 'KAB. SANGGAU', '314', '61', '03');
-INSERT INTO `regionals` VALUES ('318', 'KAB. KETAPANG', '314', '61', '04');
-INSERT INTO `regionals` VALUES ('319', 'KAB. SINTANG', '314', '61', '05');
-INSERT INTO `regionals` VALUES ('320', 'KAB. KAPUAS HULU', '314', '61', '06');
-INSERT INTO `regionals` VALUES ('321', 'KAB. BENGKAYANG', '314', '61', '07');
-INSERT INTO `regionals` VALUES ('322', 'KAB. LANDAK', '314', '61', '08');
-INSERT INTO `regionals` VALUES ('323', 'KAB. SEKADAU', '314', '61', '09');
-INSERT INTO `regionals` VALUES ('324', 'KAB. MELAWI', '314', '61', '10');
-INSERT INTO `regionals` VALUES ('325', 'KAB. KAYONG UTARA', '314', '61', '11');
-INSERT INTO `regionals` VALUES ('326', 'KAB. KUBU RAYA', '314', '61', '12');
-INSERT INTO `regionals` VALUES ('327', 'KOTA PONTIANAK', '314', '61', '13');
-INSERT INTO `regionals` VALUES ('328', 'KOTA SINGKAWANG', '314', '61', '14');
-INSERT INTO `regionals` VALUES ('329', 'KALIMANTAN TENGAH', null, '62', '00');
-INSERT INTO `regionals` VALUES ('330', 'KAB. KOTAWARINGIN BARAT', '329', '62', '01');
-INSERT INTO `regionals` VALUES ('331', 'KAB. KOTAWARINGIN TIMUR', '329', '62', '02');
-INSERT INTO `regionals` VALUES ('332', 'KAB. KAPUAS', '329', '62', '03');
-INSERT INTO `regionals` VALUES ('333', 'KAB. BARITO SELATAN', '329', '62', '04');
-INSERT INTO `regionals` VALUES ('334', 'KAB. BARITO UTARA', '329', '62', '05');
-INSERT INTO `regionals` VALUES ('335', 'KAB. KATINGAN', '329', '62', '06');
-INSERT INTO `regionals` VALUES ('336', 'KAB. SERUYAN', '329', '62', '07');
-INSERT INTO `regionals` VALUES ('337', 'KAB. SUKAMARA', '329', '62', '08');
-INSERT INTO `regionals` VALUES ('338', 'KAB. LAMANDAU', '329', '62', '09');
-INSERT INTO `regionals` VALUES ('339', 'KAB. GUNUNG MAS', '329', '62', '10');
-INSERT INTO `regionals` VALUES ('340', 'KAB. PULANG PISAU', '329', '62', '11');
-INSERT INTO `regionals` VALUES ('341', 'KAB. MURUNG RAYA', '329', '62', '12');
-INSERT INTO `regionals` VALUES ('342', 'KAB. BARITO TIMUR', '329', '62', '13');
-INSERT INTO `regionals` VALUES ('343', 'KOTA PALANGKARAYA', '329', '62', '14');
-INSERT INTO `regionals` VALUES ('344', 'KALIMANTAN SELATAN', null, '63', '00');
-INSERT INTO `regionals` VALUES ('345', 'KAB. TANAH LAUT', '343', '63', '01');
-INSERT INTO `regionals` VALUES ('346', 'KAB. KOTABARU', '343', '63', '02');
-INSERT INTO `regionals` VALUES ('347', 'KAB. BANJAR', '343', '63', '03');
-INSERT INTO `regionals` VALUES ('348', 'KAB. BARITO KUALA', '343', '63', '04');
-INSERT INTO `regionals` VALUES ('349', 'KAB. TAPIN', '343', '63', '05');
-INSERT INTO `regionals` VALUES ('350', 'KAB. HULU SUNGAI SELATAN', '343', '63', '06');
-INSERT INTO `regionals` VALUES ('351', 'KAB. HULU SUNGAI TENGAH', '343', '63', '07');
-INSERT INTO `regionals` VALUES ('352', 'KAB. HULU SUNGAI UTARA', '343', '63', '08');
-INSERT INTO `regionals` VALUES ('353', 'KAB. TABALONG', '343', '63', '09');
-INSERT INTO `regionals` VALUES ('354', 'KAB. TANAH BUMBU', '343', '63', '10');
-INSERT INTO `regionals` VALUES ('355', 'KAB. BALANGAN', '343', '63', '11');
-INSERT INTO `regionals` VALUES ('356', 'KOTA BANJARMASIN', '343', '63', '12');
-INSERT INTO `regionals` VALUES ('357', 'KOTA BANJARBARU', '343', '63', '13');
-INSERT INTO `regionals` VALUES ('358', 'KALIMANTAN TIMUR', null, '', '00');
-INSERT INTO `regionals` VALUES ('359', 'KAB. PASER', '357', '64', '01');
-INSERT INTO `regionals` VALUES ('360', 'KAB. KUTAI KERTANEGARA', '357', '64', '02');
-INSERT INTO `regionals` VALUES ('361', 'KAB. BERAU', '357', '64', '03');
-INSERT INTO `regionals` VALUES ('362', 'KAB. BULUNGAN', '357', '64', '04');
-INSERT INTO `regionals` VALUES ('363', 'KAB. NUNUKAN', '357', '64', '05');
-INSERT INTO `regionals` VALUES ('364', 'KAB. MALINAU', '357', '64', '06');
-INSERT INTO `regionals` VALUES ('365', 'KAB. KUTAI BARAT', '357', '64', '07');
-INSERT INTO `regionals` VALUES ('366', 'KAB. KUTAI TIMUR', '357', '64', '08');
-INSERT INTO `regionals` VALUES ('367', 'KAB PENAJAM PASER UTARA', '357', '64', '09');
-INSERT INTO `regionals` VALUES ('368', 'KAB TANA TIDUNG', '357', '64', '10');
-INSERT INTO `regionals` VALUES ('369', 'KOTA BALIKPAPAN', '357', '64', '11');
-INSERT INTO `regionals` VALUES ('370', 'KOTA SAMARINDA', '357', '64', '12');
-INSERT INTO `regionals` VALUES ('371', 'KOTA TARAKAN', '357', '64', '13');
-INSERT INTO `regionals` VALUES ('372', 'KOTA BONTANG', '357', '64', '14');
-INSERT INTO `regionals` VALUES ('373', 'SULAWESI UTARA', null, '71', '00');
-INSERT INTO `regionals` VALUES ('374', 'KAB BOLAANG MONGONDOW', '372', '71', '01');
-INSERT INTO `regionals` VALUES ('375', 'KAB. MINAHASA', '372', '71', '02');
-INSERT INTO `regionals` VALUES ('376', 'KAB. KEPULAUAN SANGIHE', '372', '71', '03');
-INSERT INTO `regionals` VALUES ('377', 'KAB. KEPULAUAN TALAUD', '372', '71', '04');
-INSERT INTO `regionals` VALUES ('378', 'KAB. MINAHASA SELATAN', '372', '71', '05');
-INSERT INTO `regionals` VALUES ('379', 'KAB. MINAHASA UTARA', '372', '71', '06');
-INSERT INTO `regionals` VALUES ('380', 'KAB. MINAHASA TENGGARA', '372', '71', '07');
-INSERT INTO `regionals` VALUES ('381', 'KAB. BOLMONG UTARA', '372', '71', '08');
-INSERT INTO `regionals` VALUES ('382', 'KAB. KEP. SITARO', '372', '71', '09');
-INSERT INTO `regionals` VALUES ('383', 'KOTA MANADO', '372', '71', '10');
-INSERT INTO `regionals` VALUES ('384', 'KOTA BITUNG', '372', '71', '11');
-INSERT INTO `regionals` VALUES ('385', 'KOTA TOMOHON', '372', '71', '12');
-INSERT INTO `regionals` VALUES ('386', 'KOTA. KOTAMOBAGU', '372', '71', '13');
-INSERT INTO `regionals` VALUES ('387', 'SULAWESI TENGAH', null, '72', '00');
-INSERT INTO `regionals` VALUES ('388', 'KAB. BANGGAI', '386', '72', '01');
-INSERT INTO `regionals` VALUES ('389', 'KAB. POSO', '386', '72', '02');
-INSERT INTO `regionals` VALUES ('390', 'KAB. DONGGALA', '386', '72', '03');
-INSERT INTO `regionals` VALUES ('391', 'KAB. TOLI TOLI', '386', '72', '04');
-INSERT INTO `regionals` VALUES ('392', 'KAB. BUOL', '386', '72', '05');
-INSERT INTO `regionals` VALUES ('393', 'KAB. MOROWALI', '386', '72', '06');
-INSERT INTO `regionals` VALUES ('394', 'KAB BANGGAI KEPULAUAN', '386', '72', '07');
-INSERT INTO `regionals` VALUES ('395', 'KAB. PARIGI MOUTONG', '386', '72', '08');
-INSERT INTO `regionals` VALUES ('396', 'KAB. TOJO UNA UNA', '386', '72', '09');
-INSERT INTO `regionals` VALUES ('397', 'KOTA PALU', '386', '72', '10');
-INSERT INTO `regionals` VALUES ('398', 'SULAWESI SELATAN', null, '73', '00');
-INSERT INTO `regionals` VALUES ('399', 'KAB. SELAYAR', '397', '73', '01');
-INSERT INTO `regionals` VALUES ('400', 'KAB. BULUKUMBA', '397', '73', '02');
-INSERT INTO `regionals` VALUES ('401', 'KAB. BANTAENG', '397', '73', '03');
-INSERT INTO `regionals` VALUES ('402', 'KAB. JENEPONTO', '397', '73', '04');
-INSERT INTO `regionals` VALUES ('403', 'KAB. TAKALAR', '397', '73', '05');
-INSERT INTO `regionals` VALUES ('404', 'KAB. GOWA', '397', '73', '06');
-INSERT INTO `regionals` VALUES ('405', 'KAB. SINJAI', '397', '73', '07');
-INSERT INTO `regionals` VALUES ('406', 'KAB. BONE', '397', '73', '08');
-INSERT INTO `regionals` VALUES ('407', 'KAB. MAROS', '397', '73', '09');
-INSERT INTO `regionals` VALUES ('408', 'KAB. PANGKAJENE KEP.', '397', '73', '10');
-INSERT INTO `regionals` VALUES ('409', 'KAB. BARRU', '397', '73', '11');
-INSERT INTO `regionals` VALUES ('410', 'KAB. SOPPENG', '397', '73', '12');
-INSERT INTO `regionals` VALUES ('411', 'KAB. WAJO', '397', '73', '13');
-INSERT INTO `regionals` VALUES ('412', 'KAB. SIDENRENG RAPANG', '397', '73', '14');
-INSERT INTO `regionals` VALUES ('413', 'KAB. PINRANG', '397', '73', '15');
-INSERT INTO `regionals` VALUES ('414', 'KAB. ENREKANG', '397', '73', '16');
-INSERT INTO `regionals` VALUES ('415', 'KAB. LUWU', '397', '73', '17');
-INSERT INTO `regionals` VALUES ('416', 'KAB. TANA TORAJA', '397', '73', '18');
-INSERT INTO `regionals` VALUES ('417', 'KAB. LUWU UTARA', '397', '73', '19');
-INSERT INTO `regionals` VALUES ('418', 'KAB. LUWU TIMUR', '397', '73', '20');
-INSERT INTO `regionals` VALUES ('419', 'KOTA MAKASSAR', '397', '73', '21');
-INSERT INTO `regionals` VALUES ('420', 'KOTA PARE PARE', '397', '73', '22');
-INSERT INTO `regionals` VALUES ('421', 'KOTA PALOPO', '397', '73', '23');
-INSERT INTO `regionals` VALUES ('422', 'SULAWESI TENGGARA', null, '74', '00');
-INSERT INTO `regionals` VALUES ('423', 'KAB. KOLAKA', '421', '74', '01');
-INSERT INTO `regionals` VALUES ('424', 'KAB. KONAWE', '421', '74', '02');
-INSERT INTO `regionals` VALUES ('425', 'KAB. MUNA', '421', '74', '03');
-INSERT INTO `regionals` VALUES ('426', 'KAB. BUTON', '421', '74', '04');
-INSERT INTO `regionals` VALUES ('427', 'KAB. KONAWE SELATAN', '421', '74', '05');
-INSERT INTO `regionals` VALUES ('428', 'KAB. BOMBANA', '421', '74', '06');
-INSERT INTO `regionals` VALUES ('429', 'KAB. WAKATOBI', '421', '74', '07');
-INSERT INTO `regionals` VALUES ('430', 'KAB. KOLAKA UTARA', '421', '74', '08');
-INSERT INTO `regionals` VALUES ('431', 'KAB. KONAWE UTARA', '421', '74', '09');
-INSERT INTO `regionals` VALUES ('432', 'KAB. BUTON UTARA', '421', '74', '10');
-INSERT INTO `regionals` VALUES ('433', 'KOTA KENDARI', '421', '74', '11');
-INSERT INTO `regionals` VALUES ('434', 'KOTA BAU BAU', '421', '74', '12');
-INSERT INTO `regionals` VALUES ('435', 'GORONTALO', null, '75', '00');
-INSERT INTO `regionals` VALUES ('436', 'KAB. GORONTALO', '434', '75', '01');
-INSERT INTO `regionals` VALUES ('437', 'KAB. BOALEMO', '434', '75', '02');
-INSERT INTO `regionals` VALUES ('438', 'KAB. BONE BOLANGO', '434', '75', '03');
-INSERT INTO `regionals` VALUES ('439', 'KAB. PAHUWATO', '434', '75', '04');
-INSERT INTO `regionals` VALUES ('440', 'KAB. GORONTALO UTARA', '434', '75', '05');
-INSERT INTO `regionals` VALUES ('441', 'KOTA GORONTALO', '434', '75', '06');
-INSERT INTO `regionals` VALUES ('442', 'SULAWESI BARAT', null, '76', '00');
-INSERT INTO `regionals` VALUES ('443', 'KAB. MAMUJU UTARA', '441', '76', '01');
-INSERT INTO `regionals` VALUES ('444', 'KAB. MAMUJU', '441', '76', '02');
-INSERT INTO `regionals` VALUES ('445', 'KAB. MAMASA', '441', '76', '03');
-INSERT INTO `regionals` VALUES ('446', 'KAB. POLEWALI MANDAR', '441', '76', '04');
-INSERT INTO `regionals` VALUES ('447', 'KAB. MAJENE', '441', '76', '05');
-INSERT INTO `regionals` VALUES ('448', 'MALUKU', null, '81', '00');
-INSERT INTO `regionals` VALUES ('449', 'KAB. MALUKU TENGAH', '447', '81', '01');
-INSERT INTO `regionals` VALUES ('450', 'KAB. MALUKU TENGGARA', '447', '81', '02');
-INSERT INTO `regionals` VALUES ('451', 'KAB MALUKU TENGGARA BRT', '447', '81', '03');
-INSERT INTO `regionals` VALUES ('452', 'KAB. BURU', '447', '81', '04');
-INSERT INTO `regionals` VALUES ('453', 'KAB. SERAM BAGIAN TIMUR', '447', '81', '05');
-INSERT INTO `regionals` VALUES ('454', 'KAB. SERAM BAGIAN BARAT', '447', '81', '06');
-INSERT INTO `regionals` VALUES ('455', 'KAB. KEPULAUAN ARU', '447', '81', '07');
-INSERT INTO `regionals` VALUES ('456', 'KOTA AMBON', '447', '81', '08');
-INSERT INTO `regionals` VALUES ('457', 'KOTA TUAL', '447', '81', '09');
-INSERT INTO `regionals` VALUES ('458', 'MALUKU UTARA', null, '82', '00');
-INSERT INTO `regionals` VALUES ('459', 'KAB. HALMAHERA BARAT', '457', '82', '01');
-INSERT INTO `regionals` VALUES ('460', 'KAB. HALMAHERA TENGAH', '457', '82', '02');
-INSERT INTO `regionals` VALUES ('461', 'KAB. HALMAHERA UTARA', '457', '82', '03');
-INSERT INTO `regionals` VALUES ('462', 'KAB. HALMAHERA SELATAN', '457', '82', '04');
-INSERT INTO `regionals` VALUES ('463', 'KAB. KEPULAUAN SULA', '457', '82', '05');
-INSERT INTO `regionals` VALUES ('464', 'KAB. HALMAHERA TIMUR', '457', '82', '06');
-INSERT INTO `regionals` VALUES ('465', 'KOTA TERNATE', '457', '82', '07');
-INSERT INTO `regionals` VALUES ('466', 'KOTA TIDORE KEPULAUAN', '457', '82', '08');
-INSERT INTO `regionals` VALUES ('467', 'PAPUA', null, '91', '00');
-INSERT INTO `regionals` VALUES ('468', 'KAB. MERAUKE', '466', '91', '01');
-INSERT INTO `regionals` VALUES ('469', 'KAB. JAYAWIJAYA', '466', '91', '02');
-INSERT INTO `regionals` VALUES ('470', 'KAB. JAYAPURA', '466', '91', '03');
-INSERT INTO `regionals` VALUES ('471', 'KAB. NABIRE', '466', '91', '04');
-INSERT INTO `regionals` VALUES ('472', 'KAB. YAPEN WAROPEN', '466', '91', '05');
-INSERT INTO `regionals` VALUES ('473', 'KAB. BIAK NUMFOR', '466', '91', '06');
-INSERT INTO `regionals` VALUES ('474', 'KAB. PUNCAK JAYA', '466', '91', '07');
-INSERT INTO `regionals` VALUES ('475', 'KAB. PANIAI', '466', '91', '08');
-INSERT INTO `regionals` VALUES ('476', 'KAB. MIMIKA', '466', '91', '09');
-INSERT INTO `regionals` VALUES ('477', 'KAB. SARMI', '466', '91', '10');
-INSERT INTO `regionals` VALUES ('478', 'KAB. KEEROM', '466', '91', '11');
-INSERT INTO `regionals` VALUES ('479', 'KAB PEGUNUNGAN BINTANG', '466', '91', '12');
-INSERT INTO `regionals` VALUES ('480', 'KAB. YAHUKIMO', '466', '91', '13');
-INSERT INTO `regionals` VALUES ('481', 'KAB. TOLIKARA', '466', '91', '14');
-INSERT INTO `regionals` VALUES ('482', 'KAB. WAROPEN', '466', '91', '15');
-INSERT INTO `regionals` VALUES ('483', 'KAB. BOVEN DIGOEL', '466', '91', '16');
-INSERT INTO `regionals` VALUES ('484', 'KAB. MAPPI', '466', '91', '17');
-INSERT INTO `regionals` VALUES ('485', 'KAB. ASMAT', '466', '91', '18');
-INSERT INTO `regionals` VALUES ('486', 'KAB. SUPIORI', '466', '91', '19');
-INSERT INTO `regionals` VALUES ('487', 'KAB. MAMBERAMO RAYA', '466', '91', '20');
-INSERT INTO `regionals` VALUES ('488', 'KOTA JAYAPURA', '466', '91', '21');
-INSERT INTO `regionals` VALUES ('489', 'PAPUA BARAT  (PP No. 24\'2007)', null, '92', '00');
-INSERT INTO `regionals` VALUES ('490', 'KAB. SORONG', '488', '92', '01');
-INSERT INTO `regionals` VALUES ('491', 'KAB. MANOKWARI', '488', '92', '02');
-INSERT INTO `regionals` VALUES ('492', 'KAB. FAK FAK', '488', '92', '03');
-INSERT INTO `regionals` VALUES ('493', 'KAB. SORONG SELATAN', '488', '92', '04');
-INSERT INTO `regionals` VALUES ('494', 'KAB. RAJA AMPAT', '488', '92', '05');
-INSERT INTO `regionals` VALUES ('495', 'KAB. TELUK BENTUNI', '488', '92', '06');
-INSERT INTO `regionals` VALUES ('496', 'KAB. TELUK WONDAMA', '488', '92', '07');
-INSERT INTO `regionals` VALUES ('497', 'KAB. KAIMANA', '488', '92', '08');
-INSERT INTO `regionals` VALUES ('498', 'KOTA SORONG', '488', '92', '09');
+INSERT INTO `regionals` VALUES
+(1,'ACEH',NULL,'11','00'),
+(2,'KAB. SIMEULUE',1,'11','01'),
+(3,'KAB. ACEH SINGKIL',1,'11','02'),
+(4,'KAB. ACEH SELATAN',1,'11','03'),
+(5,'KAB. ACEH TENGGARA',1,'11','04'),
+(6,'KAB. ACEH TIMUR',1,'11','05'),
+(7,'KAB. ACEH TENGAH',1,'11','06'),
+(8,'KAB. ACEH BARAT',1,'11','07'),
+(9,'KAB. ACEH BESAR',1,'11','08'),
+(10,'KAB. PIDIE',1,'11','09'),
+(11,'KAB. BIREUEN',1,'11','10'),
+(12,'KAB. ACEH UTARA',1,'11','11'),
+(13,'KAB. ACEH BARAT DAYA',1,'11','12'),
+(14,'KAB. GAYO LUES',1,'11','13'),
+(15,'KAB. ACEH TAMIANG',1,'11','14'),
+(16,'KAB. NAGAN RAYA',1,'11','15'),
+(17,'KAB. ACEH JAYA',1,'11','16'),
+(18,'KAB. BENER MERIAH',1,'11','17'),
+(19,'KAB. PIDIE JAYA',1,'11','18'),
+(20,'KOTA BANDA ACEH',1,'11','71'),
+(21,'KOTA SABANG',1,'11','72'),
+(22,'KOTA LANGSA',1,'11','73'),
+(23,'KOTA LHOKSEUMAWE',1,'11','74'),
+(24,'KOTA SUBULUSSALAM',1,'11','75'),
+(25,'SUMATERA UTARA',NULL,'12','00'),
+(26,'KAB. NIAS',25,'12','01'),
+(27,'KAB. MANDAILING NATAL',25,'12','02'),
+(28,'KAB. TAPANULI SELATAN',25,'12','03'),
+(29,'KAB. TAPANULI TENGAH',25,'12','04'),
+(30,'KAB. TAPANULI UTARA',25,'12','05'),
+(31,'KAB. TOBA SAMOSIR',25,'12','06'),
+(32,'KAB. LABUHAN BATU',25,'12','07'),
+(33,'KAB. ASAHAN',25,'12','08'),
+(34,'KAB. SIMALUNGUN',25,'12','09'),
+(35,'KAB. DAIRI',25,'12','10'),
+(36,'KAB. KARO',25,'12','11'),
+(37,'KAB. DELI SERDANG',25,'12','12'),
+(38,'KAB. LANGKAT',25,'12','13'),
+(39,'KAB. NIAS SELATAN',25,'12','14'),
+(40,'KAB. HUMBANG HASUNDUTAN',25,'12','15'),
+(41,'KAB. PAKPAK BHARAT',25,'12','16'),
+(42,'KAB. SAMOSIR',25,'12','17'),
+(43,'KAB. SERDANG BEDAGAI',25,'12','18'),
+(44,'KAB. BATU BARA',25,'12','19'),
+(45,'KAB. PADANG LAWAS UTARA',25,'12','20'),
+(46,'KAB. PADANG LAWAS',25,'12','21'),
+(47,'KAB. LABUHAN BATU SELATAN',25,'12','22'),
+(48,'KAB. LABUHAN BATU UTARA',25,'12','23'),
+(49,'KAB. NIAS UTARA',25,'12','24'),
+(50,'KAB. NIAS BARAT',25,'12','25'),
+(51,'KOTA SIBOLGA',25,'12','71'),
+(52,'KOTA TANJUNG BALAI',25,'12','72'),
+(53,'KOTA PEMATANG SIANTAR',25,'12','73'),
+(54,'KOTA TEBING TINGGI',25,'12','74'),
+(55,'KOTA MEDAN',25,'12','75'),
+(56,'KOTA BINJAI',25,'12','76'),
+(57,'KOTA PADANGSIDIMPUAN',25,'12','77'),
+(58,'KOTA GUNUNGSITOLI',25,'12','78'),
+(59,'SUMATERA BARAT',NULL,'13','00'),
+(60,'KAB. KEPULAUAN MENTAWAI',59,'13','01'),
+(61,'KAB. PESISIR SELATAN',59,'13','02'),
+(62,'KAB. SOLOK',59,'13','03'),
+(63,'KAB. SIJUNJUNG',59,'13','04'),
+(64,'KAB. TANAH DATAR',59,'13','05'),
+(65,'KAB. PADANG PARIAMAN',59,'13','06'),
+(66,'KAB. AGAM',59,'13','07'),
+(67,'KAB. LIMA PULUH KOTA',59,'13','08'),
+(68,'KAB. PASAMAN',59,'13','09'),
+(69,'KAB. SOLOK SELATAN',59,'13','10'),
+(70,'KAB. DHARMASRAYA',59,'13','11'),
+(71,'KAB. PASAMAN BARAT',59,'13','12'),
+(72,'KOTA PADANG',59,'13','71'),
+(73,'KOTA SOLOK',59,'13','72'),
+(74,'KOTA SAWAH LUNTO',59,'13','73'),
+(75,'KOTA PADANG PANJANG',59,'13','74'),
+(76,'KOTA BUKITTINGGI',59,'13','75'),
+(77,'KOTA PAYAKUMBUH',59,'13','76'),
+(78,'KOTA PARIAMAN',59,'13','77'),
+(79,'RIAU',NULL,'14','00'),
+(80,'KAB. KUANTAN SINGINGI',79,'14','01'),
+(81,'KAB. INDRAGIRI HULU',79,'14','02'),
+(82,'KAB. INDRAGIRI HILIR',79,'14','03'),
+(83,'KAB. PELALAWAN',79,'14','04'),
+(84,'KAB. S I A K',79,'14','05'),
+(85,'KAB. KAMPAR',79,'14','06'),
+(86,'KAB. ROKAN HULU',79,'14','07'),
+(87,'KAB. BENGKALIS',79,'14','08'),
+(88,'KAB. ROKAN HILIR',79,'14','09'),
+(89,'KAB. KEPULAUAN MERANTI',79,'14','10'),
+(90,'KOTA PEKANBARU',79,'14','71'),
+(91,'KOTA D U M A I',79,'14','73'),
+(92,'JAMBI',NULL,'15','00'),
+(93,'KAB. KERINCI',92,'15','01'),
+(94,'KAB. MERANGIN',92,'15','02'),
+(95,'KAB. SAROLANGUN',92,'15','03'),
+(96,'KAB. BATANG HARI',92,'15','04'),
+(97,'KAB. MUARO JAMBI',92,'15','05'),
+(98,'KAB. TANJUNG JABUNG TIMUR',92,'15','06'),
+(99,'KAB. TANJUNG JABUNG BARAT',92,'15','07'),
+(100,'KAB. TEBO',92,'15','08'),
+(101,'KAB. BUNGO',92,'15','09'),
+(102,'KOTA JAMBI',92,'15','71'),
+(103,'KOTA SUNGAI PENUH',92,'15','72'),
+(104,'SUMATERA SELATAN',NULL,'16','00'),
+(105,'KAB. OGAN KOMERING ULU',104,'16','01'),
+(106,'KAB. OGAN KOMERING ILIR',104,'16','02'),
+(107,'KAB. MUARA ENIM',104,'16','03'),
+(108,'KAB. LAHAT',104,'16','04'),
+(109,'KAB. MUSI RAWAS',104,'16','05'),
+(110,'KAB. MUSI BANYUASIN',104,'16','06'),
+(111,'KAB. BANYU ASIN',104,'16','07'),
+(112,'KAB. OGAN KOMERING ULU SELATAN',104,'16','08'),
+(113,'KAB. OGAN KOMERING ULU TIMUR',104,'16','09'),
+(114,'KAB. OGAN ILIR',104,'16','10'),
+(115,'KAB. EMPAT LAWANG',104,'16','11'),
+(116,'KAB. PENUKAL ABAB LEMATANG ILIR',104,'16','12'),
+(117,'KAB. MUSI RAWAS UTARA',104,'16','13'),
+(118,'KOTA PALEMBANG',104,'16','71'),
+(119,'KOTA PRABUMULIH',104,'16','72'),
+(120,'KOTA PAGAR ALAM',104,'16','73'),
+(121,'KOTA LUBUKLINGGAU',104,'16','74'),
+(122,'BENGKULU',NULL,'17','00'),
+(123,'KAB. BENGKULU SELATAN',122,'17','01'),
+(124,'KAB. REJANG LEBONG',122,'17','02'),
+(125,'KAB. BENGKULU UTARA',122,'17','03'),
+(126,'KAB. KAUR',122,'17','04'),
+(127,'KAB. SELUMA',122,'17','05'),
+(128,'KAB. MUKOMUKO',122,'17','06'),
+(129,'KAB. LEBONG',122,'17','07'),
+(130,'KAB. KEPAHIANG',122,'17','08'),
+(131,'KAB. BENGKULU TENGAH',122,'17','09'),
+(132,'KOTA BENGKULU',122,'17','71'),
+(133,'LAMPUNG',NULL,'18','00'),
+(134,'KAB. LAMPUNG BARAT',133,'18','01'),
+(135,'KAB. TANGGAMUS',133,'18','02'),
+(136,'KAB. LAMPUNG SELATAN',133,'18','03'),
+(137,'KAB. LAMPUNG TIMUR',133,'18','04'),
+(138,'KAB. LAMPUNG TENGAH',133,'18','05'),
+(139,'KAB. LAMPUNG UTARA',133,'18','06'),
+(140,'KAB. WAY KANAN',133,'18','07'),
+(141,'KAB. TULANGBAWANG',133,'18','08'),
+(142,'KAB. PESAWARAN',133,'18','09'),
+(143,'KAB. PRINGSEWU',133,'18','10'),
+(144,'KAB. MESUJI',133,'18','11'),
+(145,'KAB. TULANG BAWANG BARAT',133,'18','12'),
+(146,'KAB. PESISIR BARAT',133,'18','13'),
+(147,'KOTA BANDAR LAMPUNG',133,'18','71'),
+(148,'KOTA METRO',133,'18','72'),
+(149,'KEPULAUAN BANGKA BELITUNG',NULL,'19','00'),
+(150,'KAB. BANGKA',149,'19','01'),
+(151,'KAB. BELITUNG',149,'19','02'),
+(152,'KAB. BANGKA BARAT',149,'19','03'),
+(153,'KAB. BANGKA TENGAH',149,'19','04'),
+(154,'KAB. BANGKA SELATAN',149,'19','05'),
+(155,'KAB. BELITUNG TIMUR',149,'19','06'),
+(156,'KOTA PANGKAL PINANG',149,'19','71'),
+(157,'KEPULAUAN RIAU',NULL,'21','00'),
+(158,'KAB. KARIMUN',157,'21','01'),
+(159,'KAB. BINTAN',157,'21','02'),
+(160,'KAB. NATUNA',157,'21','03'),
+(161,'KAB. LINGGA',157,'21','04'),
+(162,'KAB. KEPULAUAN ANAMBAS',157,'21','05'),
+(163,'KOTA B A T A M',157,'21','71'),
+(164,'KOTA TANJUNG PINANG',157,'21','72'),
+(165,'DKI JAKARTA',NULL,'31','00'),
+(166,'KAB. KEPULAUAN SERIBU',165,'31','01'),
+(167,'KOTA JAKARTA SELATAN',165,'31','71'),
+(168,'KOTA JAKARTA TIMUR',165,'31','72'),
+(169,'KOTA JAKARTA PUSAT',165,'31','73'),
+(170,'KOTA JAKARTA BARAT',165,'31','74'),
+(171,'KOTA JAKARTA UTARA',165,'31','75'),
+(172,'JAWA BARAT',NULL,'32','00'),
+(173,'KAB. BOGOR',172,'32','01'),
+(174,'KAB. SUKABUMI',172,'32','02'),
+(175,'KAB. CIANJUR',172,'32','03'),
+(176,'KAB. BANDUNG',172,'32','04'),
+(177,'KAB. GARUT',172,'32','05'),
+(178,'KAB. TASIKMALAYA',172,'32','06'),
+(179,'KAB. CIAMIS',172,'32','07'),
+(180,'KAB. KUNINGAN',172,'32','08'),
+(181,'KAB. CIREBON',172,'32','09'),
+(182,'KAB. MAJALENGKA',172,'32','10'),
+(183,'KAB. SUMEDANG',172,'32','11'),
+(184,'KAB. INDRAMAYU',172,'32','12'),
+(185,'KAB. SUBANG',172,'32','13'),
+(186,'KAB. PURWAKARTA',172,'32','14'),
+(187,'KAB. KARAWANG',172,'32','15'),
+(188,'KAB. BEKASI',172,'32','16'),
+(189,'KAB. BANDUNG BARAT',172,'32','17'),
+(190,'KAB. PANGANDARAN',172,'32','18'),
+(191,'KOTA BOGOR',172,'32','71'),
+(192,'KOTA SUKABUMI',172,'32','72'),
+(193,'KOTA BANDUNG',172,'32','73'),
+(194,'KOTA CIREBON',172,'32','74'),
+(195,'KOTA BEKASI',172,'32','75'),
+(196,'KOTA DEPOK',172,'32','76'),
+(197,'KOTA CIMAHI',172,'32','77'),
+(198,'KOTA TASIKMALAYA',172,'32','78'),
+(199,'KOTA BANJAR',172,'32','79'),
+(200,'JAWA TENGAH',NULL,'33','00'),
+(201,'KAB. CILACAP',200,'33','01'),
+(202,'KAB. BANYUMAS',200,'33','02'),
+(203,'KAB. PURBALINGGA',200,'33','03'),
+(204,'KAB. BANJARNEGARA',200,'33','04'),
+(205,'KAB. KEBUMEN',200,'33','05'),
+(206,'KAB. PURWOREJO',200,'33','06'),
+(207,'KAB. WONOSOBO',200,'33','07'),
+(208,'KAB. MAGELANG',200,'33','08'),
+(209,'KAB. BOYOLALI',200,'33','09'),
+(210,'KAB. KLATEN',200,'33','10'),
+(211,'KAB. SUKOHARJO',200,'33','11'),
+(212,'KAB. WONOGIRI',200,'33','12'),
+(213,'KAB. KARANGANYAR',200,'33','13'),
+(214,'KAB. SRAGEN',200,'33','14'),
+(215,'KAB. GROBOGAN',200,'33','15'),
+(216,'KAB. BLORA',200,'33','16'),
+(217,'KAB. REMBANG',200,'33','17'),
+(218,'KAB. PATI',200,'33','18'),
+(219,'KAB. KUDUS',200,'33','19'),
+(220,'KAB. JEPARA',200,'33','20'),
+(221,'KAB. DEMAK',200,'33','21'),
+(222,'KAB. SEMARANG',200,'33','22'),
+(223,'KAB. TEMANGGUNG',200,'33','23'),
+(224,'KAB. KENDAL',200,'33','24'),
+(225,'KAB. BATANG',200,'33','25'),
+(226,'KAB. PEKALONGAN',200,'33','26'),
+(227,'KAB. PEMALANG',200,'33','27'),
+(228,'KAB. TEGAL',200,'33','28'),
+(229,'KAB. BREBES',200,'33','29'),
+(230,'KOTA MAGELANG',200,'33','71'),
+(231,'KOTA SURAKARTA',200,'33','72'),
+(232,'KOTA SALATIGA',200,'33','73'),
+(233,'KOTA SEMARANG',200,'33','74'),
+(234,'KOTA PEKALONGAN',200,'33','75'),
+(235,'KOTA TEGAL',200,'33','76'),
+(236,'DI YOGYAKARTA',NULL,'34','00'),
+(237,'KAB. KULON PROGO',236,'34','01'),
+(238,'KAB. BANTUL',236,'34','02'),
+(239,'KAB. GUNUNG KIDUL',236,'34','03'),
+(240,'KAB. SLEMAN',236,'34','04'),
+(241,'KOTA YOGYAKARTA',236,'34','71'),
+(242,'JAWA TIMUR',NULL,'35','00'),
+(243,'KAB. PACITAN',242,'35','01'),
+(244,'KAB. PONOROGO',242,'35','02'),
+(245,'KAB. TRENGGALEK',242,'35','03'),
+(246,'KAB. TULUNGAGUNG',242,'35','04'),
+(247,'KAB. BLITAR',242,'35','05'),
+(248,'KAB. KEDIRI',242,'35','06'),
+(249,'KAB. MALANG',242,'35','07'),
+(250,'KAB. LUMAJANG',242,'35','08'),
+(251,'KAB. JEMBER',242,'35','09'),
+(252,'KAB. BANYUWANGI',242,'35','10'),
+(253,'KAB. BONDOWOSO',242,'35','11'),
+(254,'KAB. SITUBONDO',242,'35','12'),
+(255,'KAB. PROBOLINGGO',242,'35','13'),
+(256,'KAB. PASURUAN',242,'35','14'),
+(257,'KAB. SIDOARJO',242,'35','15'),
+(258,'KAB. MOJOKERTO',242,'35','16'),
+(259,'KAB. JOMBANG',242,'35','17'),
+(260,'KAB. NGANJUK',242,'35','18'),
+(261,'KAB. MADIUN',242,'35','19'),
+(262,'KAB. MAGETAN',242,'35','20'),
+(263,'KAB. NGAWI',242,'35','21'),
+(264,'KAB. BOJONEGORO',242,'35','22'),
+(265,'KAB. TUBAN',242,'35','23'),
+(266,'KAB. LAMONGAN',242,'35','24'),
+(267,'KAB. GRESIK',242,'35','25'),
+(268,'KAB. BANGKALAN',242,'35','26'),
+(269,'KAB. SAMPANG',242,'35','27'),
+(270,'KAB. PAMEKASAN',242,'35','28'),
+(271,'KAB. SUMENEP',242,'35','29'),
+(272,'KOTA KEDIRI',242,'35','71'),
+(273,'KOTA BLITAR',242,'35','72'),
+(274,'KOTA MALANG',242,'35','73'),
+(275,'KOTA PROBOLINGGO',242,'35','74'),
+(276,'KOTA PASURUAN',242,'35','75'),
+(277,'KOTA MOJOKERTO',242,'35','76'),
+(278,'KOTA MADIUN',242,'35','77'),
+(279,'KOTA SURABAYA',242,'35','78'),
+(280,'KOTA BATU',242,'35','79'),
+(281,'BANTEN',NULL,'36','00'),
+(282,'KAB. PANDEGLANG',281,'36','01'),
+(283,'KAB. LEBAK',281,'36','02'),
+(284,'KAB. TANGERANG',281,'36','03'),
+(285,'KAB. SERANG',281,'36','04'),
+(286,'KOTA TANGERANG',281,'36','71'),
+(287,'KOTA CILEGON',281,'36','72'),
+(288,'KOTA SERANG',281,'36','73'),
+(289,'KOTA TANGERANG SELATAN',281,'36','74'),
+(290,'BALI',NULL,'51','00'),
+(291,'KAB. JEMBRANA',290,'51','01'),
+(292,'KAB. TABANAN',290,'51','02'),
+(293,'KAB. BADUNG',290,'51','03'),
+(294,'KAB. GIANYAR',290,'51','04'),
+(295,'KAB. KLUNGKUNG',290,'51','05'),
+(296,'KAB. BANGLI',290,'51','06'),
+(297,'KAB. KARANG ASEM',290,'51','07'),
+(298,'KAB. BULELENG',290,'51','08'),
+(299,'KOTA DENPASAR',290,'51','71'),
+(300,'NUSA TENGGARA BARAT',NULL,'52','00'),
+(301,'KAB. LOMBOK BARAT',300,'52','01'),
+(302,'KAB. LOMBOK TENGAH',300,'52','02'),
+(303,'KAB. LOMBOK TIMUR',300,'52','03'),
+(304,'KAB. SUMBAWA',300,'52','04'),
+(305,'KAB. DOMPU',300,'52','05'),
+(306,'KAB. BIMA',300,'52','06'),
+(307,'KAB. SUMBAWA BARAT',300,'52','07'),
+(308,'KAB. LOMBOK UTARA',300,'52','08'),
+(309,'KOTA MATARAM',300,'52','71'),
+(310,'KOTA BIMA',300,'52','72'),
+(311,'NUSA TENGGARA TIMUR',NULL,'53','00'),
+(312,'KAB. SUMBA BARAT',311,'53','01'),
+(313,'KAB. SUMBA TIMUR',311,'53','02'),
+(314,'KAB. KUPANG',311,'53','03'),
+(315,'KAB. TIMOR TENGAH SELATAN',311,'53','04'),
+(316,'KAB. TIMOR TENGAH UTARA',311,'53','05'),
+(317,'KAB. BELU',311,'53','06'),
+(318,'KAB. ALOR',311,'53','07'),
+(319,'KAB. LEMBATA',311,'53','08'),
+(320,'KAB. FLORES TIMUR',311,'53','09'),
+(321,'KAB. SIKKA',311,'53','10'),
+(322,'KAB. ENDE',311,'53','11'),
+(323,'KAB. NGADA',311,'53','12'),
+(324,'KAB. MANGGARAI',311,'53','13'),
+(325,'KAB. ROTE NDAO',311,'53','14'),
+(326,'KAB. MANGGARAI BARAT',311,'53','15'),
+(327,'KAB. SUMBA TENGAH',311,'53','16'),
+(328,'KAB. SUMBA BARAT DAYA',311,'53','17'),
+(329,'KAB. NAGEKEO',311,'53','18'),
+(330,'KAB. MANGGARAI TIMUR',311,'53','19'),
+(331,'KAB. SABU RAIJUA',311,'53','20'),
+(332,'KAB. MALAKA',311,'53','21'),
+(333,'KOTA KUPANG',311,'53','71'),
+(334,'KALIMANTAN BARAT',NULL,'61','00'),
+(335,'KAB. SAMBAS',334,'61','01'),
+(336,'KAB. BENGKAYANG',334,'61','02'),
+(337,'KAB. LANDAK',334,'61','03'),
+(338,'KAB. MEMPAWAH',334,'61','04'),
+(339,'KAB. SANGGAU',334,'61','05'),
+(340,'KAB. KETAPANG',334,'61','06'),
+(341,'KAB. SINTANG',334,'61','07'),
+(342,'KAB. KAPUAS HULU',334,'61','08'),
+(343,'KAB. SEKADAU',334,'61','09'),
+(344,'KAB. MELAWI',334,'61','10'),
+(345,'KAB. KAYONG UTARA',334,'61','11'),
+(346,'KAB. KUBU RAYA',334,'61','12'),
+(347,'KOTA PONTIANAK',334,'61','71'),
+(348,'KOTA SINGKAWANG',334,'61','72'),
+(349,'KALIMANTAN TENGAH',NULL,'62','00'),
+(350,'KAB. KOTAWARINGIN BARAT',349,'62','01'),
+(351,'KAB. KOTAWARINGIN TIMUR',349,'62','02'),
+(352,'KAB. KAPUAS',349,'62','03'),
+(353,'KAB. BARITO SELATAN',349,'62','04'),
+(354,'KAB. BARITO UTARA',349,'62','05'),
+(355,'KAB. SUKAMARA',349,'62','06'),
+(356,'KAB. LAMANDAU',349,'62','07'),
+(357,'KAB. SERUYAN',349,'62','08'),
+(358,'KAB. KATINGAN',349,'62','09'),
+(359,'KAB. PULANG PISAU',349,'62','10'),
+(360,'KAB. GUNUNG MAS',349,'62','11'),
+(361,'KAB. BARITO TIMUR',349,'62','12'),
+(362,'KAB. MURUNG RAYA',349,'62','13'),
+(363,'KOTA PALANGKA RAYA',349,'62','71'),
+(364,'KALIMANTAN SELATAN',NULL,'63','00'),
+(365,'KAB. TANAH LAUT',364,'63','01'),
+(366,'KAB. KOTA BARU',364,'63','02'),
+(367,'KAB. BANJAR',364,'63','03'),
+(368,'KAB. BARITO KUALA',364,'63','04'),
+(369,'KAB. TAPIN',364,'63','05'),
+(370,'KAB. HULU SUNGAI SELATAN',364,'63','06'),
+(371,'KAB. HULU SUNGAI TENGAH',364,'63','07'),
+(372,'KAB. HULU SUNGAI UTARA',364,'63','08'),
+(373,'KAB. TABALONG',364,'63','09'),
+(374,'KAB. TANAH BUMBU',364,'63','10'),
+(375,'KAB. BALANGAN',364,'63','11'),
+(376,'KOTA BANJARMASIN',364,'63','71'),
+(377,'KOTA BANJAR BARU',364,'63','72'),
+(378,'KALIMANTAN TIMUR',NULL,'64','00'),
+(379,'KAB. PASER',378,'64','01'),
+(380,'KAB. KUTAI BARAT',378,'64','02'),
+(381,'KAB. KUTAI KARTANEGARA',378,'64','03'),
+(382,'KAB. KUTAI TIMUR',378,'64','04'),
+(383,'KAB. BERAU',378,'64','05'),
+(384,'KAB. PENAJAM PASER UTARA',378,'64','09'),
+(385,'KAB. MAHAKAM HULU',378,'64','11'),
+(386,'KOTA BALIKPAPAN',378,'64','71'),
+(387,'KOTA SAMARINDA',378,'64','72'),
+(388,'KOTA BONTANG',378,'64','74'),
+(389,'KALIMANTAN UTARA',NULL,'65','00'),
+(390,'KAB. MALINAU',389,'65','01'),
+(391,'KAB. BULUNGAN',389,'65','02'),
+(392,'KAB. TANA TIDUNG',389,'65','03'),
+(393,'KAB. NUNUKAN',389,'65','04'),
+(394,'KOTA TARAKAN',389,'65','71'),
+(395,'SULAWESI UTARA',NULL,'71','00'),
+(396,'KAB. BOLAANG MONGONDOW',395,'71','01'),
+(397,'KAB. MINAHASA',395,'71','02'),
+(398,'KAB. KEPULAUAN SANGIHE',395,'71','03'),
+(399,'KAB. KEPULAUAN TALAUD',395,'71','04'),
+(400,'KAB. MINAHASA SELATAN',395,'71','05'),
+(401,'KAB. MINAHASA UTARA',395,'71','06'),
+(402,'KAB. BOLAANG MONGONDOW UTARA',395,'71','07'),
+(403,'KAB. SIAU TAGULANDANG BIARO',395,'71','08'),
+(404,'KAB. MINAHASA TENGGARA',395,'71','09'),
+(405,'KAB. BOLAANG MONGONDOW SELATAN',395,'71','10'),
+(406,'KAB. BOLAANG MONGONDOW TIMUR',395,'71','11'),
+(407,'KOTA MANADO',395,'71','71'),
+(408,'KOTA BITUNG',395,'71','72'),
+(409,'KOTA TOMOHON',395,'71','73'),
+(410,'KOTA KOTAMOBAGU',395,'71','74'),
+(411,'SULAWESI TENGAH',NULL,'72','00'),
+(412,'KAB. BANGGAI KEPULAUAN',411,'72','01'),
+(413,'KAB. BANGGAI',411,'72','02'),
+(414,'KAB. MOROWALI',411,'72','03'),
+(415,'KAB. POSO',411,'72','04'),
+(416,'KAB. DONGGALA',411,'72','05'),
+(417,'KAB. TOLI-TOLI',411,'72','06'),
+(418,'KAB. BUOL',411,'72','07'),
+(419,'KAB. PARIGI MOUTONG',411,'72','08'),
+(420,'KAB. TOJO UNA-UNA',411,'72','09'),
+(421,'KAB. SIGI',411,'72','10'),
+(422,'KAB. BANGGAI LAUT',411,'72','11'),
+(423,'KAB. MOROWALI UTARA',411,'72','12'),
+(424,'KOTA PALU',411,'72','71'),
+(425,'SULAWESI SELATAN',NULL,'73','00'),
+(426,'KAB. KEPULAUAN SELAYAR',425,'73','01'),
+(427,'KAB. BULUKUMBA',425,'73','02'),
+(428,'KAB. BANTAENG',425,'73','03'),
+(429,'KAB. JENEPONTO',425,'73','04'),
+(430,'KAB. TAKALAR',425,'73','05'),
+(431,'KAB. GOWA',425,'73','06'),
+(432,'KAB. SINJAI',425,'73','07'),
+(433,'KAB. MAROS',425,'73','08'),
+(434,'KAB. PANGKAJENE DAN KEPULAUAN',425,'73','09'),
+(435,'KAB. BARRU',425,'73','10'),
+(436,'KAB. BONE',425,'73','11'),
+(437,'KAB. SOPPENG',425,'73','12'),
+(438,'KAB. WAJO',425,'73','13'),
+(439,'KAB. SIDENRENG RAPPANG',425,'73','14'),
+(440,'KAB. PINRANG',425,'73','15'),
+(441,'KAB. ENREKANG',425,'73','16'),
+(442,'KAB. LUWU',425,'73','17'),
+(443,'KAB. TANA TORAJA',425,'73','18'),
+(444,'KAB. LUWU UTARA',425,'73','22'),
+(445,'KAB. LUWU TIMUR',425,'73','25'),
+(446,'KAB. TORAJA UTARA',425,'73','26'),
+(447,'KOTA MAKASSAR',425,'73','71'),
+(448,'KOTA PAREPARE',425,'73','72'),
+(449,'KOTA PALOPO',425,'73','73'),
+(450,'SULAWESI TENGGARA',NULL,'74','00'),
+(451,'KAB. BUTON',450,'74','01'),
+(452,'KAB. MUNA',450,'74','02'),
+(453,'KAB. KONAWE',450,'74','03'),
+(454,'KAB. KOLAKA',450,'74','04'),
+(455,'KAB. KONAWE SELATAN',450,'74','05'),
+(456,'KAB. BOMBANA',450,'74','06'),
+(457,'KAB. WAKATOBI',450,'74','07'),
+(458,'KAB. KOLAKA UTARA',450,'74','08'),
+(459,'KAB. BUTON UTARA',450,'74','09'),
+(460,'KAB. KONAWE UTARA',450,'74','10'),
+(461,'KAB. KOLAKA TIMUR',450,'74','11'),
+(462,'KAB. KONAWE KEPULAUAN',450,'74','12'),
+(463,'KAB. MUNA BARAT',450,'74','13'),
+(464,'KAB. BUTON TENGAH',450,'74','14'),
+(465,'KAB. BUTON SELATAN',450,'74','15'),
+(466,'KOTA KENDARI',450,'74','71'),
+(467,'KOTA BAUBAU',450,'74','72'),
+(468,'GORONTALO',NULL,'75','00'),
+(469,'KAB. BOALEMO',468,'75','01'),
+(470,'KAB. GORONTALO',468,'75','02'),
+(471,'KAB. POHUWATO',468,'75','03'),
+(472,'KAB. BONE BOLANGO',468,'75','04'),
+(473,'KAB. GORONTALO UTARA',468,'75','05'),
+(474,'KOTA GORONTALO',468,'75','71'),
+(475,'SULAWESI BARAT',NULL,'76','00'),
+(476,'KAB. MAJENE',475,'76','01'),
+(477,'KAB. POLEWALI MANDAR',475,'76','02'),
+(478,'KAB. MAMASA',475,'76','03'),
+(479,'KAB. MAMUJU',475,'76','04'),
+(480,'KAB. MAMUJU UTARA',475,'76','05'),
+(481,'KAB. MAMUJU TENGAH',475,'76','06'),
+(482,'MALUKU',NULL,'81','00'),
+(483,'KAB. MALUKU TENGGARA BARAT',482,'81','01'),
+(484,'KAB. MALUKU TENGGARA',482,'81','02'),
+(485,'KAB. MALUKU TENGAH',482,'81','03'),
+(486,'KAB. BURU',482,'81','04'),
+(487,'KAB. KEPULAUAN ARU',482,'81','05'),
+(488,'KAB. SERAM BAGIAN BARAT',482,'81','06'),
+(489,'KAB. SERAM BAGIAN TIMUR',482,'81','07'),
+(490,'KAB. MALUKU BARAT DAYA',482,'81','08'),
+(491,'KAB. BURU SELATAN',482,'81','09'),
+(492,'KOTA AMBON',482,'81','71'),
+(493,'KOTA TUAL',482,'81','72'),
+(494,'MALUKU UTARA',NULL,'82','00'),
+(495,'KAB. HALMAHERA BARAT',494,'82','01'),
+(496,'KAB. HALMAHERA TENGAH',494,'82','02'),
+(497,'KAB. KEPULAUAN SULA',494,'82','03'),
+(498,'KAB. HALMAHERA SELATAN',494,'82','04'),
+(499,'KAB. HALMAHERA UTARA',494,'82','05'),
+(500,'KAB. HALMAHERA TIMUR',494,'82','06'),
+(501,'KAB. PULAU MOROTAI',494,'82','07'),
+(502,'KAB. PULAU TALIABU',494,'82','08'),
+(503,'KOTA TERNATE',494,'82','71'),
+(504,'KOTA TIDORE KEPULAUAN',494,'82','72'),
+(505,'PAPUA BARAT',NULL,'91','00'),
+(506,'KAB. FAKFAK',505,'91','01'),
+(507,'KAB. KAIMANA',505,'91','02'),
+(508,'KAB. TELUK WONDAMA',505,'91','03'),
+(509,'KAB. TELUK BINTUNI',505,'91','04'),
+(510,'KAB. MANOKWARI',505,'91','05'),
+(511,'KAB. SORONG SELATAN',505,'91','06'),
+(512,'KAB. SORONG',505,'91','07'),
+(513,'KAB. RAJA AMPAT',505,'91','08'),
+(514,'KAB. TAMBRAUW',505,'91','09'),
+(515,'KAB. MAYBRAT',505,'91','10'),
+(516,'KAB. MANOKWARI SELATAN',505,'91','11'),
+(517,'KAB. PEGUNUNGAN ARFAK',505,'91','12'),
+(518,'KOTA SORONG',505,'91','71'),
+(519,'PAPUA',NULL,'94','00'),
+(520,'KAB. MERAUKE',519,'94','01'),
+(521,'KAB. JAYAWIJAYA',519,'94','02'),
+(522,'KAB. JAYAPURA',519,'94','03'),
+(523,'KAB. NABIRE',519,'94','04'),
+(524,'KAB. KEPULAUAN YAPEN',519,'94','08'),
+(525,'KAB. BIAK NUMFOR',519,'94','09'),
+(526,'KAB. PANIAI',519,'94','10'),
+(527,'KAB. PUNCAK JAYA',519,'94','11'),
+(528,'KAB. MIMIKA',519,'94','12'),
+(529,'KAB. BOVEN DIGOEL',519,'94','13'),
+(530,'KAB. MAPPI',519,'94','14'),
+(531,'KAB. ASMAT',519,'94','15'),
+(532,'KAB. YAHUKIMO',519,'94','16'),
+(533,'KAB. PEGUNUNGAN BINTANG',519,'94','17'),
+(534,'KAB. TOLIKARA',519,'94','18'),
+(535,'KAB. SARMI',519,'94','19'),
+(536,'KAB. KEEROM',519,'94','20'),
+(537,'KAB. WAROPEN',519,'94','26'),
+(538,'KAB. SUPIORI',519,'94','27'),
+(539,'KAB. MAMBERAMO RAYA',519,'94','28'),
+(540,'KAB. NDUGA',519,'94','29'),
+(541,'KAB. LANNY JAYA',519,'94','30'),
+(542,'KAB. MAMBERAMO TENGAH',519,'94','31'),
+(543,'KAB. YALIMO',519,'94','32'),
+(544,'KAB. PUNCAK',519,'94','33'),
+(545,'KAB. DOGIYAI',519,'94','34'),
+(546,'KAB. INTAN JAYA',519,'94','35'),
+(547,'KAB. DEIYAI',519,'94','36'),
+(548,'KOTA JAYAPURA',519,'94','71');
 
 -- ----------------------------
 -- Table structure for `religions`
