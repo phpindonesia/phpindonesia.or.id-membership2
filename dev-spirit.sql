@@ -255,6 +255,8 @@ CREATE TABLE `regionals` (
 -- ----------------------------
 -- Records of regionals
 -- ----------------------------
+-- regionals.sql
+/*
 INSERT INTO `regionals` VALUES ('1', 'ACEH', null, '11', '00');
 INSERT INTO `regionals` VALUES ('2', 'KAB. ACEH SELATAN', '1', '11', '01');
 INSERT INTO `regionals` VALUES ('3', 'KAB. ACEH TENGGARA', '1', '11', '02');
@@ -753,6 +755,7 @@ INSERT INTO `regionals` VALUES ('495', 'KAB. TELUK BENTUNI', '488', '92', '06');
 INSERT INTO `regionals` VALUES ('496', 'KAB. TELUK WONDAMA', '488', '92', '07');
 INSERT INTO `regionals` VALUES ('497', 'KAB. KAIMANA', '488', '92', '08');
 INSERT INTO `regionals` VALUES ('498', 'KOTA SORONG', '488', '92', '09');
+*/
 
 -- ----------------------------
 -- Table structure for `religions`
