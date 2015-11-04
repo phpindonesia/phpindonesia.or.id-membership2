@@ -13,6 +13,7 @@ return array(
 			'/apps/membership/update-password',
 			'/apps/membership/account-reactivation'
 		),
+		'mode' => 'development',
 		'salt_pwd' => 'dev-spirit',
 		'db' => array(
 			'host' => 'localhost',

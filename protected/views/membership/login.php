@@ -13,7 +13,7 @@
 				<h3 class="aligncenter"> <span> <i class="fa fa-user"></i></span> Login Anggota</h3>
 
 				<div>
-					<label style="font-weight: bold;">Username</label>
+					<label style="font-weight: bold;">Username / Email</label>
 					<input id="username" name="username" required="required" type="text" style="font-size: 15px;" />
 				</div>
 
