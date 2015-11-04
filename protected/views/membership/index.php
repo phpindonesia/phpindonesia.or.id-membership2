@@ -49,9 +49,11 @@ $this->append_js(array(
 								<label for="cities-dd" style="font-weight: bold;">Kabupaten / Kota</label>
 								<div class="selection-box">
 								<?php
-								echo $this->fh_input_select('city_id', $cities, array(
+								$attr = array(
 									'id' => 'cities-dd'
-								));
+								);
+								(isset($_GET['province_id']) && $_GET['province_id'] != '') ?  null : $attr['disabled'] = 'disabled';
+								echo $this->fh_input_select('city_id', $cities, $attr);
 								?>
 								</div>
 							</div>

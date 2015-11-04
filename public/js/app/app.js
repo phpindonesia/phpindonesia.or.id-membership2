@@ -1,5 +1,5 @@
-// disable select #cities-dd in index & register
-jQuery('#cities-dd').attr('disabled', 'disabled');
+// disabled again if provinces value is null
+// jQuery("#cities-dd").attr('disabled', 'disabled');
 
 function input_select(settings, data) {
 	var str_opts = '';
