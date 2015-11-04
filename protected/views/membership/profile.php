@@ -32,7 +32,7 @@
 				</div>
 
 				<div class="team-details">
-					<h6><?php echo $member['fullname']; ?></h6>
+					<h6><?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></h6>
 					<br />
 
 					<ul class="dt-sc-social-icons">
@@ -42,7 +42,7 @@
 
 						<li style="margin-right: 5px; padding: 3px; border: 1px #DDDDDD solid;">
 							<span class="fa <?php echo $socmedias_logo[$socmed_item['socmed_type']]; ?>"></span>
-							<?php echo $socmed_item['account_name']; ?>
+							<?php echo filter_var(trim($socmed_item['account_name']), FILTER_SANITIZE_STRING); ?>
 						</li>
 
 						<?php
@@ -72,12 +72,12 @@
 
 								<tr>
 									<td style="width:200px; font-weight: bold;">Nama Lengkap</td>
-									<td>: <?php echo $member['fullname']; ?></td>
+									<td>: <?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></td>
 								</tr>
 
 								<tr>
 									<td style="width:200px; font-weight: bold;">Gender</td>
-									<td>: <?php echo ucfirst($member['gender']); ?></td>
+									<td>: <?php echo filter_var(trim(ucfirst($member['gender'])), FILTER_SANITIZE_STRING); ?></td>
 								</tr>
 
 								<tr>
@@ -87,7 +87,7 @@
 
 								<tr>
 									<td style="width:200px; font-weight: bold;">Phone</td>
-									<td>: <?php echo $member['contact_phone']; ?></td>
+									<td>: <?php echo filter_var(trim($member['contact_phone']), FILTER_SANITIZE_STRING); ?></td>
 								</tr>
 
 								<tr>
@@ -95,9 +95,9 @@
 									<td>
 										: 
 										<?php
-										echo $member['birth_place'] == null ? '-' : ucfirst($member['birth_place']);
+										echo $member['birth_place'] == null ? '-' : filter_var(trim(ucfirst($member['birth_place'])), FILTER_SANITIZE_STRING);
 										echo ' , ';
-										echo $member['birth_date'] == null ? '-' : $member['birth_date'];
+										echo $member['birth_date'] == null ? '-' : filter_var(trim($member['birth_date']), FILTER_SANITIZE_STRING);
 										?>
 									</td>
 								</tr>
@@ -107,9 +107,9 @@
 									<td>
 										:
 										<?php
-										echo $member['identity_type'] == null ? '-' : $member['identity_type'];
+										echo $member['identity_type'] == null ? '-' : filter_var(trim($member['identity_type']), FILTER_SANITIZE_STRING);
 										echo ' : ';
-										echo $member['identity_number'] == null ? '-' : $member['identity_number'];
+										echo $member['identity_number'] == null ? '-' : filter_var(trim($member['identity_number']), FILTER_SANITIZE_STRING);
 										?>
 									</td>
 								</tr>
@@ -119,11 +119,11 @@
 									<td>
 										: 
 										<?php
-										echo $member['area'] == '' ? '-' : ucwords($member['area']);
+										echo $member['area'] == '' ? '-' : filter_var(trim(ucwords($member['area'])), FILTER_SANITIZE_STRING);
 										echo ' , ';
-										echo $member['city'];
+										echo filter_var(trim($member['city']), FILTER_SANITIZE_STRING);
 										echo ' , ';
-										echo $member['province']
+										echo filter_var(trim($member['province']), FILTER_SANITIZE_STRING)
 										?>
 									</td>
 								</tr>
@@ -179,13 +179,13 @@
 
                         <td>
                             <?php
-                            echo $item_portfolio['company_name'];
+                            echo filter_var(trim($item_portfolio['company_name']),FILTER_SANITIZE_STRING);
                             ?>
                         </td>
 
                         <td>
                             <?php
-                            echo $item_portfolio['industry_name'];
+                            echo filter_var(trim($item_portfolio['industry_name']), FILTER_SANITIZE_STRING);
                             ?>
                         </td>
 
@@ -203,7 +203,7 @@
                             }
 
                             if ($item_portfolio['start_date_y'] != null) {
-                                $periode_str .= $item_portfolio['start_date_y'];
+                                $periode_str .= filter_var(trim($item_portfolio['start_date_y']), FILTER_SANITIZE_STRING);
                             }
 
                             if ($item_portfolio['work_status'] == 'R') {
@@ -225,19 +225,19 @@
                                 $periode_str .= ' s/d Sekarang';
                             }
 
-                            echo $periode_str;
+                            echo filter_var(trim($periode_str), FILTER_SANITIZE_STRING);
                             ?>
                         </td>
 
                         <td>
                             <?php
-                            echo $item_portfolio['job_title'];
+                            echo filter_var(trim($item_portfolio['job_title']), FILTER_SANITIZE_STRING);
                             ?>
                         </td>
 
                         <td>
                             <?php
-                            echo $item_portfolio['job_desc'];
+                            echo filter_var(trim($item_portfolio['job_desc']), FILTER_SANITIZE_STRING);
                             ?>
                         </td>
 
