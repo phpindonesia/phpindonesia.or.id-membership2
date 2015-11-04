@@ -19,11 +19,6 @@ $app->get('/apps/common-data/cities/{province_id:[0-9]+}', function ($request, $
 			));
 		}
 
-		$response_new = $response->withStatus(200)->withHeader('Content-type', 'application/json');
-		return $this->view->render(
-			$response_new,
-			'ajax',
-			array('_view_ajax_data_' => $cities)
-		);
+		return $response->withJson($cities, 200);
 	}
 });
