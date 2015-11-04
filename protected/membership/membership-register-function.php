@@ -117,7 +117,7 @@ $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $res
 
             try {
                 $db->insert('users', array(
-                    'username' => trim($_POST['username']),
+                    'username' => filter_var(trim($_POST['username']), FILTER_SANITIZE_STRING),
                     'password' => $salt_pwd,
                     'email' => $email_address,
                     'province_id' => $_POST['province_id'],
@@ -175,7 +175,7 @@ $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $res
                     $replacements = array();
                     $replacements[$email_address] = array(
                         '{email_address}' => $email_address,
-                        '{fullname}' => $fullname,
+                        '{fullname}' => filter_var(trim($fullname), FILTER_SANITIZE_STRING),
                         '{registration_date}' => date('d-m-Y H:i:s'),
                         '{activation_path}' => $this->router->pathFor('membership-activation', array('uid' => $last_user_id, 'activation_key' => $activation_key)),
                         '{activation_expired_date}' => $activation_expired_date,

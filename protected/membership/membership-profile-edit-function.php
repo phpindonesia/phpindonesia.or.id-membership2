@@ -21,25 +21,25 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
             $area = trim($_POST['area']);
             $area = empty($area) ? null : $area;
             $identity_number = trim($_POST['identity_number']);
-            $identity_number = empty($identity_number) ? null : $identity_number;
-            $identity_type = $_POST['identity_type'] == '' ? null : $_POST['identity_type'];
-            $religion_id = $_POST['religion_id'] == '' ? null : $_POST['religion_id'];
+            $identity_number = empty($identity_number) ? null : filter_var(trim($identity_number), FILTER_SANITIZE_STRING);
+            $identity_type = $_POST['identity_type'] == '' ? null : filter_var(trim($_POST['identity_type']), FILTER_SANITIZE_STRING);
+            $religion_id = $_POST['religion_id'] == '' ? null : filter_var(trim($_POST['religion_id']), FILTER_SANITIZE_STRING);
 
             $db->beginTransaction();
             try {
 
                 $members_profiles = array(
-                    'fullname' => trim($_POST['fullname']),
-                    'contact_phone' => trim($_POST['contact_phone']),
-                    'birth_place' => trim(strtoupper($_POST['birth_place'])),
-                    'birth_date' => $_POST['birth_date'] == '' ? null : trim($_POST['birth_date']),
+                    'fullname' => filter_var(trim($_POST['fullname']), FILTER_SANITIZE_STRING),
+                    'contact_phone' => filter_var(trim($_POST['contact_phone']), FILTER_SANITIZE_STRING),
+                    'birth_place' => filter_var(trim(strtoupper($_POST['birth_place'])), FILTER_SANITIZE_STRING),
+                    'birth_date' => $_POST['birth_date'] == '' ? null : filter_var(trim($_POST['birth_date']), FILTER_SANITIZE_STRING),
                     'identity_number' => $identity_number,
                     'identity_type' => $identity_type,
                     'religion_id' => $religion_id,
-                    'province_id' => $_POST['province_id'],
-                    'city_id' => $_POST['city_id'],
-                    'area' => $area,
-                    'job_id' => $_POST['job_id'],
+                    'province_id' => filter_var(trim($_POST['province_id']), FILTER_SANITIZE_STRING),
+                    'city_id' => filter_var(trim($_POST['city_id']), FILTER_SANITIZE_STRING),
+                    'area' => filter_var(trim($area), FILTER_SANITIZE_STRING),
+                    'job_id' => filter_var(trim($_POST['job_id']), FILTER_SANITIZE_STRING),
                     'modified' => date('Y-m-d H:i:s'),
                     'modified_by' => $_SESSION['MembershipAuth']['user_id']
                 );
@@ -84,9 +84,9 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
                     foreach ($_POST['socmeds'] as $item) {
                         $row = array(
                             'user_id' => $_SESSION['MembershipAuth']['user_id'],
-                            'socmed_type' => $item['socmed_type'],
-                            'account_name' => trim($item['account_name']),
-                            'account_url' => $item['account_url'],
+                            'socmed_type' => filter_var(trim($item['socmed_type']), FILTER_SANITIZE_STRING),
+                            'account_name' => filter_var(trim($item['account_name']), FILTER_SANITIZE_STRING),
+                            'account_url' => filter_var(trim($item['account_url']), FILTER_SANITIZE_STRING),
                             'created' => date('Y-m-d H:i:s')
                         );
 
