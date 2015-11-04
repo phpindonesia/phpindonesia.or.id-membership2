@@ -135,6 +135,8 @@
 	input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="tel"], input[type="number"], input[type="range"], input[type="date"], input[type="search"], textarea, input.text { background-color:#f8f8f8; border-radius: 2px; border: 1px solid #eaeaea; color: #92a7bb; display: inline-block; font-size: 13px; margin: 10px 0; padding: 16px 15px; width: 100%; -webkit-appearance: none; -moz-appearance: none; }
 	
 	input[type="text"]:hover, input[type="password"]:hover, input[type="email"]:hover, textarea:hover, input[type="date"]:hover { color:#000000; }
+
+	select[disabled="disabled"], input[disabled="disabled"] {cursor: not-allowed !important;}
 	
 	textarea { height: 190px; overflow: auto; resize: none; padding: 16px 15px; width:100%; }
 	
