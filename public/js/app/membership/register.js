@@ -12,10 +12,12 @@ jQuery("#provinces-dd").on('change', function () {
                 label: 'regional_name',
                 dst: jQuery("#cities-dd")
             }, data);
+
     	}).fail(function (data) {
     		alert('Failed to request data');
     	}).always(function (data) {
     	});
+        
     } else {
         input_select({dst: jQuery("#cities-dd")}, []);
     }

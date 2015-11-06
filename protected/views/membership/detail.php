@@ -25,7 +25,7 @@
 				</div>
 
 				<div class="team-details">
-					<h6><?php echo $member['fullname']; ?></h6>
+					<h6><?php echo filter_var(trim($member['fullname'])); ?></h6>
 
 					<br />
 
@@ -36,7 +36,7 @@
 
 						<li style="margin-right: 5px; padding: 3px; border: 1px #DDDDDD solid;">
 							<span class="fa <?php echo $socmedias_logo[$socmed_item['socmed_type']]; ?>"></span>
-							<?php echo $socmed_item['account_name']; ?>
+							<?php echo filter_var(trim($socmed_item['account_name']), FILTER_SANITIZE_STRING); ?>
 						</li>
 
 						<?php
@@ -58,22 +58,22 @@
 							<tbody>
 								<tr>
 									<td style="width:200px; font-weight: bold;">Nama Lengkap</td>
-									<td>: <?php echo ($member['fullname'] == '' ? '-' : $member['fullname']); ?></td>
+									<td>: <?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></td>
 								</tr>
 
 								<tr>
 									<td style="width:200px; font-weight: bold;">Gender</td>
-									<td>: <?php echo ($member['gender'] == '' ? '-' : $member['gender']); ?></td>
+									<td>: <?php echo ucfirst($member['gender']); ?></td>
 								</tr>
 
 								<tr>
 									<td style="width:200px; font-weight: bold;">Daerah Kelahiran</td>
-									<td>: <?php echo ($member['birth_place'] == '' ? '-' : $member['birth_place']); ?></td>
+									<td>: <?php echo ucfirst($member['birth_place']); ?></td>
 								</tr>
 
 								<tr>
 									<td style="width:200px; font-weight: bold;">Domisili</td>
-									<td>: <?php echo $member['province'].', '.$member['city'].', '.$member['area']; ?></td>
+									<td>: <?php echo $member['province'].', '.$member['city'].', '.filter_var(trim($member['area']), FILTER_SANITIZE_STRING); ?></td>
 								</tr>
 
 							</tbody>

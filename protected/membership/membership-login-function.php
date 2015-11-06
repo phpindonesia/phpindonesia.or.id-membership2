@@ -6,29 +6,37 @@ $app->map(['GET', 'POST'], '/apps/membership/login', function ($request, $respon
         $db = $this->getContainer()->get('db');
         $salt_pwd = md5($this->getContainer()->get('settings')['salt_pwd'].$_POST['password']);
   
-        $q_user_count = $db->createQueryBuilder()
+        $q_user_count = $db->createQueryBuilder();
+        $q_user_count
         ->select('COUNT(*) AS total_data')
         ->from('users', 'u')
         ->leftJoin('u', 'users_roles', 'ur', 'u.user_id = ur.user_id')
-        ->where('u.username = :username')
+        ->where(
+            $q_user_count->expr()->orX(
+                $q_user_count->expr()->eq('u.username', ':username'),
+                $q_user_count->expr()->eq('u.email', ':email')
+            )
+        )
         ->andWhere('u.password = :password')
         ->andWhere('u.deleted = :d')
         ->andWhere('u.activated = :act')
         ->andWhere('ur.role_id = :rid')
         ->setParameter(':username', trim($_POST['username']), \Doctrine\DBAL\Types\Type::STRING)
+        ->setParameter(':email', trim($_POST['username']), \Doctrine\DBAL\Types\Type::STRING)
         ->setParameter(':password', $salt_pwd, \Doctrine\DBAL\Types\Type::STRING)
         ->setParameter(':d', 'N')
         ->setParameter(':act', 'Y')
-        ->setParameter(':rid', 'member')
-        ->execute();
+        ->setParameter(':rid', 'member');
 
-        $user_count = (int) $q_user_count->fetch()['total_data'];
+        $sth = $q_user_count->execute();
+        $user_count = (int) $sth->fetch()['total_data'];
         $db->close();
 
         if ($user_count > 0) {
             if (!isset($_SESSION['MembershipAuth'])) {
 
-                $q_user = $db->createQueryBuilder()
+                $q_user = $db->createQueryBuilder();
+                $q_user
                 ->select(
                     'u.user_id',
                     'u.username',
@@ -42,15 +50,21 @@ $app->map(['GET', 'POST'], '/apps/membership/login', function ($request, $respon
                 ->from('users', 'u')
                 ->leftJoin('u', 'users_roles', 'ur', 'u.user_id = ur.user_id')
                 ->leftJoin('u', 'members_profiles', 'up', 'u.user_id = up.user_id')
-                ->where('u.username = :username')
+                ->where(
+                    $q_user_count->expr()->orX(
+                        $q_user_count->expr()->eq('u.username', ':username'),
+                        $q_user_count->expr()->eq('u.email', ':email')
+                    )
+                )
                 ->andWhere('u.password = :password')
                 ->andWhere('ur.role_id = :rid')
                 ->setParameter(':username', trim($_POST['username']))
+                ->setParameter(':email', trim($_POST['username']))
                 ->setParameter(':password', $salt_pwd)
-                ->setParameter(':rid', 'member')
-                ->execute();
+                ->setParameter(':rid', 'member');
 
-                $user = $q_user->fetch();
+                $sth = $q_user->execute();
+                $user = $sth->fetch();
                 $db->close();
 
                 $_SESSION['MembershipAuth'] = array();

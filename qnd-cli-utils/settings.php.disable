@@ -1,0 +1,26 @@
+<?php
+return array(
+	'settings' => array(
+		'salt_pwd' => 'dev-spirit',
+		'db' => array(
+			'host' => 'localhost',
+			'user' => 'root',
+			'password' => '---',
+			'dbname' => 'dev-spirit',
+			'driver' => 'pdo_mysql'
+		),
+		'smtp' => array(
+			'host' => 'smtp.gmail.com',
+			'port' => 465,
+			'ssl' => true,
+			'username' => 'someone@gmail.com',
+			'password' => '---'
+		),
+		'email' => array(
+			'sender_email' => 'someone@gmail.com',
+			'sender_name' => 'PHP Indonesia Membership'
+		),
+		'upload_photo_profile_path' => _FULL_APP_PATH_.'public'._DS_.'files'._DS_.'photoprofile'._DS_,
+		'base_url' => 'http://localhost'
+	)
+);

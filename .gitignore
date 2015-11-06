@@ -1,5 +1,6 @@
 public/files/*
 protected/settings.php
+qnd-cli-utils/settings.php
 composer.phar
 composer.lock
 composer.json
