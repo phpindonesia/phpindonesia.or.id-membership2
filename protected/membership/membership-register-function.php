@@ -204,7 +204,7 @@ $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $res
 
                 } catch (Swift_TransportException $e) {
                     $this->flash->flashLater('success', $register_success_msg_alt);
-                    return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-index'));   
+                    return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-index'));
                 }
             }
 
@@ -226,6 +226,22 @@ $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $res
     ->from('jobs')
     ->execute();
 
+    // Just default value for list of cities
+    $cities = array();
+    // In case someone failed to register and we have $_POST['province_id'] already set
+    if ($province_id = $request->getParam('province_id')) {
+        // Just copy the functionality of common-data-cities-function.php
+        // and wondering why we don't put it independently so share functionality could be much more easier
+        $q_cities = $this->db->createQueryBuilder()
+            ->select('id', 'regional_name')
+            ->from('regionals')
+            ->where('parent_id = :pid')
+            ->setParameter(':pid', $province_id)
+            ->execute();
+
+        $cities = \Cake\Utility\Hash::combine($q_cities->fetchAll(), '{n}.id', '{n}.regional_name');
+    }
+
     $provinces = \Cake\Utility\Hash::combine($q_provinces->fetchAll(), '{n}.id', '{n}.regional_name');
     $jobs = \Cake\Utility\Hash::combine($q_jobs->fetchAll(), '{n}.job_id', '{n}.job_id');
 
@@ -243,7 +259,7 @@ $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $res
     return $this->view->render(
         $response,
         'membership/register',
-        compact('provinces', 'jobs', 'gcaptcha_site_key', 'use_captcha')
+        compact('provinces', 'cities', 'jobs', 'gcaptcha_site_key', 'use_captcha')
     );
 
 })->setName('membership-register');
