@@ -19,7 +19,11 @@ $app->map(['GET', 'POST'], '/apps/membership/forgot-password', function ($reques
 			->select('COUNT(*) AS total_data')
 			->from('users')
 			->where('email = :email')
+            ->andWhere('activated = :act')
+            ->andWhere('deleted = :d')
 			->setParameter(':email', trim($_POST['email']))
+            ->setParameter(':act', 'Y', \Doctrine\DBAL\Types\Type::STRING)
+            ->setParameter(':d', 'N', \Doctrine\DBAL\Types\Type::STRING)
 			->execute();
 
 			$email_exist = (int) $q_email_exist->fetch()['total_data'];
@@ -29,7 +33,7 @@ $app->map(['GET', 'POST'], '/apps/membership/forgot-password', function ($reques
 
 			return false;
 
-		}, 'Tidak terdaftar!');
+		}, 'Tidak terdaftar! atau Account anda belum aktif.');
 
 		if ($use_captcha == true) {
             $validator->addNewRule('verify_captcha', function ($field, $value, array $params) use ($gcaptcha_secret) {
