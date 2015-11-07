@@ -25,8 +25,6 @@ $q_users = $db->createQueryBuilder()
 ->andWhere('usr.activated = :actv')
 ->setParameter(':deleted', 'N', \Doctrine\DBAL\Types\Type::STRING)
 ->setParameter(':actv', 'N', \Doctrine\DBAL\Types\Type::STRING)
-->setFirstResult(0)
-->setMaxResults(2)
 ->orderBy('u_actv.user_id', 'ASC')
 ->execute();
 
