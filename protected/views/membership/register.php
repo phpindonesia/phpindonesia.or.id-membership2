@@ -60,7 +60,7 @@ $this->append_js(array(
 					<label for="cities-dd" style="font-weight: bold;">Kabupaten / Kota *</label>
 
 					<?php
-					echo $this->fh_input_select('city_id', array(), array(
+					echo $this->fh_input_select('city_id', $cities, array(
 						'id' => 'cities-dd'
 					));
 					?>
@@ -116,14 +116,14 @@ $this->append_js(array(
 				<?php
 				endif;
 				?>
-				
+
 			</form>
 		</div>
 	</div>
 </div>
 
-<div class="full-width-section">  
-	<div class="container"> 
+<div class="full-width-section">
+	<div class="container">
 		<div class="dt-sc-margin70"></div>
 		<div class="page_info aligncenter">
 			<p>Sudah pernah terdaftar menjadi anggota PHP Indonesia, silahkan <a href="<?php echo $this->uri_path_for('membership-login'); ?>" title="">Login Disini</a>.</p>

@@ -54,6 +54,7 @@ $this->append_js(array(
                             'style' => 'display: inline; width: 100px;'
                         ));
                         ?>
+                        <?php echo $this->fh_show_errors('start_date_y', $_view_validation_errors_); ?>
 
                         &nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -87,6 +88,7 @@ $this->append_js(array(
                             'style' => 'display: inline; width: 350px;'
                         ));
                         ?>
+                        <?php echo $this->fh_show_errors('work_status', $_view_validation_errors_); ?>
 					</div>
 
                     <?php

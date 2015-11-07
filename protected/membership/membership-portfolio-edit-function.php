@@ -28,18 +28,18 @@ $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id}', function ($re
             }
 
         	$db->update('members_portfolios', array(
-                'company_name' => $_POST['company_name'],
-                'industry_id' => $_POST['industry_id'],
-                'start_date_y' => $_POST['start_date_y'],
-                'start_date_m' => $_POST['start_date_m'] == '' ? null : $_POST['start_date_m'],
-                'start_date_d' => $_POST['start_date_d'] == '' ? null : $_POST['start_date_d'],
-                'end_date_y' => $_POST['end_date_y'],
-                'end_date_m' => $_POST['end_date_m'] == '' ? null : $_POST['end_date_m'],
-                'end_date_d' => $_POST['end_date_d'] == '' ? null : $_POST['end_date_d'],
-                'work_status' => $_POST['work_status'],
-                'job_title' => $_POST['job_title'],
-                'job_desc' => $_POST['job_desc'],
-                'career_level_id' => $_POST['career_level_id'],
+                'company_name' => filter_var(trim($_POST['company_name']), FILTER_SANITIZE_STRING),
+                'industry_id' => filter_var(trim($_POST['industry_id']), FILTER_SANITIZE_STRING),
+                'start_date_y' => filter_var(trim($_POST['start_date_y']), FILTER_SANITIZE_STRING),
+                'start_date_m' => $_POST['start_date_m'] == '' ? null : filter_var(trim($_POST['start_date_m']), FILTER_SANITIZE_STRING),
+                'start_date_d' => $_POST['start_date_d'] == '' ? null : filter_var(trim($_POST['start_date_d']), FILTER_SANITIZE_STRING),
+                'end_date_y' => filter_var(trim($_POST['end_date_y']), FILTER_SANITIZE_STRING),
+                'end_date_m' => $_POST['end_date_m'] == '' ? null : filter_var(trim($_POST['end_date_m']), FILTER_SANITIZE_STRING),
+                'end_date_d' => $_POST['end_date_d'] == '' ? null : filter_var(trim($_POST['end_date_d']), FILTER_SANITIZE_STRING),
+                'work_status' => filter_var(trim($_POST['work_status']), FILTER_SANITIZE_STRING),
+                'job_title' => filter_var(trim($_POST['job_title']), FILTER_SANITIZE_STRING),
+                'job_desc' => filter_var(trim($_POST['job_desc']), FILTER_SANITIZE_STRING),
+                'career_level_id' => filter_var(trim($_POST['career_level_id']), FILTER_SANITIZE_STRING),
                 'modified' => date('Y-m-d H:i:s'),
                 'modified_by' => $_SESSION['MembershipAuth']['user_id']
             ), array('member_portfolio_id' => $_POST['member_portfolio_id']));
