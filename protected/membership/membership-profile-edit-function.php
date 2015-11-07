@@ -50,8 +50,9 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
                     $mime_type = finfo_file($finfo, $_FILES['photo']['tmp_name']);
                     finfo_close($finfo);
 
-                    if ($mime_type == 'image/jpeg' || $mime_type == 'image/png') {
-                        $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+                    $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+
+                    if (($mime_type == 'image/jpeg' || $mime_type == 'image/png') && ($ext != 'php')) {
                         $new_fname = $_SESSION['MembershipAuth']['user_id'].'-'.date('YmdHis').'.'.$ext;
 
                         if (move_uploaded_file($_FILES['photo']['tmp_name'], $this->getContainer()->get('settings')['upload_photo_profile_path'].$new_fname)) {
@@ -59,6 +60,8 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
                             if ($_SESSION['MembershipAuth']['photo'] != null) {
                                 unlink($this->getContainer()->get('settings')['upload_photo_profile_path'].$_SESSION['MembershipAuth']['photo']);
                             }
+
+                            $_SESSION['MembershipAuth']['photo'] = $new_fname;
 
                         } else {
                             $members_profiles['photo'] = null;
