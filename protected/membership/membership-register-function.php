@@ -218,6 +218,7 @@ $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $res
     ->from('regionals')
     ->where('parent_id IS NULL')
     ->andWhere('city_code = :ccode')
+    ->orderBy('province_code, city_code')
     ->setParameter(':ccode', '00', \Doctrine\DBAL\Types\Type::STRING)
     ->execute();
 
