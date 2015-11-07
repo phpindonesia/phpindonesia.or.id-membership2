@@ -237,6 +237,7 @@ $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $res
             ->select('id', 'regional_name')
             ->from('regionals')
             ->where('parent_id = :pid')
+            ->orderBy('province_code, city_code')
             ->setParameter(':pid', $province_id)
             ->execute();
 

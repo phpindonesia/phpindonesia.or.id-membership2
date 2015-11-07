@@ -81,6 +81,7 @@ $app->get('/apps/membership', function ($request, $response, $args) {
     ->from('regionals')
     ->where('parent_id IS NULL')
     ->andWhere('city_code = :ccode')
+    ->orderBy('province_code, city_code')
     ->setParameter(':ccode', '00', \Doctrine\DBAL\Types\Type::STRING)
     ->execute();
 
@@ -92,6 +93,7 @@ $app->get('/apps/membership', function ($request, $response, $args) {
         ->select('id', 'regional_name')
         ->from('regionals')
         ->where('parent_id = :pvid')
+        ->orderBy('province_code, city_code')
         ->setParameter(':pvid', $_GET['province_id'])
         ->execute();
 
