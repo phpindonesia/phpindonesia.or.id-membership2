@@ -42,7 +42,11 @@ $mailer->registerPlugin(new Swift_Plugins_AntiFloodPlugin(20,30));
 echo "---SENDING EMAIL---\n\n";
 
 foreach ($users as $usr_mail) {
+<<<<<<< d79fc03606ba8e7b4f4700daaf9abfc82b2b99cb
     
+=======
+
+>>>>>>> Sending email wrong url activation confirmation
     $message = Swift_Message::newInstance('PHP Indonesia - Konfirmasi kesalahan URL aktivasi.')
     ->setFrom(array(
         $container['settings']['email']['sender_email'] => $container['settings']['email']['sender_name']
@@ -59,4 +63,7 @@ foreach ($users as $usr_mail) {
 }
 
 echo "Done!\n\n";
+<<<<<<< d79fc03606ba8e7b4f4700daaf9abfc82b2b99cb
 
+=======
+>>>>>>> Sending email wrong url activation confirmation
