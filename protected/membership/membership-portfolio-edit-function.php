@@ -108,4 +108,29 @@ $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id}', function ($re
         compact('portfolio', 'industries', 'career_levels', 'years_range', 'months_range', 'days_range')
     );
 
+})->add(function ($req, $res, $next) {
+
+    $routeInfo = $req->getAttribute('routeInfo');
+    $id = $routeInfo[2]['id'];
+
+    $q_user = $this['db']->createQueryBuilder()
+        ->select('count(*) num', 'user_id', 'member_portfolio_id')
+        ->from('members_portfolios')
+        ->where('member_portfolio_id = :portId')
+        ->andWhere('user_id = :userId')
+        ->setParameter(':portId', $routeInfo[2]['id'])
+        ->setParameter(':userId', $_SESSION['MembershipAuth']['user_id'])
+        ->execute();
+
+    $user = $q_user->fetch();
+
+    if ($user['num'] < 1) {
+
+        $this['flash']->flashLater('warning', 'Permission denied.');
+        return $res->withStatus(302)->withHeader('Location', $this['router']->pathFor('membership-profile'));
+
+    }
+
+    return $next($req, $res);
+
 })->setName('membership-portfolio-edit');
