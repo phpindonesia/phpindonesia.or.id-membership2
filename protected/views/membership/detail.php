@@ -85,6 +85,111 @@
 		</div>
 	</div>
 
+	<div class="container">
+		<h3>Portfolios</h3>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="font-weight: bold;">#</th>
+                        <th style="font-weight: bold;">Nama Tempat Bekerja</th>
+                        <th style="font-weight: bold;">Industri / Sektor</th>
+                        <th style="font-weight: bold;">Periode Kerja</th>
+                        <th style="font-weight: bold;">Posisi Pekerjaan (Job title)</th>
+                        <th style="font-weight: bold;">Deskripsi Pekerjaan (Job desc)</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <?php
+                    $num = 1;
+                    foreach ($member_portfolios as $item_portfolio):
+                    ?>
+
+                    <tr>
+                        <td>
+                            <?php
+                            echo $num;
+                            ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            echo filter_var(trim($item_portfolio['company_name']),FILTER_SANITIZE_STRING);
+                            ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            echo filter_var(trim($item_portfolio['industry_name']), FILTER_SANITIZE_STRING);
+                            ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            $periode_str = '';
+
+                            // Start
+                            if ($item_portfolio['start_date_d'] != null) {
+                                $periode_str .= $item_portfolio['start_date_d'].' ';
+                            }
+
+                            if ($item_portfolio['start_date_m'] != null) {
+                                $periode_str .= $months[$item_portfolio['start_date_m']].' ';
+                            }
+
+                            if ($item_portfolio['start_date_y'] != null) {
+                                $periode_str .= filter_var(trim($item_portfolio['start_date_y']), FILTER_SANITIZE_STRING);
+                            }
+
+                            if ($item_portfolio['work_status'] == 'R') {
+                                $periode_str .= ' s/d ';
+                                // End
+                                if ($item_portfolio['end_date_d'] != null) {
+                                    $periode_str .= $item_portfolio['end_date_d'].' ';
+                                }
+
+                                if ($item_portfolio['end_date_m'] != null) {
+                                    $periode_str .= $months[$item_portfolio['end_date_m']].' ';
+                                }
+
+                                if ($item_portfolio['end_date_y'] != null) {
+                                    $periode_str .= $item_portfolio['end_date_y'];
+                                }
+
+                            } else {
+                                $periode_str .= ' s/d Sekarang';
+                            }
+
+                            echo filter_var(trim($periode_str), FILTER_SANITIZE_STRING);
+                            ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            echo filter_var(trim($item_portfolio['job_title']), FILTER_SANITIZE_STRING);
+                            ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            echo filter_var(trim($item_portfolio['job_desc']), FILTER_SANITIZE_STRING);
+                            ?>
+                        </td>
+                    </tr>
+
+                    <?php
+                    $num++;
+                    endforeach;
+                    ?>
+                </tbody>
+
+            </table>
+        </div>
+	</div>
+
 	<div class="dt-sc-margin50"></div>
 
 	<div class="container">
