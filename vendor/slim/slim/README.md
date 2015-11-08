@@ -12,7 +12,7 @@ Slim is a PHP micro-framework that helps you quickly write simple yet powerful w
 It's recommended that you use [Composer](https://getcomposer.org/) to install Slim.
 
 ```bash
-$ composer require slim/slim
+$ composer require slim/slim "^3.0@RC"
 ```
 
 This will install Slim and all required dependencies. Slim requires PHP 5.5.0 or newer.
@@ -65,6 +65,7 @@ Learn more at these links:
 - [Documentation](http://www.slimframework.com/docs/start/installation.html)
 - [Support Forum](http://help.slimframework.com)
 - [Twitter](https://twitter.com/slimphp)
+- [Resources](https://github.com/xssc/awesome-slim)
 
 ## Security
 

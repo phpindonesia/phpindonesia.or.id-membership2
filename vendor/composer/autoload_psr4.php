@@ -13,5 +13,6 @@ return array(
     'League\\Plates\\' => array($vendorDir . '/league/plates/src'),
     'Interop\\Container\\' => array($vendorDir . '/container-interop/container-interop/src/Interop/Container'),
     'FastRoute\\' => array($vendorDir . '/nikic/fast-route/src'),
+    'Doctrine\\Common\\Cache\\' => array($vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache'),
     'Aura\\Includer\\' => array($vendorDir . '/aura/includer/src'),
 );

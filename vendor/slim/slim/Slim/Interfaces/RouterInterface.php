@@ -2,9 +2,9 @@
 /**
  * Slim Framework (http://slimframework.com)
  *
- * @link      https://github.com/codeguy/Slim
+ * @link      https://github.com/slimphp/Slim
  * @copyright Copyright (c) 2011-2015 Josh Lockhart
- * @license   https://github.com/codeguy/Slim/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
 namespace Slim\Interfaces;
 
@@ -31,6 +31,14 @@ interface RouterInterface
      * @return RouteInterface
      */
     public function map($methods, $pattern, $handler);
+
+
+    /**
+     * Finalize registered routes in preparation for dispatching
+     *
+     * NOTE: The routes can only be finalized once.
+     */
+    public function finalize();
 
     /**
      * Dispatch router for HTTP request
@@ -65,14 +73,35 @@ interface RouterInterface
      *
      * @param string $name        Route name
      *
-     * @return Route
+     * @return \Slim\Interfaces\RouteInterface
      *
      * @throws RuntimeException   If named route does not exist
      */
     public function getNamedRoute($name);
 
     /**
-     * Build the path for a named route
+     * @param $identifier
+     *
+     * @return \Slim\Interfaces\RouteInterface
+     */
+    public function lookupRoute($identifier);
+
+    /**
+     * Build the path for a named route excluding the base path
+     *
+     * @param string $name        Route name
+     * @param array  $data        Named argument replacement data
+     * @param array  $queryParams Optional query string parameters
+     *
+     * @return string
+     *
+     * @throws RuntimeException         If named route does not exist
+     * @throws InvalidArgumentException If required data not provided
+     */
+    public function relativePathFor($name, array $data = [], array $queryParams = []);
+
+    /**
+     * Build the path for a named route including the base path
      *
      * @param string $name        Route name
      * @param array  $data        Named argument replacement data

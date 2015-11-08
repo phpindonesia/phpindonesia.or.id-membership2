@@ -2,9 +2,9 @@
 /**
  * Slim Framework (http://slimframework.com)
  *
- * @link      https://github.com/codeguy/Slim
+ * @link      https://github.com/slimphp/Slim
  * @copyright Copyright (c) 2011-2015 Josh Lockhart
- * @license   https://github.com/codeguy/Slim/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
 namespace Slim;
 
@@ -16,7 +16,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Interop\Container\ContainerInterface;
 use FastRoute\Dispatcher;
-use Slim\Exception\Exception as SlimException;
+use Slim\Exception\SlimException;
+use Slim\Exception\MethodNotAllowedException;
+use Slim\Exception\NotFoundException;
 use Slim\Http\Uri;
 use Slim\Http\Headers;
 use Slim\Http\Body;
@@ -45,9 +47,7 @@ use Slim\Interfaces\RouterInterface;
 class App
 {
     use CallableResolverAwareTrait;
-    use MiddlewareAwareTrait {
-        add as addMiddleware;
-    }
+    use MiddlewareAwareTrait;
 
     /**
      * Current version
@@ -125,6 +125,24 @@ class App
     public function __isset($name)
     {
         return $this->container->has($name);
+    }
+
+    /**
+     * Calling a non-existant method on App checks to see if there's an item
+     * in the container than is callable and if so, calls it.
+     *
+     * @param  string $method
+     * @param  array $args
+     * @return mixed
+     */
+    public function __call($method, $args)
+    {
+        if ($this->container->has($method)) {
+            $obj = $this->container->get($method);
+            if (is_callable($obj)) {
+                return call_user_func_array($obj, $args);
+            }
+        }
     }
 
     /********************************************************************************
@@ -300,12 +318,26 @@ class App
         // Dispatch the Router first if the setting for this is on
         if ($this->container->get('settings')['determineRouteBeforeAppMiddleware'] === true) {
             // Dispatch router (note: you won't be able to alter routes after this)
-            $request = $this->dispatchRouterAndPrepareRoute($request);
+            $request = $this->dispatchRouterAndPrepareRoute($request, $router);
         }
 
         // Traverse middleware stack
         try {
             $response = $this->callMiddlewareStack($request, $response);
+        } catch (MethodNotAllowedException $e) {
+            if (!$this->container->has('notAllowedHandler')) {
+                throw $e;
+            }
+            /** @var callable $notAllowedHandler */
+            $notAllowedHandler = $this->container->get('notAllowedHandler');
+            $response = $notAllowedHandler($e->getRequest(), $e->getResponse(), $e->getAllowedMethods());
+        } catch (NotFoundException $e) {
+            if (!$this->container->has('notFoundHandler')) {
+                throw $e;
+            }
+            /** @var callable $notFoundHandler */
+            $notFoundHandler = $this->container->get('notFoundHandler');
+            $response = $notFoundHandler($e->getRequest(), $e->getResponse());
         } catch (SlimException $e) {
             $response = $e->getResponse();
         } catch (Exception $e) {
@@ -360,9 +392,20 @@ class App
                 if ($body->isSeekable()) {
                     $body->rewind();
                 }
-                $settings = $this->container->get('settings');
-                while (!$body->eof()) {
-                    echo $body->read($settings['responseChunkSize']);
+                $settings       = $this->container->get('settings');
+                $chunkSize      = $settings['responseChunkSize'];
+                $contentLength  = $response->getHeaderLine('Content-Length');
+                if (!$contentLength) {
+                    $contentLength = $body->getSize();
+                }
+                $totalChunks    = ceil($contentLength / $chunkSize);
+                $lastChunkSize  = $contentLength % $chunkSize;
+                $currentChunk   = 0;
+                while (!$body->eof() && $currentChunk < $totalChunks) {
+                    if (++$currentChunk == $totalChunks && $lastChunkSize > 0) {
+                        $chunkSize = $lastChunkSize;
+                    }
+                    echo $body->read($chunkSize);
                     if (connection_status() != CONNECTION_NORMAL) {
                         break;
                     }
@@ -391,18 +434,29 @@ class App
         // Get the route info
         $routeInfo = $request->getAttribute('routeInfo');
 
+        /** @var \Slim\Interfaces\RouterInterface $router */
+        $router = $this->container->get('router');
+
         // If router hasn't been dispatched or the URI changed then dispatch
         if (null === $routeInfo || ($routeInfo['request'] !== [$request->getMethod(), (string) $request->getUri()])) {
-            $request = $this->dispatchRouterAndPrepareRoute($request);
+            $request = $this->dispatchRouterAndPrepareRoute($request, $router);
             $routeInfo = $request->getAttribute('routeInfo');
         }
 
         if ($routeInfo[0] === Dispatcher::FOUND) {
-            return $routeInfo[1]($request, $response);
+            $route = $router->lookupRoute($routeInfo[1]);
+            return $route->run($request, $response);
         } elseif ($routeInfo[0] === Dispatcher::METHOD_NOT_ALLOWED) {
+            if (!$this->container->has('notAllowedHandler')) {
+                throw new MethodNotAllowedException($request, $response, $routeInfo[1]);
+            }
             /** @var callable $notAllowedHandler */
             $notAllowedHandler = $this->container->get('notAllowedHandler');
             return $notAllowedHandler($request, $response, $routeInfo[1]);
+        }
+
+        if (!$this->container->has('notFoundHandler')) {
+            throw new NotFoundException($request, $response);
         }
         /** @var callable $notFoundHandler */
         $notFoundHandler = $this->container->get('notFoundHandler');
@@ -451,9 +505,9 @@ class App
      * @param ServerRequestInterface $request
      * @return ServerRequestInterface
      */
-    protected function dispatchRouterAndPrepareRoute(ServerRequestInterface $request)
+    protected function dispatchRouterAndPrepareRoute(ServerRequestInterface $request, RouterInterface $router)
     {
-        $routeInfo = $this->container->get('router')->dispatch($request);
+        $routeInfo = $router->dispatch($request);
 
         if ($routeInfo[0] === Dispatcher::FOUND) {
             $routeArguments = [];
@@ -461,10 +515,11 @@ class App
                 $routeArguments[$k] = urldecode($v);
             }
 
-            $routeInfo[1][0]->prepare($request, $routeArguments);
+            $route = $router->lookupRoute($routeInfo[1]);
+            $route->prepare($request, $routeArguments);
 
             // add route to the request's attributes in case a middleware or handler needs access to the route
-            $request = $request->withAttribute('route', $routeInfo[1][0]);
+            $request = $request->withAttribute('route', $route);
         }
 
         $routeInfo['request'] = [$request->getMethod(), (string) $request->getUri()];
@@ -485,7 +540,7 @@ class App
         }
 
         $size = $response->getBody()->getSize();
-        if ($size !== null) {
+        if ($size !== null && !$response->hasHeader('Content-Length')) {
             $response = $response->withHeader('Content-Length', (string) $size);
         }
 

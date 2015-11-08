@@ -2,9 +2,9 @@
 /**
  * Slim Framework (http://slimframework.com)
  *
- * @link      https://github.com/codeguy/Slim
+ * @link      https://github.com/slimphp/Slim
  * @copyright Copyright (c) 2011-2015 Josh Lockhart
- * @license   https://github.com/codeguy/Slim/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
 namespace Slim;
 
@@ -22,9 +22,7 @@ use Slim\Interfaces\RouteInterface;
  */
 class Route extends Routable implements RouteInterface
 {
-    use MiddlewareAwareTrait {
-        add as addMiddleware;
-    }
+    use MiddlewareAwareTrait;
 
     /**
      * HTTP methods supported by this route
@@ -32,6 +30,13 @@ class Route extends Routable implements RouteInterface
      * @var string[]
      */
     protected $methods = [];
+
+    /**
+     * Route identifier
+     *
+     * @var string
+     */
+    protected $identifier;
 
     /**
      * Route name
@@ -71,12 +76,13 @@ class Route extends Routable implements RouteInterface
      * @param callable     $callable The route callable
      * @param RouteGroup[] $groups The parent route groups
      */
-    public function __construct($methods, $pattern, $callable, $groups = [])
+    public function __construct($methods, $pattern, $callable, $groups = [], $identifier = 0)
     {
         $this->methods  = $methods;
         $this->pattern  = $pattern;
         $this->callable = $callable;
         $this->groups   = $groups;
+        $this->identifier = 'route' . $identifier;
     }
 
     /**
@@ -152,6 +158,16 @@ class Route extends Routable implements RouteInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Get route identifier
+     *
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     /**
@@ -326,10 +342,12 @@ class Route extends Routable implements RouteInterface
             $response = $newResponse;
         } elseif (is_string($newResponse)) {
             // if route callback returns a string, then append it to the response
-            $response->getBody()->write($newResponse);
+            if ($response->getBody()->isWritable()) {
+                $response->getBody()->write($newResponse);
+            }
         }
 
-        if (!empty($output)) {
+        if (!empty($output) && $response->getBody()->isWritable()) {
             if ($this->outputBuffering === 'prepend') {
                 // prepend output buffer content
                 $body = new Http\Body(fopen('php://temp', 'r+'));

@@ -515,20 +515,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('', $uri->getFragment());
     }
 
-    public function testCreateEnvironmentWithForwardedProto()
-    {
-        $environment = Environment::mock([
-            'SCRIPT_NAME' => '/index.php',
-            'REQUEST_URI' => '/foo/bar',
-            'HTTPS' => '',
-            'HTTP_X_FORWARDED_PROTO' => 'https'
-        ]);
-        $uri = Uri::createFromEnvironment($environment);
-
-        $this->assertEquals('https', $uri->getScheme());
-    }
-
-    public function testCreateEnvironmentWithForwardedHost()
+    public function testCreateEnvironmentWithIPv6Host()
     {
         $environment = Environment::mock([
             'SCRIPT_NAME' => '/index.php',
@@ -536,13 +523,19 @@ class UriTest extends \PHPUnit_Framework_TestCase
             'PHP_AUTH_USER' => 'josh',
             'PHP_AUTH_PW' => 'sekrit',
             'QUERY_STRING' => 'abc=123',
-            'HTTP_HOST' => 'example.com:8080',
+            'HTTP_HOST' => '[2001:db8::1]:8080',
+            'REMOTE_ADDR' => '2001:db8::1',
             'SERVER_PORT' => 8080,
-            'HTTP_X_FORWARDED_HOST' => 'example3.com, example2.com, example1.com'
         ]);
+
         $uri = Uri::createFromEnvironment($environment);
 
-        $this->assertEquals('example3.com', $uri->getHost());
+        $this->assertEquals('josh:sekrit', $uri->getUserInfo());
+        $this->assertEquals('[2001:db8::1]', $uri->getHost());
+        $this->assertEquals('8080', $uri->getPort());
+        $this->assertEquals('/foo/bar', $uri->getPath());
+        $this->assertEquals('abc=123', $uri->getQuery());
+        $this->assertEquals('', $uri->getFragment());
     }
 
     /**

@@ -2,9 +2,9 @@
 /**
  * Slim Framework (http://slimframework.com)
  *
- * @link      https://github.com/codeguy/Slim
+ * @link      https://github.com/slimphp/Slim
  * @copyright Copyright (c) 2011-2015 Josh Lockhart
- * @license   https://github.com/codeguy/Slim/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
 namespace Slim\Http;
 
@@ -158,33 +158,34 @@ class Uri implements UriInterface
     public static function createFromEnvironment(Environment $env)
     {
         // Scheme
-        if ($env->has('HTTP_X_FORWARDED_PROTO')) {
-            $scheme = $env->get('HTTP_X_FORWARDED_PROTO'); // Will be "http" or "https"
-        } else {
-            $isSecure = $env->get('HTTPS');
-            $scheme = (empty($isSecure) || $isSecure === 'off') ? 'http' : 'https';
-        }
+        $isSecure = $env->get('HTTPS');
+        $scheme = (empty($isSecure) || $isSecure === 'off') ? 'http' : 'https';
 
         // Authority: Username and password
         $username = $env->get('PHP_AUTH_USER', '');
         $password = $env->get('PHP_AUTH_PW', '');
 
         // Authority: Host
-        if ($env->has('HTTP_X_FORWARDED_HOST')) {
-            $host = trim(current(explode(',', $env->get('HTTP_X_FORWARDED_HOST'))));
-        } elseif ($env->has('HTTP_HOST')) {
+        if ($env->has('HTTP_HOST')) {
             $host = $env->get('HTTP_HOST');
         } else {
             $host = $env->get('SERVER_NAME');
         }
 
         // Authority: Port
-        $pos = strpos($host, ':');
-        if ($pos !== false) {
-            $port = (int)substr($host, $pos + 1);
-            $host = strstr($host, ':', true);
+        $port = (int)$env->get('SERVER_PORT', 80);
+        if (preg_match('/^(\[[a-fA-F0-9:.]+\])(:\d+)?\z/', $host, $matches)) {
+            $host = $matches[1];
+
+            if ($matches[2]) {
+                $port = (int) substr($matches[2], 1);
+            }
         } else {
-            $port = (int)$env->get('SERVER_PORT', 80);
+            $pos = strpos($host, ':');
+            if ($pos !== false) {
+                $port = (int) substr($host, $pos + 1);
+                $host = strstr($host, ':', true);
+            }
         }
 
         // Path

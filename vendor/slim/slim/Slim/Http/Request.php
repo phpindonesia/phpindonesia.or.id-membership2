@@ -2,9 +2,9 @@
 /**
  * Slim Framework (http://slimframework.com)
  *
- * @link      https://github.com/codeguy/Slim
+ * @link      https://github.com/slimphp/Slim
  * @copyright Copyright (c) 2011-2015 Josh Lockhart
- * @license   https://github.com/codeguy/Slim/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
 namespace Slim\Http;
 
@@ -15,6 +15,7 @@ use RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\StreamInterface;
+use Slim\Collection;
 use Slim\Interfaces\Http\HeadersInterface;
 
 /**
@@ -82,7 +83,7 @@ class Request extends Message implements ServerRequestInterface
     /**
      * The request attributes (route segment names and values)
      *
-     * @var \Slim\Http\Collection
+     * @var \Slim\Collection
      */
     protected $attributes;
 
@@ -186,6 +187,10 @@ class Request extends Message implements ServerRequestInterface
         });
 
         $this->registerMediaTypeParser('application/xml', function ($input) {
+            return simplexml_load_string($input);
+        });
+
+        $this->registerMediaTypeParser('text/xml', function ($input) {
             return simplexml_load_string($input);
         });
 
@@ -1060,25 +1065,5 @@ class Request extends Message implements ServerRequestInterface
         }
 
         return $params;
-    }
-
-    /*******************************************************************************
-     * Helpers
-     ******************************************************************************/
-
-    /**
-     * Get the client IP address.
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return string|null IP address or null if none found.
-     */
-    public function getIp()
-    {
-        if ($this->hasHeader('X-Forwarded-For')) {
-            return trim(current(explode(',', $this->getHeaderLine('X-Forwarded-For'))));
-        }
-
-        return isset($this->serverParams['REMOTE_ADDR']) ? $this->serverParams['REMOTE_ADDR'] : null;
     }
 }

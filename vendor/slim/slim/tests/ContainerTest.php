@@ -24,7 +24,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     /**
      * Test `get()` throws error if item does not exist
      *
-     * @expectedException \Slim\Exception\NotFoundException
+     * @expectedException \Slim\Exception\ContainerValueNotFoundException
      */
     public function testGetWithError()
     {
@@ -75,5 +75,17 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $c = new Container;
         $this->assertInstanceOf('\Slim\Handlers\NotAllowed', $c['notAllowedHandler']);
+    }
+
+    /**
+     * Test settings can be edited
+     */
+    public function testSettingsCanBeEdited()
+    {
+        $c = new Container;
+        $this->assertSame('1.1', $c->get('settings')['httpVersion']);
+
+        $c->get('settings')['httpVersion'] = '1.2';
+        $this->assertSame('1.2', $c->get('settings')['httpVersion']);
     }
 }

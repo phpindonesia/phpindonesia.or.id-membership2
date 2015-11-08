@@ -6,4 +6,19 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Cloudinary' => $vendorDir . '/cloudinary/cloudinary_php/src/Cloudinary.php',
+    'CloudinaryField' => $vendorDir . '/cloudinary/cloudinary_php/src/CloudinaryField.php',
+    'Cloudinary\\Api' => $vendorDir . '/cloudinary/cloudinary_php/src/Api.php',
+    'Cloudinary\\Api\\AlreadyExists' => $vendorDir . '/cloudinary/cloudinary_php/src/Api.php',
+    'Cloudinary\\Api\\AuthorizationRequired' => $vendorDir . '/cloudinary/cloudinary_php/src/Api.php',
+    'Cloudinary\\Api\\BadRequest' => $vendorDir . '/cloudinary/cloudinary_php/src/Api.php',
+    'Cloudinary\\Api\\Error' => $vendorDir . '/cloudinary/cloudinary_php/src/Api.php',
+    'Cloudinary\\Api\\GeneralError' => $vendorDir . '/cloudinary/cloudinary_php/src/Api.php',
+    'Cloudinary\\Api\\NotAllowed' => $vendorDir . '/cloudinary/cloudinary_php/src/Api.php',
+    'Cloudinary\\Api\\NotFound' => $vendorDir . '/cloudinary/cloudinary_php/src/Api.php',
+    'Cloudinary\\Api\\RateLimited' => $vendorDir . '/cloudinary/cloudinary_php/src/Api.php',
+    'Cloudinary\\Api\\Response' => $vendorDir . '/cloudinary/cloudinary_php/src/Api.php',
+    'Cloudinary\\Error' => $vendorDir . '/cloudinary/cloudinary_php/src/Uploader.php',
+    'Cloudinary\\PreloadedFile' => $vendorDir . '/cloudinary/cloudinary_php/src/PreloadedFile.php',
+    'Cloudinary\\Uploader' => $vendorDir . '/cloudinary/cloudinary_php/src/Uploader.php',
 );

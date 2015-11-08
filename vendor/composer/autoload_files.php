@@ -8,4 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     $vendorDir . '/nikic/fast-route/src/functions.php',
     $vendorDir . '/swiftmailer/swiftmailer/lib/swift_required.php',
+    $vendorDir . '/cloudinary/cloudinary_php/src/Helpers.php',
 );
