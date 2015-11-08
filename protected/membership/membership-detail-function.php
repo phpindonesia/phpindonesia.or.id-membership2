@@ -56,11 +56,12 @@ $app->get('/apps/membership/detail/{name}', function ($request, $response, $args
     ->setParameter(':uid', $member['user_id'])
     ->setParameter(':d', 'N')
     ->execute();
+    
     $member_portfolios = $q_member_portfolios->fetchAll();
-
     $member_socmeds = $q_member_socmeds->fetchAll();
     $socmedias = $this->getContainer()->get('settings')['socmedias'];
     $socmedias_logo = $this->getContainer()->get('settings')['socmedias_logo'];
+    $months = $this->getContainer()->get('months');
 
     $this->view->getPlates()->addData(
         array(
@@ -73,7 +74,14 @@ $app->get('/apps/membership/detail/{name}', function ($request, $response, $args
     return $this->view->render(
         $response,
         'membership/detail',
-        compact('member', 'member_socmeds', 'socmedias', 'socmedias_logo', 'member_portfolios')
+        compact(
+            'member',
+            'member_socmeds',
+            'socmedias',
+            'socmedias_logo',
+            'member_portfolios',
+            'months'
+        )
     );
 
 })->setName('membership-detail');
