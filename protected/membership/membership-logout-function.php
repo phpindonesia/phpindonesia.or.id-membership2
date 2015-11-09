@@ -1,5 +1,5 @@
 <?php
-$app->get('/apps/membership/logout', function ($request, $response, $args) {
+$app->get('/apps/membership/logout[/]', function ($request, $response, $args) {
 
     $_SESSION = array();
 

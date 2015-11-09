@@ -1,11 +1,11 @@
 <?php
-$app->map(['GET', 'POST'], '/apps/membership/login', function ($request, $response, $args) {
+$app->map(['GET', 'POST'], '/apps/membership/login[/]', function ($request, $response, $args) {
 
     if ($request->isPost()) {
 
         $db = $this->getContainer()->get('db');
         $salt_pwd = md5($this->getContainer()->get('settings')['salt_pwd'].$_POST['password']);
-  
+
         $q_user_count = $db->createQueryBuilder();
         $q_user_count
         ->select('COUNT(*) AS total_data')

@@ -1,5 +1,5 @@
 <?php
-$app->map(['GET', 'POST'], '/apps/membership/forgot-password', function ($request, $response, $args) {
+$app->map(['GET', 'POST'], '/apps/membership/forgot-password[/]', function ($request, $response, $args) {
 
 	$gcaptcha_site_key = $this->getContainer()->get('settings')['gcaptcha']['site_key'];
 	$gcaptcha_secret = $this->getContainer()->get('settings')['gcaptcha']['secret'];
@@ -118,14 +118,14 @@ $app->map(['GET', 'POST'], '/apps/membership/forgot-password', function ($reques
 
             } catch (Swift_TransportException $e) {
                 $this->flash->flashLater('success', $success_msg_alt);
-                return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));   
+                return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));
             }
 
         } else {
         	$this->flash->flashNow('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
         }
 	}
-    
+
     $this->view->getPlates()->addData(
         array(
             'page_title' => 'Membership',

@@ -1,8 +1,8 @@
 <?php
-$app->get('/apps/membership/profile', function ($request, $response, $args) {
-    
+$app->get('/apps/membership/profile[/]', function ($request, $response, $args) {
+
     $db = $this->getContainer()->get('db');
-    
+
     $q_member = $db->createQueryBuilder()
     ->select(
         'm.*',

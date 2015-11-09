@@ -1,5 +1,5 @@
 <?php
-$app->map(['GET', 'POST'], '/apps/membership/update-password', function ($request, $response, $args) {
+$app->map(['GET', 'POST'], '/apps/membership/update-password[/]', function ($request, $response, $args) {
 
 	if ($request->isPost()) {
 		$db = $this->getContainer()->get('db');
@@ -62,7 +62,7 @@ $app->map(['GET', 'POST'], '/apps/membership/update-password', function ($reques
         	$this->flash->flashNow('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
         }
 	}
-    
+
     $this->view->getPlates()->addData(
         array(
             'page_title' => 'Membership',

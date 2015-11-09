@@ -1,5 +1,5 @@
 <?php
-$app->map(['GET', 'POST'], '/apps/membership/portfolio/add', function ($request, $response, $args) {
+$app->map(['GET', 'POST'], '/apps/membership/portfolio/add[/]', function ($request, $response, $args) {
 
 	$db = $this->getContainer()->get('db');
 

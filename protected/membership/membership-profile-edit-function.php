@@ -1,6 +1,6 @@
 <?php
-$app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, $response, $args) {
-    
+$app->map(['GET', 'POST'], '/apps/membership/profile/edit[/]', function ($request, $response, $args) {
+
     $db = $this->getContainer()->get('db');
 
     if ($request->isPost()) {
@@ -65,7 +65,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
 
                         } else {
                             $members_profiles['photo'] = null;
-                        }  
+                        }
                     }
                 }
 
@@ -103,7 +103,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
                                 'member_socmed_id' => $item['member_socmed_id']
                             ));
                         }
-                        
+
                     }
                 }
 
@@ -125,7 +125,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
             } catch (Exception $e) {
                 $db->rollback();
                 $db->close();
-                
+
                 $this->flash->flashNow('error', 'System failed<br />'.$e->getMessage());
             }
 
@@ -133,7 +133,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
             $this->flash->flashNow('warning', 'Some of mandatory fields is empty!');
         }
     }
-    
+
     $q_member = $db->createQueryBuilder()
     ->select(
         'm.*',
