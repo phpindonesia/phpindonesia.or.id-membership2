@@ -72,7 +72,10 @@ class PlatesUriExtension implements ExtensionInterface {
         }
 
         try {
-            $options += ['tags' => 'user-avatar'];
+            $options += [
+                'tags' => 'user-avatar',
+                'crop' => 'fill',
+            ];
 
             return \Cloudinary::cloudinary_url($public_id, $options);
         } catch (\Exception $e) {

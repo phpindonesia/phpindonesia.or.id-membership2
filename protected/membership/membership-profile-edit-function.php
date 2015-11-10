@@ -54,20 +54,24 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
 
                     if (in_array($mime_type, ['image/jpeg', 'image/png'])) {
                         $new_fname = $_SESSION['MembershipAuth']['user_id'].'-'.date('YmdHis');
+                        $options = [
+                            'public_id' => $new_fname,
+                            'tags' => ['user-avatar'],
+                        ];
 
-                        try {
-                            $photo = \Cloudinary\Uploader::upload($_FILES['photo']['tmp_name'], [
-                                'public_id' => $new_fname,
-                                'tags' => ['user-avatar'],
-                            ]);
-
-                            $members_profiles['photo'] = $new_fname.'.'.$ext;
-                        } catch (\Cloudinary\Error $e) {
-                            $members_profiles['photo'] = null;
-                        }
+                        $photo = \Cloudinary\Uploader::upload($_FILES['photo']['tmp_name'], $options);
+                        $members_profiles['photo'] = $new_fname.'.'.$ext;
+                    } else {
+                        $members_profiles['photo'] = null;
                     }
 
                     if ($members_profiles['photo'] !== null) {
+                        if ($_SESSION['MembershipAuth']['photo']) {
+                            $api = new Cloudinary\Api;
+                            $public_id = str_replace('.'.$ext, '', $_SESSION['MembershipAuth']['photo']);
+                            $api->delete_resources($public_id, $options);
+                        }
+
                         $_SESSION['MembershipAuth']['photo'] = $members_profiles['photo'];
                     }
                 }
