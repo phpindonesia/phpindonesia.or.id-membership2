@@ -86,22 +86,7 @@ $this->append_js(array(
 
 				<div class="dt-sc-team">
 					<div class="image">
-						<?php
-						if ($member['photo'] == '' || $member['photo'] == null):
-						?>
-
-						<img src="<?php echo $this->uri_base_url().'/public/images/team.png'; ?>" alt="" style="width: 140px; height: 140px;" />
-						
-                        <?php
-                        else:
-                        ?>
-
-						<img src="<?php echo $this->uri_base_url().'/public/files/photoprofile/'.$member['photo']; ?>" alt="" style="width: 140px; height: 140px;" />
-						
-                        <?php
-                        endif;
-                        ?>
-
+						<img src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '140', 'height' => '140']) ?>" alt="" style="width: 140px; height: 140px;" />
 					</div>
 
 					<div class="team-details">

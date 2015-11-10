@@ -143,7 +143,7 @@ $this->append_js(array(
 								<legend>Photo Profile</legend>
 								<div class="dt-sc-team">
 									<div class="image">
-									    <img src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '180', 'height' => '180']) ?>" alt="user avatar" style="width: 180px; height: 180px;" />
+									    <img id="img-photo-profile" src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '180', 'height' => '180']) ?>" alt="user avatar" style="width: 180px; height: 180px;" />
 									</div>
 
 									<div style="clear: both;">
@@ -233,13 +233,11 @@ $this->append_js(array(
 									<div class="form-row form-row-wide" style="margin-top:24px;">
 										<label for="socmed-account-name" style="font-weight: bold;">Account Name</label>
 										<input type="text" id="socmed-account-name" />
-										<p style="color: #EA7120; font-size: 0.8em;">BUKAN FULLNAME. Contoh: <span style="text-decoration: underline; font-weight: bold;">@phpindonesia</span> - for twitter, <span style="text-decoration: underline; font-weight: bold;">princessyahrini</span> for instagram. Isikan account name (nickname) Jika sosmed memiliki fitur account name (nickname) dan isian account URL boleh dikosongan.</p>
 									</div>
 
 									<div class="form-row form-row-wide" style="margin-top:24px;">
 										<label for="socmed-account-url" style="font-weight: bold;">Account Url</label>
 										<input type="text" id="socmed-account-url" />
-										<p style="color: #EA7120; font-size: 0.8em;">Contoh: <span style="text-decoration: underline; font-weight: bold;">https://www.facebook.com/profile.php?id=12345678</span> - Jika sosmed tidak memiliki fitur nickname seperti twitter atau instagram. Isikan account URL jika sosmed tidak punya fitur account name (nickname) dan isian account name (nickname) boleh dikosongkan.</p>
 									</div>
 
 									<div id="delete-collections"></div>

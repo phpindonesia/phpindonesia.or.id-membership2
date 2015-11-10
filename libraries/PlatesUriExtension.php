@@ -17,9 +17,12 @@ class PlatesUriExtension implements ExtensionInterface {
 
 	protected $parts;
 
-	public function __construct(UriInterface $uri, $router) {
+    protected $settings;
+
+	public function __construct(UriInterface $uri, $router, $settings) {
 		$this->uri = $uri;
         $this->router = $router;
+        $this->settings = $settings;
         $path = null;
 
         if ($this->uri->getBasePath() != '') {
@@ -77,7 +80,9 @@ class PlatesUriExtension implements ExtensionInterface {
                 'crop' => 'fill',
             ];
 
-            return \Cloudinary::cloudinary_url($public_id, $options);
+            $cdn_upload_path = 'phpindonesia/'.$this->settings['mode'].'/';
+            return \Cloudinary::cloudinary_url($cdn_upload_path.$public_id, $options);
+
         } catch (\Exception $e) {
             return $default;
         }

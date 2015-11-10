@@ -6,22 +6,9 @@
 		<div class="column dt-sc-two-fifth first">
 
 			<div class="dt-sc-team">
+
 				<div class="image">
-					<?php
-					if ($member['photo'] == '' || $member['photo'] == null):
-					?>
-
-					<img src="<?php echo $this->uri_base_url().'/public/images/team.png'; ?>" alt="" />
-
-					<?php
-					else:
-					?>
-
-					<img src="<?php echo $this->uri_base_url().'/public/files/photoprofile/'.$member['photo']; ?>" alt="" style="width: 180px; height: 180px;" />
-
-					<?php
-					endif;
-					?>
+                    <img src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '180', 'height' => '180']) ?>" alt="" />
 				</div>
 
 				<div class="team-details">

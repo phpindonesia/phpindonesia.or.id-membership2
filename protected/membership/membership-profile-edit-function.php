@@ -51,31 +51,39 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
                     finfo_close($finfo);
 
                     $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+                    $env_mode = $this->getContainer()->get('settings')['mode'];
+                    $cdn_upload_path = 'phpindonesia/'.$env_mode.'/';
+                    $new_fname = $_SESSION['MembershipAuth']['user_id'].'-'.date('YmdHis');
 
-                    if (in_array($mime_type, ['image/jpeg', 'image/png'])) {
-                        $new_fname = $_SESSION['MembershipAuth']['user_id'].'-'.date('YmdHis');
-                        $options = [
-                            'public_id' => $new_fname,
-                            'tags' => ['user-avatar'],
-                        ];
+                    $options = [
+                        'public_id' => $cdn_upload_path.$new_fname,
+                        'tags' => ['user-avatar'],
+                    ];
 
+                    if ((in_array($mime_type, ['image/jpeg', 'image/png'])) && ($ext != 'php')) {
+
+                        // Upload photo to CDN Cloudinary
                         $photo = \Cloudinary\Uploader::upload($_FILES['photo']['tmp_name'], $options);
                         $members_profiles['photo'] = $new_fname.'.'.$ext;
-                    } else {
-                        $members_profiles['photo'] = null;
-                    }
 
-                    if ($members_profiles['photo'] !== null) {
-                        if ($_SESSION['MembershipAuth']['photo']) {
-                            $api = new Cloudinary\Api;
+                        // Delete old photo
+                        if ($_SESSION['MembershipAuth']['photo'] != null) {
+                            $api = new \Cloudinary\Api;
                             $public_id = str_replace('.'.$ext, '', $_SESSION['MembershipAuth']['photo']);
-                            $api->delete_resources($public_id, $options);
+
+                            $options = [
+                                'public_id' => $cdn_upload_path.$new_fname,
+                                'tags' => ['user-avatar'],
+                            ];
+
+                            $api->delete_resources($cdn_upload_path.$public_id, $options);
+                            $_SESSION['MembershipAuth']['photo'] = $members_profiles['photo'];
                         }
 
-                        $_SESSION['MembershipAuth']['photo'] = $members_profiles['photo'];
                     }
                 }
 
+                // Update profile data record
                 $db->update('members_profiles', $members_profiles, array(
                     'user_id' => $_SESSION['MembershipAuth']['user_id']
                 ));

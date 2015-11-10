@@ -17,7 +17,7 @@ $container['view'] = function ($container) {
 	$view = new \Slim\Views\PlatesTemplate($view_cfg['template_path']);
 
 	$view->loadExtension(new \League\Plates\Extension\Asset(_FULL_APP_PATH_.'public'));
-	$view->loadExtension(new \League\Plates\Extension\PlatesUriExtension($container->get('request')->getUri(), $container->get('router')));
+	$view->loadExtension(new \League\Plates\Extension\PlatesUriExtension($container->get('request')->getUri(), $container->get('router'), $container->get('settings')));
 	$view->loadExtension(new \League\Plates\Extension\PlatesFlashMessageExtension($container->get('flash')));
 	$view->loadExtension(new \League\Plates\Extension\PlatesFormHelperExtension($container->get('request')->getMethod()));
 

@@ -120,7 +120,7 @@ jQuery(document).ready(function($){
 		if( !isMobile ){
 			currentWidth = window.innerWidth || document.documentElement.clientWidth;
 			if( currentWidth > 767 ){
-				menuHover();
+				// menuHover();
 			}
 		}	
 		
