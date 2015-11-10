@@ -14,21 +14,7 @@
 			<div class="dt-sc-team">
 
 				<div class="image">
-					<?php
-					if ($member['photo'] == '' || $member['photo'] == null):
-					?>
-
-					<img src="<?php echo $this->uri_base_url().'/public/images/team.png'; ?>" alt="" style="width: 180px; height: 180px;" />
-
-					<?php
-					else:
-					?>
-
-					<img src="<?php echo $this->uri_base_url().'/public/files/photoprofile/'.$member['photo']; ?>" alt="" style="width: 180px; height: 180px;" />
-
-					<?php
-					endif;
-					?>
+					<img src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '180', 'height' => '180']) ?>" alt="user avatar" style="width: 180px; height: 180px;" />
 				</div>
 
 				<div class="team-details">
@@ -93,7 +79,7 @@
 								<tr>
 									<td style="width:200px; font-weight: bold;">Tempat, Tanggal Lahir</td>
 									<td>
-										: 
+										:
 										<?php
 										echo $member['birth_place'] == null ? '-' : filter_var(trim(ucfirst($member['birth_place'])), FILTER_SANITIZE_STRING);
 										echo ' , ';
@@ -117,7 +103,7 @@
 								<tr>
 									<td style="width:200px; font-weight: bold;">Domisili</td>
 									<td>
-										: 
+										:
 										<?php
 										echo $member['area'] == '' ? '-' : filter_var(trim(ucwords($member['area'])), FILTER_SANITIZE_STRING);
 										echo ' , ';
@@ -254,6 +240,6 @@
         </div>
 
 	</div>
-	
+
 </div>
 <div class="dt-sc-margin50"></div>

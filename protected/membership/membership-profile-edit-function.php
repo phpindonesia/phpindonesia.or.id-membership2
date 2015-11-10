@@ -1,6 +1,6 @@
 <?php
 $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, $response, $args) {
-    
+
     $db = $this->getContainer()->get('db');
 
     if ($request->isPost()) {
@@ -51,22 +51,38 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
                     finfo_close($finfo);
 
                     $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+                    $new_fname = $_SESSION['MembershipAuth']['user_id'].'-'.date('YmdHis');
 
-                    if (($mime_type == 'image/jpeg' || $mime_type == 'image/png') && ($ext != 'php')) {
-                        $new_fname = $_SESSION['MembershipAuth']['user_id'].'-'.date('YmdHis').'.'.$ext;
+                    try {
+                        $photo = \Cloudinary\Uploader::upload($_FILES['photo']['tmp_name'], [
+                            'public_id' => $new_fname,
+                            'tags' => ['user-avatar'],
+                        ]);
 
-                        if (move_uploaded_file($_FILES['photo']['tmp_name'], $this->getContainer()->get('settings')['upload_photo_profile_path'].$new_fname)) {
-                            $members_profiles['photo'] = $new_fname;
-                            if ($_SESSION['MembershipAuth']['photo'] != null) {
-                                unlink($this->getContainer()->get('settings')['upload_photo_profile_path'].$_SESSION['MembershipAuth']['photo']);
-                            }
-
-                            $_SESSION['MembershipAuth']['photo'] = $new_fname;
-
-                        } else {
-                            $members_profiles['photo'] = null;
-                        }  
+                        $members_profiles['photo'] = $new_fname.'.'.$ext;
+                    } catch (\Cloudinary\Error $e) {
+                        $members_profiles['photo'] = null;
                     }
+
+                    if ($members_profiles['photo'] !== null) {
+                        $_SESSION['MembershipAuth']['photo'] = $members_profiles['photo'];
+                    }
+
+                    // if (($mime_type == 'image/jpeg' || $mime_type == 'image/png') && ($ext != 'php')) {
+                    //     $new_fname = $_SESSION['MembershipAuth']['user_id'].'-'.date('YmdHis').'.'.$ext;
+
+                    //     if (move_uploaded_file($_FILES['photo']['tmp_name'], $this->getContainer()->get('settings')['upload_photo_profile_path'].$new_fname)) {
+                    //         $members_profiles['photo'] = $new_fname;
+                    //         if ($_SESSION['MembershipAuth']['photo'] != null) {
+                    //             unlink($this->getContainer()->get('settings')['upload_photo_profile_path'].$_SESSION['MembershipAuth']['photo']);
+                    //         }
+
+                    //         $_SESSION['MembershipAuth']['photo'] = $new_fname;
+
+                    //     } else {
+                    //         $members_profiles['photo'] = null;
+                    //     }
+                    // }
                 }
 
                 $db->update('members_profiles', $members_profiles, array(
@@ -103,7 +119,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
                                 'member_socmed_id' => $item['member_socmed_id']
                             ));
                         }
-                        
+
                     }
                 }
 
@@ -125,7 +141,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
             } catch (Exception $e) {
                 $db->rollback();
                 $db->close();
-                
+
                 $this->flash->flashNow('error', 'System failed<br />'.$e->getMessage());
             }
 
@@ -133,7 +149,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
             $this->flash->flashNow('warning', 'Some of mandatory fields is empty!');
         }
     }
-    
+
     $q_member = $db->createQueryBuilder()
     ->select(
         'm.*',

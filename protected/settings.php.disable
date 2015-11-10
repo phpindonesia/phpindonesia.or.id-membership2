@@ -40,6 +40,11 @@ return array(
 			'site_key' => '6LfJzg4TAAAAANipQttg0q0TL6VJJCPgDdBcnAR7',
 			'secret' => '6LfJzg4TAAAAAE2Vwoy39WAulllaK4wV_O_0H-kf'
 		),
+		'cloudinary' => array(
+			'cloud_name' => '',
+			'api_key' => '',
+			'api_secret' => '',
+		),
 		'use_captcha' => true,
 		'upload_photo_profile_path' => _FULL_APP_PATH_.'public'._DS_.'files'._DS_.'photoprofile'._DS_,
 		'socmedias' => array(
