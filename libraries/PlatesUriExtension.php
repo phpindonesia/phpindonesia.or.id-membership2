@@ -47,6 +47,7 @@ class PlatesUriExtension implements ExtensionInterface {
         $engine->registerFunction('uri_match', array($this, 'runUri'));
         $engine->registerFunction('uri_path_for', array($this, 'pathFor'));
         $engine->registerFunction('uri_base_url', array($this, 'baseUrl'));
+        $engine->registerFunction('uri_user_photo', array($this, 'userPhoto'));
     }
 
     public function pathFor($name, $data = [], $queryParams = [], $appName = 'default') {
@@ -60,6 +61,25 @@ class PlatesUriExtension implements ExtensionInterface {
 
         if (method_exists($this->uri, 'getBaseUrl')) {
             return $this->uri->getBaseUrl();
+        }
+    }
+
+    public function userPhoto($public_id = null, $options = [])
+    {
+        $default = $this->baseUrl().'/public/images/team.png';
+        if (null === $public_id) {
+            return $default;
+        }
+
+        try {
+            $options += [
+                'tags' => 'user-avatar',
+                'crop' => 'fill',
+            ];
+
+            return \Cloudinary::cloudinary_url($public_id, $options);
+        } catch (\Exception $e) {
+            return $default;
         }
     }
 

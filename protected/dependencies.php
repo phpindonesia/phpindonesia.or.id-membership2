@@ -9,6 +9,9 @@ $container['db'] = function ($container) {
 	return $db;
 };
 
+// Setup cloudinary config before view
+\Cloudinary::config($container->get('settings')['cloudinary']);
+
 $container['view'] = function ($container) {
 	$view_cfg = $container->get('settings')['view'];
 	$view = new \Slim\Views\PlatesTemplate($view_cfg['template_path']);
@@ -17,7 +20,7 @@ $container['view'] = function ($container) {
 	$view->loadExtension(new \League\Plates\Extension\PlatesUriExtension($container->get('request')->getUri(), $container->get('router')));
 	$view->loadExtension(new \League\Plates\Extension\PlatesFlashMessageExtension($container->get('flash')));
 	$view->loadExtension(new \League\Plates\Extension\PlatesFormHelperExtension($container->get('request')->getMethod()));
-	
+
 	$view->addFolder('layouts', $view_cfg['template_path']._DS_.'layouts');
 	$view->addFolder('sections', $view_cfg['template_path']._DS_.'sections');
 
@@ -29,11 +32,11 @@ $container['mailer'] = function ($container) {
 	$transport = null;
 
 	if ($smtp_account['ssl']) {
-	    $transport = Swift_SmtpTransport::newInstance($smtp_account['host'], $smtp_account['port'], 'ssl');	
+	    $transport = Swift_SmtpTransport::newInstance($smtp_account['host'], $smtp_account['port'], 'ssl');
 	} else {
 		$transport = Swift_SmtpTransport::newInstance($smtp_account['host'], $smtp_account['port']);
 	}
-	
+
 	$transport->setUsername($smtp_account['username']);
 	$transport->setPassword($smtp_account['password']);
 

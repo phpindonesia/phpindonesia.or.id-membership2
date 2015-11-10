@@ -143,21 +143,7 @@ $this->append_js(array(
 								<legend>Photo Profile</legend>
 								<div class="dt-sc-team">
 									<div class="image">
-										<?php
-										if ($member['photo'] == '' || $member['photo'] == null):
-										?>
-									    
-									    <img id="img-photo-profile" src="<?php echo $this->uri_base_url().'/public/images/team.png'; ?>" alt="" style="width: 180px; height: 180px;" />
-									    
-									    <?php
-									    else:
-									    ?>
-
-									    <img id="img-photo-profile" src="<?php echo $this->uri_base_url().'/public/files/photoprofile/'.$member['photo']; ?>" alt="" style="width: 180px; height: 180px;" />
-
-									    <?php
-									    endif;
-									    ?>
+									    <img src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '180', 'height' => '180']) ?>" alt="user avatar" style="width: 180px; height: 180px;" />
 									</div>
 
 									<div style="clear: both;">
@@ -213,7 +199,7 @@ $this->append_js(array(
 											<?php
 											    $ii++;
 											    endforeach;
-											else:											   
+											else:
 											?>
 
 											<tr class="empty-row">
@@ -271,7 +257,7 @@ $this->append_js(array(
 
 					<div class="dt-sc-margin50"></div>
 					<p style="float: left;">
-						
+
 						<button type="button" onclick="location.href='<?php echo $this->uri_path_for('membership-profile'); ?>';" class="button" style="color:#fff;">Cancel and Back</button>
 						<input type="submit" class="button" value="Update Data" style="color:#fff; margin-right: 25px;" />
 					</p>
