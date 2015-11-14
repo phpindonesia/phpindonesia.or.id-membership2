@@ -1,5 +1,12 @@
 <?php $this->layout('layouts::layout-system'); ?>
 
+<?php
+$this->append_js(array(
+    $this->uri_base_url().'/public/js/jquery.popupoverlay.js',
+    $this->uri_base_url().'/public/js/app/membership/profile.js'
+));
+?>
+
 <div class="full-width-section">
 	<div class="container">
 
@@ -57,9 +64,9 @@
 
 		<div class="column dt-sc-three-fifth">
 
-			<div class="entry-body" style="margin-top: -25px; margin-bottom: 50px;">
-				<a href="<?php echo $this->uri_path_for('membership-profile-edit'); ?>" class="button" style="color:#fff;">Update Basic Profile</a>
-				<a href="<?php echo $this->uri_path_for('membership-portfolio-add'); ?>" class="button" style="color:#fff;">Add Portfolio</a>
+			<div class="entry-body" style="margin-top: -25px; margin-bottom: 25px;">
+				<a href="<?php echo $this->uri_path_for('membership-profile-edit'); ?>" class="button">Update Basic Profile</a>
+				<a href="<?php echo $this->uri_path_for('membership-portfolio-add'); ?>" class="button">Add Portfolio</a>
 			</div>
 
 			<article class="blog-post">
@@ -256,4 +263,11 @@
 	</div>
 	
 </div>
+
 <div class="dt-sc-margin50"></div>
+
+<div id="portfolio-popup" class="well" style="background-color: #FFFFFF;">
+    <h3>Selamat!</h3>
+
+    <button class="button portfolio-popup-close" style="color:#fff;">Close</button>
+</div>
