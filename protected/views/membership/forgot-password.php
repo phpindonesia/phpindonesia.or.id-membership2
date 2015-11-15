@@ -35,29 +35,33 @@
                             </td>
                         </tr>
 
+                    </tbody>
+                </table>
+
+                <table class="form-oprek" style="width: 70%; margin: 0 auto;">
+                    <tbody>
                         <tr>
                             <td style="width: 100px;">
-                        	<?php
-                        	if ($use_captcha == true):
-                        	?>
+                            <?php
+                            if ($use_captcha == true):
+                            ?>
 
-	                        <input id="foo-captcha" name="captcha" type="hidden" value="1" />
-	                        <?php
-	                        echo $this->fh_show_errors('captcha', $_view_validation_errors_);
-	                        ?>
+                            <input id="foo-captcha" name="captcha" type="hidden" value="1" />
+                            <?php
+                            echo $this->fh_show_errors('captcha', $_view_validation_errors_);
+                            ?>
 
-	                        <div class="g-recaptcha" data-sitekey="<?php echo $gcaptcha_site_key; ?>"></div>
+                            <div class="g-recaptcha" data-sitekey="<?php echo $gcaptcha_site_key; ?>"></div>
 
-	                        <?php
-	                        endif;
-	                        ?>
+                            <?php
+                            endif;
+                            ?>
                             </td>
 
                             <td>
-                            	<input value="Confirm" class="button" type="submit" />
+                                <input value="Confirm" class="button" type="submit" />
                             </td>
                         </tr>
-
                     </tbody>
                 </table>
 

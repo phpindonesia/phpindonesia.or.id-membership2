@@ -22,7 +22,7 @@ $this->append_js(array(
 
             <form action="<?php echo $this->uri_path_for('membership-register'); ?>" method="post" novalidate>
 
-                <table>
+                <table class="form-oprek">
                     <tbody>
                         <tr>
                             <th>
@@ -174,27 +174,36 @@ $this->append_js(array(
                             </td>
                         </tr>
 
+                    </tbody>
+                </table>
+
+                <table class="form-oprek">
+                    <tbody>
                         <tr>
                             <td>
-                            <?php
-                            if ($use_captcha == true):
-                            ?>
-                            
-                            <input id="foo-captcha" name="captcha" type="hidden" value="1" />
-                            <?php echo $this->fh_show_errors('captcha', $_view_validation_errors_); ?>
-                            <div class="g-recaptcha" data-sitekey="<?php echo $gcaptcha_site_key; ?>"></div>
-                            
-                            <?php
-                            endif;
-                            ?>
+                                &nbsp;
                             </td>
+
                             <td>
-                                <input value="Register" class="button" type="submit" />
+                                <?php
+                                if ($use_captcha == true):
+                                ?>
+                                
+                                <input id="foo-captcha" name="captcha" type="hidden" value="1" />
+                                <?php echo $this->fh_show_errors('captcha', $_view_validation_errors_); ?>
+                                <div class="g-recaptcha" data-sitekey="<?php echo $gcaptcha_site_key; ?>"></div>
+                                
+                                <?php
+                                endif;
+                                ?>
+
+                                <input value="Register" type="submit" />
                             </td>
 
                             <td>
                                 &nbsp;
                             </td>
+
                             <td>
                                 &nbsp;
                             </td>

@@ -1828,6 +1828,6 @@ table th[class*="col-"] {
 	margin-bottom: -20px;
 }
 
-table.form-oprek th {
+table.form-oprek th, table.form-oprek td {
 	vertical-align: middle;
 }
