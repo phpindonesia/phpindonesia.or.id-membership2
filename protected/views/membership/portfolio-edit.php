@@ -18,10 +18,10 @@ $this->append_js(array(
             echo $this->insert('sections::flash-message');
             ?>
 
-            <form action="<?php echo $this->uri_path_for('membership-portfolio-add'); ?>" method="post" class="checkout" novalidate>
+            <form action="<?php echo $this->uri_path_for('membership-portfolio-edit', array('id' => $portfolio['member_portfolio_id'])); ?>" method="post" class="checkout" novalidate>
                 <input type="hidden" name="member_portfolio_id" value="<?php echo $portfolio['member_portfolio_id']; ?>" />
 
-                <table>
+                <table class="form-oprek">
                     <tbody>
                         <tr>
                             <th>
@@ -59,37 +59,42 @@ $this->append_js(array(
                                 <label style="font-weight: bold; display:block;">Mulai bekerja di perusahaan ini</label>
                             </th>
                             <td>
-                                <label style="display: inline;">Tahun</label>
-                                <?php
-                                echo $this->fh_input_select('start_date_y', $years_range, array(
-                                    'default' => $portfolio['start_date_y'],
-                                    'id' => 'start-date-y'
-                                ));
-                                ?>
+                                <ul class="date-parts">
+                                    <li>
+                                        <label style="display: block;">Tahun</label>
+                                        <?php
+                                        echo $this->fh_input_select('start_date_y', $years_range, array(
+                                            'default' => $portfolio['start_date_y'],
+                                            'id' => 'start-date-y'
+                                        ));
+                                        ?>
 
-                                <?php
-                                echo $this->fh_show_errors('start_date_y', $_view_validation_errors_);
-                                ?>
+                                        <?php
+                                        echo $this->fh_show_errors('start_date_y', $_view_validation_errors_);
+                                        ?>
+                                    </li>
 
-                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <li>
+                                        <label style="display: block;">Bulan (opsional)</label>
+                                        <?php
+                                        echo $this->fh_input_select('start_date_m', $months_range, array(
+                                            'default' => $portfolio['start_date_m'],
+                                            'id' => 'start-date-m'
+                                        ));
+                                        ?>
+                                    </li>
 
-                                <label style="display: inline;">Bulan (opsional)</label>
-                                <?php
-                                echo $this->fh_input_select('start_date_m', $months_range, array(
-                                    'default' => $portfolio['start_date_m'],
-                                    'id' => 'start-date-m'
-                                ));
-                                ?>
-
-                                &nbsp;&nbsp;&nbsp;&nbsp;
-
-                                <label style="display: inline;">Tanggal (opsional)</label>
-                                <?php
-                                echo $this->fh_input_select('start_date_d', $days_range, array(
-                                    'default' => $portfolio['start_date_d'],
-                                    'id' => 'start-date-d'
-                                ));
-                                ?>
+                                    <li>
+                                        <label style="display: block;">Tanggal (opsional)</label>
+                                        <?php
+                                        echo $this->fh_input_select('start_date_d', $days_range, array(
+                                            'default' => $portfolio['start_date_d'],
+                                            'id' => 'start-date-d'
+                                        ));
+                                        ?>
+                                    </li>
+                                </ul>
+                                
                             </td>
                         </tr>
 
@@ -119,34 +124,41 @@ $this->append_js(array(
                             <th>
                                 <label style="font-weight: bold; display:block;">Akhir bekerja di perusahaan ini</label>
                             </th>
+
                             <td>
-                                <label style="display: inline;">Tahun</label>
-                                <?php
-                                echo $this->fh_input_select('end_date_y', $years_range, array(
-                                    'default' => $portfolio['end_date_y'],
-                                    'id' => 'end-date-y'
-                                ));
-                                ?>
 
-                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <ul class="date-parts">
+                                    <li>
+                                        <label style="display: block;">Tahun</label>
+                                        <?php
+                                        echo $this->fh_input_select('end_date_y', $years_range, array(
+                                            'default' => $portfolio['end_date_y'],
+                                            'id' => 'end-date-y'
+                                        ));
+                                        ?>
+                                    </li>
 
-                                <label style="display: inline;">Bulan (opsional)</label>
-                                <?php
-                                echo $this->fh_input_select('end_date_m', $months_range, array(
-                                    'default' => $portfolio['end_date_m'],
-                                    'id' => 'end-date-m'
-                                ));
-                                ?>
+                                    <li>
+                                        <label style="display: block;">Bulan (opsional)</label>
+                                        <?php
+                                        echo $this->fh_input_select('end_date_m', $months_range, array(
+                                            'default' => $portfolio['end_date_m'],
+                                            'id' => 'end-date-m'
+                                        ));
+                                        ?>
+                                    </li>
+                                    
+                                    <li>
+                                        <label style="display: block;">Tanggal (opsional)</label>
+                                        <?php
+                                        echo $this->fh_input_select('end_date_d', $days_range, array(
+                                            'default' => $portfolio['end_date_d'],
+                                            'id' => 'end-date-d'
+                                        ));
+                                        ?>
+                                    </li>
+                                </ul>
 
-                                &nbsp;&nbsp;&nbsp;&nbsp;
-
-                                <label style="display: inline;">Tanggal (opsional)</label>
-                                <?php
-                                echo $this->fh_input_select('end_date_d', $days_range, array(
-                                    'default' => $portfolio['end_date_d'],
-                                    'id' => 'end-date-d'
-                                ));
-                                ?>
                             </td>
                         </tr>
 

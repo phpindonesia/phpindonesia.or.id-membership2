@@ -1817,3 +1817,17 @@ table th[class*="col-"] {
 	width: 40%;
 	float: right;
 }
+
+.date-parts li {
+	float: left;
+	margin-right: 30px;
+}
+
+.error {
+	display: block;
+	margin-bottom: -20px;
+}
+
+table.form-oprek th {
+	vertical-align: middle;
+}
