@@ -3,7 +3,8 @@
 <?php
 $this->append_js(array(
     $this->uri_base_url().'/public/js/jquery.popupoverlay.js',
-    $this->uri_base_url().'/public/js/app/membership/profile.js'
+    $this->uri_path_for('membership-profile-javascript'),
+    $this->uri_base_url().'/public/js/app/membership/portfolio-add.js'
 ));
 ?>
 
@@ -266,8 +267,15 @@ $this->append_js(array(
 
 <div class="dt-sc-margin50"></div>
 
-<div id="portfolio-popup" class="well" style="background-color: #FFFFFF;">
-    <h3>Selamat!</h3>
 
-    <button class="button portfolio-popup-close" style="color:#fff;">Close</button>
+<!-- PORTFOLIO ADD SECTION -->
+<div id="portfolio-popup" class="well" style="background-color: #FFFFFF;">
+    
+    <?php
+    echo $this->insert('membership/sections/portfolio-add-section');
+    ?>
+
+    <div style="position: absolute; top: 5px; right: 5px;">
+        <button class="portfolio-popup-close">Close [X]</button>
+    </div>
 </div>

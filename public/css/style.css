@@ -1818,9 +1818,18 @@ table th[class*="col-"] {
 	float: right;
 }
 
-.date-parts li {
+.date-parts li, .assessm li {
 	float: left;
-	margin-right: 30px;
+	margin-right: 10px;
+}
+
+.assessm li {
+	padding: 3px;
+	background: #DDDDDD;
+}
+
+.assessm li label {
+	color: blue;
 }
 
 .error {

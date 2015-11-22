@@ -1,9 +1,7 @@
 <?php
 $app->get('/apps/membership/profile', function ($request, $response, $args) {
-    
-    $db = $this->getContainer()->get('db');
-    
-    $q_member = $db->createQueryBuilder()
+      
+    $q_member = $this->db->createQueryBuilder()
     ->select(
         'm.*',
         'reg_prv.regional_name AS province',
@@ -18,7 +16,7 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
     ->setParameter(':d', 'N')
     ->execute();
 
-    $q_member_socmeds = $db->createQueryBuilder()
+    $q_member_socmeds = $this->db->createQueryBuilder()
     ->select('socmed_type', 'account_name', 'account_url')
     ->from('members_socmeds')
     ->where('user_id = :uid')
@@ -27,7 +25,7 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
     ->setParameter(':d', 'N')
     ->execute();
 
-    $q_member_portfolios = $db->createQueryBuilder()
+    $q_member_portfolios = $this->db->createQueryBuilder()
     ->select(
         'mp.member_portfolio_id',
         'mp.company_name',
@@ -58,7 +56,29 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
     $socmedias_logo = $this->getContainer()->get('settings')['socmedias_logo'];
     $months = $this->getContainer()->get('months');
 
-    $db->close();
+    /*
+     * Data view for portfolio-add-section
+     * //
+    */
+    $q_carerr_levels = $this->db->createQueryBuilder()
+    ->select('career_level_id')
+    ->from('career_levels')
+    ->orderBy('order_by', 'ASC')
+    ->execute();
+
+    $q_industries = $this->db->createQueryBuilder()
+    ->select('industry_id', 'industry_name')
+    ->from('industries')
+    ->execute();
+
+    $career_levels = \Cake\Utility\Hash::combine($q_carerr_levels->fetchAll(), '{n}.career_level_id', '{n}.career_level_id');
+    $industries = \Cake\Utility\Hash::combine($q_industries->fetchAll(), '{n}.industry_id', '{n}.industry_name');
+    $years_range = $this->getContainer()->get('years_range');
+    $months_range = $this->getContainer()->get('months_range');
+    $days_range = $this->getContainer()->get('days_range');
+    // --- End data view for portfolio-add-section
+
+    $this->db->close();
 
     $this->view->getPlates()->addData(
         array(
@@ -66,6 +86,21 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
             'sub_page_title' => 'Profil Anggota'
         ),
         'layouts::layout-system'
+    );
+
+    /*
+     * Assign data view for portfolio-add-section
+     * //
+    */
+    $this->view->getPlates()->addData(
+        compact(
+            'career_levels',
+            'industries',
+            'years_range',
+            'months_range',
+            'days_range'
+        ),
+        'membership/sections/portfolio-add-section'
     );
 
     return $this->view->render(
@@ -82,3 +117,30 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
     );
 
 })->setName('membership-profile');
+
+$app->get('/apps/membership/profile-javascript', function ($request, $response, $args) {
+
+    $q_check_portf = $this->db->createQueryBuilder()
+    ->select('COUNT(*) AS total_data')
+    ->from('members_portfolios')
+    ->where('user_id = :uid')
+    ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+    ->execute();
+
+    $have_portf = false;
+    if ($q_check_portf->fetch()['total_data'] > 0) {
+        $have_portf = true;
+    }
+
+    $this->db->close();
+
+    $response_n = $response->withStatus(200)
+    ->withHeader('Content-Type', 'application/javascript');
+    
+    return $this->view->render(
+        $response_n,
+        'membership/profile-javascript',
+        array('have_portf' => $have_portf)
+    );
+
+})->setName('membership-profile-javascript');
