@@ -7,117 +7,115 @@ $this->append_js(array(
 ?>
 
 <section id="primary" class="content-full-width">
-	<div class="full-width-section">			
 
-		<div class="container" style="margin-top: -50px;">
+	<div class="full-width-section">
 
-			<div style="margin: 0; padding: 0; margin-top: -20px;">
-				<?php
-				echo $this->insert('sections::flash-message');
-				?>
-		    </div>
-
+		<div class="container" style="margin-top: -70px;">
+			
 			<h2 class="aligncenter">Anggota PHP Indonesia</h2>
 
-			<div class="woocommerce" style="padding:0px 30px; margin-bottom: -50px;">
-				<form name="searchform" method="get" class="checkout" action="<?php echo $this->uri_path_for('membership-index'); ?>">
-					<div class="col2-set" id="customer_details">
-
-						<div class="col-1">
-
-							<div class="form-row form-row-first" style="width: 100%;">
-								<label for="provinces-dd" style="font-weight: bold;">Provinsi</label>
-								<div class="selection-box">
-								<?php
-								echo $this->fh_input_select('province_id', $provinces, array(
-									'id' => 'provinces-dd'
-								));
-								?>
-								</div>
-							</div>
-
-							<div class="form-row form-row-wide">
-								<label for="area" style="font-weight: bold;">Area</label>
-								<input type="text" id="area" name="area" value="<?php echo $this->fh_default_val('area', null, true); ?>" />
-							</div>
-
-						</div>
-
-						<div class="col-2">
-
-							<div class="form-row form-row-first" style="width: 100%;">
-								<label for="cities-dd" style="font-weight: bold;">Kabupaten / Kota</label>
-								<div class="selection-box">
-								<?php
-								echo $this->fh_input_select('city_id', $cities, array(
-									'id' => 'cities-dd'
-								));
-								?>
-								</div>
-							</div>
-
-							<div class="form-row form-row-wide">
-								<label>&nbsp;</label>
-								<input value="Search" type="submit" />
-							</div>
-
-						</div>
-					</div>
-
-				</form><hr />
-			</div>
-			
 			<?php
-			$no = 1;
-			foreach($members as $member):
+			echo $this->insert('sections::flash-message');
 			?>
 
+			<form action="<?php echo $this->uri_path_for('membership-index'); ?>" method="get" class="checkout" novalidate>
+				<table>
+                    <tbody>
+                        <tr>
+                            <th>
+                                <label for="provinces-dd" style="font-weight: bold;">Provinsi</label>
+                            </th>
+                            <td>
+                                <?php
+                                echo $this->fh_input_select('province_id', $provinces, array(
+                                    'id' => 'provinces-dd',
+                                    'class' => 'input_full'
+                                ));
+                                ?>
+                            </td>
+
+                            <th>
+                            	<label for="cities-dd" style="font-weight: bold;">Kabupaten / Kota</label>
+                            </th>
+                            <td>
+                            	<?php
+                                echo $this->fh_input_select('city_id', $cities, array(
+                                    'id' => 'cities-dd',
+                                    'class' => 'input_full'
+                                ));
+                                ?>
+                            </td>
+                        </tr>
+
+                        <tr>
+                        	<th>
+                        		<label for="area" style="font-weight: bold;">Area</label>
+                        	</th>
+                        	<td>
+                        		<input type="text" id="area" class="input_full" name="area" value="<?php echo $this->fh_default_val('area', null, true); ?>" />
+                        	</td>
+                        	<td>&nbsp;</td>
+                        	<td>&nbsp;</td>
+                        </tr>
+
+                        <tr>
+                        	<td>&nbsp;</td>
+                        	<td><input value="Search" type="submit" /></td>
+                        	<td>&nbsp;</td>
+                        	<td>&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+			</form>
+
 			<?php
-			if ($no%4 == 1):
-			?>
+            $no = 1;
+            foreach($members as $member):
+            ?>
 
-			<div class="dt-sc-hr-invisible-small"></div>
+            <?php
+            if ($no%4 == 1):
+            ?>
 
-			<?php
-			endif;
-			?>
+            <div class="dt-sc-hr-invisible-small"></div>
 
-			<div class="column dt-sc-one-fourth <?php echo ($no == '1' || $no%4 == 1 ? 'first' : ''); ?>">
+            <?php
+            endif;
+            ?>
+
+            <div class="column dt-sc-one-fourth <?php echo ($no == '1' || $no%4 == 1 ? 'first' : ''); ?>">
 
 				<div class="dt-sc-team">
 					<div class="image">
 						<img src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '140', 'height' => '140']) ?>" alt="" style="width: 140px; height: 140px;" />
 					</div>
 
-					<div class="team-details">
-						<h6><a href="<?php echo $this->uri_path_for('membership-detail', array('name' => $member['username'])); ?>"><?php echo $member['fullname']; ?></a></h6>
+                    <div class="team-details">
+                        <h6><a href="<?php echo $this->uri_path_for('membership-detail', array('name' => $member['username'])); ?>"><?php echo $member['fullname']; ?></a></h6>
 
-						<p>
-							<?php echo $member['province'].', '.$member['city']; ?>
-						</p>
+                        <p>
+                            <?php echo $member['province'].', '.$member['city']; ?>
+                        </p>
 
-					</div>
+                    </div>
 
-				</div>
+                </div>
 
-			</div>
+            </div>
 
-			<?php
-			$no++;
-			endforeach;
-			?>
-			
-			<p>&nbsp;</p>
+            <?php
+            $no++;
+            endforeach;
+            ?>
 
-			<div class="pagination" style="text-align:center;">
-			<?php
-			echo $html_view_pager;
-			?>
-			</div>
+            <div class="pagination" style="text-align:center;">
+            <?php
+            echo $html_view_pager;
+            ?>
+            </div>
 
 		</div>
 
-		<div class="dt-sc-hr-invisible-small"></div>
-		<div class="dt-sc-margin50"></div>
 	</div>
+
 </section>

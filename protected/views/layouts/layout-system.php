@@ -14,10 +14,10 @@
 	<link id="layer-slider" rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/layerslider.css'; ?>" media="all"/>
 	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/prettyPhoto.css'; ?>" type="text/css" media="screen"/>
 	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/animations.css'; ?>" type="text/css" media="all" />
-	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/skins/blue/style.css'; ?>" type="text/css" media="all"/>
 	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/responsive.css'; ?>" type="text/css" media="all" />
 	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/meanmenu.css'; ?>" type="text/css" media="all" />
 	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/font-awesome.min.css'; ?>" type="text/css" />
+    <link href="<?php echo $this->uri_base_url().'/public/css/formalize.css?v='.time(); ?>" rel="stylesheet">
 	<link href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic" rel="stylesheet" type="text/css">
 	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
 
@@ -96,6 +96,7 @@
 <script type="text/javascript" src="<?php echo $this->uri_base_url().'/public/js/jquery.formalize.min.js'; ?>"></script>
 <script type="text/javascript" src="<?php echo $this->uri_base_url().'/public/js/okzoom.min.js'; ?>"></script>
 <script type="text/javascript" src="<?php echo $this->uri_base_url().'/public/js/custom.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo $this->uri_base_url().'/public/js/jquery.formalize.min.js'; ?>"></script>
 <script type="text/javascript" src="<?php echo $this->uri_base_url().'/public/js/app/app.js?='.time(); ?>"></script>
 
 <script type="text/javascript">

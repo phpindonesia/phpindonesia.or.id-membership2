@@ -1,5 +1,5 @@
 <?php
-$app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id}', function ($request, $response, $args) {
+$app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id:[0-9]+}', function ($request, $response, $args) {
 
 	$db = $this->getContainer()->get('db');
 
@@ -97,7 +97,7 @@ $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id}', function ($re
 	$this->view->getPlates()->addData(
         array(
             'page_title' => 'Membership',
-            'sub_page_title' => 'Update Portfolio'
+            'sub_page_title' => 'Update portfolio item'
         ),
         'layouts::layout-system'
     );
@@ -114,21 +114,19 @@ $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id}', function ($re
     $id = $routeInfo[2]['id'];
 
     $q_user = $this['db']->createQueryBuilder()
-        ->select('count(*) num', 'user_id', 'member_portfolio_id')
-        ->from('members_portfolios')
-        ->where('member_portfolio_id = :portId')
-        ->andWhere('user_id = :userId')
-        ->setParameter(':portId', $routeInfo[2]['id'])
-        ->setParameter(':userId', $_SESSION['MembershipAuth']['user_id'])
-        ->execute();
+    ->select('count(*) num', 'user_id', 'member_portfolio_id')
+    ->from('members_portfolios')
+    ->where('member_portfolio_id = :portId')
+    ->andWhere('user_id = :userId')
+    ->setParameter(':portId', $routeInfo[2]['id'])
+    ->setParameter(':userId', $_SESSION['MembershipAuth']['user_id'])
+    ->execute();
 
     $user = $q_user->fetch();
 
     if ($user['num'] < 1) {
-
         $this['flash']->flashLater('warning', 'Permission denied.');
         return $res->withStatus(302)->withHeader('Location', $this['router']->pathFor('membership-profile'));
-
     }
 
     return $next($req, $res);

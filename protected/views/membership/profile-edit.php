@@ -13,256 +13,316 @@ $this->append_js(array(
 
 		<div class="container" style="margin-top: -70px;">
 
-			<div class="dt-sc-hr-invisible-small"></div>
+			<h3 style="border-bottom: 1px #000000 solid;">Update My Basic Profile</h3>
 
-			<div class="woocommerce" style="padding:0px 30px;">
+			<?php
+			echo $this->insert('sections::flash-message');
+			?>
 
-				<h3>Update My Basic Profile</h3>
+			<form action="<?php echo $this->uri_path_for('membership-profile-edit'); ?>" method="post" enctype="multipart/form-data" class="checkout" novalidate>
 
-				<form action="<?php echo $this->uri_path_for('membership-profile-edit'); ?>" method="post" enctype="multipart/form-data" class="checkout" novalidate>
+				<div class="left-col-oprek">
 
-					<?php
-					echo $this->insert('sections::flash-message');
-					?>
+					<table>
+						<tbody>
+							<tr>
+								<th>
+									<label for="fullname" style="font-weight: bold;">Nama Lengkap *</label>
+								</th>
+								<td>
+									<input type="text" class="input_full" id="fullname" name="fullname" value="<?php echo $this->fh_default_val('fullname', $member['fullname']); ?>" />
+									<?php echo $this->fh_show_errors('fullname', $_view_validation_errors_); ?>
+								</td>
+							</tr>
 
-					<div class="col2-set" id="customer_details">
+							<tr>
+								<th>
+									<label for="email" style="font-weight: bold;">Email *</label>
+								</th>
+								<td>
+									<input type="text" class="input_full" id="email" name="email" value="<?php echo $this->fh_default_val('email', $_SESSION['MembershipAuth']['email']); ?>" />
+									<?php echo $this->fh_show_errors('email', $_view_validation_errors_); ?>
+								</td>
+							</tr>
 
-						<div class="col-1">
+							<tr>
+								<th>
+									<label for="contact_phone" style="font-weight: bold;">Telepon</label>
+								</th>
+								<td>
+									<input type="text" class="input_full" id="contact_phone" name="contact_phone" value="<?php echo $this->fh_default_val('contact_phone', $member['contact_phone']); ?>" />
+								</td>
+							</tr>
 
-							<div class="form-row form-row-wide">
-								<label for="fullname" style="font-weight: bold;">Nama Lengkap *</label>
-								<input type="text" id="fullname" name="fullname" value="<?php echo $this->fh_default_val('fullname', $member['fullname']); ?>" />
-								<?php echo $this->fh_show_errors('fullname', $_view_validation_errors_); ?>
-							</div>
+							<tr>
+								<th>
+									<label for="province_id" style="font-weight: bold;">Provinsi *</label>
+								</th>
+								<td>
+									<?php
+									echo $this->fh_input_select('province_id', $provinces, array(
+										'default' => $member['province_id'],
+										'id' => 'provinces-dd',
+										'class' => 'input_full'
+									));
+									?>
 
-							<div class="form-row form-row-wide">
-								<label for="email" style="font-weight: bold;">Email *</label>
-								<input type="text" id="email" name="email" value="<?php echo $this->fh_default_val('email', $_SESSION['MembershipAuth']['email']); ?>" />
-								<?php echo $this->fh_show_errors('email', $_view_validation_errors_); ?>
-							</div>
+									<?php echo $this->fh_show_errors('province_id', $_view_validation_errors_); ?>
+								</td>
+							</tr>
 
-							<div class="form-row form-row-wide">
-								<label for="contact_phone" style="font-weight: bold;">Telepon</label>
-								<input type="text" id="contact_phone" name="contact_phone" value="<?php echo $this->fh_default_val('contact_phone', $member['contact_phone']); ?>" />
-							</div>
+							<tr>
+								<th>
+									<label for="city_id" style="font-weight: bold;">Kabupaten / Kota Domisili *</label>
+								</th>
+								<td>
+									<?php
+									echo $this->fh_input_select('city_id', $cities, array(
+										'default' => $member['city_id'],
+										'id' => 'cities-dd',
+										'class' => 'input_full'
+									));
+									?>
 
-							<div class="form-row form-row-wide" style="margin-top:25px;">
-								<label for="province_id" style="font-weight: bold;">Provinsi *</label>
-								<div class="selection-box">
-								<?php
-								echo $this->fh_input_select('province_id', $provinces, array(
-									'default' => $member['province_id'],
-									'id' => 'provinces-dd'
-								));
-								?>
+									<?php echo $this->fh_show_errors('city_id', $_view_validation_errors_); ?>
+								</td>
+							</tr>
 
-								<?php echo $this->fh_show_errors('province_id', $_view_validation_errors_); ?>
+							<tr>
+								<th>
+									<label for="area" style="font-weight: bold;">Area *</label>
+								</th>
+								<td>
+									<input type="text" class="input_full" id="area" name="area" value="<?php echo $this->fh_default_val('area', $member['area']); ?>" />
+								</td>
+							</tr>
 
-								</div>
-							</div>
+							<tr>
+								<th>
+									<label for="job-id" style="font-weight: bold;">Pekerjaan *</label>
+								</th>
+								<td>
+									<?php
+									echo $this->fh_input_select('job_id', $jobs, array(
+										'default' => $member['job_id'],
+										'id' => 'job-id',
+										'class' => 'input_full'
+									));
+									?>
 
-							<div class="form-row form-row-wide" style="margin-top:25px;">
-								<label for="city_id" style="font-weight: bold;">Kabupaten / Kota Domisili *</label>
-								<div class="selection-box">
-								<?php
-								echo $this->fh_input_select('city_id', $cities, array(
-									'default' => $member['city_id'],
-									'id' => 'cities-dd'
-								));
-								?>
+									<?php echo $this->fh_show_errors('job_id', $_view_validation_errors_); ?>
+								</td>
+							</tr>
 
-								<?php echo $this->fh_show_errors('city_id', $_view_validation_errors_); ?>
+							<tr>
+								<th>
+									<label for="identity_type" style="font-weight: bold;">Jenis Identitas</label>
+								</th>
 
-								</div>
-							</div>
-
-							<div class="form-row form-row-wide" style="margin-top:25px;">
-								<label for="area" style="font-weight: bold;">Area *</label>
-								<input type="text" id="area" name="area" value="<?php echo $this->fh_default_val('area', $member['area']); ?>" />
-							</div>
-
-							<div class="form-row form-row-wide" style="margin-top:25px;">
-								<label for="job-id" style="font-weight: bold;">Pekerjaan *</label>
-								<div class="selection-box">
-								<?php
-								echo $this->fh_input_select('job_id', $jobs, array(
-									'default' => $member['job_id'],
-									'id' => 'job-id'
-								));
-								?>
-
-								<?php echo $this->fh_show_errors('job_id', $_view_validation_errors_); ?>
-
-								</div>
-							</div>
-
-							<div class="form-row form-row-wide">
-								<label for="identity_type" style="font-weight: bold;">Jenis Identitas</label>
-								<div class="selection-box">
+								<td>
 								<?php
 								echo $this->fh_input_select('identity_type', $identity_types, array(
 									'default' => $member['identity_type'],
 									'id' => 'identity_type',
+									'class' => 'input_full'
 								));
 								?>
-								</div>
-							</div>
+								</td>
+							</tr>
 
-							<div class="form-row form-row-wide">
-								<label for="identity_number" style="font-weight: bold;">Nomer Identitas</label>
-								<input type="text" id="identity_number" name="identity_number" value="<?php echo $this->fh_default_val('identity_number', $member['identity_number']); ?>" />
-							</div>
+							<tr>
+								<th>
+									<label for="identity_number" style="font-weight: bold;">Nomer Identitas</label>
+								</th>
+								
+								<td>
+									<input type="text" class="input_full" id="identity_number" name="identity_number" value="<?php echo $this->fh_default_val('identity_number', $member['identity_number']); ?>" />
+								</td>
+							</tr>
 
-							<div class="form-row form-row-wide">
-								<label for="birth_place" style="font-weight: bold;">Tempat Lahir</label>
-								<input type="text" id="birth_place" name="birth_place" value="<?php echo $this->fh_default_val('birth_place', $member['birth_place']); ?>" />
-							</div>
+							<tr>
+								<th>
+									<label for="birth_place" style="font-weight: bold;">Tempat Lahir</label>
+								</th>
+								
+								<td>
+									<input type="text" class="input_full" id="birth_place" name="birth_place" value="<?php echo $this->fh_default_val('birth_place', $member['birth_place']); ?>" />
+								</td>
+							</tr>
 
-							<div class="form-row form-row-wide" style="margin-top:24px;">
-								<label for="birth-date" style="font-weight: bold;">Tanggal Lahir</label>
-								<input type="text" id="birth-date" name="birth_date" value="<?php echo $member['birth_date']; ?>" />
-							</div>
+							<tr>
+								<th>
+									<label for="birth-date" style="font-weight: bold;">Tanggal Lahir</label>
+								</th>
+								
+								<td>
+									<input type="text" class="input_full" id="birth-date" name="birth_date" value="<?php echo $member['birth_date']; ?>" />
+								</td>
+							</tr>
 
-							<div class="form-row form-row-wide">
-								<label for="religion_id" style="font-weight: bold;">Religi</label>
-								<div class="selection-box">
+							<tr>
+								<th>
+									<label for="religion_id" style="font-weight: bold;">Religi</label>
+								</th>
+								
+								<td>
 								<?php
 								echo $this->fh_input_select('religion_id', $religions, array(
 									'default' => $member['religion_id'],
-									'id' => 'religion-dd'
+									'id' => 'religion-dd',
+									'class' => 'input_full'
 								));
 								?>
-								</div>
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+
+				</div>		
+
+				<div class="right-col-oprek">
+					<fieldset>
+						<legend>Photo Profile</legend>
+						<div class="dt-sc-team">
+							<div class="image">
+								<img id="img-photo-profile" src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '180', 'height' => '180']) ?>" alt="user avatar" style="width: 180px; height: 180px;" />
+							</div>
+
+							<div style="clear: both;">
+								<p>Update Photo Profile</p>
+								<input type="file" name="photo" id="photo-profile" />
 							</div>
 
 						</div>
+					</fieldset>
 
-						<div class="col-2">
+					<fieldset>
+						<legend>Social Medias</legend>
 
-							<fieldset>
-								<legend>Photo Profile</legend>
-								<div class="dt-sc-team">
-									<div class="image">
-									    <img id="img-photo-profile" src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '180', 'height' => '180']) ?>" alt="user avatar" style="width: 180px; height: 180px;" />
-									</div>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Media Name</th>
+									<th>Account Name</th>
+									<th>Account Url</th>
+									<th>&nbsp;</th>
+								</tr>
+							</thead>
 
-									<div style="clear: both;">
-										<p>Update Photo Profile</p>
-										<input type="file" name="photo" id="photo-profile" />
-									</div>
+							<tbody id="socmed-rows">
+								<?php
+								if ($members_socmeds):
+									$ii = 0;
+									foreach ($members_socmeds as $socmed):
+								?>
 
-								</div>
-							</fieldset>
+								    <tr id="socmed-item<?php echo $ii; ?>">
+								    	<td>
+								    		<?php echo $socmedias[$socmed['socmed_type']]; ?>
+								    		<input class="db-row-id" type="hidden" name="socmeds[<?php echo $ii; ?>][member_socmed_id]" value="<?php echo $socmed['member_socmed_id']; ?>" />
+								    		<input class="socmed-type" type="hidden" name="socmeds[<?php echo $ii; ?>][socmed_type]" value="<?php echo $socmed['socmed_type']; ?>" />
+								    	</td>
 
-							<fieldset>
-								<legend>Social Medias</legend>
+								    	<td>
+								    		<input type="text" name="socmeds[<?php echo $ii; ?>][account_name]" value="<?php echo $socmed['account_name']; ?>" placeholder="BUKAN FULLNAME. Contoh: @phpindonesia - for twitter, princessyahrini for instagram" />
+								    	</td>
 
-								<div class="form-row form-row-wide">
-									<table class="table">
-										<thead>
-											<tr>
-												<th>Media Name</th>
-												<th>Account Name</th>
-												<th>Account Url</th>
-												<th>&nbsp;</th>
-											</tr>
-										</thead>
+								    	<td>
+								    		<input type="text" name="socmeds[<?php echo $ii; ?>][account_url]" value="<?php echo $socmed['account_url']; ?>" placeholder="Contoh: https://www.facebook.com/profile.php?id=12345678 - Jika sosmed tidak memiliki fitur nickname seperti twitter." />
+								    	</td>
 
-										<tbody id="socmed-rows">
+								    	<td style="font-size: 1.5em">
+								    		<a href="javascript:delete_socmed('socmed-item<?php echo $ii; ?>')" title="Delete this socmed item">x</a>
+								    	</td>
+
+								    </tr>
+
+								<?php
+								    $ii++;
+								    endforeach;
+								else:											   
+								?>
+
+								<tr class="empty-row">
+									<td>---</td>
+									<td>---</td>
+									<td>---</td>
+									<td>---</td>
+								</tr>
+
+								<?php
+								endif;
+								?>
+							</tbody>
+						</table>
+
+						<fieldset>
+							<legend>Tambah Informasi Social Media</legend>
+
+							<table>
+								<tbody>
+									<tr>
+										<th>
+											<label for="identity_type" style="font-weight: bold;">Jenis Social Media</label>
+										</th>
+
+										<td>
+
 											<?php
-											if ($members_socmeds):
-												$ii = 0;
-												foreach ($members_socmeds as $socmed):
+											echo $this->fh_input_select('socmed_type', $socmedias, array(
+												'id' => 'meds-dd',
+												'class' => 'input_full'
+											));
 											?>
+										</td>
+									</tr>
 
-											    <tr id="socmed-item<?php echo $ii; ?>">
-											    	<td style="padding-top: 35px;">
-											    		<?php echo $socmedias[$socmed['socmed_type']]; ?>
-											    		<input class="db-row-id" type="hidden" name="socmeds[<?php echo $ii; ?>][member_socmed_id]" value="<?php echo $socmed['member_socmed_id']; ?>" />
-											    		<input class="socmed-type" type="hidden" name="socmeds[<?php echo $ii; ?>][socmed_type]" value="<?php echo $socmed['socmed_type']; ?>" />
-											    	</td>
+									<tr>
+										<th>
+											<label for="socmed-account-name" style="font-weight: bold;">Account Name</label>
+										</th>
 
-											    	<td>
-											    		<input type="text" name="socmeds[<?php echo $ii; ?>][account_name]" value="<?php echo $socmed['account_name']; ?>" placeholder="BUKAN FULLNAME. Contoh: @phpindonesia - for twitter, princessyahrini for instagram" />
-											    	</td>
+										<td>
+											<input type="text" class="input_full" id="socmed-account-name" />
+											<p style="color: #EA7120; font-size: 0.8em;">BUKAN FULLNAME.</p>
+										</td>
+									</tr>
 
-											    	<td>
-											    		<input type="text" name="socmeds[<?php echo $ii; ?>][account_url]" value="<?php echo $socmed['account_url']; ?>" placeholder="Contoh: https://www.facebook.com/profile.php?id=12345678 - Jika sosmed tidak memiliki fitur nickname seperti twitter." />
-											    	</td>
+									<tr>
+										<th>
+											<label for="socmed-account-url" style="font-weight: bold;">Account Url</label>
+										</th>
 
-											    	<td style="padding-top: 25px; font-size: 1.5em">
-											    		<a href="javascript:delete_socmed('socmed-item<?php echo $ii; ?>')" title="Delete this socmed item">x</a>
-											    	</td>
+										<td>
+											<input type="text" class="input_full" id="socmed-account-url" />
+										</td>
+									</tr>
 
-											    </tr>
+								</tbody>
+							</table>
 
-											<?php
-											    $ii++;
-											    endforeach;
-											else:
-											?>
+							<button id="add-socmed" type="button" class="button">Add new</button>
 
-											<tr class="empty-row">
-												<td>---</td>
-												<td>---</td>
-												<td>---</td>
-												<td>---</td>
-											</tr>
+							<div id="delete-collections"></div>
 
-											<?php
-											endif;
-											?>
-										</tbody>
 
-									</table>
-								</div>
+						</fieldset>
 
-								<fieldset>
-									<legend>Tambah Informasi Social Media</legend>
-									<div class="form-row form-row-wide">
-										<label for="identity_type" style="font-weight: bold;">Jenis Social Media</label>
-										<div class="selection-box">
-										<?php
-										echo $this->fh_input_select('socmed_type', $socmedias, array(
-											'id' => 'meds-dd',
-										));
-										?>
-										</div>
-									</div>
+					</fieldset>
 
-									<div class="form-row form-row-wide" style="margin-top:24px;">
-										<label for="socmed-account-name" style="font-weight: bold;">Account Name</label>
-										<input type="text" id="socmed-account-name" />
-									</div>
+				</div>
 
-									<div class="form-row form-row-wide" style="margin-top:24px;">
-										<label for="socmed-account-url" style="font-weight: bold;">Account Url</label>
-										<input type="text" id="socmed-account-url" />
-									</div>
+				<div style="clear: both; margin-bottom: 25px; background-color:#478BCA; padding: 10px;">
+					<input value="Update Data" type="submit">
+					<button type="button" onclick="location.href='/apps/membership/profile';">Cancel and Back</button>
+				</div>
 
-									<div id="delete-collections"></div>
+			</form>
 
-									<div class="form-row form-row-wide" style="margin-top:24px;">
-										<button id="add-socmed" type="button" class="button">Add new</button>
-									</div>
-								</fieldset>
-
-							</fieldset>
-
-						</div>
-
-					</div>
-
-					<div class="dt-sc-margin50"></div>
-					<p style="float: left;">
-
-						<button type="button" onclick="location.href='<?php echo $this->uri_path_for('membership-profile'); ?>';" class="button" style="color:#fff;">Cancel and Back</button>
-						<input type="submit" class="button" value="Update Data" style="color:#fff; margin-right: 25px;" />
-					</p>
-					<div class="dt-sc-margin50"></div>
-				</form>
-			</div>
 		</div>
-		<div class="dt-sc-hr-invisible-small"></div>
+
 	</div>
+
 </section>
+

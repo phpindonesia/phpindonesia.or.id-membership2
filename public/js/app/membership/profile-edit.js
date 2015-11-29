@@ -44,7 +44,7 @@ jQuery(document).ready(function () {
 
         item += '<tr id="socmed-item'+item_number+'">';
 
-        item += '<td style="padding-top: 35px;">';
+        item += '<td>';
         item += item_label;
         item += '<input class="db-row-id" type="hidden" name="socmeds['+item_number+'][member_socmed_id]" value="0" />';
         item += '<input class="socmed-type" type="hidden" name="socmeds['+item_number+'][socmed_type]" value="'+item_value+'" />';
@@ -58,7 +58,7 @@ jQuery(document).ready(function () {
         item += '<input type="text" name="socmeds['+item_number+'][account_url]" value="'+account_url+'" />';
         item += '</td>';
 
-        item += '<td style="padding-top: 25px; font-size: 1.5em">';
+        item += '<td style="font-size: 1.5em">';
         item += "<a href=\"javascript:delete_socmed('socmed-item"+item_number+"')\" title=\"Delete this socmed item\">x</a>";
         item += '</td>';
 

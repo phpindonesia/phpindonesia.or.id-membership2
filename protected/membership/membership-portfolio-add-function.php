@@ -75,7 +75,7 @@ $app->map(['GET', 'POST'], '/apps/membership/portfolio/add', function ($request,
 	$this->view->getPlates()->addData(
         array(
             'page_title' => 'Membership',
-            'sub_page_title' => 'Update Portfolio'
+            'sub_page_title' => 'Add new portfolio'
         ),
         'layouts::layout-system'
     );
