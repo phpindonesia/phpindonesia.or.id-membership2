@@ -49,8 +49,26 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
     ->setParameter(':d', 'N')
     ->execute();
 
+    $q_member_skills = $this->db->createQueryBuilder()
+    ->select(
+        'ms.member_skill_id',
+        'ms.skill_self_assesment',
+        'sp.skill_name AS skill_parent_name',
+        'ss.skill_name'
+    )
+    ->from('members_skills', 'ms')
+    ->leftJoin('ms', 'skills', 'sp', 'ms.skill_parent_id = sp.skill_id')
+    ->leftJoin('ms', 'skills', 'ss', 'ms.skill_id = ss.skill_id')
+    ->where('ms.user_id = :uid')
+    ->andWhere('ms.deleted = :d')
+    ->orderBy('sp.skill_name', 'ASC')
+    ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+    ->setParameter(':d', 'N')
+    ->execute();
+
     $member = $q_member->fetch();
     $member_portfolios = $q_member_portfolios->fetchAll();
+    $member_skills = $q_member_skills->fetchAll();
     $member_socmeds = $q_member_socmeds->fetchAll();
     $socmedias = $this->getContainer()->get('settings')['socmedias'];
     $socmedias_logo = $this->getContainer()->get('settings')['socmedias_logo'];
@@ -76,7 +94,34 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
     $years_range = $this->getContainer()->get('years_range');
     $months_range = $this->getContainer()->get('months_range');
     $days_range = $this->getContainer()->get('days_range');
+    
     // --- End data view for portfolio-add-section
+
+    /*
+     * Data view for skill-add-section
+     * //
+    */
+    $q_skills_main = $this->db->createQueryBuilder()
+    ->select('skill_id', 'skill_name')
+    ->from('skills')
+    ->where('parent_id IS NULL')
+    ->execute();
+
+    $skills_main = \Cake\Utility\Hash::combine($q_skills_main->fetchAll(), '{n}.skill_id', '{n}.skill_name');
+    $skills = array();
+
+    if (isset($_POST['skill_id']) && $_POST['skill_parent_id'] != '') {
+        $q_skills = $this->db->createQueryBuilder()
+        ->select('skill_id', 'skill_name')
+        ->from('skills')
+        ->where('parent_id = :pid')
+        ->setParameter(':pid', $_POST['skill_parent_id'])
+        ->execute();
+
+        $skills = \Cake\Utility\Hash::combine($q_skills->fetchAll(), '{n}.skill_id', '{n}.skill_name');
+    }
+
+    // --- End data view for skill-add-section
 
     $this->db->close();
 
@@ -87,6 +132,7 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
         ),
         'layouts::layout-system'
     );
+
 
     /*
      * Assign data view for portfolio-add-section
@@ -103,12 +149,22 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
         'membership/sections/portfolio-add-section'
     );
 
+    /*
+     * Assign data view for skill-add-section
+     * //
+    */
+    $this->view->getPlates()->addData(
+        compact('skills_main', 'skills'),
+        'membership/sections/skill-add-section'
+    );
+
     return $this->view->render(
         $response,
         'membership/profile',
         compact(
             'member',
             'member_portfolios',
+            'member_skills',
             'member_socmeds',
             'socmedias',
             'socmedias_logo',
@@ -118,21 +174,69 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
 
 })->setName('membership-profile');
 
+
 $app->get('/apps/membership/profile-javascript', function ($request, $response, $args) {
 
-    $q_check_portf = $this->db->createQueryBuilder()
-    ->select('COUNT(*) AS total_data')
-    ->from('members_portfolios')
-    ->where('user_id = :uid')
-    ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-    ->execute();
+    $open_portfolio = false;
+    $open_skill = false;
+    $worker = array('KARYAWAN', 'FREELANCER', 'OWNER', 'MAHASISWA-KARYAWAN');
+    $student = array('PELAJAR', 'MAHASISWA');
 
-    $have_portf = false;
-    if ($q_check_portf->fetch()['total_data'] > 0) {
-        $have_portf = true;
+    if (in_array($_SESSION['MembershipAuth']['job_id'], $worker)) {
+
+        if (!isset($_COOKIE['portfolio-popup'])) {
+            $q_check_portf = $this->db->createQueryBuilder()
+            ->select('COUNT(*) AS total_data')
+            ->from('members_portfolios')
+            ->where('user_id = :uid')
+            ->andWhere('deleted = :d')
+            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+            ->setParameter(':d', 'N')
+            ->execute();
+
+            if ($q_check_portf->fetch()['total_data'] > 0) {
+                $open_portfolio = false;
+            } else {
+                $open_portfolio = true;
+            }
+        }
+
+        if (!isset($_COOKIE['skill-popup'])) {
+            $q_check_skills = $this->db->createQueryBuilder()
+            ->select('COUNT(*) AS total_data')
+            ->from('members_skills')
+            ->where('user_id = :uid')
+            ->andWhere('deleted = :d')
+            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+            ->setParameter(':d', 'N')
+            ->execute();
+
+            if ($q_check_skills->fetch()['total_data'] > 0) {
+                $open_skill = false;
+            } else {
+                $open_skill = true;
+            }
+        }
+
+    } else if (in_array($_SESSION['MembershipAuth']['job_id'], $student)) {
+        
+        if (!isset($_COOKIE['skill-popup'])) {
+            $q_check_skills = $this->db->createQueryBuilder()
+            ->select('COUNT(*) AS total_data')
+            ->from('members_skills')
+            ->where('user_id = :uid')
+            ->andWhere('deleted = :d')
+            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+            ->setParameter(':d', 'N')
+            ->execute();
+
+            if ($q_check_skills->fetch()['total_data'] > 0) {
+                $open_skill = false;
+            } else {
+                $open_skill = true;
+            }
+        }
     }
-
-    $this->db->close();
 
     $response_n = $response->withStatus(200)
     ->withHeader('Content-Type', 'application/javascript');
@@ -140,7 +244,36 @@ $app->get('/apps/membership/profile-javascript', function ($request, $response, 
     return $this->view->render(
         $response_n,
         'membership/profile-javascript',
-        array('have_portf' => $have_portf)
+        array(
+            'open_portfolio' => $open_portfolio,
+            'open_skill' => $open_skill
+        )
     );
 
 })->setName('membership-profile-javascript');
+
+
+$app->get('/apps/membership/profile-portfolio-setcookie', function ($request, $response, $args) {
+
+    if (!isset($_COOKIE['portfolio-popup'])) {
+        setcookie('portfolio-popup', 1, time()+86400);
+    }
+
+    return $response->withStatus(200)
+    ->withHeader('Content-Type', 'application/json')
+    ->write(json_encode(array('resp' => 'OK')));
+
+})->setName('membership-profile-portfolio-setcookie');
+
+
+$app->get('/apps/membership/profile-skill-setcookie', function ($request, $response, $args) {
+    
+    if (!isset($_COOKIE['skill-popup'])) {
+        setcookie('skill-popup', 1, time()+86400);
+    }
+
+    return $response->withStatus(200)
+    ->withHeader('Content-Type', 'application/json')
+    ->write(json_encode(array('resp' => 'OK')));    
+
+})->setName('membership-profile-skill-setcookie');

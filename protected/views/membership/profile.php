@@ -4,7 +4,8 @@
 $this->append_js(array(
     $this->uri_base_url().'/public/js/jquery.popupoverlay.js',
     $this->uri_path_for('membership-profile-javascript'),
-    $this->uri_base_url().'/public/js/app/membership/portfolio-add.js'
+    $this->uri_base_url().'/public/js/app/membership/portfolio-add.js',
+    $this->uri_base_url().'/public/js/app/membership/skill-add.js'
 ));
 ?>
 
@@ -66,8 +67,9 @@ $this->append_js(array(
 		<div class="column dt-sc-three-fifth">
 
 			<div class="entry-body" style="margin-top: -25px; margin-bottom: 25px;">
-				<a href="<?php echo $this->uri_path_for('membership-profile-edit'); ?>" class="button">Update Basic Profile</a>
-				<a href="<?php echo $this->uri_path_for('membership-portfolio-add'); ?>" class="button">Add Portfolio</a>
+				<a href="<?php echo $this->uri_path_for('membership-profile-edit'); ?>" class="button" style="color: blue;">Update Basic Profile</a>
+				<a href="<?php echo $this->uri_path_for('membership-portfolio-add'); ?>" class="button" style="color: blue;">Add Portfolios</a>
+                <a href="<?php echo $this->uri_path_for('membership-skill-add'); ?>" class="button" style="color: blue;">Add Skills</a>
 			</div>
 
 			<article class="blog-post">
@@ -156,9 +158,10 @@ $this->append_js(array(
 	</div>
 
 	<div class="container">
+
 		<h3>Portfolios</h3>
 
-        <div class="table-responsive">
+        <div class="table-responsive" style="margin-bottom: 25px;">
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -201,7 +204,6 @@ $this->append_js(array(
                             <?php
                             $periode_str = '';
 
-                            // Start
                             if ($item_portfolio['start_date_d'] != null) {
                                 $periode_str .= $item_portfolio['start_date_d'].' ';
                             }
@@ -216,7 +218,7 @@ $this->append_js(array(
 
                             if ($item_portfolio['work_status'] == 'R') {
                                 $periode_str .= ' s/d ';
-                                // End
+
                                 if ($item_portfolio['end_date_d'] != null) {
                                     $periode_str .= $item_portfolio['end_date_d'].' ';
                                 }
@@ -261,6 +263,59 @@ $this->append_js(array(
             </table>
         </div>
 
+        <h3>Skills</h3>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="font-weight: bold;">#</th>
+                        <th style="font-weight: bold;">Skill Global</th>
+                        <th style="font-weight: bold;">Skill Spesific</th>
+                        <th style="font-weight: bold; text-align: center;">Self Assesment</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <?php
+                    $num_skill = 1;
+                    foreach ($member_skills as $item_skill):
+                    ?>
+                    <tr>
+                        <td>
+                            <?php echo $num_skill; ?>
+                        </td>
+
+                        <td>
+                            <?php echo $item_skill['skill_parent_name']; ?>
+                        </td>
+
+                        <td>
+                            <?php echo $item_skill['skill_name']; ?>
+                        </td>
+
+                        <td style="text-align: center;">
+                            <?php echo $item_skill['skill_self_assesment']; ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            $unique = md5($num_skill.$item_skill['member_skill_id']);
+                            ?>
+                            <form action="<?php echo $this->uri_path_for('membership-skill-delete', array('id' => $item_skill['member_skill_id'])); ?>" name="post_<?php echo $unique; ?>" id="post_<?php echo $unique; ?>" style="display:none;" method="post"><input autocomplete="off" name="_method" value="POST" type="hidden"></form>
+                            <a href="#" onclick="if (confirm('Delete this skill item?')) { document.post_<?php echo $unique; ?>.submit(); } event.returnValue = false; return false;"><i class="fa fa-trash"></i> Delete</a>
+                        </td>
+                    </tr>
+                    <?php
+                    $num_skill++;
+                    endforeach;
+                    ?>
+
+                </tbody>
+            </table>
+
 	</div>
 	
 </div>
@@ -268,7 +323,7 @@ $this->append_js(array(
 <div class="dt-sc-margin50"></div>
 
 
-<!-- PORTFOLIO ADD SECTION -->
+<!-- PORTFOLIO & SKILL ADD SECTION -->
 <div id="portfolio-popup" class="well" style="background-color: #FFFFFF;">
     
     <?php
@@ -277,5 +332,16 @@ $this->append_js(array(
 
     <div style="position: absolute; top: 5px; right: 5px;">
         <button class="portfolio-popup-close">Close [X]</button>
+    </div>
+</div>
+
+<div id="skill-popup" class="well" style="background-color: #FFFFFF;">
+    
+    <?php
+    echo $this->insert('membership/sections/skill-add-section');
+    ?>
+
+    <div style="position: absolute; top: 5px; right: 5px;">
+        <button class="skill-popup-close">Close [X]</button>
     </div>
 </div>

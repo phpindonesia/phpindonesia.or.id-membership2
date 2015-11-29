@@ -15,10 +15,12 @@ jQuery("#skill-parent-id").on('change', function () {
                 }, data);
 
                 jQuery("#skill-id-dd").html(str_opts);
+                jQuery("#skill-id-dd").attr('disabled', false);
                 jQuery("#skill-id-row").fadeIn();
 
             } else {
-                jQuery("#skill-id-row").fadeOut();                
+                jQuery("#skill-id-row").fadeOut();
+                jQuery("#skill-id-dd").attr('disabled', true);                
             }
 
         }).fail(function (data) {
@@ -26,6 +28,13 @@ jQuery("#skill-parent-id").on('change', function () {
         }).always(function (data) {
             //
         });
+        
+    } else {
+        var str_opts = input_select_n({}, []);
+        
+        jQuery("#skill-id-dd").html(str_opts);
+        jQuery("#skill-id-dd").attr('disabled', true);
+        jQuery("#skill-id-row").fadeOut();
         
     }
 });

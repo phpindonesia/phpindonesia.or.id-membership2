@@ -45,7 +45,8 @@ $app->map(['GET', 'POST'], '/apps/membership/login', function ($request, $respon
                     'u.city_id',
                     'ur.role_id',
                     'up.fullname',
-                    'up.photo'
+                    'up.photo',
+                    'up.job_id'
                 )
                 ->from('users', 'u')
                 ->leftJoin('u', 'users_roles', 'ur', 'u.user_id = ur.user_id')
@@ -76,6 +77,7 @@ $app->map(['GET', 'POST'], '/apps/membership/login', function ($request, $respon
                 $_SESSION['MembershipAuth']['city_id'] = $user['city_id'];
                 $_SESSION['MembershipAuth']['photo'] = $user['photo'];
                 $_SESSION['MembershipAuth']['fullname'] = $user['fullname'];
+                $_SESSION['MembershipAuth']['job_id'] = $user['job_id'];
 
                 $db->update('users', array('last_login' => date('Y-m-d H:i:s')), array(
                     'user_id' => $user['user_id']

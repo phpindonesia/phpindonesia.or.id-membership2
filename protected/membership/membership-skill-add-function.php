@@ -14,7 +14,24 @@ $app->map(['GET', 'POST'], '/apps/membership/skill/add', function ($request, $re
 
         if ($this->validator->validate()) {
 
-            //
+            $skill_id = null;
+            $skill_parent_id = filter_var(trim($_POST['skill_parent_id']), FILTER_SANITIZE_STRING);
+            if (!isset($_POST['skill_id'])) {
+                $skill_id = $skill_parent_id;
+            } else {
+                $skill_id = filter_var(trim($_POST['skill_id']), FILTER_SANITIZE_STRING);
+            }
+
+            $this->db->insert('members_skills', array(
+                'user_id' => filter_var(trim($_SESSION['MembershipAuth']['user_id']), FILTER_SANITIZE_STRING),
+                'skill_id' => $skill_id,
+                'skill_parent_id' => $skill_parent_id,
+                'skill_self_assesment' => filter_var(trim($_POST['skill_self_assesment']), FILTER_SANITIZE_STRING),
+                'created' => date('Y-m-d H:i:s'),
+                'modified' => null
+            ));
+
+            $this->db->close();
 
             $this->flash->flashLater('success', 'Item skill baru berhasil ditambahkan. Selamat! . Silahkan tambahkan lagi item skill anda.');
             return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-profile'));
