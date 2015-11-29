@@ -1,6 +1,7 @@
 <?php
 return array(
 	'settings' => array(
+		'mode' => 'development',
 		'salt_pwd' => 'dev-spirit',
 		'db' => array(
 			'host' => 'localhost',
@@ -19,6 +20,11 @@ return array(
 		'email' => array(
 			'sender_email' => 'someone@gmail.com',
 			'sender_name' => 'PHP Indonesia Membership'
+		),
+		'cloudinary' => array(
+			'cloud_name' => '-',
+			'api_key' => '123456789143210',
+			'api_secret' => '-'
 		),
 		'upload_photo_profile_path' => _FULL_APP_PATH_.'public'._DS_.'files'._DS_.'photoprofile'._DS_,
 		'base_url' => 'http://localhost'
