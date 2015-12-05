@@ -23,6 +23,7 @@ $app->get('/apps/membership', function ($request, $response, $args) {
     ->leftJoin('m', 'regionals', 'reg_cit', 'reg_cit.id = m.city_id')
     ->where('ur.role_id = :rid')
     ->andWhere('u.activated = :act')
+    ->orderBy('u.created', 'DESC')
     ->setParameter(':rid', 'member')
     ->setParameter(':act', 'Y');
 
