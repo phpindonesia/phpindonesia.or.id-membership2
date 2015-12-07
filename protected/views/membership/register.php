@@ -35,7 +35,7 @@ $this->append_js(array(
 							<input type="text" id="username" name="username" class="form-control" value="<?php echo $this->fh_default_val('username'); ?>" />
 							<p class="help-block">
 	                        	<?php echo $this->fh_show_errors('username', $_view_validation_errors_); ?>
-								Masukkan <em>username</em> yang kamu inginkan.
+								Masukkan <em>username</em> yang anda inginkan.
 							</p>
 						</div>
 					</div>
@@ -46,7 +46,7 @@ $this->append_js(array(
 							<input type="password" id="password" name="password" class="form-control" value="<?php echo $this->fh_default_val('password'); ?>" />
 							<p class="help-block">
 	                        	<?php echo $this->fh_show_errors('password', $_view_validation_errors_); ?>
-								Masukkan <em>password</em> yang kamu inginkan.
+								Masukkan <em>password</em> yang anda inginkan.
 							</p>
 						</div>
 					</div>
@@ -57,7 +57,7 @@ $this->append_js(array(
 							<input type="password" id="repassword" name="repassword" class="form-control" value="<?php echo $this->fh_default_val('repassword'); ?>" />
 							<p class="help-block">
 	                        	<?php echo $this->fh_show_errors('repassword', $_view_validation_errors_); ?>
-								Kaonfirmasikan ulang <em>password</em> yang kamu masukkan.
+								Konfirmasikan ulang <em>password</em> yang anda masukkan.
 							</p>
 						</div>
 					</div>
@@ -68,14 +68,14 @@ $this->append_js(array(
 							<input type="text" id="fullname" name="fullname" class="form-control" value="<?php echo $this->fh_default_val('fullname'); ?>" />
 							<p class="help-block">
 	                        	<?php echo $this->fh_show_errors('fullname', $_view_validation_errors_); ?>
-								Masukkan <em>nama lengkap</em> kamu, <b>jangan</b> masukkan nama alay.
+								Masukkan <em>nama lengkap</em> anda
 							</p>
 						</div>
 					</div>
 
 					<div class="col-xs-10 col-sm-5">
 						<div class="form-group">
-	                        <label for="gender-dd" class="control-label">Jenis Kelamin *</label>
+	                        <label for="gender-dd" class="control-label">Gender *</label>
 	                        <?php
 	                        echo $this->fh_input_select('gender_id', array('female' => 'Wanita', 'male' => 'Pria'), array(
 	                        	'id' => 'gender-dd',
@@ -84,7 +84,7 @@ $this->append_js(array(
 	                        ?>
 							<p class="help-block">
 	                        	<?php echo $this->fh_show_errors('gender_id', $_view_validation_errors_); ?>
-								Cukup jelas :).
+								Gender
 							</p>
 						</div>
 					</div>
@@ -99,7 +99,7 @@ $this->append_js(array(
 	                        ?>
 							<p class="help-block">
 	                        	<?php echo $this->fh_show_errors('province_id', $_view_validation_errors_); ?>
-								Masukkan <em>propinsi</em> wilayah kamu bertempat tinggal.
+								Masukkan <em>propinsi</em> wilayah anda bertempat tinggal.
 							</p>
 						</div>
 					</div>
@@ -115,7 +115,7 @@ $this->append_js(array(
 	                        ?>
 							<p class="help-block">
 	                        	<?php echo $this->fh_show_errors('city_id', $_view_validation_errors_); ?>
-								Masukkan <em>kota</em> atau <em>kabupaten</em> wilayah kamu bertempat tinggal.
+								Masukkan <em>kota</em> atau <em>kabupaten</em> wilayah anda bertempat tinggal.
 							</p>
 						</div>
 					</div>
@@ -126,7 +126,7 @@ $this->append_js(array(
 							<input type="text" id="area" name="area" class="form-control" value="<?php echo $this->fh_default_val('area'); ?>" />
 							<p class="help-block">
 	                        	<?php echo $this->fh_show_errors('area', $_view_validation_errors_); ?>
-								Masukkan wilayah <em>domisili, kecamatan, atau desa</em> tempat kamu sekarang tinggal.
+								Masukkan wilayah <em>domisili, kecamatan, atau desa</em> tempat anda sekarang tinggal.
 							</p>
 						</div>
 					</div>
@@ -135,14 +135,14 @@ $this->append_js(array(
 						<div class="form-group">
 	                        <label for="job-id" class="control-label">Pekerjaan *</label>
 	                        <?php
-	                        echo $this->fh_input_select('job_id', $cities, array(
+	                        echo $this->fh_input_select('job_id', $jobs, array(
 	                        	'id' => 'job-id',
 	                        	'class' => 'form-control'
 	                        ));
 	                        ?>
 							<p class="help-block">
 	                        	<?php echo $this->fh_show_errors('job_id', $_view_validation_errors_); ?>
-								Aktifitas atau pekerjaan kamu saat ini.
+								Aktifitas atau pekerjaan anda saat ini.
 							</p>
 						</div>
 					</div>
