@@ -17,9 +17,10 @@
 	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/responsive.css'; ?>" type="text/css" media="all" />
 	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/meanmenu.css'; ?>" type="text/css" media="all" />
 	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/font-awesome.min.css'; ?>" type="text/css" />
-    <link href="<?php echo $this->uri_base_url().'/public/css/formalize.css?v='.time(); ?>" rel="stylesheet">
-	<link href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic" rel="stylesheet" type="text/css">
-	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/formalize.css?v='.time(); ?>" />
+	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/responsive2.css'; ?>" type="text/css" media="all" />
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic" type="text/css" />
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" type="text/css" />
 
 	<link rel="shortcut icon" href="<?php echo $this->uri_base_url().'/public/images/favicon.png'; ?>" type="image/png">
 
