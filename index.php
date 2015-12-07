@@ -35,7 +35,8 @@ require 'libraries'._DS_.'Hash.php';
 
 $settings = require 'protected'._DS_.'settings.php';
 session_start();
-$app = new \Slim\App($settings);
+$container = new \Slim\Container($settings);
+$app = new \Slim\App($container);
 
 require 'protected'._DS_.'dependencies.php';
 
