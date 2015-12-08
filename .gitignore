@@ -4,3 +4,4 @@ qnd-cli-utils/settings.php
 composer.phar
 composer.lock
 composer.json
+.idea/*
