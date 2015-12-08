@@ -3,7 +3,8 @@ namespace App\Libraries;
 
 use \League\Plates\Engine;
 
-class Validator {
+class Validator
+{
 	protected $validator;
 	protected $plates;
 
@@ -19,9 +20,14 @@ class Validator {
 		\Valitron\Validator::addRule($rule_name, $callback, $message);
 	}
 
-	public function rule($rule, $fields) {
-		$num_args = func_num_args();
-		$args = func_get_args();
+	public function rule($rule, $fields = null) {
+		if (is_array($rule)) {
+			$this->validator->rules($rule);
+			return;
+		}
+
+		$num_args	 = func_num_args();
+		$args		 = func_get_args();
 
 		if ($num_args == 3) {
 			$this->validator->rule($rule, $fields, $args[2]);
@@ -32,6 +38,8 @@ class Validator {
 		} else {
 			$this->validator->rule($rule, $fields);
 		}
+
+		return $this;
 	}
 
 	public function errors() {
@@ -46,4 +54,18 @@ class Validator {
 		$this->plates->addData(array('_view_validation_errors_' => $this->validator->errors()));
 		return false;
 	}
+
+	public function message($arg) {
+		$this->validator->message($arg);
+		return $this;
+	}
+
+	public function label($arg) {
+		if (is_array($arg)) {
+			$this->validator->labels($arg);
+		} else {
+			$this->validator->label($arg);
+		}
+	}
+
 }
