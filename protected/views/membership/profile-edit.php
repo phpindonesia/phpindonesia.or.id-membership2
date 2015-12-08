@@ -15,9 +15,7 @@ $this->append_js(array(
 
 			<h3 style="border-bottom: 1px #000000 solid;">Update My Basic Profile</h3>
 
-			<?php
-			echo $this->insert('sections::flash-message');
-			?>
+			<?php echo $this->insert('sections::flash-message'); ?>
 
 			<form action="<?php echo $this->uri_path_for('membership-profile-edit'); ?>" method="post" enctype="multipart/form-data" class="checkout" novalidate>
 
@@ -51,6 +49,7 @@ $this->append_js(array(
 								</th>
 								<td>
 									<input type="text" class="input_full" id="contact_phone" name="contact_phone" value="<?php echo $this->fh_default_val('contact_phone', $member['contact_phone']); ?>" />
+									<?php echo $this->fh_show_errors('contact_phone', $_view_validation_errors_); ?>
 								</td>
 							</tr>
 
@@ -61,9 +60,9 @@ $this->append_js(array(
 								<td>
 									<?php
 									echo $this->fh_input_select('province_id', $provinces, array(
-										'default' => $member['province_id'],
-										'id' => 'provinces-dd',
-										'class' => 'input_full'
+										'default'	 => $member['province_id'],
+										'id'		 => 'provinces-dd',
+										'class'		 => 'input_full'
 									));
 									?>
 
@@ -78,9 +77,9 @@ $this->append_js(array(
 								<td>
 									<?php
 									echo $this->fh_input_select('city_id', $cities, array(
-										'default' => $member['city_id'],
-										'id' => 'cities-dd',
-										'class' => 'input_full'
+										'default'	 => $member['city_id'],
+										'id'		 => 'cities-dd',
+										'class'		 => 'input_full'
 									));
 									?>
 
@@ -94,6 +93,7 @@ $this->append_js(array(
 								</th>
 								<td>
 									<input type="text" class="input_full" id="area" name="area" value="<?php echo $this->fh_default_val('area', $member['area']); ?>" />
+									<?php echo $this->fh_show_errors('area', $_view_validation_errors_); ?>
 								</td>
 							</tr>
 
@@ -104,9 +104,9 @@ $this->append_js(array(
 								<td>
 									<?php
 									echo $this->fh_input_select('job_id', $jobs, array(
-										'default' => $member['job_id'],
-										'id' => 'job-id',
-										'class' => 'input_full'
+										'default'	 => $member['job_id'],
+										'id'		 => 'job-id',
+										'class'		 => 'input_full'
 									));
 									?>
 
@@ -122,11 +122,12 @@ $this->append_js(array(
 								<td>
 								<?php
 								echo $this->fh_input_select('identity_type', $identity_types, array(
-									'default' => $member['identity_type'],
-									'id' => 'identity_type',
-									'class' => 'input_full'
+									'default'	 => $member['identity_type'],
+									'id'		 => 'identity_type',
+									'class'		 => 'input_full'
 								));
 								?>
+								<?php echo $this->fh_show_errors('identity_type', $_view_validation_errors_); ?>
 								</td>
 							</tr>
 
@@ -134,9 +135,10 @@ $this->append_js(array(
 								<th>
 									<label for="identity_number" style="font-weight: bold;">Nomer Identitas</label>
 								</th>
-								
+
 								<td>
 									<input type="text" class="input_full" id="identity_number" name="identity_number" value="<?php echo $this->fh_default_val('identity_number', $member['identity_number']); ?>" />
+									<?php echo $this->fh_show_errors('identity_number', $_view_validation_errors_); ?>
 								</td>
 							</tr>
 
@@ -144,9 +146,10 @@ $this->append_js(array(
 								<th>
 									<label for="birth_place" style="font-weight: bold;">Tempat Lahir</label>
 								</th>
-								
+
 								<td>
 									<input type="text" class="input_full" id="birth_place" name="birth_place" value="<?php echo $this->fh_default_val('birth_place', $member['birth_place']); ?>" />
+									<?php echo $this->fh_show_errors('birth_place', $_view_validation_errors_); ?>
 								</td>
 							</tr>
 
@@ -154,9 +157,10 @@ $this->append_js(array(
 								<th>
 									<label for="birth-date" style="font-weight: bold;">Tanggal Lahir</label>
 								</th>
-								
+
 								<td>
 									<input type="text" class="input_full" id="birth-date" name="birth_date" value="<?php echo $member['birth_date']; ?>" />
+									<?php echo $this->fh_show_errors('birth_date', $_view_validation_errors_); ?>
 								</td>
 							</tr>
 
@@ -164,13 +168,13 @@ $this->append_js(array(
 								<th>
 									<label for="religion_id" style="font-weight: bold;">Religi</label>
 								</th>
-								
+
 								<td>
 								<?php
 								echo $this->fh_input_select('religion_id', $religions, array(
-									'default' => $member['religion_id'],
-									'id' => 'religion-dd',
-									'class' => 'input_full'
+									'default'	 => $member['religion_id'],
+									'id'		 => 'religion-dd',
+									'class'		 => 'input_full'
 								));
 								?>
 								</td>
@@ -179,7 +183,7 @@ $this->append_js(array(
 						</tbody>
 					</table>
 
-				</div>		
+				</div>
 
 				<div class="right-col-oprek">
 					<fieldset>
@@ -196,6 +200,7 @@ $this->append_js(array(
 
 						</div>
 					</fieldset>
+					<?php echo $this->fh_show_errors('photo', $_view_validation_errors_); ?>
 
 					<fieldset>
 						<legend>Social Medias</legend>
@@ -215,13 +220,12 @@ $this->append_js(array(
 								if ($members_socmeds):
 									$ii = 0;
 									foreach ($members_socmeds as $socmed):
-								?>
+									?>
 
 								    <tr id="socmed-item<?php echo $ii; ?>">
 								    	<td>
-								    		<?php echo $socmedias[$socmed['socmed_type']]; ?>
-								    		<input class="db-row-id" type="hidden" name="socmeds[<?php echo $ii; ?>][member_socmed_id]" value="<?php echo $socmed['member_socmed_id']; ?>" />
-								    		<input class="socmed-type" type="hidden" name="socmeds[<?php echo $ii; ?>][socmed_type]" value="<?php echo $socmed['socmed_type']; ?>" />
+											<?php echo $socmedias[$socmed['socmed_type']][0] ?>
+											<input class="socmed-type" type="hidden" name="socmeds[<?php echo $ii; ?>][socmed_type]" value="<?php echo $socmed['socmed_type']; ?>" />
 								    	</td>
 
 								    	<td>
@@ -238,24 +242,34 @@ $this->append_js(array(
 
 								    </tr>
 
-								<?php
+									<?php
 								    $ii++;
 								    endforeach;
-								else:											   
-								?>
+								else:
+                                    ?>
 
-								<tr class="empty-row">
-									<td>---</td>
-									<td>---</td>
-									<td>---</td>
-									<td>---</td>
-								</tr>
+                                    <tr class="empty-row">
+                                        <td>---</td>
+                                        <td>---</td>
+                                        <td>---</td>
+                                        <td>---</td>
+                                    </tr>
 
 								<?php
 								endif;
 								?>
 							</tbody>
 						</table>
+
+						<?php
+						if (isset($_POST['socmeds'])):
+							foreach ((array) $_POST['socmeds'] as $i => $item):
+								echo $this->fh_show_errors("socmeds.{$i}.socmed_type", $_view_validation_errors_);
+								echo $this->fh_show_errors("socmeds.{$i}.account_name", $_view_validation_errors_);
+								echo $this->fh_show_errors("socmeds.{$i}.account_url", $_view_validation_errors_);
+							endforeach;
+						endif;
+						?>
 
 						<fieldset>
 							<legend>Tambah Informasi Social Media</legend>
@@ -270,10 +284,10 @@ $this->append_js(array(
 										<td>
 
 											<?php
-											echo $this->fh_input_select('socmed_type', $socmedias, array(
-												'id' => 'meds-dd',
-												'class' => 'input_full'
-											));
+											echo $this->fh_input_select('socmed_type',
+												array_combine(array_keys($socmedias), \Cake\Utility\Hash::extract($socmedias, '{s}.0')),
+												array('id' => 'meds-dd', 'class' => 'input_full')
+											);
 											?>
 										</td>
 									</tr>
@@ -325,4 +339,3 @@ $this->append_js(array(
 	</div>
 
 </section>
-

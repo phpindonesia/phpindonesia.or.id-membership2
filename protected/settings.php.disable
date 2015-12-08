@@ -49,20 +49,12 @@ return array(
 		'use_captcha' => true,
 		'upload_photo_profile_path' => _FULL_APP_PATH_.'public'._DS_.'files'._DS_.'photoprofile'._DS_,
 		'socmedias' => array(
-			'facebook' => 'Facebook',
-			'twitter' => 'Twitter',
-			'linkedin' => 'LinkedIn',
-			'instagram' => 'Instagram',
-			'path' => 'Path',
-			'github' => 'GitHub'
+			'facebook'  => ['Facebook', 'fa-facebook', 'http://facebook.com/'],
+			'twitter'   => ['Twitter', 'fa-twitter', 'http://twitter.com/'],
+			'linkedin'  => ['LinkedIn', 'fa-linkedin', 'http://linkedin.com/in/'],
+			'instagram' => ['Instagram', 'fa-instagram', 'http://instagram.com/'],
+			'path'      => ['Path', 'fa-pinterest-p', 'http://path.com/'],
+			'github'    => ['GitHub', 'fa-github', 'http://github.com/'],
 		),
-		'socmedias_logo' => array(
-			'facebook' => 'fa-facebook',
-			'twitter' => 'fa-twitter',
-			'linkedin' => 'fa-linkedin',
-			'instagram' => 'fa-instagram',
-			'path' => 'fa-pinterest-p',
-			'github' => 'fa-github'
-		)
 	)
 );

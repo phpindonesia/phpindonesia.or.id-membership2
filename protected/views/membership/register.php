@@ -17,7 +17,6 @@ $this->append_js(array(
 
 			<form action="<?php echo $this->uri_path_for('membership-register'); ?>" method="post" novalidate class="form-horizontal">
 				<div class="row">
-					
 					<div class="col-xs-10 col-sm-5">
 						<div class="form-group">
 							<label for="email" class="control-label">Alamat Email</label>
