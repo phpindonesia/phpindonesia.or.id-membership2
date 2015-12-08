@@ -2,120 +2,96 @@
 
 <?php
 $this->append_js(array(
-    $this->uri_base_url().'/public/js/app/membership/index.js'
+    $this->uri_base_url() . '/public/js/app/membership/index.js'
+));
+$this->append_css(array(
+    $this->uri_base_url() . '/public/css/chabibnr.css'
 ));
 ?>
-
 <section id="primary" class="content-full-width">
 
-	<div class="full-width-section">
+    <div class="full-width-section">
 
-		<div class="container" style="margin-top: -70px;">
-			
-			<h2 class="aligncenter">Anggota PHP Indonesia</h2>
-
-			<?php
-			echo $this->insert('sections::flash-message');
-			?>
-
-			<form action="<?php echo $this->uri_path_for('membership-index'); ?>" method="get" class="checkout" novalidate>
-				<table>
-                    <tbody>
-                        <tr>
-                            <th>
-                                <label for="provinces-dd" style="font-weight: bold;">Provinsi</label>
-                            </th>
-                            <td>
+        <div class="container bootstrap" style="margin-top: -70px;">
+            <div class="row">
+                <div class="col-md-3">
+                    <form class="aside-search" action="<?php echo $this->uri_path_for('membership-index'); ?>"
+                          method="get">
+                        <h3 class="aside-header">CARI MEMBER</h3>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-6">
+                                <label class="aside-label">Provinsi</label>
                                 <?php
                                 echo $this->fh_input_select('province_id', $provinces, array(
                                     'id' => 'provinces-dd',
-                                    'class' => 'input_full'
+                                    'class' => 'aside-input'
                                 ));
                                 ?>
-                            </td>
-
-                            <th>
-                            	<label for="cities-dd" style="font-weight: bold;">Kabupaten / Kota</label>
-                            </th>
-                            <td>
-                            	<?php
+                            </div>
+                            <div class="col-md-12 col-sm-6">
+                                <label class="aside-label">Kota</label>
+                                <?php
                                 echo $this->fh_input_select('city_id', $cities, array(
                                     'id' => 'cities-dd',
-                                    'class' => 'input_full'
+                                    'class' => 'aside-input'
                                 ));
                                 ?>
-                            </td>
-                        </tr>
+                            </div>
+                        </div>
 
-                        <tr>
-                        	<th>
-                        		<label for="area" style="font-weight: bold;">Area</label>
-                        	</th>
-                        	<td>
-                        		<input type="text" id="area" class="input_full" name="area" value="<?php echo $this->fh_default_val('area', null, true); ?>" />
-                        	</td>
-                        	<td>&nbsp;</td>
-                        	<td>&nbsp;</td>
-                        </tr>
+                        <label class="aside-label">Area</label>
+                        <input type="text" id="area" class="aside-input" name="area"
+                               value="<?php echo $this->fh_default_val('area', null, true); ?>"/>
 
-                        <tr>
-                        	<td>&nbsp;</td>
-                        	<td><input value="Search" type="submit" /></td>
-                        	<td>&nbsp;</td>
-                        	<td>&nbsp;</td>
-                        </tr>
-                    </tbody>
-                </table>
-			</form>
+                        <div>
+                            <button type="submit" class="aside-submit">Search</button>
+                            <div class="clearfix"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-9">
+                    <div class="row">
+                        <?php
+                        echo $this->insert('sections::flash-message');
+                        ?>
 
-			<?php
-            $no = 1;
-            foreach($members as $member):
-            ?>
+                        <?php foreach ($members as $member): ?>
+                            <div class="col-md-4 col-xs-12 col-sm-6">
+                                <div class="card-profile">
+                                    <div class="card-profile-header">
+                                        <img class="card-profile-circle"
+                                             src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '100', 'height' => '100']) ?>"/>
+                                        <span
+                                            class="card-profile-name text-ellipsis"><?php echo $member['fullname']; ?></span>
+                            <span class="card-profile-subname text-ellipsis"><span
+                                    style="color: rgba(191, 222, 255, 0.75);">@</span><?php echo $member['username'] ?></span>
 
-            <?php
-            if ($no%4 == 1):
-            ?>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="card-profile-footer">
+                                        <div><?php echo $member['province'] ?></div>
+                                        <div><?php echo $member['city']; ?></div>
+                                        <a href="<?php echo $this->uri_path_for('membership-detail', array('name' => $member['username'])); ?>"
+                                           class="card-profile-action">
+                                            <i class="fa fa-external-link"></i>
+                                        </a>
 
-            <div class="dt-sc-hr-invisible-small"></div>
-
-            <?php
-            endif;
-            ?>
-
-            <div class="column dt-sc-one-fourth <?php echo ($no == '1' || $no%4 == 1 ? 'first' : ''); ?>">
-
-				<div class="dt-sc-team">
-					<div class="image">
-						<img src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '140', 'height' => '140']) ?>" alt="" style="width: 140px; height: 140px;" />
-					</div>
-
-                    <div class="team-details">
-                        <h6><a href="<?php echo $this->uri_path_for('membership-detail', array('name' => $member['username'])); ?>"><?php echo $member['fullname']; ?></a></h6>
-
-                        <p>
-                            <?php echo $member['province'].', '.$member['city']; ?>
-                        </p>
-
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="pagination" style="text-align:center;">
+                        <?php
+                        echo $html_view_pager;
+                        ?>
                     </div>
 
                 </div>
-
             </div>
+        </div>
 
-            <?php
-            $no++;
-            endforeach;
-            ?>
-
-            <div class="pagination" style="text-align:center;">
-            <?php
-            echo $html_view_pager;
-            ?>
-            </div>
-
-		</div>
-
-	</div>
+    </div>
 
 </section>
