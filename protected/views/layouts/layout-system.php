@@ -10,6 +10,7 @@
 	<title>PHP Indonesia | Membership</title>
 
 	<link href="<?php echo $this->uri_base_url().'/public/css/style.css?v='.time(); ?>" rel="stylesheet">
+	<link href="<?php echo $this->uri_base_url().'/public/css/bootstrap.css' ?>" rel="stylesheet">
 	<link id="shortcodes-css" rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/shortcodes.css'; ?>" type="text/css" media="all"/>
 	<link id="layer-slider" rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/layerslider.css'; ?>" media="all"/>
 	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/prettyPhoto.css'; ?>" type="text/css" media="screen"/>
@@ -38,7 +39,7 @@
 			echo '<link href="'.$css.'" rel="stylesheet">';
 			echo "\n";
 		endforeach;
-	endif;     
+	endif;
 	?>
 
 	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -110,7 +111,7 @@ if (isset($_view_js_)):
         echo '<script src="'.$js.'?v='.time().'"></script>';
         echo "\n";
     endforeach;
-endif;     
+endif;
 ?>
 
 </body>
