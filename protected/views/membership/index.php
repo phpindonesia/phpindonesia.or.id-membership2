@@ -61,10 +61,10 @@ $this->append_css(array(
                                     <div class="card-profile-header">
                                         <img class="card-profile-circle"
                                              src="<?php echo $this->uri_user_photo($member['photo'], ['width' => '100', 'height' => '100']) ?>"/>
-                                        <span
-                                            class="card-profile-name text-ellipsis"><?php echo $member['fullname']; ?></span>
-                            <span class="card-profile-subname text-ellipsis"><span
-                                    style="color: rgba(191, 222, 255, 0.75);">@</span><?php echo $member['username'] ?></span>
+                                        <span class="card-profile-name text-ellipsis"><?php echo $member['fullname']; ?></span>
+                                        <span class="card-profile-subname text-ellipsis">
+                                            <span style="color: rgba(191, 222, 255, 0.75);">@</span><?php echo $member['username'] ?>
+                                        </span>
 
                                         <div class="clearfix"></div>
                                     </div>
