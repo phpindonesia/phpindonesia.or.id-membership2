@@ -123,6 +123,6 @@ $container['errorHandler'] = function ($container) {
         };
 
     } else if ($container->get('settings')['mode'] == 'development') {
-        return new \Slim\Handlers\Error;
+        return new \Slim\Handlers\Error(true);
     }
 };

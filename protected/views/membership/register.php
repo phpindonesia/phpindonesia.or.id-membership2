@@ -1,220 +1,168 @@
-<?php
+ <?php
 $this->layout('layouts::layout-system');
 ?>
 
 <?php
 $this->append_js(array(
-    $this->uri_base_url().'/public/js/app/membership/register.js'
+  $this->uri_base_url().'/public/js/app/membership/register.js'
 ));
 ?>
 
 <section id="primary" class="content-full-width">
-
 	<div class="full-width-section">
+		<div class="container" style="margin-top: -50px;">
 
-		<div class="container" style="margin-top: -70px;">
+			<h3> <span> <i class="fa fa-user"></i></span> Registrasi Anggota</h3>
+			<?php echo $this->insert('sections::flash-message'); ?>
 
-            <h3 class="aligncenter"> <span> <i class="fa fa-user"></i></span> Registrasi Anggota</h3>
+			<form action="<?php echo $this->uri_path_for('membership-register'); ?>" method="post" novalidate class="form-horizontal">
+				<div class="row">
+					
+					<div class="col-xs-10 col-sm-5">
+						<div class="form-group">
+							<label for="email" class="control-label">Alamat Email</label>
+							<input type="email" id="email" name="email" class="form-control" value="<?php echo $this->fh_default_val('email'); ?>" />
+							<p class="help-block">
+	                        	<?php echo $this->fh_show_errors('email', $_view_validation_errors_); ?>
+								Masukkan alamat email yang masih aktif.
+							</p>
+						</div>
+					</div>
 
-            <?php
-            echo $this->insert('sections::flash-message');
-            ?>
+					<div class="col-xs-10 col-sm-5">
+						<div class="form-group">
+							<label for="username" class="control-label">Username</label>
+							<input type="text" id="username" name="username" class="form-control" value="<?php echo $this->fh_default_val('username'); ?>" />
+							<p class="help-block">
+	                        	<?php echo $this->fh_show_errors('username', $_view_validation_errors_); ?>
+								Masukkan <em>username</em> yang anda inginkan.
+							</p>
+						</div>
+					</div>
 
-            <form action="<?php echo $this->uri_path_for('membership-register'); ?>" method="post" novalidate>
+					<div class="col-xs-10 col-sm-5">
+						<div class="form-group">
+							<label for="password" class="control-label">Password</label>
+							<input type="password" id="password" name="password" class="form-control" value="<?php echo $this->fh_default_val('password'); ?>" />
+							<p class="help-block">
+	                        	<?php echo $this->fh_show_errors('password', $_view_validation_errors_); ?>
+								Masukkan <em>password</em> yang anda inginkan.
+							</p>
+						</div>
+					</div>
 
-                <table class="form-oprek">
-                    <tbody>
-                        <tr>
-                            <th>
-                                <label for="email" style="font-weight: bold;">Email *</label>
-                            </th>
-                            <td>
-                            	<input id="email" class="input_full" name="email" type="email" value="<?php echo $this->fh_default_val('email'); ?>" />
-                            	<?php
-                            	echo $this->fh_show_errors('email', $_view_validation_errors_);
-                            	?>
-                            </td>
+					<div class="col-xs-10 col-sm-5">
+						<div class="form-group">
+							<label for="repassword" class="control-label">Konfirmasi Password</label>
+							<input type="password" id="repassword" name="repassword" class="form-control" value="<?php echo $this->fh_default_val('repassword'); ?>" />
+							<p class="help-block">
+	                        	<?php echo $this->fh_show_errors('repassword', $_view_validation_errors_); ?>
+								Konfirmasikan ulang <em>password</em> yang anda masukkan.
+							</p>
+						</div>
+					</div>
 
-                            <th>
-                                <label for="username" style="font-weight: bold;">Username *</label>
-                            </th>
-                            <td>
-                            	<input id="username" class="input_full" name="username" type="text" value="<?php echo $this->fh_default_val('username'); ?>" />
-                            	<?php
-                            	echo $this->fh_show_errors('username', $_view_validation_errors_);
-                            	?>
-                            </td>
-                        </tr>
+					<div class="col-xs-10 col-sm-5">
+						<div class="form-group">
+							<label for="fullname" class="control-label">Nama Lengkap *</label>
+							<input type="text" id="fullname" name="fullname" class="form-control" value="<?php echo $this->fh_default_val('fullname'); ?>" />
+							<p class="help-block">
+	                        	<?php echo $this->fh_show_errors('fullname', $_view_validation_errors_); ?>
+								Masukkan <em>nama lengkap</em> anda
+							</p>
+						</div>
+					</div>
 
-                        <tr>
-                            <th>
-                                <label for="password" style="font-weight: bold;">Password *</label>
-                            </th>
-                            <td>
-                                <input id="password" class="input_full" name="password" type="password" value="<?php echo $this->fh_default_val('password'); ?>" />
-                                <?php
-                                echo $this->fh_show_errors('password', $_view_validation_errors_);
-                                ?>
-                            </td>
+					<div class="col-xs-10 col-sm-5">
+						<div class="form-group">
+	                        <label for="gender-dd" class="control-label">Gender *</label>
+	                        <?php
+	                        echo $this->fh_input_select('gender_id', array('female' => 'Wanita', 'male' => 'Pria'), array(
+	                        	'id' => 'gender-dd',
+	                        	'class' => 'form-control'
+	                        ));
+	                        ?>
+							<p class="help-block">
+	                        	<?php echo $this->fh_show_errors('gender_id', $_view_validation_errors_); ?>
+								Gender
+							</p>
+						</div>
+					</div>
 
-                            <th>
-                                <label for="repassword" style="font-weight: bold;">Ketik ulang password *</label>
-                            </th>
-                            <td>
-                                <input id="repassword" class="input_full" name="repassword" type="password" value="<?php echo $this->fh_default_val('repassword'); ?>" />
-                                <?php
-                                echo $this->fh_show_errors('repassword', $_view_validation_errors_);
-                                ?>
-                            </td>
-                        </tr>
+					<div class="col-xs-10 col-sm-5">
+						<div class="form-group">
+	                        <label for="provinces-dd" class="control-label">Provinsi *</label>
+	                        <?php echo $this->fh_input_select('province_id', $provinces, array(
+		                        	'id' => 'provinces-dd',
+		                        	'class' => 'form-control'
+		                        ));
+	                        ?>
+							<p class="help-block">
+	                        	<?php echo $this->fh_show_errors('province_id', $_view_validation_errors_); ?>
+								Masukkan <em>propinsi</em> wilayah anda bertempat tinggal.
+							</p>
+						</div>
+					</div>
 
-                        <tr>
-                            <th>
-                                <label for="provinces-dd" style="font-weight: bold;">Provinsi *</label>
-                            </th>
-                            <td>
-                                <?php
-                                echo $this->fh_input_select('province_id', $provinces, array(
-                                	'id' => 'provinces-dd',
-                                	'class' => 'input_full'
-                                ));
-                                ?>
+					<div class="col-xs-10 col-sm-5">
+						<div class="form-group">
+	                        <label for="cities-dd" class="control-label">Kabupaten / Kota *</label>
+	                        <?php
+	                        echo $this->fh_input_select('city_id', $cities, array(
+	                        	'id' => 'cities-dd',
+	                        	'class' => 'form-control'
+	                        ));
+	                        ?>
+							<p class="help-block">
+	                        	<?php echo $this->fh_show_errors('city_id', $_view_validation_errors_); ?>
+								Masukkan <em>kota</em> atau <em>kabupaten</em> wilayah anda bertempat tinggal.
+							</p>
+						</div>
+					</div>
 
-                                <?php
-                                echo $this->fh_show_errors('province_id', $_view_validation_errors_);
-                                ?>
-                            </td>
+					<div class="col-xs-10 col-sm-5">
+						<div class="form-group">
+							<label for="area" class="control-label">Area Domisili *</label>
+							<input type="text" id="area" name="area" class="form-control" value="<?php echo $this->fh_default_val('area'); ?>" />
+							<p class="help-block">
+	                        	<?php echo $this->fh_show_errors('area', $_view_validation_errors_); ?>
+								Masukkan wilayah <em>domisili, kecamatan, atau desa</em> tempat anda sekarang tinggal.
+							</p>
+						</div>
+					</div>
 
-                            <th>
-                                <label for="cities-dd" style="font-weight: bold;">Kabupaten / Kota *</label>
-                            </th>
-                            <td>
-                                <?php
-                                echo $this->fh_input_select('city_id', $cities, array(
-                                	'id' => 'cities-dd',
-                                	'class' => 'input_full'
-                                ));
-                                ?>
+					<div class="col-xs-10 col-sm-5">
+						<div class="form-group">
+	                        <label for="job-id" class="control-label">Pekerjaan *</label>
+	                        <?php
+	                        echo $this->fh_input_select('job_id', $jobs, array(
+	                        	'id' => 'job-id',
+	                        	'class' => 'form-control'
+	                        ));
+	                        ?>
+							<p class="help-block">
+	                        	<?php echo $this->fh_show_errors('job_id', $_view_validation_errors_); ?>
+								Aktifitas atau pekerjaan anda saat ini.
+							</p>
+						</div>
+					</div>
 
-                                <?php
-                                echo $this->fh_show_errors('city_id', $_view_validation_errors_);
-                                ?>
-                            </td>
-                        </tr>
+					<div class="col-xs-10 col-sm-10">
+						<div class="form-group">
+                            <?php if ($use_captcha == true): ?>
+	                            <input id="foo-captcha" name="captcha" type="hidden" value="1" />
+	                            <?php echo $this->fh_show_errors('captcha', $_view_validation_errors_); ?>
+	                            <div class="g-recaptcha" style="margin-bottom:10px;" data-sitekey="<?php echo $gcaptcha_site_key; ?>"></div>
+                            <?php endif; ?>
+                            <input value="Register" type="submit" />
+						</div>
+					</div>
 
-                        <tr>
-                            <th>
-                                <label for="fullname" style="font-weight: bold;">Nama Lengkap *</label>
-                            </th>
-                            <td>
-                                <input id="fullname" class="input_full" name="fullname" type="text" value="<?php echo $this->fh_default_val('fullname'); ?>" />
-                                <?php
-                                echo $this->fh_show_errors('fullname', $_view_validation_errors_);
-                                ?>
-                            </td>
+				</div>
+		    </form>
 
-                            <th>
-                                <label for="gender-dd" style="font-weight: bold;">Gender *</label>
-                            </th>
-                            <td>
-                                <?php
-                                echo $this->fh_input_select('gender_id', array('female' => 'Wanita', 'male' => 'Pria'), array(
-                                	'id' => 'gender-dd',
-                                	'class' => 'input_full'
-                                ));
-                                ?>
-
-                                <?php
-                                echo $this->fh_show_errors('gender_id', $_view_validation_errors_);
-                                ?>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th>
-                                <label for="job-id" style="font-weight: bold;">Pekerjaan *</label>
-                            </th>
-                            <td>
-                                <?php
-                                echo $this->fh_input_select('job_id', $jobs, array(
-                                	'id' => 'job-id',
-                                	'class' => 'input_full'
-                                ));
-                                ?>
-
-                                <?php
-                                echo $this->fh_show_errors('job_id', $_view_validation_errors_);
-                                ?>
-                            </td>
-
-                            <td>
-                                &nbsp;
-                            </td>
-                            <td>
-                                &nbsp;
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th>
-                                <label for="area" style="font-weight: bold;">Area Domisili *</label>
-                            </th>
-                            <td>
-                                <input id="area" class="input_full" name="area" type="text" value="<?php echo $this->fh_default_val('area'); ?>" placeholder="Area Domisili. Contoh format: Nama Kelurahan, Nama Kecamatan atau Nama Daerah Tempat Tinggal, Nama Kota Madya" />
-                                <?php
-                                echo $this->fh_show_errors('area', $_view_validation_errors_);
-                                ?>
-                            </td>
-
-                            <td>
-                                &nbsp;
-                            </td>
-                            <td>
-                                &nbsp;
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
-
-                <table class="form-oprek">
-                    <tbody>
-                        <tr>
-                            <td>
-                                &nbsp;
-                            </td>
-
-                            <td>
-                                <?php
-                                if ($use_captcha == true):
-                                ?>
-                                
-                                <input id="foo-captcha" name="captcha" type="hidden" value="1" />
-                                <?php echo $this->fh_show_errors('captcha', $_view_validation_errors_); ?>
-                                <div class="g-recaptcha" data-sitekey="<?php echo $gcaptcha_site_key; ?>"></div>
-                                
-                                <?php
-                                endif;
-                                ?>
-
-                                <input value="Register" type="submit" />
-                            </td>
-
-                            <td>
-                                &nbsp;
-                            </td>
-
-                            <td>
-                                &nbsp;
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-            </form>
-        </div>
-
-	</div>
+		</div> <!-- container -->
+	</div> <!-- full width section -->
 
 	<div class="full-width-section">
 		<div class="container">
@@ -228,4 +176,4 @@ $this->append_js(array(
 
 	<div class="dt-sc-margin100"></div>
 
-</section>
+</section> <!-- section primary -->
