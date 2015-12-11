@@ -131,7 +131,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
                     'user_id'      => $_SESSION['MembershipAuth']['user_id'],
                     'socmed_type'  => $item['socmed_type'],
                     'account_name' => $item['account_name'],
-                    'account_url'  => $item['account_url'],
+                    'account_url'  => $item['account_url'] ? $item['account_url'] : $socmedias[$item['socmed_type']][2] . $item['account_name'],
                     'created'      => date('Y-m-d H:i:s'),
                     'deleted'      => 'N',
                 );
@@ -253,8 +253,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
     $cities          = \Cake\Utility\Hash::combine($q_cities->fetchAll(), '{n}.id', '{n}.regional_name');
     $religions       = \Cake\Utility\Hash::combine($q_religions->fetchAll(), '{n}.religion_id', '{n}.religion_name');
     $jobs            = \Cake\Utility\Hash::combine($q_jobs->fetchAll(), '{n}.job_id', '{n}.job_id');
-
-    $genders = array('female' => 'Wanita', 'male' => 'Pria');
+    $genders         = array('female' => 'Wanita', 'male' => 'Pria');
 
     $db->close();
 

@@ -224,9 +224,8 @@ $this->append_js(array(
 
 								    <tr id="socmed-item<?php echo $ii; ?>">
 								    	<td>
-								    		<?php echo $socmedias[$socmed['socmed_type']]; ?>
-								    		<input class="db-row-id" type="hidden" name="socmeds[<?php echo $ii; ?>][member_socmed_id]" value="<?php echo $socmed['member_socmed_id']; ?>" />
-								    		<input class="socmed-type" type="hidden" name="socmeds[<?php echo $ii; ?>][socmed_type]" value="<?php echo $socmed['socmed_type']; ?>" />
+											<?php echo $socmedias[$socmed['socmed_type']][0] ?>
+											<input class="socmed-type" type="hidden" name="socmeds[<?php echo $ii; ?>][socmed_type]" value="<?php echo $socmed['socmed_type']; ?>" />
 								    	</td>
 
 								    	<td>
@@ -285,7 +284,8 @@ $this->append_js(array(
 										<td>
 
 											<?php
-											echo $this->fh_input_select('socmed_type', $socmedias, array(
+											echo $this->fh_input_select('socmed_type',
+												\Cake\Utility\Hash::extract($socmedias, '{s}.0'), array(
 												'id'	 => 'meds-dd',
 												'class'	 => 'input_full'
 											));
