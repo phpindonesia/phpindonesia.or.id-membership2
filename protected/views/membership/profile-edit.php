@@ -285,10 +285,9 @@ $this->append_js(array(
 
 											<?php
 											echo $this->fh_input_select('socmed_type',
-												\Cake\Utility\Hash::extract($socmedias, '{s}.0'), array(
-												'id'	 => 'meds-dd',
-												'class'	 => 'input_full'
-											));
+												array_combine(array_keys($socmedias), \Cake\Utility\Hash::extract($socmedias, '{s}.0')),
+												array('id' => 'meds-dd', 'class' => 'input_full')
+											);
 											?>
 										</td>
 									</tr>

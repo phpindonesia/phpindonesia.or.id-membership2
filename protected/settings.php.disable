@@ -51,10 +51,10 @@ return array(
 		'socmedias' => array(
 			'facebook'  => ['Facebook', 'fa-facebook', 'http://facebook.com/'],
 			'twitter'   => ['Twitter', 'fa-twitter', 'http://twitter.com/'],
-			'linkedin'  => ['LinkedIn', 'fa-linkedin', 'http://linked.in/in/'],
+			'linkedin'  => ['LinkedIn', 'fa-linkedin', 'http://linkedin.com/in/'],
 			'instagram' => ['Instagram', 'fa-instagram', 'http://instagram.com/'],
 			'path'      => ['Path', 'fa-pinterest-p', 'http://path.com/'],
-			'github'    => ['GitHub', 'fa-github', 'http://gitHub.com/'],
+			'github'    => ['GitHub', 'fa-github', 'http://github.com/'],
 		),
 	)
 );
