@@ -3,7 +3,7 @@
  * Slim Framework (http://slimframework.com)
  *
  * @link      https://github.com/slimphp/Slim
- * @copyright Copyright (c) 2011-2015 Josh Lockhart
+ * @copyright Copyright (c) 2011-2016 Josh Lockhart
  * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
 namespace Slim\Handlers;
@@ -21,6 +21,18 @@ use Slim\Http\Body;
 class NotAllowed
 {
     /**
+     * Known handled content types
+     *
+     * @var array
+     */
+    protected $knownContentTypes = [
+        'application/json',
+        'application/xml',
+        'text/xml',
+        'text/html',
+    ];
+
+    /**
      * Invoke error handler
      *
      * @param  ServerRequestInterface $request  The most recent Request object
@@ -31,29 +43,107 @@ class NotAllowed
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $methods)
     {
-        $allow = implode(', ', $methods);
-
         if ($request->getMethod() === 'OPTIONS') {
             $status = 200;
             $contentType = 'text/plain';
-            $output = 'Allowed methods: ' . $allow;
+            $output = $this->renderPlainNotAllowedMessage($methods);
         } else {
             $status = 405;
-            $contentType = $this->determineContentType($request->getHeaderLine('Accept'));
+            $contentType = $this->determineContentType($request);
             switch ($contentType) {
                 case 'application/json':
-                    $output = '{"message":"Method not allowed. Must be one of: ' . $allow . '"}';
+                    $output = $this->renderJsonNotAllowedMessage($methods);
                     break;
 
                 case 'text/xml':
                 case 'application/xml':
-                    $output = "<root><message>Method not allowed. Must be one of: $allow</message></root>";
+                    $output = $this->renderXmlNotAllowedMessage($methods);
                     break;
 
                 case 'text/html':
-                default:
-                    $contentType = 'text/html';
-                    $output = <<<END
+                    $output = $this->renderHtmlNotAllowedMessage($methods);
+                    break;
+            }
+        }
+
+        $body = new Body(fopen('php://temp', 'r+'));
+        $body->write($output);
+        $allow = implode(', ', $methods);
+
+        return $response
+                ->withStatus($status)
+                ->withHeader('Content-type', $contentType)
+                ->withHeader('Allow', $allow)
+                ->withBody($body);
+    }
+
+    /**
+     * Determine which content type we know about is wanted using Accept header
+     *
+     * @param ServerRequestInterface $request
+     * @return string
+     */
+    private function determineContentType(ServerRequestInterface $request)
+    {
+        $acceptHeader = $request->getHeaderLine('Accept');
+        $selectedContentTypes = array_intersect(explode(',', $acceptHeader), $this->knownContentTypes);
+
+        if (count($selectedContentTypes)) {
+            return $selectedContentTypes[0];
+        }
+
+        return 'text/html';
+    }
+
+    /**
+     * Render PLAIN not allowed message
+     *
+     * @param  array                  $methods
+     * @return string
+     */
+    protected function renderPlainNotAllowedMessage($methods)
+    {
+        $allow = implode(', ', $methods);
+
+        return 'Allowed methods: ' . $allow;
+    }
+
+    /**
+     * Render JSON not allowed message
+     *
+     * @param  array                  $methods
+     * @return string
+     */
+    protected function renderJsonNotAllowedMessage($methods)
+    {
+        $allow = implode(', ', $methods);
+
+        return '{"message":"Method not allowed. Must be one of: ' . $allow . '"}';
+    }
+
+    /**
+     * Render XML not allowed message
+     *
+     * @param  array                  $methods
+     * @return string
+     */
+    protected function renderXmlNotAllowedMessage($methods)
+    {
+        $allow = implode(', ', $methods);
+
+        return "<root><message>Method not allowed. Must be one of: $allow</message></root>";
+    }
+
+    /**
+     * Render HTML not allowed message
+     *
+     * @param  array                  $methods
+     * @return string
+     */
+    protected function renderHtmlNotAllowedMessage($methods)
+    {
+        $allow = implode(', ', $methods);
+        $output = <<<END
 <html>
     <head>
         <title>Method not allowed</title>
@@ -77,38 +167,7 @@ class NotAllowed
     </body>
 </html>
 END;
-                    break;
-            }
-        }
 
-        $body = new Body(fopen('php://temp', 'r+'));
-        $body->write($output);
-
-        return $response
-                ->withStatus($status)
-                ->withHeader('Content-type', $contentType)
-                ->withHeader('Allow', $allow)
-                ->withBody($body);
-    }
-
-    /**
-     * Read the accept header and determine which content type we know about
-     * is wanted.
-     *
-     * @param  string $acceptHeader Accept header from request
-     * @return string
-     */
-    private function determineContentType($acceptHeader)
-    {
-        $list = explode(',', $acceptHeader);
-        $known = ['application/json', 'application/xml', 'text/xml', 'text/html'];
-        
-        foreach ($list as $type) {
-            if (in_array($type, $known)) {
-                return $type;
-            }
-        }
-
-        return 'text/html';
+        return $output;
     }
 }

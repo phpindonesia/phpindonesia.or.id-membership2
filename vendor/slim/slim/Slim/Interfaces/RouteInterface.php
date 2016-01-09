@@ -3,7 +3,7 @@
  * Slim Framework (http://slimframework.com)
  *
  * @link      https://github.com/slimphp/Slim
- * @copyright Copyright (c) 2011-2015 Josh Lockhart
+ * @copyright Copyright (c) 2011-2016 Josh Lockhart
  * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
 namespace Slim\Interfaces;
@@ -80,6 +80,17 @@ interface RouteInterface
      * @throws InvalidArgumentException if the route name is not a string
      */
     public function setName($name);
+
+    /**
+     * Add middleware
+     *
+     * This method prepends new middleware to the route's middleware stack.
+     *
+     * @param mixed $callable The callback routine
+     *
+     * @return RouteInterface
+     */
+    public function add($callable);
 
     /**
      * Prepare the route for use

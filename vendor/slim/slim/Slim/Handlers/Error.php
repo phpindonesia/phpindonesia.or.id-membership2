@@ -3,7 +3,7 @@
  * Slim Framework (http://slimframework.com)
  *
  * @link      https://github.com/slimphp/Slim
- * @copyright Copyright (c) 2011-2015 Josh Lockhart
+ * @copyright Copyright (c) 2011-2016 Josh Lockhart
  * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
 namespace Slim\Handlers;
@@ -22,6 +22,18 @@ use Slim\Http\Body;
 class Error
 {
     protected $displayErrorDetails;
+
+    /**
+     * Known handled content types
+     *
+     * @var array
+     */
+    protected $knownContentTypes = [
+        'application/json',
+        'application/xml',
+        'text/xml',
+        'text/html',
+    ];
 
     /**
      * Constructor
@@ -44,7 +56,7 @@ class Error
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, Exception $exception)
     {
-        $contentType = $this->determineContentType($request->getHeaderLine('Accept'));
+        $contentType = $this->determineContentType($request);
         switch ($contentType) {
             case 'application/json':
                 $output = $this->renderJsonErrorMessage($exception);
@@ -56,8 +68,6 @@ class Error
                 break;
 
             case 'text/html':
-            default:
-                $contentType = 'text/html';
                 $output = $this->renderHtmlErrorMessage($exception);
                 break;
         }
@@ -77,7 +87,7 @@ class Error
      * @param  Exception $exception
      * @return string
      */
-    private function renderHtmlErrorMessage(Exception $exception)
+    protected function renderHtmlErrorMessage(Exception $exception)
     {
         $title = 'Slim Application Error';
 
@@ -97,8 +107,8 @@ class Error
         $output = sprintf(
             "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'>" .
             "<title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana," .
-            "sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{display:inline-block;" .
-            "width:65px;}</style></head><body><h1>%s</h1>%s</body></html>",
+            "sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{" .
+            "display:inline-block;width:65px;}</style></head><body><h1>%s</h1>%s</body></html>",
             $title,
             $title,
             $html
@@ -114,7 +124,7 @@ class Error
      *
      * @return string
      */
-    private function renderHtmlException(Exception $exception)
+    protected function renderHtmlException(Exception $exception)
     {
         $html = sprintf('<div><strong>Type:</strong> %s</div>', get_class($exception));
 
@@ -148,7 +158,7 @@ class Error
      * @param  Exception $exception
      * @return string
      */
-    private function renderJsonErrorMessage(Exception $exception)
+    protected function renderJsonErrorMessage(Exception $exception)
     {
         $error = [
             'message' => 'Slim Application Error',
@@ -178,7 +188,7 @@ class Error
      * @param  Exception $exception
      * @return string
      */
-    private function renderXmlErrorMessage(Exception $exception)
+    protected function renderXmlErrorMessage(Exception $exception)
     {
         $xml = "<error>\n  <message>Slim Application Error</message>\n";
         if ($this->displayErrorDetails) {
@@ -210,21 +220,18 @@ class Error
     }
 
     /**
-     * Read the accept header and determine which content type we know about
-     * is wanted.
+     * Determine which content type we know about is wanted using Accept header
      *
-     * @param  string $acceptHeader Accept header from request
+     * @param ServerRequestInterface $request
      * @return string
      */
-    private function determineContentType($acceptHeader)
+    private function determineContentType(ServerRequestInterface $request)
     {
-        $list = explode(',', $acceptHeader);
-        $known = ['application/json', 'application/xml', 'text/xml', 'text/html'];
+        $acceptHeader = $request->getHeaderLine('Accept');
+        $selectedContentTypes = array_intersect(explode(',', $acceptHeader), $this->knownContentTypes);
 
-        foreach ($list as $type) {
-            if (in_array($type, $known)) {
-                return $type;
-            }
+        if (count($selectedContentTypes)) {
+            return $selectedContentTypes[0];
         }
 
         return 'text/html';
