@@ -60,22 +60,5 @@ $app->add(function ($request, $response, $next) {
 	}
 
 	return $next($request, $response);
-<<<<<<< HEAD
-});
-
-/*
- * Registering some view helper / extensions functions
- * Actually this is not a middleware. I just put it here
- */
-$app->view->getPlates()->registerFunction('append_js', function ($js_files = array()) use ($app) {
-	$app->view->getPlates()->addData(array('_view_js_' => $js_files));
-	return true;
-});
-
-$app->view->getPlates()->registerFunction('append_css', function ($js_files = array()) use ($app) {
-	$app->view->getPlates()->addData(array('_view_css_' => $js_files));
-	return true;
-=======
->>>>>>> contrib/3.1.x
 });
 
