@@ -55,12 +55,8 @@ class Messages
 
         // Load messages from previous request
         if (isset($this->storage[$this->storageKey]) && is_array($this->storage[$this->storageKey])) {
-            $cnt = count($this->storage[$this->storageKey]);
-            if ($cnt > 0) {
-                $this->fromPrevious = $this->storage[$this->storageKey];
-            }
+            $this->fromPrevious = $this->storage[$this->storageKey];
         }
-
         $this->storage[$this->storageKey] = [];
     }
 
@@ -70,7 +66,7 @@ class Messages
      * @param string $key The key to store the message under
      * @param string $message Message to show on next request
      */
-    public function addMessage($key, $message, $when = 'later')
+    public function addMessage($key, $message)
     {
         //Create Array for this key
         if (!isset($this->storage[$this->storageKey][$key])) {
@@ -79,20 +75,6 @@ class Messages
         
         //Push onto the array
         $this->storage[$this->storageKey][$key][] = (string)$message;
-
-        if ($when == 'now') {
-            $this->fromPrevious = $this->storage[$this->storageKey];
-            $this->storage[$this->storageKey] = [];
-        }
-		
-    }
-
-    public function flashNow($key, $message) {
-        $this->addMessage($key, $message, 'now');
-    }
-
-    public function flashLater($key, $message) {
-        $this->addMessage($key, $message);
     }
 
     /**

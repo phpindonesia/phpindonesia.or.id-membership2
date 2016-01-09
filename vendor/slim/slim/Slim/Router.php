@@ -3,7 +3,7 @@
  * Slim Framework (http://slimframework.com)
  *
  * @link      https://github.com/slimphp/Slim
- * @copyright Copyright (c) 2011-2015 Josh Lockhart
+ * @copyright Copyright (c) 2011-2016 Josh Lockhart
  * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
 namespace Slim;
@@ -16,6 +16,7 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser;
 use FastRoute\RouteParser\Std as StdParser;
 use FastRoute\DataGenerator;
+use Slim\Interfaces\RouteGroupInterface;
 use Slim\Interfaces\RouterInterface;
 use Slim\Interfaces\RouteInterface;
 
@@ -70,8 +71,6 @@ class Router implements RouterInterface
      */
     protected $routeGroups = [];
 
-    private $finalized = false;
-
     /**
      * @var \FastRoute\Dispatcher
      */
@@ -124,12 +123,11 @@ class Router implements RouterInterface
 
         // Prepend parent group pattern(s)
         if ($this->routeGroups) {
-            // If any route in the group only has / we remove it
-            if ($pattern === '/') {
-                $pattern = '';
-            }
             $pattern = $this->processGroups() . $pattern;
         }
+
+        // According to RFC methods are defined in uppercase (See RFC 7231)
+        $methods = array_map("strtoupper", $methods);
 
         // Add route
         $route = new Route($methods, $pattern, $handler, $this->routeGroups, $this->routeCounter);
@@ -137,21 +135,6 @@ class Router implements RouterInterface
         $this->routeCounter++;
 
         return $route;
-    }
-
-    /**
-     * Finalize registered routes in preparation for dispatching
-     *
-     * NOTE: The routes can only be finalized once.
-     */
-    public function finalize()
-    {
-        if (!$this->finalized) {
-            foreach ($this->getRoutes() as $route) {
-                $route->finalize();
-            }
-            $this->finalized = true;
-        }
     }
 
     /**
@@ -165,7 +148,6 @@ class Router implements RouterInterface
      */
     public function dispatch(ServerRequestInterface $request)
     {
-        $this->finalize();
         $uri = '/' . ltrim($request->getUri()->getPath(), '/');
         
         return $this->createDispatcher()->dispatch(
@@ -246,7 +228,7 @@ class Router implements RouterInterface
      * @param string   $pattern
      * @param callable $callable
      *
-     * @return RouteGroup
+     * @return RouteGroupInterface
      */
     public function pushGroup($pattern, $callable)
     {
