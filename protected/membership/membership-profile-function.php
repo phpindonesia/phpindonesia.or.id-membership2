@@ -1,6 +1,6 @@
 <?php
 $app->get('/apps/membership/profile', function ($request, $response, $args) {
-      
+
     $q_member = $this->db->createQueryBuilder()
     ->select(
         'm.*',
@@ -70,9 +70,9 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
     $member_portfolios = $q_member_portfolios->fetchAll();
     $member_skills = $q_member_skills->fetchAll();
     $member_socmeds = $q_member_socmeds->fetchAll();
-    $socmedias = $this->getContainer()->get('settings')['socmedias'];
-    $socmedias_logo = $this->getContainer()->get('settings')['socmedias_logo'];
-    $months = $this->getContainer()->get('months');
+    $socmedias = $this->get('settings')['socmedias'];
+    $socmedias_logo = $this->get('settings')['socmedias_logo'];
+    $months = $this->get('months');
 
     /*
      * Data view for portfolio-add-section
@@ -91,10 +91,10 @@ $app->get('/apps/membership/profile', function ($request, $response, $args) {
 
     $career_levels = \Cake\Utility\Hash::combine($q_carerr_levels->fetchAll(), '{n}.career_level_id', '{n}.career_level_id');
     $industries = \Cake\Utility\Hash::combine($q_industries->fetchAll(), '{n}.industry_id', '{n}.industry_name');
-    $years_range = $this->getContainer()->get('years_range');
-    $months_range = $this->getContainer()->get('months_range');
-    $days_range = $this->getContainer()->get('days_range');
-    
+    $years_range = $this->get('years_range');
+    $months_range = $this->get('months_range');
+    $days_range = $this->get('days_range');
+
     // --- End data view for portfolio-add-section
 
     /*
@@ -219,7 +219,7 @@ $app->get('/apps/membership/profile-javascript', function ($request, $response, 
         }
 
     } else if (in_array($_SESSION['MembershipAuth']['job_id'], $student)) {
-        
+
         if (!isset($_COOKIE['skill-popup'])) {
             $q_check_skills = $this->db->createQueryBuilder()
             ->select('COUNT(*) AS total_data')
@@ -240,7 +240,7 @@ $app->get('/apps/membership/profile-javascript', function ($request, $response, 
 
     $response_n = $response->withStatus(200)
     ->withHeader('Content-Type', 'application/javascript');
-    
+
     return $this->view->render(
         $response_n,
         'membership/profile-javascript',
@@ -267,13 +267,13 @@ $app->get('/apps/membership/profile-portfolio-setcookie', function ($request, $r
 
 
 $app->get('/apps/membership/profile-skill-setcookie', function ($request, $response, $args) {
-    
+
     if (!isset($_COOKIE['skill-popup'])) {
         setcookie('skill-popup', 1, time()+86400);
     }
 
     return $response->withStatus(200)
     ->withHeader('Content-Type', 'application/json')
-    ->write(json_encode(array('resp' => 'OK')));    
+    ->write(json_encode(array('resp' => 'OK')));
 
 })->setName('membership-profile-skill-setcookie');

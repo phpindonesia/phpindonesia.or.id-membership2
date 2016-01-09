@@ -1,13 +1,13 @@
 <?php
 $app->map(['GET', 'POST'], '/apps/membership/forgot-password', function ($request, $response, $args) {
 
-	$gcaptcha_site_key = $this->getContainer()->get('settings')['gcaptcha']['site_key'];
-	$gcaptcha_secret = $this->getContainer()->get('settings')['gcaptcha']['secret'];
-	$use_captcha = $this->getContainer()->get('settings')['use_captcha'];
+	$gcaptcha_site_key = $this->get('settings')['gcaptcha']['site_key'];
+	$gcaptcha_secret = $this->get('settings')['gcaptcha']['secret'];
+	$use_captcha = $this->get('settings')['use_captcha'];
 
 	if ($request->isPost()) {
-		$db = $this->getContainer()->get('db');
-		$validator = $this->getContainer()->get('validator');
+		$db = $this->get('db');
+		$validator = $this->get('validator');
 
 		$success_msg = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda. Terimakasih ^_^';
 		$success_msg_alt = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda.<br /><br /><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong><br /><br />Terimakasih ^_^';
@@ -97,11 +97,11 @@ $app->map(['GET', 'POST'], '/apps/membership/forgot-password', function ($reques
                 );
 
                 $message = Swift_Message::newInstance('PHP Indonesia - Konfirmasi lupa password')
-                ->setFrom(array($this->getContainer()->get('settings')['email']['sender_email'] => $this->getContainer()->get('settings')['email']['sender_name']))
+                ->setFrom(array($this->get('settings')['email']['sender_email'] => $this->get('settings')['email']['sender_name']))
                 ->setTo(array($email_address => $member['username']))
                 ->setBody(file_get_contents(_FULL_APP_PATH_.'protected'._DS_.'views'._DS_.'email'._DS_.'forgot-password-confirmation.txt'));
 
-                $mailer = $this->getContainer()->get('mailer');
+                $mailer = $this->get('mailer');
                 $mailer->registerPlugin(new Swift_Plugins_DecoratorPlugin($replacements));
                 $mailer->send($message);
 
@@ -113,19 +113,19 @@ $app->map(['GET', 'POST'], '/apps/membership/forgot-password', function ($reques
 
                 $db->close();
 
-                $this->flash->flashLater('success', $success_msg);
+                $this->flash->addMessage('success', $success_msg);
                 return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));
 
             } catch (Swift_TransportException $e) {
-                $this->flash->flashLater('success', $success_msg_alt);
-                return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));   
+                $this->flash->addMessage('success', $success_msg_alt);
+                return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));
             }
 
         } else {
-        	$this->flash->flashNow('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
+        	$this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
         }
 	}
-    
+
     $this->view->getPlates()->addData(
         array(
             'page_title' => 'Membership',

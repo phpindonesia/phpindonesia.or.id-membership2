@@ -1,14 +1,14 @@
 <?php
 $app->map(['GET', 'POST'], '/apps/membership/account-reactivation', function ($request, $response, $args) {
-	
-	$gcaptcha_site_key = $this->getContainer()->get('settings')['gcaptcha']['site_key'];
-    $gcaptcha_secret = $this->getContainer()->get('settings')['gcaptcha']['secret'];
-    $use_captcha = $this->getContainer()->get('settings')['use_captcha'];
-        
+
+	$gcaptcha_site_key = $this->get('settings')['gcaptcha']['site_key'];
+    $gcaptcha_secret = $this->get('settings')['gcaptcha']['secret'];
+    $use_captcha = $this->get('settings')['use_captcha'];
+
     if ($request->isPost()) {
 
-		$db = $this->getContainer()->get('db');
-        $validator = $this->getContainer()->get('validator');
+		$db = $this->get('db');
+        $validator = $this->get('validator');
         $validator->createInput($_POST);
 
         $validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {

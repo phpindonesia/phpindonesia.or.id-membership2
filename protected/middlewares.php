@@ -60,6 +60,7 @@ $app->add(function ($request, $response, $next) {
 	}
 
 	return $next($request, $response);
+<<<<<<< HEAD
 });
 
 /*
@@ -74,5 +75,7 @@ $app->view->getPlates()->registerFunction('append_js', function ($js_files = arr
 $app->view->getPlates()->registerFunction('append_css', function ($js_files = array()) use ($app) {
 	$app->view->getPlates()->addData(array('_view_css_' => $js_files));
 	return true;
+=======
+>>>>>>> contrib/3.1.x
 });
 

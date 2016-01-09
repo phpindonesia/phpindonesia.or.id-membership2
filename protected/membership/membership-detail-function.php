@@ -1,7 +1,7 @@
 <?php
 $app->get('/apps/membership/detail/{name}', function ($request, $response, $args) {
 
-    $db = $this->getContainer()->get('db');
+    $db = $this->get('db');
 
     $q_member = $db->createQueryBuilder()
     ->select(
@@ -56,12 +56,12 @@ $app->get('/apps/membership/detail/{name}', function ($request, $response, $args
     ->setParameter(':uid', $member['user_id'])
     ->setParameter(':d', 'N')
     ->execute();
-    
+
     $member_portfolios = $q_member_portfolios->fetchAll();
     $member_socmeds = $q_member_socmeds->fetchAll();
-    $socmedias = $this->getContainer()->get('settings')['socmedias'];
-    $socmedias_logo = $this->getContainer()->get('settings')['socmedias_logo'];
-    $months = $this->getContainer()->get('months');
+    $socmedias = $this->get('settings')['socmedias'];
+    $socmedias_logo = $this->get('settings')['socmedias_logo'];
+    $months = $this->get('months');
 
     $this->view->getPlates()->addData(
         array(

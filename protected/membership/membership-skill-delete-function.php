@@ -8,13 +8,13 @@ $app->post('/apps/membership/skill/delete/{id:[0-9]+}', function ($request, $res
 
     $this->db->close();
 
-    $this->flash->flashLater('success', 'Item Skill berhasil dihapus');
+    $this->flash->addMessage('success', 'Item Skill berhasil dihapus');
 
     return $response->withStatus(302)
     ->withHeader('Location', $this->router->pathFor('membership-profile'));
 
 })->add(function ($request, $response, $next) {
-    
+
     $routeInfo = $request->getAttribute('routeInfo');
     $id = $routeInfo[2]['id'];
 

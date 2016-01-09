@@ -1,10 +1,10 @@
 <?php
 $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, $response, $args) {
 
-    $db = $this->getContainer()->get('db');
+    $db = $this->get('db');
 
     if ($request->isPost()) {
-        $validator = $this->getContainer()->get('validator');
+        $validator = $this->get('validator');
         $validator->createInput($_POST);
         $validator->rule('required', array(
             'fullname',
@@ -51,7 +51,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
                     finfo_close($finfo);
 
                     $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
-                    $env_mode = $this->getContainer()->get('settings')['mode'];
+                    $env_mode = $this->get('settings')['mode'];
                     $cdn_upload_path = 'phpindonesia/'.$env_mode.'/';
                     $new_fname = $_SESSION['MembershipAuth']['user_id'].'-'.date('YmdHis');
 
@@ -134,18 +134,18 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
                 $db->commit();
                 $db->close();
 
-                $this->flash->flashLater('success', 'Profile information successfuly updated! Congratulation!');
+                $this->flash->addMessage('success', 'Profile information successfuly updated! Congratulation!');
                 return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-profile'));
 
             } catch (Exception $e) {
                 $db->rollback();
                 $db->close();
 
-                $this->flash->flashNow('error', 'System failed<br />'.$e->getMessage());
+                $this->flash->addMessage('error', 'System failed<br />'.$e->getMessage());
             }
 
         } else {
-            $this->flash->flashNow('warning', 'Some of mandatory fields is empty!');
+            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
         }
     }
 
@@ -207,7 +207,7 @@ $app->map(['GET', 'POST'], '/apps/membership/profile/edit', function ($request, 
 
     $genders = array('female' => 'Wanita', 'male' => 'Pria');
     $identity_types = array('ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa');
-    $socmedias = $this->getContainer()->get('settings')['socmedias'];
+    $socmedias = $this->get('settings')['socmedias'];
 
     $db->close();
 

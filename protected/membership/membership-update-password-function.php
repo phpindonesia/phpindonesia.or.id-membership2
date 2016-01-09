@@ -2,9 +2,9 @@
 $app->map(['GET', 'POST'], '/apps/membership/update-password', function ($request, $response, $args) {
 
 	if ($request->isPost()) {
-		$db = $this->getContainer()->get('db');
-		$validator = $this->getContainer()->get('validator');
-		$salt_pwd = $this->getContainer()->get('settings')['salt_pwd'];
+		$db = $this->get('db');
+		$validator = $this->get('validator');
+		$salt_pwd = $this->get('settings')['salt_pwd'];
 
 		$validator->createInput($_POST);
         $validator->rule('required', array(
@@ -55,14 +55,14 @@ $app->map(['GET', 'POST'], '/apps/membership/update-password', function ($reques
         		'modified_by' => $_SESSION['MembershipAuth']['user_id']
         	), array('user_id' => $_SESSION['MembershipAuth']['user_id']));
 
-        	$this->flash->flashLater('success', 'Password anda berhasil diubah! Selamat!');
+        	$this->flash->addMessage('success', 'Password anda berhasil diubah! Selamat!');
         	return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-profile'));
 
         } else {
-        	$this->flash->flashNow('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
+        	$this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
         }
 	}
-    
+
     $this->view->getPlates()->addData(
         array(
             'page_title' => 'Membership',

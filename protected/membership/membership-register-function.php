@@ -1,13 +1,13 @@
 <?php
 $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $response, $args) {
 
-    $db = $this->getContainer()->get('db');
-    $gcaptcha_site_key = $this->getContainer()->get('settings')['gcaptcha']['site_key'];
-    $gcaptcha_secret = $this->getContainer()->get('settings')['gcaptcha']['secret'];
-    $use_captcha = $this->getContainer()->get('settings')['use_captcha'];
+    $db = $this->get('db');
+    $gcaptcha_site_key = $this->get('settings')['gcaptcha']['site_key'];
+    $gcaptcha_secret = $this->get('settings')['gcaptcha']['secret'];
+    $use_captcha = $this->get('settings')['use_captcha'];
 
     if ($request->isPost()) {
-        $validator = $this->getContainer()->get('validator');
+        $validator = $this->get('validator');
         $validator->createInput($_POST);
         $validator->rule('required', array(
             'username',
@@ -99,7 +99,7 @@ $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $res
         }
 
         if ($validator->validate()) {
-            $salt_pwd = md5($this->getContainer()->get('settings')['salt_pwd'].$_POST['password']);
+            $salt_pwd = md5($this->get('settings')['salt_pwd'].$_POST['password']);
             $area = trim($_POST['area']);
             $area = empty($area) ? null : $area;
             $fullname = ucwords(trim($_POST['fullname']));
@@ -165,7 +165,7 @@ $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $res
                 $db->close();
                 $trx_success = false;
 
-                $this->flash->flashNow('error', 'System gagal!<br />'.$e->getMessage());
+                $this->flash->addMessage('error', 'System gagal!<br />'.$e->getMessage());
 
             }
 
@@ -183,11 +183,11 @@ $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $res
                     );
 
                     $message = Swift_Message::newInstance('PHP Indonesia - Aktivasi Membership')
-                    ->setFrom(array($this->getContainer()->get('settings')['email']['sender_email'] => $this->getContainer()->get('settings')['email']['sender_name']))
+                    ->setFrom(array($this->get('settings')['email']['sender_email'] => $this->get('settings')['email']['sender_name']))
                     ->setTo(array($email_address => $fullname))
                     ->setBody(file_get_contents(_FULL_APP_PATH_.'protected'._DS_.'views'._DS_.'email'._DS_.'activation.txt'));
 
-                    $mailer = $this->getContainer()->get('mailer');
+                    $mailer = $this->get('mailer');
                     $mailer->registerPlugin(new Swift_Plugins_DecoratorPlugin($replacements));
                     $mailer->send($message);
 
@@ -199,17 +199,17 @@ $app->map(['GET', 'POST'], '/apps/membership/register', function ($request, $res
 
                     $db->close();
 
-                    $this->flash->flashLater('success', $register_success_msg);
+                    $this->flash->addMessage('success', $register_success_msg);
                     return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-index'));
 
                 } catch (Swift_TransportException $e) {
-                    $this->flash->flashLater('success', $register_success_msg_alt);
+                    $this->flash->addMessage('success', $register_success_msg_alt);
                     return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-index'));
                 }
             }
 
         } else {
-            $this->flash->flashNow('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
+            $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
         }
     }
 
