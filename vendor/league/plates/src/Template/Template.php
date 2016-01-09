@@ -53,7 +53,6 @@ class Template
      */
     public function __construct(Engine $engine, $name)
     {
-	    set_error_handler(array($this, 'renderErrorHandler'));
         $this->engine = $engine;
         $this->name = new Name($engine, $name);
 
@@ -140,13 +139,6 @@ class Template
             throw $e;
         }
     }
-	
-	public function renderErrorHandler($errno, $errstr, $errfile, $errline) {
-	    ob_end_clean();	
-		throw new LogicException(
-		    'The template "' . $this->name->getName() . '" producing error. '.$errstr.', on file: '.$errfile.', on line: '.$errline
-		);
-	}
 
     /**
      * Set the template's layout.

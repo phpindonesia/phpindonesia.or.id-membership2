@@ -3,7 +3,7 @@
  * Slim Framework (http://slimframework.com)
  *
  * @link      https://github.com/slimphp/Slim
- * @copyright Copyright (c) 2011-2015 Josh Lockhart
+ * @copyright Copyright (c) 2011-2016 Josh Lockhart
  * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
 namespace Slim\Http;
@@ -105,7 +105,7 @@ class UploadedFile implements UploadedFileInterface
             if (!is_array($uploadedFile['error'])) {
                 $parsed[$field] = new static(
                     $uploadedFile['tmp_name'],
-                    isset($uploadedFile['tmp_name']) ? $uploadedFile['name'] : null,
+                    isset($uploadedFile['name']) ? $uploadedFile['name'] : null,
                     isset($uploadedFile['type']) ? $uploadedFile['type'] : null,
                     isset($uploadedFile['size']) ? $uploadedFile['size'] : null,
                     $uploadedFile['error'],
@@ -115,7 +115,7 @@ class UploadedFile implements UploadedFileInterface
                 foreach ($uploadedFile['error'] as $fileIdx => $error) {
                     $parsed[$field][] = new static(
                         $uploadedFile['tmp_name'][$fileIdx],
-                        isset($uploadedFile['tmp_name']) ? $uploadedFile['name'][$fileIdx] : null,
+                        isset($uploadedFile['name']) ? $uploadedFile['name'][$fileIdx] : null,
                         isset($uploadedFile['type']) ? $uploadedFile['type'][$fileIdx] : null,
                         isset($uploadedFile['size']) ? $uploadedFile['size'][$fileIdx] : null,
                         $uploadedFile['error'][$fileIdx],
