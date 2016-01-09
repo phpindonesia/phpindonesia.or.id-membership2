@@ -10,6 +10,7 @@
 	<title>PHP Indonesia | Membership</title>
 
 	<link href="<?php echo $this->uri_base_url().'/public/css/style.css?v='.time(); ?>" rel="stylesheet">
+	<link href="<?php echo $this->uri_base_url().'/public/css/bootstrap.css' ?>" rel="stylesheet">
 	<link id="shortcodes-css" rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/shortcodes.css'; ?>" type="text/css" media="all"/>
 	<link id="layer-slider" rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/layerslider.css'; ?>" media="all"/>
 	<link rel="stylesheet" href="<?php echo $this->uri_base_url().'/public/css/prettyPhoto.css'; ?>" type="text/css" media="screen"/>
