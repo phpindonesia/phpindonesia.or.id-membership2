@@ -3,9 +3,9 @@ $app->map(['GET', 'POST'], '/apps/membership/login', function ($request, $respon
 
     if ($request->isPost()) {
 
-        $db = $this->getContainer()->get('db');
-        $salt_pwd = md5($this->getContainer()->get('settings')['salt_pwd'].$_POST['password']);
-  
+        $db = $this->get('db');
+        $salt_pwd = md5($this->get('settings')['salt_pwd'].$_POST['password']);
+
         $q_user_count = $db->createQueryBuilder();
         $q_user_count
         ->select('COUNT(*) AS total_data')
@@ -85,12 +85,12 @@ $app->map(['GET', 'POST'], '/apps/membership/login', function ($request, $respon
 
                 $db->close();
 
-                $this->flash->flashLater('success', 'Welcome brother!');
+                $this->flash->addMessage('success', 'Welcome brother!');
                 return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-profile'));
             }
 
         } else {
-            $this->flash->flashLater('error', 'Wrong credentials');
+            $this->flash->addMessage('error', 'Wrong credentials');
             return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));
         }
     }

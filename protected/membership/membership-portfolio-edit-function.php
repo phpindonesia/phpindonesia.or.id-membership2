@@ -1,10 +1,10 @@
 <?php
 $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id:[0-9]+}', function ($request, $response, $args) {
 
-	$db = $this->getContainer()->get('db');
+	$db = $this->get('db');
 
 	if ($request->isPost()) {
-		$validator = $this->getContainer()->get('validator');
+		$validator = $this->get('validator');
         $validator->createInput($_POST);
         $validator->rule('required', array(
             'company_name',
@@ -44,11 +44,11 @@ $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id:[0-9]+}', functi
                 'modified_by' => $_SESSION['MembershipAuth']['user_id']
             ), array('member_portfolio_id' => $_POST['member_portfolio_id']));
 
-            $this->flash->flashLater('success', 'Item portfolio berhasil diperbaharui. Selamat!');
+            $this->flash->addMessage('success', 'Item portfolio berhasil diperbaharui. Selamat!');
             return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-profile'));
 
         } else {
-        	$this->flash->flashNow('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
+        	$this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
         }
 	}
 
@@ -90,9 +90,9 @@ $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id:[0-9]+}', functi
 	$portfolio = $q_portfolio->fetch();
     $industries = \Cake\Utility\Hash::combine($q_industries->fetchAll(), '{n}.industry_id', '{n}.industry_name');
     $career_levels = \Cake\Utility\Hash::combine($q_carerr_levels->fetchAll(), '{n}.career_level_id', '{n}.career_level_id');
-    $years_range = $this->getContainer()->get('years_range');
-	$months_range = $this->getContainer()->get('months_range');
-	$days_range = $this->getContainer()->get('days_range');
+    $years_range = $this->get('years_range');
+	$months_range = $this->get('months_range');
+	$days_range = $this->get('days_range');
 
 	$this->view->getPlates()->addData(
         array(

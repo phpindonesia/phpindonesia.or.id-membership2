@@ -1,7 +1,7 @@
 <?php
 $app->get('/apps/membership/activation/{uid}/{activation_key}', function ($request, $response, $args) {
-    
-    $db = $this->getContainer()->get('db');
+
+    $db = $this->get('db');
 
     $q_activation_exist_count = $db->createQueryBuilder()
     ->select('COUNT(*) AS total_data')
@@ -26,11 +26,11 @@ $app->get('/apps/membership/activation/{uid}/{activation_key}', function ($reque
             'activation_key' => $args['activation_key']
         ));
 
-        $this->flash->flashLater('success', 'Selamat! Account anda sudah aktif. Silahkan login...');
+        $this->flash->addMessage('success', 'Selamat! Account anda sudah aktif. Silahkan login...');
         return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));
 
     } else {
-        $this->flash->flashLater('error', 'Bad Request');
+        $this->flash->addMessage('error', 'Bad Request');
         return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));
     }
 

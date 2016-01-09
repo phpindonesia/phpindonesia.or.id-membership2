@@ -2,30 +2,30 @@
 /*
  * Middleware for setting up Core App View variables.
  * This mean all view variable setup here is a CORE view vars
- *
-*/
-$app->add(function ($request, $response, $next) use ($app) {
-	$app->view->getPlates()->addData(array('_view_validation_errors_' => array()));
-	$app->view->getPlates()->addData(array('_view_js_' => array()));
-	$app->view->getPlates()->addData(array('_view_css_' => array()));
+ */
+$app->add(function ($request, $response, $next) {
+	$view = $this->get('view');
 
-	$response = $next($request, $response);
-	return $response;
+	$view->getPlates()->addData([
+		'_view_validation_errors_' => [],
+		'_view_js_' => [],
+		'_view_css_' => [],
+	]);
+
+	return $next($request, $response);
 });
 
 /*
  * Middleware for checking user authentication
  * Check wether a user already logged in or not
- *
-*/
-$app->add(function ($request, $response, $next) use ($app) {
-	$router = $app->getContainer()->get('router');
-	$uri = $app->getContainer()->get('request')->getUri();
-	
-	$exclude_from_auth = $app->getContainer()->get('settings')['exclude_from_auth'];
+ */
+$app->add(function ($request, $response, $next) {
+	$uri = $request->getUri();
+
+	$exclude_from_auth = $this['settings']['exclude_from_auth'];
 	$base_path = $uri->getBasePath() != '' ? $uri->getBasePath() : '';
 	$path = '';
-	
+
 	if ($uri->getBasePath() != '' && $uri->getPath() == '/') {
 	    $path = '/';
 	} else if ($uri->getBasePath() != '' && $uri->getPath() != '/') {
@@ -53,30 +53,14 @@ $app->add(function ($request, $response, $next) use ($app) {
     } else {
         $contain = true;
     }
-	
+
 	if (!$contain) {
         if (!isset($_SESSION['MembershipAuth'])) {
-            $app->flash->addMessage('error', 'You are not authenticated');
-            return $response->withStatus(302)->withHeader('Location', $router->pathFor('membership-login'));
+            $this['flash']->addMessage('error', 'You are not authenticated');
+            return $response->withStatus(302)->withHeader('Location', $this['router']->pathFor('membership-login'));
         }
 	}
 
-	$response = $next($request, $response);
-	return $response;
-});
-
-/*
- * Registering some view helper / extensions functions
- * Actually this is not a middleware. I just put it here 
- * 
-*/
-$app->view->getPlates()->registerFunction('append_js', function ($js_files = array()) use ($app) {
-	$app->view->getPlates()->addData(array('_view_js_' => $js_files));
-	return true;
-});
-
-$app->view->getPlates()->registerFunction('append_css', function ($js_files = array()) use ($app) {
-	$app->view->getPlates()->addData(array('_view_css_' => $js_files));
-	return true;
+	return $next($request, $response);
 });
 

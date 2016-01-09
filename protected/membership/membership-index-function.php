@@ -1,7 +1,7 @@
 <?php
 $app->get('/apps/membership', function ($request, $response, $args) {
 
-    $db = $this->getContainer()->get('db');
+    $db = $this->get('db');
 
     $q_members = $db->createQueryBuilder()
     ->select(
@@ -49,7 +49,7 @@ $app->get('/apps/membership', function ($request, $response, $args) {
     };
 
     $pagerAdapter = new \Pagerfanta\Adapter\DoctrineDbalAdapter($q_members, $countQueryBuilderModifier);
-    
+
     $pagerfanta = new \Pagerfanta\Pagerfanta($pagerAdapter);
     $pagerfanta->setMaxPerPage(20);
     $pagerfanta->setCurrentPage(isset($_GET['page']) ? $_GET['page'] : 1);

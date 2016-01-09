@@ -1,7 +1,7 @@
 <?php
 $app->get('/apps/membership/reset-password/{uid}/{reset_key}', function ($request, $response, $args) {
-    
-    $db = $this->getContainer()->get('db');
+
+    $db = $this->get('db');
 
     $q_reset_exist_count = $db->createQueryBuilder()
     ->select('COUNT(*) AS total_data')
@@ -32,7 +32,7 @@ $app->get('/apps/membership/reset-password/{uid}/{reset_key}', function ($reques
     	$email_address = $member['email'];
 
         // Handle new temporary password
-        $salt_pwd = $this->getContainer()->get('settings')['salt_pwd'];
+        $salt_pwd = $this->get('settings')['salt_pwd'];
         $temp_pwd = substr(str_shuffle(md5(microtime())), 0, 10);
         $salted_temp_pwd = md5($salt_pwd.$temp_pwd);
 
@@ -57,24 +57,24 @@ $app->get('/apps/membership/reset-password/{uid}/{reset_key}', function ($reques
             );
 
             $message = Swift_Message::newInstance('PHP Indonesia - Password baru sementara')
-            ->setFrom(array($this->getContainer()->get('settings')['email']['sender_email'] => $this->getContainer()->get('settings')['email']['sender_name']))
+            ->setFrom(array($this->get('settings')['email']['sender_email'] => $this->get('settings')['email']['sender_name']))
             ->setTo(array($email_address => $member['username']))
             ->setBody(file_get_contents(_FULL_APP_PATH_.'protected'._DS_.'views'._DS_.'email'._DS_.'password-change-ok-confirmation.txt'));
 
-            $mailer = $this->getContainer()->get('mailer');
+            $mailer = $this->get('mailer');
             $mailer->registerPlugin(new Swift_Plugins_DecoratorPlugin($replacements));
             $mailer->send($message);
 
-            $this->flash->flashLater('success', $success_msg);
+            $this->flash->addMessage('success', $success_msg);
             return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));
 
         } catch (Swift_TransportException $e) {
-            $this->flash->flashLater('success', $success_msg_alt);
-            return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));   
+            $this->flash->addMessage('success', $success_msg_alt);
+            return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));
         }
-        
+
     } else {
-        $this->flash->flashLater('error', 'Bad Request');
+        $this->flash->addMessage('error', 'Bad Request');
         return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-login'));
     }
 
