@@ -1,41 +1,41 @@
 <?php
 $app->map(['GET', 'POST'], '/apps/membership/forgot-password', function ($request, $response, $args) {
 
-	$gcaptcha_site_key = $this->get('settings')['gcaptcha']['site_key'];
-	$gcaptcha_secret = $this->get('settings')['gcaptcha']['secret'];
-	$use_captcha = $this->get('settings')['use_captcha'];
+    $gcaptcha_site_key = $this->get('settings')['gcaptcha']['site_key'];
+    $gcaptcha_secret = $this->get('settings')['gcaptcha']['secret'];
+    $use_captcha = $this->get('settings')['use_captcha'];
 
-	if ($request->isPost()) {
-		$db = $this->get('db');
-		$validator = $this->get('validator');
+    if ($request->isPost()) {
+        $db = $this->get('db');
+        $validator = $this->get('validator');
 
-		$success_msg = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda. Terimakasih ^_^';
-		$success_msg_alt = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda.<br /><br /><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong><br /><br />Terimakasih ^_^';
+        $success_msg = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda. Terimakasih ^_^';
+        $success_msg_alt = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda.<br /><br /><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong><br /><br />Terimakasih ^_^';
 
-		$validator->createInput($_POST);
+        $validator->createInput($_POST);
 
-		$validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {
-			$q_email_exist = $db->createQueryBuilder()
-			->select('COUNT(*) AS total_data')
-			->from('users')
-			->where('email = :email')
-            ->andWhere('activated = :act')
-            ->andWhere('deleted = :d')
-			->setParameter(':email', trim($_POST['email']))
-            ->setParameter(':act', 'Y', \Doctrine\DBAL\Types\Type::STRING)
-            ->setParameter(':d', 'N', \Doctrine\DBAL\Types\Type::STRING)
-			->execute();
+        $validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {
+            $q_email_exist = $db->createQueryBuilder()
+                ->select('COUNT(*) AS total_data')
+                ->from('users')
+                ->where('email = :email')
+                ->andWhere('activated = :act')
+                ->andWhere('deleted = :d')
+                ->setParameter(':email', trim($_POST['email']))
+                ->setParameter(':act', 'Y', \Doctrine\DBAL\Types\Type::STRING)
+                ->setParameter(':d', 'N', \Doctrine\DBAL\Types\Type::STRING)
+                ->execute();
 
-			$email_exist = (int) $q_email_exist->fetch()['total_data'];
-			if ($email_exist > 0) {
-				return true;
-			}
+            $email_exist = (int) $q_email_exist->fetch()['total_data'];
+            if ($email_exist > 0) {
+                return true;
+            }
 
-			return false;
+            return false;
 
-		}, 'Tidak terdaftar! atau Account anda belum aktif.');
+        }, 'Tidak terdaftar! atau Account anda belum aktif.');
 
-		if ($use_captcha == true) {
+        if ($use_captcha == true) {
             $validator->addNewRule('verify_captcha', function ($field, $value, array $params) use ($gcaptcha_secret) {
                 $result = false;
 
@@ -64,21 +64,21 @@ $app->map(['GET', 'POST'], '/apps/membership/forgot-password', function ($reques
             $email_address = trim($_POST['email']);
 
             $q_member = $db->createQueryBuilder()
-            ->select('user_id', 'username')
-            ->from('users')
-            ->where('email = :email')
-            ->setParameter(':email', $email_address)
-            ->execute();
+                ->select('user_id', 'username')
+                ->from('users')
+                ->where('email = :email')
+                ->setParameter(':email', $email_address)
+                ->execute();
 
             $member = $q_member->fetch();
 
             $db->insert('users_reset_pwd', array(
-            	'user_id' => $member['user_id'],
-            	'reset_key' => $reset_key,
-            	'expired_date' => $reset_expired_date,
-            	'email_sent' => 'N',
-            	'created' => date('Y-m-d H:i:s'),
-            	'deleted' => 'N'
+                'user_id' => $member['user_id'],
+                'reset_key' => $reset_key,
+                'expired_date' => $reset_expired_date,
+                'email_sent' => 'N',
+                'created' => date('Y-m-d H:i:s'),
+                'deleted' => 'N'
             ));
 
             $db->close();
@@ -89,8 +89,8 @@ $app->map(['GET', 'POST'], '/apps/membership/forgot-password', function ($reques
                     '{email_address}' => $email_address,
                     '{request_reset_date}' => date('d-m-Y H:i:s'),
                     '{reset_path}' => $this->router->pathFor('membership-reset-password', array(
-                    	'uid' => $member['user_id'],
-                    	'reset_key' => $reset_key
+                        'uid' => $member['user_id'],
+                        'reset_key' => $reset_key
                     )),
                     '{reset_expired_date}' => date('d-m-Y H:i:s', strtotime($reset_expired_date)),
                     '{base_url}' => $request->getUri()->getBaseUrl()
@@ -122,9 +122,9 @@ $app->map(['GET', 'POST'], '/apps/membership/forgot-password', function ($reques
             }
 
         } else {
-        	$this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
+            $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
         }
-	}
+    }
 
     $this->view->getPlates()->addData(
         array(

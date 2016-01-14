@@ -67,7 +67,7 @@ $container['validator'] = function ($container) {
     return new Validator($container->get('view')->getPlates());
 };
 
-$container['flash'] = function ($container) {
+$container['flash'] = function () {
     return new SlimFlash;
 };
 

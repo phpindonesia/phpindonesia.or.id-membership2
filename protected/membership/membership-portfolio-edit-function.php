@@ -1,10 +1,10 @@
 <?php
 $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id:[0-9]+}', function ($request, $response, $args) {
 
-	$db = $this->get('db');
+    $db = $this->get('db');
 
-	if ($request->isPost()) {
-		$validator = $this->get('validator');
+    if ($request->isPost()) {
+        $validator = $this->get('validator');
         $validator->createInput($_POST);
         $validator->rule('required', array(
             'company_name',
@@ -27,7 +27,7 @@ $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id:[0-9]+}', functi
                 $_POST['end_date_d'] = null;
             }
 
-        	$db->update('members_portfolios', array(
+            $db->update('members_portfolios', array(
                 'company_name' => filter_var(trim($_POST['company_name']), FILTER_SANITIZE_STRING),
                 'industry_id' => filter_var(trim($_POST['industry_id']), FILTER_SANITIZE_STRING),
                 'start_date_y' => filter_var(trim($_POST['start_date_y']), FILTER_SANITIZE_STRING),
@@ -48,9 +48,9 @@ $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id:[0-9]+}', functi
             return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-profile'));
 
         } else {
-        	$this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
+            $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
         }
-	}
+    }
 
     $q_portfolio = $db->createQueryBuilder()
     ->select(
@@ -87,14 +87,14 @@ $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id:[0-9]+}', functi
     ->from('industries')
     ->execute();
 
-	$portfolio = $q_portfolio->fetch();
+    $portfolio = $q_portfolio->fetch();
     $industries = \Cake\Utility\Hash::combine($q_industries->fetchAll(), '{n}.industry_id', '{n}.industry_name');
     $career_levels = \Cake\Utility\Hash::combine($q_carerr_levels->fetchAll(), '{n}.career_level_id', '{n}.career_level_id');
     $years_range = $this->get('years_range');
-	$months_range = $this->get('months_range');
-	$days_range = $this->get('days_range');
+    $months_range = $this->get('months_range');
+    $days_range = $this->get('days_range');
 
-	$this->view->getPlates()->addData(
+    $this->view->getPlates()->addData(
         array(
             'page_title' => 'Membership',
             'sub_page_title' => 'Update portfolio item'

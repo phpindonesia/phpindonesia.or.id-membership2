@@ -4,22 +4,22 @@ namespace Slim\Views;
 use Psr\Http\Message\ResponseInterface;
 
 class PlatesTemplate implements \ArrayAccess {
-	protected $plates;
-	protected $defaultVariables = [];
+    protected $plates;
+    protected $defaultVariables = [];
 
-	public function __construct($template_path, $settings = []) {
-		$this->plates = new \League\Plates\Engine($template_path);
-	}
+    public function __construct($template_path, $settings = []) {
+        $this->plates = new \League\Plates\Engine($template_path);
+    }
 
-	public function loadExtension(\League\Plates\Extension\ExtensionInterface $extension) {
-		$this->plates->loadExtension($extension);
-	}
+    public function loadExtension(\League\Plates\Extension\ExtensionInterface $extension) {
+        $this->plates->loadExtension($extension);
+    }
 
-	public function addFolder($folder_name, $path_to_folder) {
-		$this->plates->addFolder($folder_name, $path_to_folder);
-	}
+    public function addFolder($folder_name, $path_to_folder) {
+        $this->plates->addFolder($folder_name, $path_to_folder);
+    }
 
-	/**
+    /**
      * Fetch rendered template
      *
      * @param  string $template Template pathname relative to templates directory
@@ -27,15 +27,15 @@ class PlatesTemplate implements \ArrayAccess {
      *
      * @return string
      */
-	public function fetch($template, $data = []) {
-		$data = array_merge($this->defaultVariables, $data);
-		$tpl_object = $this->plates->make($template);
-		$tpl_object->data($data);
+    public function fetch($template, $data = []) {
+        $data = array_merge($this->defaultVariables, $data);
+        $tpl_object = $this->plates->make($template);
+        $tpl_object->data($data);
 
-		return $tpl_object->render();
-	}
+        return $tpl_object->render();
+    }
 
-	/**
+    /**
      * Output rendered template
      *
      * @param ResponseInterface $response
@@ -44,12 +44,12 @@ class PlatesTemplate implements \ArrayAccess {
      * @return ResponseInterface
      */
     public function render(ResponseInterface $response, $template, $data = []) {
-    	$response->getBody()->write($this->fetch($template, $data));
-    	return $response;
+        $response->getBody()->write($this->fetch($template, $data));
+        return $response;
     }
 
     public function getPlates() {
-    	return $this->plates;
+        return $this->plates;
     }
 
     /********************************************************************************
@@ -64,7 +64,7 @@ class PlatesTemplate implements \ArrayAccess {
      * @return bool
      */
     public function offsetExists($key) {
-    	return array_key_exists($key, $this->defaultVariables);
+        return array_key_exists($key, $this->defaultVariables);
     }
 
     /**
@@ -75,7 +75,7 @@ class PlatesTemplate implements \ArrayAccess {
      * @return mixed The key's value, or the default value
      */
     public function offsetGet($key) {
-    	return $this->defaultVariables[$key];
+        return $this->defaultVariables[$key];
     }
 
     /**
@@ -85,7 +85,7 @@ class PlatesTemplate implements \ArrayAccess {
      * @param mixed  $value The data value
      */
     public function offsetSet($key, $value) {
-    	$this->defaultVariables[$key] = $value;
+        $this->defaultVariables[$key] = $value;
     }
 
     /**
@@ -94,7 +94,7 @@ class PlatesTemplate implements \ArrayAccess {
      * @param string $key The data key
      */
     public function offsetUnset($key) {
-    	unset($this->defaultVariables[$key]);
+        unset($this->defaultVariables[$key]);
     }
 
     /********************************************************************************
@@ -107,7 +107,7 @@ class PlatesTemplate implements \ArrayAccess {
      * @return int
      */
     public function count() {
-    	return count($this->defaultVariables);
+        return count($this->defaultVariables);
     }
 
     /********************************************************************************
@@ -120,7 +120,7 @@ class PlatesTemplate implements \ArrayAccess {
      * @return \ArrayIterator
      */
     public function getIterator() {
-    	return new \ArrayIterator($this->defaultVariables);
+        return new \ArrayIterator($this->defaultVariables);
     }
 
 }

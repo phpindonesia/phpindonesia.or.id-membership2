@@ -7,20 +7,20 @@ use \Psr\Http\Message\UriInterface;
 
 class PlatesUriExtension implements ExtensionInterface {
 
-	/**
+    /**
      * The Slim's request URI Object.
      * @var \Psr\Http\Message\UriInterface
      */
-	protected $uri;
+    protected $uri;
 
     protected $router;
 
-	protected $parts;
+    protected $parts;
 
     protected $settings;
 
-	public function __construct(UriInterface $uri, $router, $settings) {
-		$this->uri = $uri;
+    public function __construct(UriInterface $uri, $router, $settings) {
+        $this->uri = $uri;
         $this->router = $router;
         $this->settings = $settings;
         $path = null;
@@ -31,10 +31,10 @@ class PlatesUriExtension implements ExtensionInterface {
             $path = ltrim($this->uri->getPath(), '/');
         }
 
-		$this->parts = explode('/', $path);
-	}
+        $this->parts = explode('/', $path);
+    }
 
-	/**
+    /**
      * Register extension functions.
      * @return null
      */
@@ -88,35 +88,35 @@ class PlatesUriExtension implements ExtensionInterface {
         }
     }
 
-	public function scheme() {
-		return $this->uri->getScheme();
-	}
+    public function scheme() {
+        return $this->uri->getScheme();
+    }
 
-	public function host() {
-		return $this->uri->getHost();
-	}
+    public function host() {
+        return $this->uri->getHost();
+    }
 
-	public function port() {
-		return $this->uri->getPort();
-	}
+    public function port() {
+        return $this->uri->getPort();
+    }
 
-	public function path() {
-		return $this->uri->getPath();
-	}
+    public function path() {
+        return $this->uri->getPath();
+    }
 
-	public function basePath() {
-		return $this->uri->getBasePath();
-	}
+    public function basePath() {
+        return $this->uri->getBasePath();
+    }
 
-	public function query() {
-		return $this->uri->getQuery();
-	}
+    public function query() {
+        return $this->uri->getQuery();
+    }
 
-	public function queryParams() {
-		return $this->uri->getQueryParams();
-	}
+    public function queryParams() {
+        return $this->uri->getQueryParams();
+    }
 
-	/**
+    /**
      * Perform URI check.
      * @param  null|integer|string $var1
      * @param  mixed               $var2

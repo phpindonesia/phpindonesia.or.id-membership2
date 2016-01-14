@@ -5,13 +5,13 @@ use \League\Plates\Engine;
 
 class PlatesFormHelperExtension implements ExtensionInterface {
 
-	protected $requestType;
+    protected $requestType;
 
-	public function __construct($requestType) {
-		$this->requestType = $requestType;
-	}
+    public function __construct($requestType) {
+        $this->requestType = $requestType;
+    }
 
-	/**
+    /**
      * Register extension functions.
      * @return null
      */
@@ -23,7 +23,7 @@ class PlatesFormHelperExtension implements ExtensionInterface {
     }
 
     public function fhDefaultVal($name, $def_val = null, $handle_get_req = false) {
-    	if ($this->requestType == 'GET') {
+        if ($this->requestType == 'GET') {
             if ($def_val) {
                 return $def_val;
             } else {
@@ -31,54 +31,54 @@ class PlatesFormHelperExtension implements ExtensionInterface {
                     return isset($_GET[$name]) ? $_GET[$name] : '';
                 }
             }
-    		
-    	} else if ($this->requestType == 'POST') {
-    		return isset($_POST[$name]) ? $_POST[$name] : $def_val;
-    	}
 
-    	return false;
+        } else if ($this->requestType == 'POST') {
+            return isset($_POST[$name]) ? $_POST[$name] : $def_val;
+        }
+
+        return false;
     }
 
     public function fhInputSelect($name, array $data, array $select_attrs = array()) {
-    	$default_value = null;
-    	if (isset($select_attrs['default'])) {
-    		$default_value = $this->fhDefaultVal($name, $select_attrs['default'], true);
-    	} else {
+        $default_value = null;
+        if (isset($select_attrs['default'])) {
+            $default_value = $this->fhDefaultVal($name, $select_attrs['default'], true);
+        } else {
             $default_value = $this->fhDefaultVal($name, null, true);
         }
 
-    	unset($select_attrs['default']);
+        unset($select_attrs['default']);
         unset($select_attrs['name']);
-        
-    	$elements = array();
-    	$str = '<select name="'.$name.'"';
-    	foreach ($select_attrs as $key => $value) {
-    		$str .= ' '.$key.'="'.$value.'"';
-    	}
 
-    	$str .= '>';
-    	$elements[0] = $str;
-    	$elements[1] = '<option value="" selected="selected">-- Pilih --</option>';
+        $elements = array();
+        $str = '<select name="'.$name.'"';
+        foreach ($select_attrs as $key => $value) {
+            $str .= ' '.$key.'="'.$value.'"';
+        }
 
-    	$key_selected = false;
-    	$idx_start = 2;
-    	foreach ($data as $key => $value) {
-    		if ($key == $default_value) {
-    			$key_selected = true;
-    			$elements[$idx_start] = '<option value="'.$key.'" selected="selected">'.$value.'</option>';
-    		} else {
-    			$elements[$idx_start] = '<option value="'.$key.'">'.$value.'</option>';
-    		}
+        $str .= '>';
+        $elements[0] = $str;
+        $elements[1] = '<option value="" selected="selected">-- Pilih --</option>';
 
-    		$idx_start++;
-    	}
+        $key_selected = false;
+        $idx_start = 2;
+        foreach ($data as $key => $value) {
+            if ($key == $default_value) {
+                $key_selected = true;
+                $elements[$idx_start] = '<option value="'.$key.'" selected="selected">'.$value.'</option>';
+            } else {
+                $elements[$idx_start] = '<option value="'.$key.'">'.$value.'</option>';
+            }
 
-    	if ($key_selected) {
-    		$elements[1] = '<option value="">-- Pilih --</option>';
-    	}
+            $idx_start++;
+        }
 
-    	$elements[$idx_start] = '</select>';
-    	return implode('', $elements);
+        if ($key_selected) {
+            $elements[1] = '<option value="">-- Pilih --</option>';
+        }
+
+        $elements[$idx_start] = '</select>';
+        return implode('', $elements);
     }
 
     public function fhErrorCssClass($name, $error_css_class, array $errors) {

@@ -23,13 +23,13 @@ $app->get('/apps/membership/reset-password/{uid}/{reset_key}', function ($reques
         $success_msg = 'Password baru sementara anda sudah dikirim ke email. Segera check email anda. Terimakasih ^_^';
         $success_msg_alt = 'Password baru sementara anda sudah dikirim ke email.<br /><br /><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong><br /><br />Terimakasih ^_^';
 
-    	// Fetch member basic info
-    	$q_member = $db->createQueryBuilder()
-    	->select('username', 'email')->from('users')->where('user_id = :uid')
-    	->setParameter(':uid', $args['uid'])->execute();
+        // Fetch member basic info
+        $q_member = $db->createQueryBuilder()
+        ->select('username', 'email')->from('users')->where('user_id = :uid')
+        ->setParameter(':uid', $args['uid'])->execute();
 
-    	$member = $q_member->fetch();
-    	$email_address = $member['email'];
+        $member = $q_member->fetch();
+        $email_address = $member['email'];
 
         // Handle new temporary password
         $salt_pwd = $this->get('settings')['salt_pwd'];
@@ -37,9 +37,9 @@ $app->get('/apps/membership/reset-password/{uid}/{reset_key}', function ($reques
         $salted_temp_pwd = md5($salt_pwd.$temp_pwd);
 
         $db->update('users', array(
-        	'password' => $salted_temp_pwd,
-        	'modified' => date('Y-m-d H:i:s'),
-        	'modified_by' => 0
+            'password' => $salted_temp_pwd,
+            'modified' => date('Y-m-d H:i:s'),
+            'modified_by' => 0
         ), array('user_id' => $args['uid']));
 
         $db->update('users_reset_pwd', array('deleted' => 'Y' ), array(

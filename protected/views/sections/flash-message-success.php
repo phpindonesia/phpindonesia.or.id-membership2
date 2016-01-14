@@ -1,5 +1,5 @@
 <div class="alert alert-success">
-	<?php
-	echo $message;
-	?>
+    <?php
+    echo $message;
+    ?>
 </div>
