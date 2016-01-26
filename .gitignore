@@ -18,7 +18,7 @@ qnd-cli-utils/settings.php
 
 # Dependency folders
 # --------------------------
-/vendor/
+/vendor
 
 # IDE Project Configurations
 # --------------------------
