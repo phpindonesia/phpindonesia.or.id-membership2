@@ -1,9 +1,9 @@
 <?php $this->layout('layouts::system') ?>
 
 <div class="full-width-section parallax full-section-bg">
-	<div class="container" style="margin: 0 auto;">
+	<div class="container">
 		<div class="dt-sc-clear"></div>
-		<div class="form-wrapper register" style="margin-top: -150px;">
+		<div class="form-wrapper register">
 			<form action="<?php echo $this->pathFor('membership-login'); ?>" method="post" novalidate>
 
 				<?php

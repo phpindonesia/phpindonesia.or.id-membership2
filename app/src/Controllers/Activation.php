@@ -41,13 +41,12 @@ class Activation extends Controllers
 
     public function reactivate($request, $response, $args)
     {
-        $gcaptcha_site_key = $this->settings['gcaptcha']['site_key'];
-        $gcaptcha_secret = $this->settings['gcaptcha']['secret'];
-        $use_captcha = $this->settings['use_captcha'];
+        $gcaptchaSiteKey = $this->settings['gcaptcha']['site_key'];
+        $gcaptchaSecret = $this->settings['gcaptcha']['secret'];
+        $gcaptchaEnable = $this->settings['gcaptcha']['enable'];
 
         if ($request->isPost()) {
 
-            $db = $this->db;
             $validator = $this->validator;
             $validator->createInput($_POST);
 
@@ -81,7 +80,7 @@ class Activation extends Controllers
         $this->view->addData([
             'page_title' => 'Membership',
             'sub_page_title' => 'Account Reactivation',
-            'enable_captcha' => $use_captcha
+            'enable_captcha' => $gcaptchaEnable
         ], 'layouts::system');
 
         return $this->view->render(

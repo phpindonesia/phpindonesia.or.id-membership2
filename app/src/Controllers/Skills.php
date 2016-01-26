@@ -10,10 +10,8 @@ class Skills extends Controllers
     {
         $this->assertXhrRequest($request, $response);
 
-        $skills = $this->db->select(['skill_id', 'skill_name'])
-            ->from('skills')
-            ->where('parent_id', '=', $args['skill_id'])
-            ->execute();
+        $skills = Skills::factory($this->db)
+            ->getChild($args['skill_id']);
 
         return $response->withJson($skills, 200);
     }
@@ -74,10 +72,10 @@ class Skills extends Controllers
 
 
         $q_skills_main = $this->db->createQueryBuilder()
-        ->select('skill_id', 'skill_name')
-        ->from('skills')
-        ->where('parent_id IS NULL')
-        ->execute();
+            ->select('skill_id', 'skill_name')
+            ->from('skills')
+            ->where('parent_id IS NULL')
+            ->execute();
 
         $skills_main = \Cake\Utility\Hash::combine($q_skills_main->fetchAll(), '{n}.skill_id', '{n}.skill_name');
         $skills = array();

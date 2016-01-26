@@ -10,18 +10,13 @@ $container = $app->getContainer();
  * Setup database container
  */
 $container['db'] = function ($container) {
-    $settings = $container->get('settings')['db'];
+    $db = $container->get('settings')['db'];
 
-    if (!isset($settings['dsn'])) {
-        $settings['dsn'] = sprintf(
-            '%s:host=%s;dbname=%s',
-            $settings['driver'],
-            $settings['host'],
-            $settings['dbname']
-        );
+    if (!isset($db['dsn'])) {
+        $db['dsn'] = sprintf('%s:host=%s;dbname=%s', $db['driver'], $db['host'], $db['dbname']);
     }
 
-    return new Slim\PDO\Database($settings['dsn'], $settings['username'], $settings['password']);
+    return new Slim\PDO\Database($db['dsn'], $db['username'], $db['password']);
 };
 
 /**

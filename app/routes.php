@@ -12,18 +12,29 @@ $app->post('/register', Controllers\Account::class.':register');
 $app->get('/logout', Controllers\Account::class.':logout')->setName('membership-logout');
 
 $app->group('/skills', function () {
-    $this->get('', Controllers\Password::class.':index')->setName('membership-skills');
-    $this->delete('/{id:[0-9]+}', Controllers\Password::class.':delete')->setName('membership-skills-delete');
+    $this->get('', Controllers\Skills::class.':index')->setName('membership-skills');
 
-    $this->get('/add', Controllers\Password::class.':addPage')->setName('membership-skills-add');
-    $this->post('/add', Controllers\Password::class.':add');
+    $this->delete('/{id:[0-9]+}', Controllers\Skills::class.':delete')->setName('membership-skills-delete');
+
+    $this->get('/add', Controllers\Skills::class.':addPage')->setName('membership-skills-add');
+    $this->post('/add', Controllers\Skills::class.':add');
+});
+
+$app->get('/account', Controllers\Profile::class.':member')->setName('membership-account');
+$app->group('/profile', function () {
+    $this->get('', Controllers\Profile::class.':index')->setName('membership-profile');
+
+    $this->delete('/{id:[0-9]+}', Controllers\Profile::class.':delete')->setName('membership-profile-delete');
+
+    $this->get('/add', Controllers\Profile::class.':addPage')->setName('membership-profile-add');
+    $this->post('/add', Controllers\Profile::class.':add');
 });
 
 $app->group('/activation', function () {
-    $this->get('/activate', Controllers\Password::class.':activatePage')->setName('membership-activation-activate');
-    $this->post('/activate', Controllers\Password::class.':activate');
+    $this->get('/activate', Controllers\Activation::class.':activatePage')->setName('membership-activation-activate');
+    $this->post('/activate', Controllers\Activation::class.':activate');
 
-    $this->get('/reactivate', Controllers\Password::class.':reactivate')->setName('membership-activation-reactivate');
+    $this->get('/reactivate', Controllers\Activation::class.':reactivate')->setName('membership-activation-reactivate');
 });
 
 $app->group('/password', function () {

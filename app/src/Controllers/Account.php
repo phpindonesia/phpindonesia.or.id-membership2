@@ -6,18 +6,24 @@ use Slim\Exception\NotFoundException;
 
 class Account extends Controllers
 {
+    public function loginPage($request, $response, $args)
+    {
+        $this->setPageTitle('Membership', 'Login Anggota');
+
+        return $this->view->render('login');
+    }
+
     public function login($request, $response, $args)
     {
         $post = $request->getParsedBody();
-        $validation = $this->validator->rules([
-            'required' => ['username', 'email', 'password'],
-            'email' => 'email',
-        ]);
+        $validation = $this->validator
+            ->rule('required', ['username', 'email', 'password'])
+            ->rule('email',    'email');
 
         if (!$validation->validate()) {
-            return $this->view
-                ->validationErrors($validation->errors())
-                ->render('login');
+            $this->validationErrors($validation->errors());
+
+            return $this->view->render('login');
         }
 
         $query = $this->db->select([
@@ -27,13 +33,8 @@ class Account extends Controllers
             ->from('users u')
             ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
             ->leftJoin('members_profiles up', 'u.user_id', '=', 'up.user_id')
-            ->where('u.username', '=', $post['username'])
-            ->where('u.email', '=', $post['email'])
-            ->where('u.password', '=', $post['password'])
-            // ->where('u.deleted', '=', 'N')
-            // ->where('u.activated', '=', 'Y')
-            ->where('ur.role_id', '=', 'member')
-            ->execute();
+            ->where('u.username')->where('u.password')->where('u.email')->where('ur.role_id')
+            ->execute([$post['username'], $post['password'], $post['email'], 'member']);
 
         $user = $query->fetch();
 
@@ -72,13 +73,6 @@ class Account extends Controllers
         return $this->view->render('login');
     }
 
-    public function loginPage($request, $response, $args)
-    {
-        $this->setPageTitle('Membership', 'Login Anggota');
-
-        return $this->view->render('login');
-    }
-
     public function logout($request, $response, $args)
     {
         $_SESSION = [];
@@ -98,17 +92,16 @@ class Account extends Controllers
         );
     }
 
-    public function register($request, $response, $args)
+    public function registerPage($request, $response, $args)
     {
         return $this->view->render('register', []);
     }
 
-    public function registerPage($request, $response, $args)
+    public function register($request, $response, $args)
     {
-        $db = $this->db;
-        $gcaptcha_site_key = $this->settings['gcaptcha']['site_key'];
-        $gcaptcha_secret = $this->settings['gcaptcha']['secret'];
-        $use_captcha = $this->settings['use_captcha'];
+        $gcaptchaSiteKey = $this->settings['gcaptcha']['site_key'];
+        $gcaptchaSecret = $this->settings['gcaptcha']['secret'];
+        $gcaptchaEnable = $this->settings['gcaptcha']['enable'];
 
         if ($request->isPost()) {
             $validator = $this->validator;
@@ -126,12 +119,12 @@ class Account extends Controllers
                 'gender_id'
             ));
 
-            if ($use_captcha == true) {
-                $validator->addNewRule('verify_captcha', function ($field, $value, array $params) use ($gcaptcha_secret) {
+            if ($gcaptchaEnable == true) {
+                $validator->addNewRule('verify_captcha', function ($field, $value, array $params) use ($gcaptchaSecret) {
                     $result = false;
 
                     if (isset($_POST['g-recaptcha-response'])) {
-                        $recaptcha = new \ReCaptcha\ReCaptcha($gcaptcha_secret);
+                        $recaptcha = new \ReCaptcha\ReCaptcha($gcaptchaSecret);
                         $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
 
                         $result = $resp->isSuccess();
@@ -153,13 +146,13 @@ class Account extends Controllers
 
             $validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {
                 $q_email_count = $this->db->createQueryBuilder()
-                ->select('COUNT(*) AS total_data')
-                ->from('users')
-                ->where('email = :email')
-                ->andWhere('deleted = :d')
-                ->setParameter(':email', trim(strtolower($_POST['email'])))
-                ->setParameter(':d', 'N')
-                ->execute();
+                    ->select('COUNT(*) AS total_data')
+                    ->from('users')
+                    ->where('email = :email')
+                    ->andWhere('deleted = :d')
+                    ->setParameter(':email', trim(strtolower($_POST['email'])))
+                    ->setParameter(':d', 'N')
+                    ->execute();
 
                 $email_count = (int) $q_email_count->fetch()['total_data'];
                 $this->db->close();
@@ -198,7 +191,7 @@ class Account extends Controllers
             $validator->rule('check_email_exist', 'email');
             $validator->rule('check_username_exist', 'username');
 
-            if ($use_captcha == true) {
+            if ($gcaptchaEnable == true) {
                 $validator->rule('verify_captcha', 'captcha');
             }
 
@@ -357,7 +350,7 @@ class Account extends Controllers
             array(
                 'page_title' => 'Membership',
                 'sub_page_title' => 'Registrasi Anggota',
-                'enable_captcha' => $use_captcha
+                'enable_captcha' => $gcaptchaEnable
             ),
             'layouts::system'
         );

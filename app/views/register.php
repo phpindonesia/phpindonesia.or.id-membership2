@@ -1,7 +1,7 @@
 <?php $this->layout('layouts::system') ?>
 
 <?php
-$this->append_js(array(
+$this->appendJs(array(
   $this->baseUrl().'/asset/js/app/membership/register.js'
 ));
 ?>
@@ -146,7 +146,7 @@ $this->append_js(array(
 
                     <div class="col-xs-10 col-sm-10">
                         <div class="form-group">
-                            <?php if ($use_captcha == true): ?>
+                            <?php if ($gcaptchaEnable == true): ?>
                                 <input id="foo-captcha" name="captcha" type="hidden" value="1" />
                                 <?php echo $this->formShowErrors('captcha', $validation_errors); ?>
                                 <div class="g-recaptcha" style="margin-bottom:10px;" data-sitekey="<?php echo $gcaptcha_site_key; ?>"></div>

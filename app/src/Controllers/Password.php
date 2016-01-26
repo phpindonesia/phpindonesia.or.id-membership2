@@ -85,9 +85,9 @@ class Password extends Controllers
 
     public function forgot($request, $response, $args)
     {
-        $gcaptcha_site_key = $this->settings['gcaptcha']['site_key'];
-        $gcaptcha_secret = $this->settings['gcaptcha']['secret'];
-        $use_captcha = $this->settings['use_captcha'];
+        $gcaptchaSiteKey = $this->settings['gcaptcha']['site_key'];
+        $gcaptchaSecret = $this->settings['gcaptcha']['secret'];
+        $gcaptchaEnable = $this->settings['gcaptcha']['enable'];
 
         if ($request->isPost()) {
             $db = $this->db;
@@ -99,7 +99,7 @@ class Password extends Controllers
             $validator->createInput($_POST);
 
             $validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {
-                $q_email_exist = $db->createQueryBuilder()
+                $q_email_exist = $this->db->createQueryBuilder()
                     ->select('COUNT(*) AS total_data')
                     ->from('users')
                     ->where('email = :email')
@@ -119,12 +119,12 @@ class Password extends Controllers
 
             }, 'Tidak terdaftar! atau Account anda belum aktif.');
 
-            if ($use_captcha == true) {
-                $validator->addNewRule('verify_captcha', function ($field, $value, array $params) use ($gcaptcha_secret) {
+            if ($gcaptchaEnable == true) {
+                $validator->addNewRule('verify_captcha', function ($field, $value, array $params) use ($gcaptchaSecret) {
                     $result = false;
 
                     if (isset($_POST['g-recaptcha-response'])) {
-                        $recaptcha = new \ReCaptcha\ReCaptcha($gcaptcha_secret);
+                        $recaptcha = new \ReCaptcha\ReCaptcha($gcaptchaSecret);
                         $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
                         $result = $resp->isSuccess();
                     }
@@ -138,7 +138,7 @@ class Password extends Controllers
             $validator->rule('email', 'email');
             $validator->rule('check_email_exist', 'email');
 
-            if ($use_captcha == true) {
+            if ($gcaptchaEnable == true) {
                 $validator->rule('verify_captcha', 'captcha');
             }
 
@@ -147,7 +147,7 @@ class Password extends Controllers
                 $reset_expired_date = date('Y-m-d H:i:s', time() + 7200); // 2 jam
                 $email_address = trim($_POST['email']);
 
-                $q_member = $db->createQueryBuilder()
+                $q_member = $this->db->createQueryBuilder()
                     ->select('user_id', 'username')
                     ->from('users')
                     ->where('email = :email')
@@ -156,7 +156,7 @@ class Password extends Controllers
 
                 $member = $q_member->fetch();
 
-                $db->insert('users_reset_pwd', array(
+                $this->db->insert('users_reset_pwd', array(
                     'user_id' => $member['user_id'],
                     'reset_key' => $reset_key,
                     'expired_date' => $reset_expired_date,
@@ -165,7 +165,7 @@ class Password extends Controllers
                     'deleted' => 'N'
                 ));
 
-                $db->close();
+                $this->db->close();
 
                 try {
                     $replacements = array();
@@ -190,12 +190,12 @@ class Password extends Controllers
                     $mailer->send($message);
 
                     // Update email sent status
-                    $db->update('users_reset_pwd', array('email_sent' => 'Y'), array(
+                    $this->db->update('users_reset_pwd', array('email_sent' => 'Y'), array(
                         'user_id' => $member['user_id'],
                         'reset_key' => $reset_key
                     ));
 
-                    $db->close();
+                    $this->db->close();
 
                     $this->flash->addMessage('success', $success_msg);
                 } catch (Swift_TransportException $e) {
@@ -213,7 +213,7 @@ class Password extends Controllers
             array(
                 'page_title' => 'Membership',
                 'sub_page_title' => 'Forgot Password',
-                'enable_captcha' => $use_captcha
+                'enable_captcha' => $gcaptchaEnable
             ),
             'layouts::system'
         );
@@ -228,18 +228,18 @@ class Password extends Controllers
     public function reset($request, $response, $args)
     {
         $q_reset_exist_count = $this->db->createQueryBuilder()
-        ->select('COUNT(*) AS total_data')
-        ->from('users_reset_pwd')
-        ->where('user_id = :uid')
-        ->andWhere('reset_key = :resetkey')
-        ->andWhere('deleted = :d')
-        ->andWhere('email_sent = :sent')
-        ->andWhere('expired_date > NOW()')
-        ->setParameter(':uid', $args['uid'])
-        ->setParameter(':resetkey', $args['reset_key'])
-        ->setParameter(':d', 'N')
-        ->setParameter(':sent', 'Y')
-        ->execute();
+            ->select('COUNT(*) AS total_data')
+            ->from('users_reset_pwd')
+            ->where('user_id = :uid')
+            ->andWhere('reset_key = :resetkey')
+            ->andWhere('deleted = :d')
+            ->andWhere('email_sent = :sent')
+            ->andWhere('expired_date > NOW()')
+            ->setParameter(':uid', $args['uid'])
+            ->setParameter(':resetkey', $args['reset_key'])
+            ->setParameter(':d', 'N')
+            ->setParameter(':sent', 'Y')
+            ->execute();
 
         $reset_exist_count = (int) $q_reset_exist_count->fetch()['total_data'];
 

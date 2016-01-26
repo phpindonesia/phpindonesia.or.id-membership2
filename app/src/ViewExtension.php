@@ -9,28 +9,30 @@ use Slim\Flash\Messages as FlashMessage;
 class ViewExtension implements ExtensionInterface
 {
     /**
-     * Slim Request Object
-     *
      * @var \Slim\Http\Request
      */
     protected $request;
 
     /**
-     * Slim Request Object
-     *
      * @var \Slim\Flash\Messages
      */
     protected $flash;
+
+    /**
+     * @var string
+     */
+    protected $mode;
 
     /**
      * View Extention
      *
      * @param Slim\Http\Request $request
      */
-    public function __construct(Request $request, FlashMessage $flash)
+    public function __construct(Request $request, FlashMessage $flash, $mode = 'development')
     {
         $this->request = $request;
         $this->flash = $flash;
+        $this->mode = $mode;
     }
 
     /**
@@ -75,7 +77,7 @@ class ViewExtension implements ExtensionInterface
 
     public function userPhoto($public_id = null, $options = [])
     {
-        $default = $this->baseUrl().'/public/images/team.png';
+        $default = $this->template->asset('/asset/images/team.png');
         if (null === $public_id) {
             return $default;
         }
@@ -86,7 +88,7 @@ class ViewExtension implements ExtensionInterface
                 'crop' => 'fill',
             ];
 
-            $cdn_upload_path = 'phpindonesia/'.$this->settings['mode'].'/';
+            $cdn_upload_path = 'phpindonesia/'.$this->mode.'/';
             return \Cloudinary::cloudinary_url($cdn_upload_path.$public_id, $options);
 
         } catch (\Exception $e) {

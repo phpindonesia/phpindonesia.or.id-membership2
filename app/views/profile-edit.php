@@ -1,7 +1,7 @@
 <?php $this->layout('layouts::system') ?>
 
 <?php
-$this->append_js(array(
+$this->appendJs(array(
     $this->baseUrl().'/asset/js/jquery.inputmask.bundle.js',
     $this->baseUrl().'/asset/js/app/membership/profile-edit.js'
 ));

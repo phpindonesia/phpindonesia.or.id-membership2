@@ -9,21 +9,20 @@
 
     <title>PHP Indonesia | Membership</title>
 
-    <link href="<?php echo $this->baseUrl().'/asset/css/style.css?v='.time(); ?>" rel="stylesheet">
-    <link href="<?php echo $this->baseUrl().'/asset/css/bootstrap.css' ?>" rel="stylesheet">
-    <link id="shortcodes-css" rel="stylesheet" href="<?php echo $this->baseUrl().'/asset/css/shortcodes.css'; ?>" type="text/css" media="all"/>
-    <link id="layer-slider" rel="stylesheet" href="<?php echo $this->baseUrl().'/asset/css/layerslider.css'; ?>" media="all"/>
-    <link rel="stylesheet" href="<?php echo $this->baseUrl().'/asset/css/prettyPhoto.css'; ?>" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="<?php echo $this->baseUrl().'/asset/css/animations.css'; ?>" type="text/css" media="all" />
-    <link rel="stylesheet" href="<?php echo $this->baseUrl().'/asset/css/responsive.css'; ?>" type="text/css" media="all" />
-    <link rel="stylesheet" href="<?php echo $this->baseUrl().'/asset/css/meanmenu.css'; ?>" type="text/css" media="all" />
-    <link rel="stylesheet" href="<?php echo $this->baseUrl().'/asset/css/font-awesome.min.css'; ?>" type="text/css" />
-    <link rel="stylesheet" href="<?php echo $this->baseUrl().'/asset/css/formalize.css?v='.time(); ?>" />
-    <link rel="stylesheet" href="<?php echo $this->baseUrl().'/asset/css/responsive2.css'; ?>" type="text/css" media="all" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic|Open+Sans:400,300,600,700,300italic,400italic,600italic,700italic">
+    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/style.css">
+    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/shortcodes.css">
+    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/skins/blue/style.css">
+    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/prettyPhoto.css">
+    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/responsive.css">
+    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/meanmenu.css">
+    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/animations.css">
+    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/font-awesome.min.css">
+    <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/bootstrap.css"> -->
+    <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/formalize.css"> -->
+    <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/responsive2.css"> -->
 
-    <link rel="shortcut icon" href="<?php echo $this->baseUrl().'/asset/images/favicon.png'; ?>" type="image/png">
+    <link rel="shortcut icon" href="http://www.phpindonesia.or.id/favicon.png" type="image/png">
 
     <?php
     if (isset($enable_captcha) && $enable_captcha == true):
@@ -44,12 +43,12 @@
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src="<?php echo $this->baseUrl().'/js/html5shiv.js'; ?>"></script>
-    <script src="<?php echo $this->baseUrl().'/js/respond.min.js'; ?>"></script>
+        <script src="/js/html5shiv.js"></script>
+        <script src="/js/respond.min.js"></script>
     <![endif]-->
 </head>
 
-<body>
+<body data-baseurl="<?php echo $this->baseUrl() ?>">
 <div class="wrapper">
     <div class="inner-wrapper">
 
@@ -71,8 +70,6 @@
                 </div>
             </div>
 
-            <div class="dt-sc-margin100"></div>
-
             <section id="primary" class="content-full-width">
                 <?php echo $this->section('content') ?>
             </section>
@@ -85,19 +82,16 @@
     </div>
 </div>
 
-<script type="text/javascript" src="<?php echo $this->baseUrl().'/asset/js/jquery-1.10.2.min.js'; ?>"></script>
-<script type="text/javascript" src="<?php echo $this->baseUrl().'/asset/js/jquery-migrate.min.js'; ?>"></script>
-<script type="text/javascript" src="<?php echo $this->baseUrl().'/asset/js/twitter/jquery.tweet.min.js'; ?>"></script>
-<script type="text/javascript" src="<?php echo $this->baseUrl().'/asset/js/plugins.js'; ?>"></script>
-<script type="text/javascript" src="<?php echo $this->baseUrl().'/asset/js/jquery.formalize.min.js'; ?>"></script>
-<script type="text/javascript" src="<?php echo $this->baseUrl().'/asset/js/okzoom.min.js'; ?>"></script>
-<script type="text/javascript" src="<?php echo $this->baseUrl().'/asset/js/custom.js'; ?>"></script>
-<script type="text/javascript" src="<?php echo $this->baseUrl().'/asset/js/jquery.formalize.min.js'; ?>"></script>
-<script type="text/javascript" src="<?php echo $this->baseUrl().'/asset/js/app/app.js?='.time(); ?>"></script>
+<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery-1.10.2.min.js"></script>
+<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery-migrate.min.js"></script>
+<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/twitter/jquery.tweet.min.js"></script>
+<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/plugins.js"></script>
+<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/custom.js"></script>
+<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery.formalize.min.js"></script>
+<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/okzoom.min.js"></script>
 
-<script type="text/javascript">
-<?php echo "_base_url_ = '".$this->baseUrl()."';\n"; ?>
-</script>
+<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery.formalize.min.js"></script>
+<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/app/app.js"></script>
 
 <?php
 if (isset($_view_js_)):

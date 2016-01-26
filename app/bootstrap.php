@@ -27,7 +27,13 @@ $app = new Slim\App([
 ]);
 
 require APP_DIR.'dependencies.php';
-require APP_DIR.'middlewares.php';
+
+$app->add(new Membership\Middlewares\Authentication(
+    $app->getContainer()->get('settings')['publicRoutes'],
+    $app->getContainer()->get('flash'),
+    $app->getContainer()->get('router')
+));
+
 require APP_DIR.'routes.php';
 
 return $app;

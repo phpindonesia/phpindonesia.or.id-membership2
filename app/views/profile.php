@@ -1,7 +1,7 @@
 <?php $this->layout('layouts::system') ?>
 
 <?php
-$this->append_js(array(
+$this->appendJs(array(
     $this->baseUrl().'/asset/js/jquery.popupoverlay.js',
     $this->pathFor('membership-profile-javascript'),
     $this->baseUrl().'/asset/js/app/membership/portfolio-add.js',

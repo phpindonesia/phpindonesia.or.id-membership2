@@ -43,7 +43,7 @@
                         <tr>
                             <td style="width: 100px;">
                             <?php
-                            if ($use_captcha == true):
+                            if ($gcaptchaEnable == true):
                             ?>
 
                             <input id="foo-captcha" name="captcha" type="hidden" value="1" />

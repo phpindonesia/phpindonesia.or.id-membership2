@@ -7,13 +7,13 @@ class Portfolio
     {
         $routeInfo = $req->getAttribute('routeInfo');
         $q_user = $this['db']->createQueryBuilder()
-        ->select('count(*) num', 'user_id', 'member_portfolio_id')
-        ->from('members_portfolios')
-        ->where('member_portfolio_id = :portId')
-        ->andWhere('user_id = :userId')
-        ->setParameter(':portId', $routeInfo[2]['id'])
-        ->setParameter(':userId', $_SESSION['MembershipAuth']['user_id'])
-        ->execute();
+            ->select('count(*) num', 'user_id', 'member_portfolio_id')
+            ->from('members_portfolios')
+            ->where('member_portfolio_id = :portId')
+            ->andWhere('user_id = :userId')
+            ->setParameter(':portId', $routeInfo[2]['id'])
+            ->setParameter(':userId', $_SESSION['MembershipAuth']['user_id'])
+            ->execute();
 
         $user = $q_user->fetch();
 
