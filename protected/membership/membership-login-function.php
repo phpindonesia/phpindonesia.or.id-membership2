@@ -8,25 +8,25 @@ $app->map(['GET', 'POST'], '/apps/membership/login', function ($request, $respon
 
         $q_user_count = $db->createQueryBuilder();
         $q_user_count
-        ->select('COUNT(*) AS total_data')
-        ->from('users', 'u')
-        ->leftJoin('u', 'users_roles', 'ur', 'u.user_id = ur.user_id')
-        ->where(
-            $q_user_count->expr()->orX(
-                $q_user_count->expr()->eq('u.username', ':username'),
-                $q_user_count->expr()->eq('u.email', ':email')
+            ->select('COUNT(*) AS total_data')
+            ->from('users', 'u')
+            ->leftJoin('u', 'users_roles', 'ur', 'u.user_id = ur.user_id')
+            ->where(
+                $q_user_count->expr()->orX(
+                    $q_user_count->expr()->eq('u.username', ':username'),
+                    $q_user_count->expr()->eq('u.email', ':email')
+                )
             )
-        )
-        ->andWhere('u.password = :password')
-        ->andWhere('u.deleted = :d')
-        ->andWhere('u.activated = :act')
-        ->andWhere('ur.role_id = :rid')
-        ->setParameter(':username', trim($_POST['username']), \Doctrine\DBAL\Types\Type::STRING)
-        ->setParameter(':email', trim($_POST['username']), \Doctrine\DBAL\Types\Type::STRING)
-        ->setParameter(':password', $salt_pwd, \Doctrine\DBAL\Types\Type::STRING)
-        ->setParameter(':d', 'N')
-        ->setParameter(':act', 'Y')
-        ->setParameter(':rid', 'member');
+            ->andWhere('u.password = :password')
+            ->andWhere('u.deleted = :d')
+            ->andWhere('u.activated = :act')
+            ->andWhere('ur.role_id = :rid')
+            ->setParameter(':username', trim($_POST['username']), \Doctrine\DBAL\Types\Type::STRING)
+            ->setParameter(':email', trim($_POST['username']), \Doctrine\DBAL\Types\Type::STRING)
+            ->setParameter(':password', $salt_pwd, \Doctrine\DBAL\Types\Type::STRING)
+            ->setParameter(':d', 'N')
+            ->setParameter(':act', 'Y')
+            ->setParameter(':rid', 'member');
 
         $sth = $q_user_count->execute();
         $user_count = (int) $sth->fetch()['total_data'];
@@ -37,32 +37,32 @@ $app->map(['GET', 'POST'], '/apps/membership/login', function ($request, $respon
 
                 $q_user = $db->createQueryBuilder();
                 $q_user
-                ->select(
-                    'u.user_id',
-                    'u.username',
-                    'u.email',
-                    'u.province_id',
-                    'u.city_id',
-                    'ur.role_id',
-                    'up.fullname',
-                    'up.photo',
-                    'up.job_id'
-                )
-                ->from('users', 'u')
-                ->leftJoin('u', 'users_roles', 'ur', 'u.user_id = ur.user_id')
-                ->leftJoin('u', 'members_profiles', 'up', 'u.user_id = up.user_id')
-                ->where(
-                    $q_user_count->expr()->orX(
-                        $q_user_count->expr()->eq('u.username', ':username'),
-                        $q_user_count->expr()->eq('u.email', ':email')
+                    ->select(
+                        'u.user_id',
+                        'u.username',
+                        'u.email',
+                        'u.province_id',
+                        'u.city_id',
+                        'ur.role_id',
+                        'up.fullname',
+                        'up.photo',
+                        'up.job_id'
                     )
-                )
-                ->andWhere('u.password = :password')
-                ->andWhere('ur.role_id = :rid')
-                ->setParameter(':username', trim($_POST['username']))
-                ->setParameter(':email', trim($_POST['username']))
-                ->setParameter(':password', $salt_pwd)
-                ->setParameter(':rid', 'member');
+                    ->from('users', 'u')
+                    ->leftJoin('u', 'users_roles', 'ur', 'u.user_id = ur.user_id')
+                    ->leftJoin('u', 'members_profiles', 'up', 'u.user_id = up.user_id')
+                    ->where(
+                        $q_user_count->expr()->orX(
+                            $q_user_count->expr()->eq('u.username', ':username'),
+                            $q_user_count->expr()->eq('u.email', ':email')
+                        )
+                    )
+                    ->andWhere('u.password = :password')
+                    ->andWhere('ur.role_id = :rid')
+                    ->setParameter(':username', trim($_POST['username']))
+                    ->setParameter(':email', trim($_POST['username']))
+                    ->setParameter(':password', $salt_pwd)
+                    ->setParameter(':rid', 'member');
 
                 $sth = $q_user->execute();
                 $user = $sth->fetch();

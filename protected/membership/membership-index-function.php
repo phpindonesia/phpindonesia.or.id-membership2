@@ -4,28 +4,28 @@ $app->get('/apps/membership', function ($request, $response, $args) {
     $db = $this->get('db');
 
     $q_members = $db->createQueryBuilder()
-    ->select(
-        'u.user_id',
-        'u.username',
-        'u.email',
-        'u.created',
-        'ur.role_id',
-        'm.fullname',
-        'm.gender',
-        'm.photo',
-        'reg_prv.regional_name AS province',
-        'reg_cit.regional_name AS city'
-    )
-    ->from('users', 'u')
-    ->leftJoin('u', 'members_profiles', 'm', 'u.user_id = m.user_id')
-    ->leftJoin('u', 'users_roles', 'ur', 'u.user_id = ur.user_id')
-    ->leftJoin('m', 'regionals', 'reg_prv', 'reg_prv.id = m.province_id')
-    ->leftJoin('m', 'regionals', 'reg_cit', 'reg_cit.id = m.city_id')
-    ->where('ur.role_id = :rid')
-    ->andWhere('u.activated = :act')
-    ->orderBy('u.created', 'DESC')
-    ->setParameter(':rid', 'member')
-    ->setParameter(':act', 'Y');
+        ->select(
+            'u.user_id',
+            'u.username',
+            'u.email',
+            'u.created',
+            'ur.role_id',
+            'm.fullname',
+            'm.gender',
+            'm.photo',
+            'reg_prv.regional_name AS province',
+            'reg_cit.regional_name AS city'
+        )
+        ->from('users', 'u')
+        ->leftJoin('u', 'members_profiles', 'm', 'u.user_id = m.user_id')
+        ->leftJoin('u', 'users_roles', 'ur', 'u.user_id = ur.user_id')
+        ->leftJoin('m', 'regionals', 'reg_prv', 'reg_prv.id = m.province_id')
+        ->leftJoin('m', 'regionals', 'reg_cit', 'reg_cit.id = m.city_id')
+        ->where('ur.role_id = :rid')
+        ->andWhere('u.activated = :act')
+        ->orderBy('u.created', 'DESC')
+        ->setParameter(':rid', 'member')
+        ->setParameter(':act', 'Y');
 
     if ((isset($_GET['province_id'])) && (!empty($_GET['province_id']))) {
         $q_members->andWhere('m.province_id = :pvid');

@@ -111,8 +111,6 @@ $app->map(['GET', 'POST'], '/apps/membership/portfolio/edit/{id:[0-9]+}', functi
 })->add(function ($req, $res, $next) {
 
     $routeInfo = $req->getAttribute('routeInfo');
-    $id = $routeInfo[2]['id'];
-
     $q_user = $this['db']->createQueryBuilder()
     ->select('count(*) num', 'user_id', 'member_portfolio_id')
     ->from('members_portfolios')
