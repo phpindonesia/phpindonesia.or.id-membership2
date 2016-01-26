@@ -7,15 +7,13 @@ Icon?
 *.cache
 *.old
 *.zip
+*.phar
 *~
 
 # Development files
 # --------------------------
 app/settings.php
 qnd-cli-utils/settings.php
-composer.phar
-composer.lock
-composer.json
 .env
 
 # Dependency folders
