@@ -6,40 +6,33 @@ use Slim\Exception\NotFoundException;
 
 class Profile extends Controllers
 {
-    public function index($request, $response)
+    public function index($request, $response, $args)
     {
-        $q_member = $this->db->createQueryBuilder()
-            ->select(
+        $qMembers = $this->db->select([
                 'u.user_id',
                 'u.username',
                 'u.email',
                 'u.created',
                 'm.*',
-                'reg_prv.regional_name AS province',
-                'reg_cit.regional_name AS city'
-            )
-            ->from('users', 'u')
-            ->leftJoin('u', 'members_profiles', 'm', 'u.user_id = m.user_id')
-            ->leftJoin('m', 'regionals', 'reg_prv', 'reg_prv.id = m.province_id')
-            ->leftJoin('m', 'regionals', 'reg_cit', 'reg_cit.id = m.city_id')
-            ->where('u.username = :uname')
-            ->setParameter(':rid', 'member')
-            ->setParameter(':uname', $args['name'])
+                'reg_prv.regional_name province',
+                'reg_cit.regional_name city'
+            ])
+            ->from('users u')
+            ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+            ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+            ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
+            ->where('u.username', '=', $args['name'])
             ->execute();
 
-        $member = $q_member->fetch();
+        $member = $qMembers->fetch();
 
-        $q_member_socmeds = $this->db->createQueryBuilder()
-            ->select('socmed_type', 'account_name', 'account_url')
+        $qMembersSocmeds = $this->db->select(['socmed_type', 'account_name', 'account_url'])
             ->from('members_socmeds')
-            ->where('user_id = :uid')
-            ->andWhere('deleted = :d')
-            ->setParameter(':uid', $member['user_id'])
-            ->setParameter(':d', 'N')
+            ->where('user_id', '=', $member['user_id'])
+            ->where('deleted', '=', 'N')
             ->execute();
 
-        $q_member_portfolios = $this->db->createQueryBuilder()
-            ->select(
+        $qMembersPortfolios = $this->db->select([
                 'mp.member_portfolio_id',
                 'mp.company_name',
                 'ids.industry_name',
@@ -53,20 +46,18 @@ class Profile extends Controllers
                 'mp.job_title',
                 'mp.job_desc',
                 'mp.created'
-            )
-            ->from('members_portfolios', 'mp')
-            ->leftJoin('mp', 'industries', 'ids', 'mp.industry_id = ids.industry_id')
-            ->where('mp.user_id = :uid')
-            ->andWhere('mp.deleted = :d')
-            ->setParameter(':uid', $member['user_id'])
-            ->setParameter(':d', 'N')
+            ])
+            ->from('members_portfolios mp')
+            ->leftJoin('industries ids', 'mp.industry_id', '=', 'ids.industry_id')
+            ->where('mp.user_id', '=', $member['user_id'])
+            ->where('mp.deleted', '=', 'N')
             ->execute();
 
-        $member_portfolios = $q_member_portfolios->fetchAll();
-        $member_socmeds = $q_member_socmeds->fetchAll();
+        $member_portfolios = $qMembersPortfolios->fetchAll();
+        $member_socmeds = $qMembersSocmeds->fetchAll();
         $socmedias = $this->settings['socmedias'];
         $socmedias_logo = $this->settings['socmedias_logo'];
-        $months = $this->get('months');
+        $months = [];
 
         $this->view->addData([
             'page_title' => 'Membership',
@@ -74,8 +65,7 @@ class Profile extends Controllers
         ], 'layouts::system');
 
         return $this->view->render(
-            $response,
-            'membership/detail',
+            'profile-index',
             compact(
                 'member',
                 'member_socmeds',
@@ -87,9 +77,9 @@ class Profile extends Controllers
         );
     }
 
-    public function member($request, $response)
+    public function member($request, $response, $args)
     {
-        $q_member = $this->db->createQueryBuilder()
+        $qMembers = $this->db->createQueryBuilder()
         ->select(
             'm.*',
             'reg_prv.regional_name AS province',
@@ -104,7 +94,7 @@ class Profile extends Controllers
         ->setParameter(':d', 'N')
         ->execute();
 
-        $q_member_socmeds = $this->db->createQueryBuilder()
+        $qMembersSocmeds = $this->db->createQueryBuilder()
         ->select('socmed_type', 'account_name', 'account_url')
         ->from('members_socmeds')
         ->where('user_id = :uid')
@@ -113,7 +103,7 @@ class Profile extends Controllers
         ->setParameter(':d', 'N')
         ->execute();
 
-        $q_member_portfolios = $this->db->createQueryBuilder()
+        $qMembersPortfolios = $this->db->createQueryBuilder()
         ->select(
             'mp.member_portfolio_id',
             'mp.company_name',
@@ -137,7 +127,7 @@ class Profile extends Controllers
         ->setParameter(':d', 'N')
         ->execute();
 
-        $q_member_skills = $this->db->createQueryBuilder()
+        $qMembers_skills = $this->db->createQueryBuilder()
         ->select(
             'ms.member_skill_id',
             'ms.skill_self_assesment',
@@ -154,10 +144,10 @@ class Profile extends Controllers
         ->setParameter(':d', 'N')
         ->execute();
 
-        $member = $q_member->fetch();
-        $member_portfolios = $q_member_portfolios->fetchAll();
-        $member_skills = $q_member_skills->fetchAll();
-        $member_socmeds = $q_member_socmeds->fetchAll();
+        $member = $qMembers->fetch();
+        $member_portfolios = $qMembersPortfolios->fetchAll();
+        $member_skills = $qMembers_skills->fetchAll();
+        $member_socmeds = $qMembersSocmeds->fetchAll();
         $socmedias = $this->settings['socmedias'];
         $socmedias_logo = $this->settings['socmedias_logo'];
         $months = $this->get('months');
@@ -177,8 +167,8 @@ class Profile extends Controllers
         ->from('industries')
         ->execute();
 
-        $career_levels = \Cake\Utility\Hash::combine($q_carerr_levels->fetchAll(), '{n}.career_level_id', '{n}.career_level_id');
-        $industries = \Cake\Utility\Hash::combine($q_industries->fetchAll(), '{n}.industry_id', '{n}.industry_name');
+        $career_levels = $this->arrayPairs($q_carerr_levels->fetchAll(), '{n}.career_level_id', '{n}.career_level_id');
+        $industries = $this->arrayPairs($q_industries->fetchAll(), '{n}.industry_id', '{n}.industry_name');
         $years_range = $this->get('years_range');
         $months_range = $this->get('months_range');
         $days_range = $this->get('days_range');
@@ -195,18 +185,17 @@ class Profile extends Controllers
         ->where('parent_id IS NULL')
         ->execute();
 
-        $skills_main = \Cake\Utility\Hash::combine($q_skills_main->fetchAll(), '{n}.skill_id', '{n}.skill_name');
+        $skills_main = $this->arrayPairs($q_skills_main->fetchAll(), '{n}.skill_id', '{n}.skill_name');
         $skills = array();
 
         if (isset($_POST['skill_id']) && $_POST['skill_parent_id'] != '') {
-            $q_skills = $this->db->createQueryBuilder()
-            ->select('skill_id', 'skill_name')
+            $q_skills = $this->db->select('skill_id', 'skill_name')
             ->from('skills')
             ->where('parent_id = :pid')
             ->setParameter(':pid', $_POST['skill_parent_id'])
             ->execute();
 
-            $skills = \Cake\Utility\Hash::combine($q_skills->fetchAll(), '{n}.skill_id', '{n}.skill_name');
+            $skills = $this->arrayPairs($q_skills->fetchAll(), '{n}.skill_id', '{n}.skill_name');
         }
 
         // --- End data view for skill-add-section
@@ -247,7 +236,6 @@ class Profile extends Controllers
         );
 
         return $this->view->render(
-            $response,
             'membership/profile',
             compact(
                 'member',
@@ -261,7 +249,7 @@ class Profile extends Controllers
         );
     }
 
-    public function javascript($request, $response)
+    public function javascript($request, $response, $args)
     {
         $open_portfolio = false;
         $open_skill = false;
@@ -337,7 +325,7 @@ class Profile extends Controllers
         );
     }
 
-    public function portfolioCookie($request, $response)
+    public function portfolioCookie($request, $response, $args)
     {
         if (!isset($_COOKIE['portfolio-popup'])) {
             setcookie('portfolio-popup', 1, time()+86400);
@@ -348,7 +336,7 @@ class Profile extends Controllers
         ->write(json_encode(array('resp' => 'OK')));
     }
 
-    public function skillsCookie($request, $response)
+    public function skillsCookie($request, $response, $args)
     {
         if (!isset($_COOKIE['skill-popup'])) {
             setcookie('skill-popup', 1, time()+86400);

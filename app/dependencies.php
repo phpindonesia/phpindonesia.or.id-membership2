@@ -23,9 +23,10 @@ $container['db'] = function ($container) {
  * Setup validator container
  */
 $container['validator'] = function ($container) {
-    $params = $container->get('request')->getParams();
+    $request = $container->get('request');
+    $validator = new Valitron\Validator($request->getParams(), [], 'id');
 
-    return new Valitron\Validator($params, [], 'id');
+    return $validator;
 };
 
 /**

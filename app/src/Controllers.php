@@ -61,14 +61,12 @@ abstract class Controllers
      *
      * @param string $mainTitle     Main Page Title
      * @param string $subTitle      Sub Page Title
-     * @param bool   $enableCaptcha Enable Captcha
      */
-    protected function setPageTitle($mainTitle = '', $subTitle = '', $enableCaptcha = false)
+    protected function setPageTitle($mainTitle = '', $subTitle = '')
     {
         $this->view->addData([
             'page_title' => $mainTitle,
             'sub_page_title' => $subTitle,
-            'enable_captcha' => $enableCaptcha,
         ], 'layouts::system');
     }
 
@@ -97,16 +95,34 @@ abstract class Controllers
     }
 
     /**
+     * Enable Captcha
+     *
+     * return array
+     */
+    protected function enableCaptcha()
+    {
+        $settings = $this->settings['gcaptcha'];
+        $this->view->addData([
+            'gcaptchaSitekey' => $settings['sitekey'],
+            'gcaptchaSecret'  => $settings['secret'],
+            'gcaptchaEnable'  => $settings['enable'],
+        ]);
+
+        return $settings;
+    }
+
+    /**
      * Combine array into single key value pairs
      *
-     * @param array  $values
-     * @param string $key
-     * @param string $val
+     * @param array       $values
+     * @param string      $key
+     * @param string|null $val
      * @return array
      */
-    protected function arrayPairs(array $values, $key, $val)
+    protected function arrayPairs(array $values, $key, $val = null)
     {
         $array = [];
+        $val = $val ?: $key;
 
         foreach ($values as $value) {
             if (isset($value[$key]) && isset($value[$val])) {

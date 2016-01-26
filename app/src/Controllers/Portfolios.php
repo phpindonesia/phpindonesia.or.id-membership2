@@ -73,18 +73,18 @@ class Portfolios extends Controllers
         }
 
         $q_carerr_levels = $this->db->createQueryBuilder()
-        ->select('career_level_id')
-        ->from('career_levels')
-        ->orderBy('order_by', 'ASC')
-        ->execute();
+            ->select('career_level_id')
+            ->from('career_levels')
+            ->orderBy('order_by', 'ASC')
+            ->execute();
 
         $q_industries = $this->db->createQueryBuilder()
-        ->select('industry_id', 'industry_name')
-        ->from('industries')
-        ->execute();
+            ->select('industry_id', 'industry_name')
+            ->from('industries')
+            ->execute();
 
-        $career_levels = \Cake\Utility\Hash::combine($q_carerr_levels->fetchAll(), '{n}.career_level_id', '{n}.career_level_id');
-        $industries = \Cake\Utility\Hash::combine($q_industries->fetchAll(), '{n}.industry_id', '{n}.industry_name');
+        $career_levels = $this->arrayPairs($q_carerr_levels->fetchAll(), '{n}.career_level_id', '{n}.career_level_id');
+        $industries = $this->arrayPairs($q_industries->fetchAll(), '{n}.industry_id', '{n}.industry_name');
         $years_range = $this->get('years_range');
         $months_range = $this->get('months_range');
         $days_range = $this->get('days_range');
@@ -98,7 +98,6 @@ class Portfolios extends Controllers
         );
 
         return $this->view->render(
-            $response,
             'membership/portfolio-add',
             compact('career_levels', 'industries', 'years_range', 'months_range', 'days_range')
         );
@@ -353,10 +352,10 @@ class Portfolios extends Controllers
 
         $member          = $q_member->fetch();
         $members_socmeds = $q_members_socmeds->fetchAll();
-        $provinces       = \Cake\Utility\Hash::combine($q_provinces->fetchAll(), '{n}.id', '{n}.regional_name');
-        $cities          = \Cake\Utility\Hash::combine($q_cities->fetchAll(), '{n}.id', '{n}.regional_name');
-        $religions       = \Cake\Utility\Hash::combine($q_religions->fetchAll(), '{n}.religion_id', '{n}.religion_name');
-        $jobs            = \Cake\Utility\Hash::combine($q_jobs->fetchAll(), '{n}.job_id', '{n}.job_id');
+        $provinces       = $this->arrayPairs($q_provinces->fetchAll(), 'id', 'regional_name');
+        $cities          = $this->arrayPairs($q_cities->fetchAll(), 'id', 'regional_name');
+        $religions       = $this->arrayPairs($q_religions->fetchAll(), 'religion_id', 'religion_name');
+        $jobs            = $this->arrayPairs($q_jobs->fetchAll(), 'job_id', 'job_id');
         $genders         = array('female' => 'Wanita', 'male' => 'Pria');
 
         $this->db->close();
@@ -370,7 +369,6 @@ class Portfolios extends Controllers
         );
 
         return $this->view->render(
-            $response,
             'membership/profile-edit',
             compact(
                 'member',

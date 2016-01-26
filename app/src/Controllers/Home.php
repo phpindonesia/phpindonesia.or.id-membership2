@@ -13,7 +13,7 @@ class Home extends Controllers
         $members = Users::factory($this->db)->getMembers($request);
         $provinces = $cities = [];
 
-        foreach (Regionals::factory($this->db)->getProvices() as $prov) {
+        foreach (Regionals::factory($this->db)->getProvinces() as $prov) {
             $provinces[$prov['id']] = $prov['regional_name'];
         }
 
@@ -25,6 +25,6 @@ class Home extends Controllers
 
         $this->setPageTitle('Membership', 'Keanggotaan');
 
-        return $this->view->render('index', compact('members','provinces', 'cities'));
+        return $this->view->render('home-index', compact('members','provinces', 'cities'));
     }
 }

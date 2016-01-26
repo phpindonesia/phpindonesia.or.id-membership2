@@ -7,7 +7,7 @@ class Regionals extends Models
 {
     private $table = 'regionals';
 
-    public function getProvices()
+    public function getProvinces()
     {
         $stmt = $this->db->select(['id', 'regional_name'])
             ->from($this->table)

@@ -2,7 +2,8 @@
 namespace Membership\Controllers;
 
 use Membership\Controllers;
-use Slim\Exception\NotFoundException;
+use Membership\Models\Jobs;
+use Membership\Models\Regionals;
 
 class Account extends Controllers
 {
@@ -10,7 +11,15 @@ class Account extends Controllers
     {
         $this->setPageTitle('Membership', 'Login Anggota');
 
-        return $this->view->render('login');
+        $this->view->addData([
+            'helpTitle' => 'Bantuan Login?',
+            'helpContent' => [
+                'Jika belum terdaftar sebagai anggota, <a href="'.$this->router->pathFor('membership-register').'" title="">Daftar Disini</a> menjadi anggota PHP Indonesia.',
+                'Hilang atau lupa password login, silahkan <a href="'.$this->router->pathFor('membership-password-forgot').'" title="">Reset Password</a> Anda.'
+            ],
+        ], 'layouts::account');
+
+        return $this->view->render('account-login');
     }
 
     public function login($request, $response, $args)
@@ -23,7 +32,7 @@ class Account extends Controllers
         if (!$validation->validate()) {
             $this->validationErrors($validation->errors());
 
-            return $this->view->render('login');
+            return $this->view->render('account-login');
         }
 
         $query = $this->db->select([
@@ -70,7 +79,7 @@ class Account extends Controllers
             ->table('users')
             ->where('user_id', '=', $user['user_id']);
 
-        return $this->view->render('login');
+        return $this->view->render('account-login');
     }
 
     public function logout($request, $response, $args)
@@ -94,12 +103,35 @@ class Account extends Controllers
 
     public function registerPage($request, $response, $args)
     {
-        return $this->view->render('register', []);
+        $qProvinces = Regionals::factory($this->db)->getProvinces();
+        $qJobs = Jobs::factory($this->db)->getIds();
+
+        $cities = [];
+        if ($provinceId = $request->getParam('province_id')) {
+            $qCities = Regionals::factory($this->db)->getCities($provinceId);
+            $cities = $this->arrayPairs($qCities, 'id', 'regional_name');
+        }
+
+        $provinces = $this->arrayPairs($qProvinces, 'id', 'regional_name');
+        $jobs = $this->arrayPairs($qJobs, 'job_id');
+
+        $this->view->addData([
+            'helpTitle' => 'Bantuan Register?',
+            'helpContent' => [
+                'Sudah pernah terdaftar menjadi anggota PHP Indonesia, silahkan <a href="'.$this->router->pathFor('membership-login').'" title="">Login Disini',
+                'Hilang atau lupa password login, silahkan <a href="'.$this->router->pathFor('membership-password-forgot').'" title="">Reset Password</a> Anda.'
+            ],
+        ], 'layouts::account');
+
+        $this->enableCaptcha();
+        $this->setPageTitle('Membership', 'Registrasi Anggota');
+
+        return $this->view->render('account-register', compact('provinces', 'cities', 'jobs'));
     }
 
     public function register($request, $response, $args)
     {
-        $gcaptchaSiteKey = $this->settings['gcaptcha']['site_key'];
+        $gcaptchaSitekey = $this->settings['gcaptcha']['site_key'];
         $gcaptchaSecret = $this->settings['gcaptcha']['secret'];
         $gcaptchaEnable = $this->settings['gcaptcha']['enable'];
 
@@ -269,7 +301,7 @@ class Account extends Controllers
                 // Sending activation email handler //
                 if ($trx_success) {
                     try {
-                        $replacements = array();
+                        $replacements = [];
                         $replacements[$email_address] = array(
                             '{email_address}' => $email_address,
                             '{fullname}' => filter_var(trim($fullname), FILTER_SANITIZE_STRING),
@@ -309,57 +341,6 @@ class Account extends Controllers
                 $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
             }
         }
-
-        $q_provinces = $this->db->createQueryBuilder()
-        ->select('id', 'regional_name')
-        ->from('regionals')
-        ->where('parent_id IS NULL')
-        ->andWhere('city_code = :ccode')
-        ->orderBy('province_code, city_code')
-        ->setParameter(':ccode', '00', \Doctrine\DBAL\Types\Type::STRING)
-        ->execute();
-
-        $q_jobs = $this->db->createQueryBuilder()
-        ->select('job_id')
-        ->from('jobs')
-        ->execute();
-
-        // Just default value for list of cities
-        $cities = array();
-        // In case someone failed to register and we have $_POST['province_id'] already set
-        if ($province_id = $request->getParam('province_id')) {
-            // Just copy the functionality of common-data-cities-function.php
-            // and wondering why we don't put it independently so share functionality could be much more easier
-            $q_cities = $this->db->createQueryBuilder()
-                ->select('id', 'regional_name')
-                ->from('regionals')
-                ->where('parent_id = :pid')
-                ->orderBy('province_code, city_code')
-                ->setParameter(':pid', $province_id)
-                ->execute();
-
-            $cities = \Cake\Utility\Hash::combine($q_cities->fetchAll(), '{n}.id', '{n}.regional_name');
-        }
-
-        $provinces = \Cake\Utility\Hash::combine($q_provinces->fetchAll(), '{n}.id', '{n}.regional_name');
-        $jobs = \Cake\Utility\Hash::combine($q_jobs->fetchAll(), '{n}.job_id', '{n}.job_id');
-
-        $this->db->close();
-
-        $this->view->addData(
-            array(
-                'page_title' => 'Membership',
-                'sub_page_title' => 'Registrasi Anggota',
-                'enable_captcha' => $gcaptchaEnable
-            ),
-            'layouts::system'
-        );
-
-        return $this->view->render(
-            $response,
-            'membership/register',
-            compact('provinces', 'cities', 'jobs', 'gcaptcha_site_key', 'use_captcha')
-        );
     }
 
     private function countActivatedUsers($post)

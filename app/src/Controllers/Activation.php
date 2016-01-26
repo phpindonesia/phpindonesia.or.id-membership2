@@ -36,57 +36,47 @@ class Activation extends Controllers
             $this->flash->addMessage('error', 'Bad Request');
         }
 
-        return $response->withRedirect($this->router->pathFor('membership-login'), 302);
+        return $response->withRedirect(
+            $this->router->pathFor('membership-login')
+        );
+    }
+
+    public function reactivatePage($request, $response, $args)
+    {
+        $this->enableCaptcha();
+        $this->setPageTitle('Membership', 'Account Reactivation');
+
+        return $this->view->render('activation-reactivate');
     }
 
     public function reactivate($request, $response, $args)
     {
-        $gcaptchaSiteKey = $this->settings['gcaptcha']['site_key'];
-        $gcaptchaSecret = $this->settings['gcaptcha']['secret'];
-        $gcaptchaEnable = $this->settings['gcaptcha']['enable'];
+        $validator = $this->validator->createInput($_POST);
 
-        if ($request->isPost()) {
+        $validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {
+            $q_email_exist = $this->db->createQueryBuilder()
+                ->select('COUNT(*) AS total_data')
+                ->from('users')
+                ->where('email = :email')
+                ->andWhere('deleted = :d')
+                ->setParameter(':email', trim($_POST['email']))
+                ->setParameter(':d', 'N')
+                ->execute();
 
-            $validator = $this->validator;
-            $validator->createInput($_POST);
-
-            $validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {
-                $q_email_exist = $this->db->createQueryBuilder()
-                    ->select('COUNT(*) AS total_data')
-                    ->from('users')
-                    ->where('email = :email')
-                    ->andWhere('deleted = :d')
-                    ->setParameter(':email', trim($_POST['email']))
-                    ->setParameter(':d', 'N')
-                    ->execute();
-
-                $email_exist = (int) $q_email_exist->fetch()['total_data'];
-                if ($email_exist > 0) {
-                    return true;
-                }
-
-                return false;
-
-            }, 'Tidak terdaftar!');
-
-            $validator->rule('required', 'email');
-            $validator->rule('check_email_exist', 'email');
-
-            if ($validator->validate()) {
-                //
+            $email_exist = (int) $q_email_exist->fetch()['total_data'];
+            if ($email_exist > 0) {
+                return true;
             }
+
+            return false;
+
+        }, 'Tidak terdaftar!');
+
+        $validator->rule('required', 'email');
+        $validator->rule('check_email_exist', 'email');
+
+        if ($validator->validate()) {
+            //
         }
-
-        $this->view->addData([
-            'page_title' => 'Membership',
-            'sub_page_title' => 'Account Reactivation',
-            'enable_captcha' => $gcaptchaEnable
-        ], 'layouts::system');
-
-        return $this->view->render(
-            $response,
-            'membership/account-reactivation',
-            compact('gcaptcha_site_key', 'use_captcha')
-        );
     }
 }

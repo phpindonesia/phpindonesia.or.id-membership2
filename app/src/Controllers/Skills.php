@@ -77,7 +77,7 @@ class Skills extends Controllers
             ->where('parent_id IS NULL')
             ->execute();
 
-        $skills_main = \Cake\Utility\Hash::combine($q_skills_main->fetchAll(), '{n}.skill_id', '{n}.skill_name');
+        $skills_main = $this->arrayPairs($q_skills_main->fetchAll(), '{n}.skill_id', '{n}.skill_name');
         $skills = array();
 
         if (isset($_POST['skill_id']) && $_POST['skill_parent_id'] != '') {
@@ -88,7 +88,7 @@ class Skills extends Controllers
             ->setParameter(':pid', $_POST['skill_parent_id'])
             ->execute();
 
-            $skills = \Cake\Utility\Hash::combine($q_skills->fetchAll(), '{n}.skill_id', '{n}.skill_name');
+            $skills = $this->arrayPairs($q_skills->fetchAll(), '{n}.skill_id', '{n}.skill_name');
         }
 
         $this->view->addData(
@@ -100,7 +100,6 @@ class Skills extends Controllers
         );
 
         return $this->view->render(
-            $response,
             'membership/skill-add',
             compact('skills_main', 'skills')
         );

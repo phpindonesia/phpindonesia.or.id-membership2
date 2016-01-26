@@ -31,21 +31,29 @@ class Authentication
     public function __invoke($request, $response, $next)
     {
         $uri = $request->getUri();
-        $basePath = $uri->getBasePath();
         $path = $uri->getPath();
 
-        // $request_path = $basePath.$path;
-        $request_path = $path;
+        if (!$this->assertContainPublicRoute($path) && !isset($_SESSION['MembershipAuth'])) {
+            $this->flash->addMessage('error', 'You are not authenticated');
+            return $response->withRedirect($this->router->pathFor('membership-login'));
+        }
 
+        return $next($request, $response);
+    }
+
+    private function assertContainPublicRoute($path)
+    {
+        $reqPath = $path;
         $contain = false;
-        if ($request_path != '/') {
-            foreach ($this->publicRoutes as $item) {
-                if ($item == '/') {
+
+        if ($reqPath != '/') {
+            foreach ($this->publicRoutes as $route) {
+                if ($route == '/') {
                     continue;
                 }
 
-                $str_path = str_replace('/', '\/', $item);
-                if (preg_match('/'.$str_path.'/i', $request_path)) {
+                $route = str_replace('/', '\/', $route);
+                if (preg_match('/'.$route.'/i', $reqPath)) {
                     $contain = true;
                     break;
                 }
@@ -54,14 +62,6 @@ class Authentication
             $contain = true;
         }
 
-        if (!$contain && !isset($_SESSION['MembershipAuth'])) {
-            $this->flash->addMessage('error', 'You are not authenticated');
-
-            return $response->withRedirect(
-                $this->router->pathFor('membership-login')
-            );
-        }
-
-        return $next($request, $response);
+        return $contain;
     }
 }

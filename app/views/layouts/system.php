@@ -12,34 +12,27 @@
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic|Open+Sans:400,300,600,700,300italic,400italic,600italic,700italic">
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/style.css">
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/shortcodes.css">
+    <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/responsive.css"> -->
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/skins/blue/style.css">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('asset/css/bootstrap.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('asset/css/font-awesome.css') ?>">
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/prettyPhoto.css">
-    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/responsive.css">
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/meanmenu.css">
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/animations.css">
-    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/font-awesome.min.css">
-    <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/bootstrap.css"> -->
+    <!-- <link rel="stylesheet" href="<?php echo $this->baseUrl('asset/css/responsive.css') ?>"> -->
+    <!-- <link rel="stylesheet" href="<?php echo $this->baseUrl('asset/css/formalize.css') ?>"> -->
     <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/formalize.css"> -->
     <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/responsive2.css"> -->
 
+    <?php if (isset($base_css)): foreach ($base_css as $css): ?>
+        <link rel="stylesheet" href="<?php echo $css ?>">
+    <?php endforeach; endif; ?>
+
     <link rel="shortcut icon" href="http://www.phpindonesia.or.id/favicon.png" type="image/png">
 
-    <?php
-    if (isset($enable_captcha) && $enable_captcha == true):
-    ?>
+    <?php if (isset($gcaptchaEnable) && $gcaptchaEnable == true): ?>
     <script src="https://www.google.com/recaptcha/api.js?hl=id" async defer></script>
-    <?php
-    endif;
-    ?>
-
-    <?php
-    if (isset($_view_css_)):
-        foreach ($_view_css_ as $css):
-            echo '<link href="'.$css.'" rel="stylesheet">';
-            echo "\n";
-        endforeach;
-    endif;
-    ?>
+    <?php endif ?>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -49,58 +42,53 @@
 </head>
 
 <body data-baseurl="<?php echo $this->baseUrl() ?>">
-<div class="wrapper">
-    <div class="inner-wrapper">
+    <div class="wrapper">
+        <div class="inner-wrapper">
 
-        <?php echo $this->insert('sections::header') ?>
+            <?php echo $this->insert('sections::header') ?>
 
-        <div id="main">
-            <div class="breadcrumb-wrapper type2">
-                <div class="container">
-                    <div class="main-title">
-                        <h1><?php echo $this->e($page_title); ?></h1>
-                        <div class="breadcrumb">
-                            <a href="http://www.phpindonesia.or.id/">Home</a>
-                            <span class="fa fa-angle-right"></span>
-                            <a href="<?php echo $this->pathFor('membership-index'); ?>"><?php echo $this->e($page_title); ?></a>
-                            <span class="fa fa-angle-right"></span>
-                            <span class="current"><?php echo $this->e($sub_page_title); ?></span>
+            <div id="main">
+                <div class="breadcrumb-wrapper type2">
+                    <div class="container">
+                        <div class="main-title">
+                            <h1><?php echo $this->e($page_title); ?></h1>
+                            <div class="breadcrumb">
+                                <a href="http://www.phpindonesia.or.id/">Home</a>
+                                <span class="fa fa-angle-right"></span>
+                                <a href="<?php echo $this->pathFor('membership-index'); ?>"><?php echo $this->e($page_title); ?></a>
+                                <span class="fa fa-angle-right"></span>
+                                <span class="current"><?php echo $this->e($sub_page_title); ?></span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <section id="primary" class="content-full-width">
+                    <?php echo $this->section('content') ?>
+                </section>
             </div>
 
-            <section id="primary" class="content-full-width">
-                <?php echo $this->section('content') ?>
-            </section>
+            <footer id="footer">
+                <?php echo $this->insert('sections::footer') ?>
+            </footer>
+
         </div>
-
-        <footer id="footer">
-            <?php echo $this->insert('sections::footer') ?>
-        </footer>
-
     </div>
-</div>
 
-<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery-1.10.2.min.js"></script>
-<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery-migrate.min.js"></script>
-<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/twitter/jquery.tweet.min.js"></script>
-<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/plugins.js"></script>
-<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/custom.js"></script>
-<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery.formalize.min.js"></script>
-<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/okzoom.min.js"></script>
+    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery-1.10.2.min.js"></script>
+    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery-migrate.min.js"></script>
+    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/twitter/jquery.tweet.min.js"></script>
+    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/plugins.js"></script>
+    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/custom.js"></script>
+    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery.formalize.min.js"></script>
+    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/okzoom.min.js"></script>
 
-<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery.formalize.min.js"></script>
-<script src="http://www.phpindonesia.or.id/po-content/phpindo/js/app/app.js"></script>
+    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery.formalize.min.js"></script>
+    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/app/app.js"></script>
 
-<?php
-if (isset($_view_js_)):
-    foreach ($_view_js_ as $js):
-        echo '<script src="'.$js.'?v='.time().'"></script>';
-        echo "\n";
-    endforeach;
-endif;
-?>
+    <?php if (isset($base_js)): foreach ($base_js as $js): ?>
+        <script src="<?php echo $js ?>"></script>
+    <?php endforeach; endif; ?>
 
 </body>
 </html>

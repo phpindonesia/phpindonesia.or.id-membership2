@@ -51,6 +51,7 @@ class ViewExtension implements ExtensionInterface
         $engine->registerFunction('formInputSelect', [$this, 'inputSelect']);
         $engine->registerFunction('formErrorClass', [$this, 'errorClass']);
         $engine->registerFunction('formShowErrors', [$this, 'showError']);
+
         $engine->registerFunction('userPhoto', [$this, 'userPhoto']);
         $engine->registerFunction('flashMessages', [$this->flash, 'getMessages']);
 

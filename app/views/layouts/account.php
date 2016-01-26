@@ -1,0 +1,26 @@
+<?php $this->layout('layouts::system') ?>
+
+<div class="full-width-section parallax full-section-bg">
+    <div class="container">
+        <div class="dt-sc-clear"></div>
+
+        <div class="form-wrapper clearfix">
+            <?php echo $this->insert('sections::flash-message') ?>
+
+            <?php echo $this->section('content') ?>
+        </div>
+    </div>
+</div>
+
+<div class="full-width-section">
+    <div class="container">
+        <div class="dt-sc-margin70"></div>
+
+        <div class="page_info aligncenter">
+            <h4 class="title"><?php echo $helpTitle ?></h4>
+            <p><?php echo implode('</p><p>', $helpContent) ?></p>
+        </div>
+    </div>
+</div>
+
+<div class="dt-sc-margin100"></div>

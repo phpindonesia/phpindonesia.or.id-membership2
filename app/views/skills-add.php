@@ -22,7 +22,7 @@ $this->appendJs(array(
                 Jika <strong>Skill Global</strong> tidak memunculkan <strong>Spesific Item</strong>, Maka silahkan langsung saja nilai menggunakan skill global.
             </p>
 
-            <form action="<?php echo $this->pathFor('membership-skill-add'); ?>" method="post" class="checkout" novalidate>
+            <form action="<?php echo $this->pathFor('membership-skills-add'); ?>" method="post" class="checkout" novalidate>
 
                 <table class="form-oprek">
                     <tbody>

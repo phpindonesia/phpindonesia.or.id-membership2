@@ -11,27 +11,21 @@ $app->post('/register', Controllers\Account::class.':register');
 
 $app->get('/logout', Controllers\Account::class.':logout')->setName('membership-logout');
 
-$app->group('/skills', function () {
-    $this->get('', Controllers\Skills::class.':index')->setName('membership-skills');
-
-    $this->delete('/{id:[0-9]+}', Controllers\Skills::class.':delete')->setName('membership-skills-delete');
-
-    $this->get('/add', Controllers\Skills::class.':addPage')->setName('membership-skills-add');
-    $this->post('/add', Controllers\Skills::class.':add');
-});
-
 $app->get('/account', Controllers\Profile::class.':member')->setName('membership-account');
 $app->group('/profile', function () {
-    $this->get('', Controllers\Profile::class.':index')->setName('membership-profile');
-
-    $this->delete('/{id:[0-9]+}', Controllers\Profile::class.':delete')->setName('membership-profile-delete');
-
     $this->get('/add', Controllers\Profile::class.':addPage')->setName('membership-profile-add');
     $this->post('/add', Controllers\Profile::class.':add');
+
+    $this->get('/javascript', Controllers\Profile::class.':javascriptPage')->setName('membership-profile-javascript');
+    $this->get('/edit', Controllers\Profile::class.':editPage')->setName('membership-profile-edit');
+
+    $this->get('/{name:[a-zA-Z]+}', Controllers\Profile::class.':index')->setName('membership-profile');
+
+    $this->delete('/{id:[0-9]+}', Controllers\Profile::class.':delete')->setName('membership-profile-delete');
 });
 
 $app->group('/activation', function () {
-    $this->get('/activate', Controllers\Activation::class.':activatePage')->setName('membership-activation-activate');
+    $this->get('/activate/{uid}/{activation_key}', Controllers\Activation::class.':activatePage')->setName('membership-activation-activate');
     $this->post('/activate', Controllers\Activation::class.':activate');
 
     $this->get('/reactivate', Controllers\Activation::class.':reactivate')->setName('membership-activation-reactivate');
@@ -45,6 +39,23 @@ $app->group('/password', function () {
 
     $this->get('/forgot', Controllers\Password::class.':forgotPage')->setName('membership-password-forgot');
     $this->post('/forgot', Controllers\Password::class.':forgot');
+});
+
+$app->group('/portfolio', function () {
+    $this->get('/add', Controllers\Portfolios::class.':addPage')->setName('membership-portfolio-add');
+    $this->post('/add', Controllers\Portfolios::class.':add');
+
+    $this->get('/edit', Controllers\Portfolios::class.':editPage')->setName('membership-portfolio-edit');
+    $this->post('/edit', Controllers\Portfolios::class.':edit');
+});
+
+$app->group('/skills', function () {
+    $this->get('', Controllers\Skills::class.':index')->setName('membership-skills');
+
+    $this->delete('/{id:[0-9]+}', Controllers\Skills::class.':delete')->setName('membership-skills-delete');
+
+    $this->get('/add', Controllers\Skills::class.':addPage')->setName('membership-skills-add');
+    $this->post('/add', Controllers\Skills::class.':add');
 });
 
 $app->group('/common-data', function () {

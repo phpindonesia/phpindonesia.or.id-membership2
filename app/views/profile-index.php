@@ -1,7 +1,11 @@
 <?php $this->layout('layouts::system') ?>
 
+<div class="dt-sc-margin70"></div>
+
 <div class="full-width-section">
 	<div class="container">
+
+        <div class="dt-sc-clear"></div>
 
 		<div class="column dt-sc-two-fifth first">
 
@@ -121,17 +125,17 @@
                             $periode_str = '';
 
                             // Start
-                            if ($item_portfolio['start_date_d'] != null) {
-                                $periode_str .= $item_portfolio['start_date_d'].' ';
-                            }
+                            // if ($item_portfolio['start_date_d'] != null) {
+                            //     $periode_str .= $item_portfolio['start_date_d'].' ';
+                            // }
 
-                            if ($item_portfolio['start_date_m'] != null) {
-                                $periode_str .= $months[$item_portfolio['start_date_m']].' ';
-                            }
+                            // if ($item_portfolio['start_date_m'] != null) {
+                            //     $periode_str .= $months[$item_portfolio['start_date_m']].' ';
+                            // }
 
-                            if ($item_portfolio['start_date_y'] != null) {
-                                $periode_str .= filter_var(trim($item_portfolio['start_date_y']), FILTER_SANITIZE_STRING);
-                            }
+                            // if ($item_portfolio['start_date_y'] != null) {
+                            //     $periode_str .= filter_var(trim($item_portfolio['start_date_y']), FILTER_SANITIZE_STRING);
+                            // }
 
                             if ($item_portfolio['work_status'] == 'R') {
                                 $periode_str .= ' s/d ';

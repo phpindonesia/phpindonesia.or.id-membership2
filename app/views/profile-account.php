@@ -57,7 +57,7 @@ $this->appendJs(array(
 			<div class="entry-body" style="margin-top: -25px; margin-bottom: 25px;">
 				<a href="<?php echo $this->pathFor('membership-profile-edit'); ?>" class="button" style="color: blue;">Update Basic Profile</a>
 				<a href="<?php echo $this->pathFor('membership-portfolio-add'); ?>" class="button" style="color: blue;">Add Portfolios</a>
-                <a href="<?php echo $this->pathFor('membership-skill-add'); ?>" class="button" style="color: blue;">Add Skills</a>
+                <a href="<?php echo $this->pathFor('membership-skills-add'); ?>" class="button" style="color: blue;">Add Skills</a>
 			</div>
 
 			<article class="blog-post">
@@ -292,7 +292,7 @@ $this->appendJs(array(
                             <?php
                             $unique = md5($num_skill.$item_skill['member_skill_id']);
                             ?>
-                            <form action="<?php echo $this->pathFor('membership-skill-delete', array('id' => $item_skill['member_skill_id'])); ?>" name="post_<?php echo $unique; ?>" id="post_<?php echo $unique; ?>" style="display:none;" method="post"><input autocomplete="off" name="_method" value="POST" type="hidden"></form>
+                            <form action="<?php echo $this->pathFor('membership-skills-delete', array('id' => $item_skill['member_skill_id'])); ?>" name="post_<?php echo $unique; ?>" id="post_<?php echo $unique; ?>" style="display:none;" method="post"><input autocomplete="off" name="_method" value="POST" type="hidden"></form>
                             <a href="#" onclick="if (confirm('Delete this skill item?')) { document.post_<?php echo $unique; ?>.submit(); } event.returnValue = false; return false;"><i class="fa fa-trash"></i> Delete</a>
                         </td>
                     </tr>

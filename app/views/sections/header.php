@@ -20,7 +20,9 @@
     <header class="header">
         <div class="container">
             <div id="logo">
-                <a href="http://www.phpindonesia.or.id" title="PHP Indonesia"><img src="<?php echo $this->baseUrl().'/asset/images/logo.png'; ?>" alt="PHP Indonesia" height="57" /></a>
+                <a href="http://www.phpindonesia.or.id" title="PHP Indonesia">
+                    <img src="http://www.phpindonesia.or.id/po-content/phpindo/images/logo.png" alt="PHP Indonesia" height="57" />
+                </a>
             </div>
 
             <div id="menu-container">
@@ -69,11 +71,11 @@
 
                         <?php if (!isset($_SESSION['MembershipAuth'])): ?>
                         <li class="menu-item-simple-parent">
-                            <a href="<?=$this->pathFor('membership-index')?>">Anggota</a>
+                            <a href="<?php echo $this->pathFor('membership-index') ?>">Anggota</a>
                             <ul class="sub-menu">
-                                <li><a href="<?=$this->pathFor('membership-login')?>">Login</a></li>
-                                <li><a href="<?=$this->pathFor('membership-register')?>">Register</a></li>
-                                <li><a href="<?=$this->pathFor('membership-password-forgot')?>">Forgot Password</a></li>
+                                <li><a href="<?php echo $this->pathFor('membership-login') ?>">Login</a></li>
+                                <li><a href="<?php echo $this->pathFor('membership-register') ?>">Register</a></li>
+                                <li><a href="<?php echo $this->pathFor('membership-password-forgot') ?>">Forgot Password</a></li>
                             </ul>
                         </li>
                         <?php endif ?>
