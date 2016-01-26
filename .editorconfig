@@ -1,0 +1,19 @@
+# editorconfig.org
+root = true
+
+[*]
+end_of_line = lf
+indent_style = space
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+indent_style = space
+
+[{app,res}/**.php]
+indent_size = 4
+
+[www/*.{css,js}]
+indent_size = 4
+
+[*.{json,yml}]
+indent_size = 4

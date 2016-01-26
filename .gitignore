@@ -1,8 +1,36 @@
-public/files/*
-protected/settings.php
+# Generic
+# --------------------------
+Thumbs.db
+Desktop.ini
+Icon?
+.directory
+*.cache
+*.old
+*.zip
+*~
+
+# Development files
+# --------------------------
+app/settings.php
 qnd-cli-utils/settings.php
 composer.phar
 composer.lock
 composer.json
-*.sublime-*
+.env
+
+# Dependency folders
+# --------------------------
+/vendor/
+
+# IDE Project Configurations
+# --------------------------
+nbproject/
 .idea/
+.settings/
+.project
+*.sublime-*
+
+# But Keep these
+# --------------------------
+!.htaccess
+!.gitkeep
