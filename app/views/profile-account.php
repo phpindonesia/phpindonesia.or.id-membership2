@@ -1,12 +1,12 @@
-<?php $this->layout('layouts::system') ?>
-
 <?php
-$this->appendJs(array(
-    $this->baseUrl().'/asset/js/jquery.popupoverlay.js',
+$this->layout('layouts::system');
+
+$this->appendJs([
+    $this->asset('/asset/js/jquery.popupoverlay.js'),
     $this->pathFor('membership-profile-javascript'),
-    $this->baseUrl().'/asset/js/app/membership/portfolio-add.js',
-    $this->baseUrl().'/asset/js/app/membership/skill-add.js'
-));
+    $this->asset('/asset/js/portfolio-add.js'),
+    $this->asset('/asset/js/skill-add.js')
+]);
 ?>
 
 <div class="dt-sc-margin70"></div>
@@ -328,5 +328,3 @@ $this->appendJs(array(
         <button class="skill-popup-close">Close [X]</button>
     </div>
 </div>
-
-<div class="dt-sc-margin70"></div>

@@ -1,6 +1,6 @@
-<?php $this->layout('layouts::system') ?>
-
 <?php
+$this->layout('layouts::system');
+
 $this->appendJs([
     $this->asset('/asset/js/membership.js')
 ]);

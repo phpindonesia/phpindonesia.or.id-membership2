@@ -1,9 +1,9 @@
-<?php $this->layout('layouts::system') ?>
-
 <?php
-$this->appendJs(array(
-    $this->baseUrl().'/asset/js/app/membership/portfolio-add.js'
-));
+$this->layout('layouts::system');
+
+$this->appendJs([
+    $this->asset('/asset/js/portfolio-add.js')
+]);
 ?>
 
 <div class="dt-sc-margin70"></div>
@@ -204,5 +204,3 @@ $this->appendJs(array(
     </div>
 
 </div>
-
-<div class="dt-sc-margin70"></div>

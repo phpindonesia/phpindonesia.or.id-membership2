@@ -1,10 +1,10 @@
-<?php $this->layout('layouts::system') ?>
-
 <?php
-$this->appendJs(array(
-    $this->baseUrl().'/asset/js/jquery.inputmask.bundle.js',
-    $this->baseUrl().'/asset/js/app/membership/profile-edit.js'
-));
+$this->layout('layouts::system');
+
+$this->appendJs([
+    $this->asset('/asset/js/jquery.inputmask.bundle.js'),
+    $this->asset('/asset/js/profile-edit.js')
+]);
 ?>
 
 <div class="dt-sc-margin70"></div>
@@ -336,5 +336,3 @@ $this->appendJs(array(
     </div>
 
 </div>
-
-<div class="dt-sc-margin70"></div>

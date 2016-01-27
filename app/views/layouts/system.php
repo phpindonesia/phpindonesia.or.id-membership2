@@ -65,6 +65,8 @@
 
                 <section id="primary" class="content-full-width">
                     <?php echo $this->section('content') ?>
+
+                    <div class="dt-sc-margin70"></div>
                 </section>
             </div>
 

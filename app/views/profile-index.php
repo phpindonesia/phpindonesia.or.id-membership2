@@ -21,9 +21,7 @@
                     <br />
 
                     <ul class="dt-sc-social-icons">
-                        <?php
-                        foreach ($member_socmeds as $socmed_item):
-                            ?>
+                        <?php foreach ($member_socmeds as $socmed_item): ?>
 
                             <li style="margin-right: 5px; padding: 3px; border: 1px #DDDDDD solid;">
                                 <a style="border: none; font: inherit;" href="<?php echo $socmed_item['account_url'] ?>">
@@ -32,9 +30,7 @@
                                 </a>
                             </li>
 
-                            <?php
-                        endforeach;
-                        ?>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
 
@@ -186,10 +182,10 @@
     <div class="dt-sc-margin50"></div>
 
     <div class="container">
-        <p align="center"><a href="<?php echo $this->pathFor('membership-index'); ?>" class="button" style="color:#fff;">Back To Membership Page</a></p>
+        <p align="center">
+            <a href="<?php echo $this->pathFor('membership-index'); ?>" class="button" style="color:#fff;">Back To Membership Page</a>
+        </p>
     </div>
 
     <div class="dt-sc-margin50"></div>
 </div>
-
-<div class="dt-sc-margin70"></div>

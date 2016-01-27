@@ -24,5 +24,3 @@
         </div>
     </div>
 <?php endif ?>
-
-<div class="dt-sc-margin70"></div>

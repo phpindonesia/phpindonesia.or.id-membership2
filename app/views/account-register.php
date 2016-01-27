@@ -1,8 +1,10 @@
-<?php $this->layout('layouts::account') ?>
+<?php
+$this->layout('layouts::account');
 
-<?php $this->appendJs([
+$this->appendJs([
     $this->asset('/asset/js/register.js')
-]) ?>
+]);
+?>
 
 <form action="<?php echo $this->pathFor('membership-register'); ?>" method="post" novalidate class="form-horizontal">
     <h3 class="aligncenter"> <i class="fa fa-user"></i> Registrasi Anggota</h3>
