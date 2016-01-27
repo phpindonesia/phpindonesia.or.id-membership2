@@ -9,145 +9,145 @@ $this->appendJs(array(
 ));
 ?>
 
+<div class="dt-sc-margin70"></div>
+
 <div class="full-width-section">
-	<div class="container">
+    <div class="container">
 
-		<div style="margin-bottom: 70px; padding: 0; margin-top: -60px;">
-			<?php
-			echo $this->insert('sections::flash-message');
-			?>
-		</div>
+        <div style="margin-bottom: 70px; padding: 0; margin-top: -60px;">
+            <?php echo $this->insert('sections::flash-message') ?>
+        </div>
 
-		<div class="column dt-sc-two-fifth first">
+        <div class="column dt-sc-two-fifth first">
 
-			<div class="dt-sc-team">
+            <div class="dt-sc-team">
 
-				<div class="image">
-					<img src="<?php echo $this->userPhoto($member['photo'], ['width' => '180', 'height' => '180']) ?>" alt="user avatar" style="width: 180px; height: 180px;" />
-				</div>
+                <div class="image">
+                    <img src="<?php echo $this->userPhoto($member['photo'], ['width' => '180', 'height' => '180']) ?>" alt="user avatar" style="width: 180px; height: 180px;" />
+                </div>
 
-				<div class="team-details">
-					<h6><?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></h6>
-					<br />
+                <div class="team-details">
+                    <h6><?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></h6>
+                    <br />
 
-					<ul class="dt-sc-social-icons">
-						<?php
-						foreach ($member_socmeds as $socmed_item):
-						?>
+                    <ul class="dt-sc-social-icons">
+                        <?php
+                        foreach ($member_socmeds as $socmed_item):
+                        ?>
 
-							<li style="margin-right: 5px; padding: 3px; border: 1px #DDDDDD solid;">
-								<a style="border: none; font: inherit;" href="<?php echo $socmed_item['account_url'] ?>">
-									<span class="fa <?php echo $socmedias[$socmed_item['socmed_type']][1]; ?>"></span>
-									<?php echo !empty($socmed_item['account_name']) ? $socmed_item['account_name'] : $_SESSION['MembershipAuth']['username'] ?>
-								</a>
-							</li>
+                            <li style="margin-right: 5px; padding: 3px; border: 1px #DDDDDD solid;">
+                                <a style="border: none; font: inherit;" href="<?php echo $socmed_item['account_url'] ?>">
+                                    <span class="fa <?php echo $socmedias[$socmed_item['socmed_type']][1]; ?>"></span>
+                                    <?php echo !empty($socmed_item['account_name']) ? $socmed_item['account_name'] : $_SESSION['MembershipAuth']['username'] ?>
+                                </a>
+                            </li>
 
-						<?php
-						endforeach;
-						?>
-					</ul>
-				</div>
+                        <?php
+                        endforeach;
+                        ?>
+                    </ul>
+                </div>
 
-			</div>
+            </div>
 
-		</div>
+        </div>
 
-		<div class="column dt-sc-three-fifth">
+        <div class="column dt-sc-three-fifth">
 
-			<div class="entry-body" style="margin-top: -25px; margin-bottom: 25px;">
-				<a href="<?php echo $this->pathFor('membership-profile-edit'); ?>" class="button" style="color: blue;">Update Basic Profile</a>
-				<a href="<?php echo $this->pathFor('membership-portfolio-add'); ?>" class="button" style="color: blue;">Add Portfolios</a>
+            <div class="entry-body" style="margin-top: -25px; margin-bottom: 25px;">
+                <a href="<?php echo $this->pathFor('membership-profile-edit'); ?>" class="button" style="color: blue;">Update Basic Profile</a>
+                <a href="<?php echo $this->pathFor('membership-portfolio-add'); ?>" class="button" style="color: blue;">Add Portfolios</a>
                 <a href="<?php echo $this->pathFor('membership-skills-add'); ?>" class="button" style="color: blue;">Add Skills</a>
-			</div>
+            </div>
 
-			<article class="blog-post">
+            <article class="blog-post">
 
-				<div class="entry-body">
+                <div class="entry-body">
 
-					<div class="table-responsive">
-						<table class="table table-hover">
-							<tbody>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <tbody>
 
-								<tr>
-									<td style="width:200px; font-weight: bold;">Nama Lengkap</td>
-									<td>: <?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></td>
-								</tr>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Nama Lengkap</td>
+                                    <td>: <?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></td>
+                                </tr>
 
-								<tr>
-									<td style="width:200px; font-weight: bold;">Gender</td>
-									<td>: <?php echo filter_var(trim(ucfirst($member['gender'])), FILTER_SANITIZE_STRING); ?></td>
-								</tr>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Gender</td>
+                                    <td>: <?php echo filter_var(trim(ucfirst($member['gender'])), FILTER_SANITIZE_STRING); ?></td>
+                                </tr>
 
-								<tr>
-									<td style="width:200px; font-weight: bold;">Email</td>
-									<td>: <?php echo $_SESSION['MembershipAuth']['email']; ?></td>
-								</tr>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Email</td>
+                                    <td>: <?php echo $_SESSION['MembershipAuth']['email']; ?></td>
+                                </tr>
 
-								<tr>
-									<td style="width:200px; font-weight: bold;">Phone</td>
-									<td>: <?php echo filter_var(trim($member['contact_phone']), FILTER_SANITIZE_STRING); ?></td>
-								</tr>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Phone</td>
+                                    <td>: <?php echo filter_var(trim($member['contact_phone']), FILTER_SANITIZE_STRING); ?></td>
+                                </tr>
 
-								<tr>
-									<td style="width:200px; font-weight: bold;">Tempat, Tanggal Lahir</td>
-									<td>
-										:
-										<?php
-										echo $member['birth_place'] == null ? '-' : filter_var(trim(ucfirst($member['birth_place'])), FILTER_SANITIZE_STRING);
-										echo ' , ';
-										echo $member['birth_date'] == null ? '-' : filter_var(trim($member['birth_date']), FILTER_SANITIZE_STRING);
-										?>
-									</td>
-								</tr>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Tempat, Tanggal Lahir</td>
+                                    <td>
+                                        :
+                                        <?php
+                                        echo $member['birth_place'] == null ? '-' : filter_var(trim(ucfirst($member['birth_place'])), FILTER_SANITIZE_STRING);
+                                        echo ' , ';
+                                        echo $member['birth_date'] == null ? '-' : filter_var(trim($member['birth_date']), FILTER_SANITIZE_STRING);
+                                        ?>
+                                    </td>
+                                </tr>
 
-								<tr>
-									<td style="width:200px; font-weight: bold;">Identitas</td>
-									<td>
-										:
-										<?php
-										echo $member['identity_type'] == null ? '-' : filter_var(trim($member['identity_type']), FILTER_SANITIZE_STRING);
-										echo ' : ';
-										echo $member['identity_number'] == null ? '-' : filter_var(trim($member['identity_number']), FILTER_SANITIZE_STRING);
-										?>
-									</td>
-								</tr>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Identitas</td>
+                                    <td>
+                                        :
+                                        <?php
+                                        echo $member['identity_type'] == null ? '-' : filter_var(trim($member['identity_type']), FILTER_SANITIZE_STRING);
+                                        echo ' : ';
+                                        echo $member['identity_number'] == null ? '-' : filter_var(trim($member['identity_number']), FILTER_SANITIZE_STRING);
+                                        ?>
+                                    </td>
+                                </tr>
 
-								<tr>
-									<td style="width:200px; font-weight: bold;">Domisili</td>
-									<td>
-										:
-										<?php
-										echo $member['area'] == '' ? '-' : filter_var(trim(ucwords($member['area'])), FILTER_SANITIZE_STRING);
-										echo ' , ';
-										echo filter_var(trim($member['city']), FILTER_SANITIZE_STRING);
-										echo ' , ';
-										echo filter_var(trim($member['province']), FILTER_SANITIZE_STRING)
-										?>
-									</td>
-								</tr>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Domisili</td>
+                                    <td>
+                                        :
+                                        <?php
+                                        echo $member['area'] == '' ? '-' : filter_var(trim(ucwords($member['area'])), FILTER_SANITIZE_STRING);
+                                        echo ' , ';
+                                        echo filter_var(trim($member['city']), FILTER_SANITIZE_STRING);
+                                        echo ' , ';
+                                        echo filter_var(trim($member['province']), FILTER_SANITIZE_STRING)
+                                        ?>
+                                    </td>
+                                </tr>
 
-								<tr>
-									<td style="width:200px; font-weight: bold;">Pekerjaan</td>
-									<td>
-										:
-										<?php
-										echo ucfirst($member['job_id']);
-										?>
-									</td>
-								</tr>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Pekerjaan</td>
+                                    <td>
+                                        :
+                                        <?php
+                                        echo ucfirst($member['job_id']);
+                                        ?>
+                                    </td>
+                                </tr>
 
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</article>
-		</div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+        </div>
 
-	</div>
+    </div>
 
-	<div class="container">
+    <div class="container">
 
-		<h3>Portfolios</h3>
+        <h3>Portfolios</h3>
 
         <div class="table-responsive" style="margin-bottom: 25px;">
             <table class="table table-hover">
@@ -304,7 +304,7 @@ $this->appendJs(array(
                 </tbody>
             </table>
 
-	</div>
+    </div>
 
 </div>
 
@@ -313,9 +313,7 @@ $this->appendJs(array(
 <!-- PORTFOLIO & SKILL ADD SECTION -->
 <div id="portfolio-popup" class="well" style="background-color: #FFFFFF;">
 
-    <?php
-    echo $this->insert('membership/sections/portfolio-add-section');
-    ?>
+    <?php echo $this->insert('sections::portfolio-add') ?>
 
     <div style="position: absolute; top: 5px; right: 5px;">
         <button class="portfolio-popup-close">Close [X]</button>
@@ -324,11 +322,11 @@ $this->appendJs(array(
 
 <div id="skill-popup" class="well" style="background-color: #FFFFFF;">
 
-    <?php
-    echo $this->insert('membership/sections/skill-add-section');
-    ?>
+    <?php echo $this->insert('sections::skill-add') ?>
 
     <div style="position: absolute; top: 5px; right: 5px;">
         <button class="skill-popup-close">Close [X]</button>
     </div>
 </div>
+
+<div class="dt-sc-margin70"></div>

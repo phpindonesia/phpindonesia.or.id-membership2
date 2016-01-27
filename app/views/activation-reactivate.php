@@ -6,9 +6,7 @@
         <div class="form-wrapper register" style="margin-top: -170px;">
 
             <form action="<?php echo $this->pathFor('membership-account-reactivation'); ?>" method="post" novalidate>
-                <?php
-                echo $this->insert('sections::flash-message');
-                ?>
+                <?php echo $this->insert('sections::flash-message') ?>
 
                 <h3 class="aligncenter"> <span> <i class="fa fa-key"></i></span> Account Reactivation</h3>
 

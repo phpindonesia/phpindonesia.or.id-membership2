@@ -3,83 +3,83 @@
 <div class="dt-sc-margin70"></div>
 
 <div class="full-width-section">
-	<div class="container">
+    <div class="container">
 
         <div class="dt-sc-clear"></div>
 
-		<div class="column dt-sc-two-fifth first">
+        <div class="column dt-sc-two-fifth first">
 
-			<div class="dt-sc-team">
+            <div class="dt-sc-team">
 
-				<div class="image">
+                <div class="image">
                     <img src="<?php echo $this->userPhoto($member['photo'], ['width' => '180', 'height' => '180']) ?>" alt="" />
-				</div>
+                </div>
 
-				<div class="team-details">
-					<h6><?php echo filter_var(trim($member['fullname'])); ?></h6>
+                <div class="team-details">
+                    <h6><?php echo filter_var(trim($member['fullname'])); ?></h6>
 
-					<br />
+                    <br />
 
-					<ul class="dt-sc-social-icons">
-						<?php
-						foreach ($member_socmeds as $socmed_item):
-							?>
+                    <ul class="dt-sc-social-icons">
+                        <?php
+                        foreach ($member_socmeds as $socmed_item):
+                            ?>
 
-							<li style="margin-right: 5px; padding: 3px; border: 1px #DDDDDD solid;">
-								<a style="border: none; font: inherit;" href="<?php echo $socmed_item['account_url'] ?>">
-									<span class="fa <?php echo $socmedias[$socmed_item['socmed_type']][1]; ?>"></span>
-									<?php echo !empty($socmed_item['account_name']) ? $socmed_item['account_name'] : strtolower($member['fullname']) ?>
-								</a>
-							</li>
+                            <li style="margin-right: 5px; padding: 3px; border: 1px #DDDDDD solid;">
+                                <a style="border: none; font: inherit;" href="<?php echo $socmed_item['account_url'] ?>">
+                                    <span class="fa <?php echo $socmedias[$socmed_item['socmed_type']][1]; ?>"></span>
+                                    <?php echo !empty($socmed_item['account_name']) ? $socmed_item['account_name'] : strtolower($member['fullname']) ?>
+                                </a>
+                            </li>
 
-							<?php
-						endforeach;
-						?>
-					</ul>
-				</div>
+                            <?php
+                        endforeach;
+                        ?>
+                    </ul>
+                </div>
 
-			</div>
+            </div>
 
-		</div>
+        </div>
 
-		<div class="column dt-sc-three-fifth">
-			<article class="blog-post">
-				<div class="entry-body">
-					<div class="table-responsive">
+        <div class="column dt-sc-three-fifth">
+            <article class="blog-post">
+                <div class="entry-body">
+                    <div class="table-responsive">
 
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td style="width:200px; font-weight: bold;">Nama Lengkap</td>
-									<td>: <?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></td>
-								</tr>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Nama Lengkap</td>
+                                    <td>: <?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></td>
+                                </tr>
 
-								<tr>
-									<td style="width:200px; font-weight: bold;">Gender</td>
-									<td>: <?php echo ucfirst($member['gender']); ?></td>
-								</tr>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Gender</td>
+                                    <td>: <?php echo ucfirst($member['gender']); ?></td>
+                                </tr>
 
-								<tr>
-									<td style="width:200px; font-weight: bold;">Daerah Kelahiran</td>
-									<td>: <?php echo ucfirst($member['birth_place']); ?></td>
-								</tr>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Daerah Kelahiran</td>
+                                    <td>: <?php echo ucfirst($member['birth_place']); ?></td>
+                                </tr>
 
-								<tr>
-									<td style="width:200px; font-weight: bold;">Domisili</td>
-									<td>: <?php echo $member['province'].', '.$member['city'].', '.filter_var(trim($member['area']), FILTER_SANITIZE_STRING); ?></td>
-								</tr>
+                                <tr>
+                                    <td style="width:200px; font-weight: bold;">Domisili</td>
+                                    <td>: <?php echo $member['province'].', '.$member['city'].', '.filter_var(trim($member['area']), FILTER_SANITIZE_STRING); ?></td>
+                                </tr>
 
-							</tbody>
-						</table>
+                            </tbody>
+                        </table>
 
-					</div>
-				</div>
-			</article>
-		</div>
-	</div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
 
-	<div class="container">
-		<h3>Portfolios</h3>
+    <div class="container">
+        <h3>Portfolios</h3>
 
         <div class="table-responsive">
             <table class="table table-hover">
@@ -181,15 +181,15 @@
 
             </table>
         </div>
-	</div>
+    </div>
 
-	<div class="dt-sc-margin50"></div>
+    <div class="dt-sc-margin50"></div>
 
-	<div class="container">
-		<p align="center"><a href="<?php echo $this->pathFor('membership-index'); ?>" class="button" style="color:#fff;">Back To Membership Page</a></p>
-	</div>
+    <div class="container">
+        <p align="center"><a href="<?php echo $this->pathFor('membership-index'); ?>" class="button" style="color:#fff;">Back To Membership Page</a></p>
+    </div>
 
-	<div class="dt-sc-margin50"></div>
+    <div class="dt-sc-margin50"></div>
 </div>
 
-<div class="dt-sc-margin50"></div>
+<div class="dt-sc-margin70"></div>

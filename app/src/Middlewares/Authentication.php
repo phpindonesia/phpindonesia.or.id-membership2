@@ -64,4 +64,28 @@ class Authentication
 
         return $contain;
     }
+
+    private function assertRouteOwnership($path)
+    {
+        $reqPath = $path;
+        $contain = false;
+
+        if ($reqPath != '/') {
+            foreach ($this->publicRoutes as $route) {
+                if ($route == '/') {
+                    continue;
+                }
+
+                $route = str_replace('/', '\/', $route);
+                if (preg_match('/'.$route.'/i', $reqPath)) {
+                    $contain = true;
+                    break;
+                }
+            }
+        } else {
+            $contain = true;
+        }
+
+        return $contain;
+    }
 }
