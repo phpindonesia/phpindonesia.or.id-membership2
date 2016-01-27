@@ -3,8 +3,7 @@
 <div class="dt-sc-margin70"></div>
 
 <div class="full-width-section">
-
-    <div class="container" style="margin-top: -70px;">
+    <div class="container">
 
         <h3 class="aligncenter"> <span> <i class="fa fa-key"></i></span> Forgot Password</h3>
 

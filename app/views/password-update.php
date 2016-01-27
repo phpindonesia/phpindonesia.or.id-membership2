@@ -2,9 +2,8 @@
 
 <div class="dt-sc-margin70"></div>
 
-<div class="full-width-section" style="margin-bottom: 50px;">
-
-    <div class="container" style="margin-top: -70px;">
+<div class="full-width-section">
+    <div class="container">
 
         <h3 class="aligncenter"> <span> <i class="fa fa-key"></i></span> Update Password</h3>
 

@@ -10,8 +10,7 @@ $this->appendJs(array(
 <div class="dt-sc-margin70"></div>
 
 <div class="full-width-section">
-
-    <div class="container" style="margin-top: -70px;">
+    <div class="container">
 
         <h3 style="border-bottom: 1px #000000 solid;">Update My Basic Profile</h3>
 

@@ -2,6 +2,7 @@
 
 <div class="full-width-section parallax full-section-bg">
     <div class="container">
+
         <div class="dt-sc-clear"></div>
         <div class="form-wrapper register" style="margin-top: -170px;">
 
