@@ -71,7 +71,7 @@ class Skills extends Controllers
         }
 
 
-        $q_skills_main = $this->db->createQueryBuilder()
+        $q_skills_main = $this->db
             ->select('skill_id', 'skill_name')
             ->from('skills')
             ->where('parent_id IS NULL')
@@ -81,7 +81,7 @@ class Skills extends Controllers
         $skills = array();
 
         if (isset($_POST['skill_id']) && $_POST['skill_parent_id'] != '') {
-            $q_skills = $this->db->createQueryBuilder()
+            $q_skills = $this->db
             ->select('skill_id', 'skill_name')
             ->from('skills')
             ->where('parent_id = :pid')

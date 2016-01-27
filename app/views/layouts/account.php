@@ -12,15 +12,17 @@
     </div>
 </div>
 
-<div class="full-width-section">
-    <div class="container">
-        <div class="dt-sc-margin70"></div>
+<?php if (isset($helpTitle)): ?>
+    <div class="full-width-section">
+        <div class="container">
+            <div class="dt-sc-margin70"></div>
 
-        <div class="page_info aligncenter">
-            <h4 class="title"><?php echo $helpTitle ?></h4>
-            <p><?php echo implode('</p><p>', $helpContent) ?></p>
+            <div class="page_info aligncenter">
+                <h4 class="title"><?php echo $helpTitle ?></h4>
+                <p><?php echo implode('</p><p>', $helpContent) ?></p>
+            </div>
         </div>
     </div>
-</div>
+<?php endif ?>
 
-<div class="dt-sc-margin100"></div>
+<div class="dt-sc-margin70"></div>

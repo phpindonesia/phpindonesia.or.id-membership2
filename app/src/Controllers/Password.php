@@ -28,11 +28,11 @@ class Password extends Controllers
         $validator->addNewRule('check_oldpassword', function ($field, $value, array $params) use ($db, $salt_pwd) {
             $salted_current_pwd = md5($salt_pwd.$value);
 
-            $q_current_pwd_count = $this->db->createQueryBuilder()
+            $q_current_pwd_count = $this->db
                 ->select('COUNT(*) AS total_data')
                 ->from('users')
                 ->where('user_id = :uid')
-                ->andWhere('password = :pwd')
+                ->where('password = :pwd')
                 ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
                 ->setParameter(':pwd', $salted_current_pwd)
                 ->execute();
@@ -82,6 +82,14 @@ class Password extends Controllers
         $this->enableCaptcha();
         $this->setPageTitle('Membership', 'Forgot Password');
 
+        $this->view->addData([
+            'helpTitle' => 'Bantuan Login?',
+            'helpContent' => [
+                'Jika belum terdaftar sebagai anggota, <a href="'.$this->router->pathFor('membership-register').'" title="">Daftar Disini</a> menjadi anggota PHP Indonesia.',
+                'Sudah pernah terdaftar menjadi anggota PHP Indonesia, silahkan <a href="'.$this->router->pathFor('membership-login').'" title="">Login Disini.'
+            ],
+        ], 'layouts::account');
+
         return $this->view->render('password-forgot');
     }
 
@@ -94,12 +102,12 @@ class Password extends Controllers
         $validator->createInput($_POST);
 
         $validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {
-            $q_email_exist = $this->db->createQueryBuilder()
+            $q_email_exist = $this->db
                 ->select('COUNT(*) AS total_data')
                 ->from('users')
                 ->where('email = :email')
-                ->andWhere('activated = :act')
-                ->andWhere('deleted = :d')
+                ->where('activated = :act')
+                ->where('deleted = :d')
                 ->setParameter(':email', trim($_POST['email']))
                 ->setParameter(':act', 'Y', \Doctrine\DBAL\Types\Type::STRING)
                 ->setParameter(':d', 'N', \Doctrine\DBAL\Types\Type::STRING)
@@ -142,7 +150,7 @@ class Password extends Controllers
             $reset_expired_date = date('Y-m-d H:i:s', time() + 7200); // 2 jam
             $email_address = trim($_POST['email']);
 
-            $q_member = $this->db->createQueryBuilder()
+            $q_member = $this->db
                 ->select('user_id', 'username')
                 ->from('users')
                 ->where('email = :email')
@@ -205,14 +213,14 @@ class Password extends Controllers
 
     public function reset($request, $response, $args)
     {
-        $q_reset_exist_count = $this->db->createQueryBuilder()
+        $q_reset_exist_count = $this->db
             ->select('COUNT(*) AS total_data')
             ->from('users_reset_pwd')
             ->where('user_id = :uid')
-            ->andWhere('reset_key = :resetkey')
-            ->andWhere('deleted = :d')
-            ->andWhere('email_sent = :sent')
-            ->andWhere('expired_date > NOW()')
+            ->where('reset_key = :resetkey')
+            ->where('deleted = :d')
+            ->where('email_sent = :sent')
+            ->where('expired_date > NOW()')
             ->setParameter(':uid', $args['uid'])
             ->setParameter(':resetkey', $args['reset_key'])
             ->setParameter(':d', 'N')
@@ -226,7 +234,7 @@ class Password extends Controllers
             $success_msg_alt = 'Password baru sementara anda sudah dikirim ke email.<br /><br /><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong><br /><br />Terimakasih ^_^';
 
             // Fetch member basic info
-            $q_member = $this->db->createQueryBuilder()
+            $q_member = $this->db
                 ->select('username', 'email')->from('users')->where('user_id = :uid')
                 ->setParameter(':uid', $args['uid'])->execute();
 

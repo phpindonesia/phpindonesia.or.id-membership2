@@ -9,7 +9,7 @@ class Portfolio
         $query = $this->db->select('count(*) num', 'user_id', 'member_portfolio_id')
             ->from('members_portfolios')
             ->where('member_portfolio_id = :portId')
-            ->andWhere('user_id = :userId')
+            ->where('user_id = :userId')
             ->setParameter(':portId', $routeInfo[2]['id'])
             ->setParameter(':userId', $_SESSION['MembershipAuth']['user_id'])
             ->execute();

@@ -82,25 +82,6 @@ class Account extends Controllers
         return $this->view->render('account-login');
     }
 
-    public function logout($request, $response, $args)
-    {
-        $_SESSION = [];
-
-        if (ini_get('session.use_cookies')) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
-            );
-        }
-
-        session_destroy();
-
-        return $res->withRedirect(
-            $this->router->pathFor('membership-login')
-        );
-    }
-
     public function registerPage($request, $response, $args)
     {
         $qProvinces = Regionals::factory($this->db)->getProvinces();
@@ -177,11 +158,11 @@ class Account extends Controllers
             }, 'Not match with current password');
 
             $validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {
-                $q_email_count = $this->db->createQueryBuilder()
+                $q_email_count = $this->db
                     ->select('COUNT(*) AS total_data')
                     ->from('users')
                     ->where('email = :email')
-                    ->andWhere('deleted = :d')
+                    ->where('deleted = :d')
                     ->setParameter(':email', trim(strtolower($_POST['email'])))
                     ->setParameter(':d', 'N')
                     ->execute();
@@ -198,11 +179,11 @@ class Account extends Controllers
             }, 'Already exist');
 
             $validator->addNewRule('check_username_exist', function ($field, $value, array $params) use ($db) {
-                $q_username_count = $this->db->createQueryBuilder()
+                $q_username_count = $this->db
                     ->select('COUNT(*) AS total_data')
                     ->from('users')
                     ->where('username = :uname')
-                    ->andWhere('deleted = :d')
+                    ->where('deleted = :d')
                     ->setParameter(':uname', trim(strtolower($_POST['username'])))
                     ->setParameter(':d', 'N')
                     ->execute();
@@ -341,6 +322,25 @@ class Account extends Controllers
                 $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
             }
         }
+    }
+
+    public function logout($request, $response, $args)
+    {
+        $_SESSION = [];
+
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+
+        session_destroy();
+
+        return $res->withRedirect(
+            $this->router->pathFor('membership-login')
+        );
     }
 
     private function countActivatedUsers($post)

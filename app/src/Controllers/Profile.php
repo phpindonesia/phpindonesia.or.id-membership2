@@ -79,7 +79,7 @@ class Profile extends Controllers
 
     public function member($request, $response, $args)
     {
-        $qMembers = $this->db->createQueryBuilder()
+        $qMembers = $this->db
         ->select(
             'm.*',
             'reg_prv.regional_name AS province',
@@ -89,21 +89,21 @@ class Profile extends Controllers
         ->leftJoin('m', 'regionals', 'reg_prv', 'reg_prv.id = m.province_id')
         ->leftJoin('m', 'regionals', 'reg_cit', 'reg_cit.id = m.city_id')
         ->where('m.user_id = :uid')
-        ->andWhere('m.deleted = :d')
+        ->where('m.deleted = :d')
         ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
         ->setParameter(':d', 'N')
         ->execute();
 
-        $qMembersSocmeds = $this->db->createQueryBuilder()
+        $qMembersSocmeds = $this->db
         ->select('socmed_type', 'account_name', 'account_url')
         ->from('members_socmeds')
         ->where('user_id = :uid')
-        ->andWhere('deleted = :d')
+        ->where('deleted = :d')
         ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
         ->setParameter(':d', 'N')
         ->execute();
 
-        $qMembersPortfolios = $this->db->createQueryBuilder()
+        $qMembersPortfolios = $this->db
         ->select(
             'mp.member_portfolio_id',
             'mp.company_name',
@@ -122,12 +122,12 @@ class Profile extends Controllers
         ->from('members_portfolios', 'mp')
         ->leftJoin('mp', 'industries', 'ids', 'mp.industry_id = ids.industry_id')
         ->where('mp.user_id = :uid')
-        ->andWhere('mp.deleted = :d')
+        ->where('mp.deleted = :d')
         ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
         ->setParameter(':d', 'N')
         ->execute();
 
-        $qMembers_skills = $this->db->createQueryBuilder()
+        $qMembers_skills = $this->db
         ->select(
             'ms.member_skill_id',
             'ms.skill_self_assesment',
@@ -138,7 +138,7 @@ class Profile extends Controllers
         ->leftJoin('ms', 'skills', 'sp', 'ms.skill_parent_id = sp.skill_id')
         ->leftJoin('ms', 'skills', 'ss', 'ms.skill_id = ss.skill_id')
         ->where('ms.user_id = :uid')
-        ->andWhere('ms.deleted = :d')
+        ->where('ms.deleted = :d')
         ->orderBy('sp.skill_name', 'ASC')
         ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
         ->setParameter(':d', 'N')
@@ -156,13 +156,13 @@ class Profile extends Controllers
          * Data view for portfolio-add-section
          * //
         */
-        $q_carerr_levels = $this->db->createQueryBuilder()
+        $q_carerr_levels = $this->db
         ->select('career_level_id')
         ->from('career_levels')
         ->orderBy('order_by', 'ASC')
         ->execute();
 
-        $q_industries = $this->db->createQueryBuilder()
+        $q_industries = $this->db
         ->select('industry_id', 'industry_name')
         ->from('industries')
         ->execute();
@@ -179,7 +179,7 @@ class Profile extends Controllers
          * Data view for skill-add-section
          * //
         */
-        $q_skills_main = $this->db->createQueryBuilder()
+        $q_skills_main = $this->db
         ->select('skill_id', 'skill_name')
         ->from('skills')
         ->where('parent_id IS NULL')
@@ -259,11 +259,11 @@ class Profile extends Controllers
         if (in_array($_SESSION['MembershipAuth']['job_id'], $worker)) {
 
             if (!isset($_COOKIE['portfolio-popup'])) {
-                $q_check_portf = $this->db->createQueryBuilder()
+                $q_check_portf = $this->db
                 ->select('COUNT(*) AS total_data')
                 ->from('members_portfolios')
                 ->where('user_id = :uid')
-                ->andWhere('deleted = :d')
+                ->where('deleted = :d')
                 ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
                 ->setParameter(':d', 'N')
                 ->execute();
@@ -276,11 +276,11 @@ class Profile extends Controllers
             }
 
             if (!isset($_COOKIE['skill-popup'])) {
-                $q_check_skills = $this->db->createQueryBuilder()
+                $q_check_skills = $this->db
                 ->select('COUNT(*) AS total_data')
                 ->from('members_skills')
                 ->where('user_id = :uid')
-                ->andWhere('deleted = :d')
+                ->where('deleted = :d')
                 ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
                 ->setParameter(':d', 'N')
                 ->execute();
@@ -295,11 +295,11 @@ class Profile extends Controllers
         } else if (in_array($_SESSION['MembershipAuth']['job_id'], $student)) {
 
             if (!isset($_COOKIE['skill-popup'])) {
-                $q_check_skills = $this->db->createQueryBuilder()
+                $q_check_skills = $this->db
                 ->select('COUNT(*) AS total_data')
                 ->from('members_skills')
                 ->where('user_id = :uid')
-                ->andWhere('deleted = :d')
+                ->where('deleted = :d')
                 ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
                 ->setParameter(':d', 'N')
                 ->execute();

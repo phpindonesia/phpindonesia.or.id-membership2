@@ -72,13 +72,13 @@ class Portfolios extends Controllers
             }
         }
 
-        $q_carerr_levels = $this->db->createQueryBuilder()
+        $q_carerr_levels = $this->db
             ->select('career_level_id')
             ->from('career_levels')
             ->orderBy('order_by', 'ASC')
             ->execute();
 
-        $q_industries = $this->db->createQueryBuilder()
+        $q_industries = $this->db
             ->select('industry_id', 'industry_name')
             ->from('industries')
             ->execute();
@@ -300,7 +300,7 @@ class Portfolios extends Controllers
             }
         }
 
-        $q_member = $this->db->createQueryBuilder()
+        $q_member = $this->db
         ->select(
             'm.*',
             'reg_prv.regional_name AS province',
@@ -313,26 +313,26 @@ class Portfolios extends Controllers
         ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
         ->execute();
 
-        $q_members_socmeds = $this->db->createQueryBuilder()
+        $q_members_socmeds = $this->db
         ->select('member_socmed_id', 'socmed_type', 'account_name', 'account_url')
         ->from('members_socmeds')
         ->where('user_id = :uid')
-        ->andWhere('deleted = :d')
+        ->where('deleted = :d')
         ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
         ->setParameter(':d', 'N')
         ->execute();
 
-        $q_provinces = $this->db->createQueryBuilder()
+        $q_provinces = $this->db
         ->select('id', 'regional_name')
         ->from('regionals')
         ->where('parent_id IS NULL')
-        ->andWhere('city_code = :ccode')
+        ->where('city_code = :ccode')
         ->orderBy('province_code, city_code')
         ->setParameter(':ccode', '00', \Doctrine\DBAL\Types\Type::STRING)
         ->execute();
 
         $province_id = isset($_POST['province_id']) ? $_POST['province_id'] : $_SESSION['MembershipAuth']['province_id'];
-        $q_cities    = $this->db->createQueryBuilder()
+        $q_cities    = $this->db
         ->select('id', 'regional_name')
         ->from('regionals')
         ->where('parent_id = :pvid')
@@ -340,12 +340,12 @@ class Portfolios extends Controllers
         ->setParameter(':pvid', $province_id, \Doctrine\DBAL\Types\Type::INTEGER)
         ->execute();
 
-        $q_religions = $this->db->createQueryBuilder()
+        $q_religions = $this->db
         ->select('religion_id', 'religion_name')
         ->from('religions')
         ->execute();
 
-        $q_jobs = $this->db->createQueryBuilder()
+        $q_jobs = $this->db
         ->select('job_id')
         ->from('jobs')
         ->execute();

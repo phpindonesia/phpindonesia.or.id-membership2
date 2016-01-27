@@ -10,7 +10,7 @@ class SkillsDelete
             ->select('COUNT(*) AS total_data')
             ->from('members_skills')
             ->where('member_skill_id = :msid')
-            ->andWhere('user_id = :uid')
+            ->where('user_id = :uid')
             ->setParameter(':msid', $routeInfo[2]['id'])
             ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
             ->execute();

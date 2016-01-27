@@ -1,67 +1,37 @@
-<?php $this->layout('layouts::system') ?>
+<?php $this->layout('layouts::account') ?>
 
-<div class="dt-sc-margin70"></div>
+<form action="<?php echo $this->pathFor('membership-password-forgot'); ?>" method="post" novalidate>
 
-<div class="full-width-section">
-    <div class="container">
+    <h3 class="aligncenter"> <i class="fa fa-key"></i> Update Password</h3>
 
-        <h3 class="aligncenter"> <span> <i class="fa fa-key"></i></span> Update Password</h3>
-
-        <?php echo $this->insert('sections::flash-message') ?>
-
-        <form action="<?php echo $this->pathFor('membership-update-password'); ?>" method="post" novalidate>
-
-            <table style="width: 70%; margin: 0 auto;">
-                <tbody>
-                    <tr>
-                        <th>
-                            <label for="oldpassword" style="font-weight: bold;">Old Password *</label>
-                        </th>
-                        <td>
-                            <input id="oldpassword" class="input_full" name="oldpassword" type="password" value="<?php echo $this->requestParam('oldpassword'); ?>" />
-                            <?php
-                            echo $this->formShowErrors('oldpassword', $validation_errors);
-                            ?>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <th>
-                            <label for="password" style="font-weight: bold;">New Password *</label>
-                        </th>
-                        <td>
-                            <input id="password" class="input_full" name="password" type="password" value="<?php echo $this->requestParam('password'); ?>" />
-                            <?php echo $this->formShowErrors('password', $validation_errors); ?>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <th>
-                            <label for="repassword" style="font-weight: bold;">Retype New Password *</label>
-                        </th>
-                        <td>
-                            <input id="repassword" class="input_full" name="repassword" type="password" value="<?php echo $this->requestParam('repassword'); ?>" />
-                            <?php
-                            echo $this->formShowErrors('repassword', $validation_errors);
-                            ?>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <th>
-                            &nbsp;
-                        </th>
-                        <td>
-                            <input value="Update" type="submit" />
-                            <button type="button" onclick="location.href='<?php echo $this->pathFor('membership-profile'); ?>';">Cancel</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-        </form>
+    <div class="form-group">
+        <label for="oldpassword" class="control-label">Old Password *</label>
+        <input id="oldpassword" class="form-control" name="oldpassword" required="required" type="password" value="<?php echo $this->requestParam('oldpassword'); ?>" />
+        <p class="help-block">
+            <?php echo $this->formShowErrors('oldpassword', $validation_errors); ?>
+        </p>
     </div>
 
-</div>
+    <div class="form-group">
+        <label for="password" class="control-label">New Password *</label>
+        <input id="password" class="form-control" name="password" required="required" type="password" value="<?php echo $this->requestParam('password'); ?>" />
+        <p class="help-block">
+            <?php echo $this->formShowErrors('password', $validation_errors); ?>
+        </p>
+    </div>
 
-<div class="dt-sc-margin70"></div>
+    <div class="form-group">
+        <label for="repassword" class="control-label">Retype New Password *</label>
+        <input id="repassword" class="form-control" name="repassword" required="required" type="password" value="<?php echo $this->requestParam('repassword'); ?>" />
+        <p class="help-block">
+            <?php echo $this->formShowErrors('repassword', $validation_errors); ?>
+        </p>
+    </div>
+
+    <div class="form-group">
+        <?php echo $this->insert('sections::captcha') ?>
+
+        <input value="Update" type="submit" class="btn btn-primary" />
+    </div>
+
+</form>
