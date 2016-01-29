@@ -2,6 +2,7 @@
 namespace Membership\Models;
 
 use Membership\Models;
+use InvalidArgumentException;
 
 class Users extends Models implements \Countable
 {
@@ -49,6 +50,34 @@ class Users extends Models implements \Countable
         });
 
         return $count > 0;
+    }
+
+    public function authenticate($login, $password)
+    {
+        $query = $this->db->select([
+                'u.user_id', 'u.username', 'u.password', 'u.email', 'u.province_id', 'u.city_id',
+                'u.deleted', 'u.activated', 'ur.role_id', 'up.fullname', 'up.photo', 'up.job_id'
+            ])
+            ->from('users u')
+            ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
+            ->leftJoin('members_profiles up', 'u.user_id', '=', 'up.user_id')
+            ->where('u.username', '=', $login)
+            ->orWhere('u.email', '=', $login)
+            ->execute();
+
+        $user = $query->fetch() ?: false;
+
+        if ($user === false) {
+            throw new InvalidArgumentException('Wrong Credentials!');
+        } elseif ($user['password'] != $password) {
+            throw new InvalidArgumentException('Wrong Credentials!');
+        } elseif (strtolower($user['deleted']) === 'y') {
+            throw new InvalidArgumentException('Wrong Credentials!');
+        } elseif (strtolower($user['activated']) === 'n') {
+            throw new InvalidArgumentException('Your account is not activated!');
+        }
+
+        return $user;
     }
 
     public function getMembers($request)

@@ -7,7 +7,7 @@ use Membership\Controllers;
 
 class RegionalsController extends Controllers
 {
-    public function sities(Request $request, Response $response, array $args)
+    public function cities(Request $request, Response $response, array $args)
     {
         $this->assertXhrRequest($request, $response);
 

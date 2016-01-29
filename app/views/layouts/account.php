@@ -5,7 +5,7 @@
         <div class="dt-sc-clear"></div>
 
         <div class="form-wrapper clearfix">
-            <?php echo $this->insert('sections::flash-message') ?>
+            <?php echo $this->insert('sections::alert') ?>
 
             <?php echo $this->section('content') ?>
         </div>

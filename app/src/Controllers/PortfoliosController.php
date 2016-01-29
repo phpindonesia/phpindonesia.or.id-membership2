@@ -91,6 +91,92 @@ class PortfoliosController extends Controllers
         );
     }
 
+    public function editPage(Request $request, Response $response, array $args)
+    {
+        $q_member = $this->db
+            ->select([
+                'm.*',
+                'reg_prv.regional_name AS province',
+                'reg_cit.regional_name AS city'
+            ])
+            ->from('members_profiles', 'm')
+            ->leftJoin('m', 'regionals', 'reg_prv', 'reg_prv.id = m.province_id')
+            ->leftJoin('m', 'regionals', 'reg_cit', 'reg_cit.id = m.city_id')
+            ->where('m.user_id = :uid')
+            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+            ->execute();
+
+        $q_members_socmeds = $this->db
+            ->select(['member_socmed_id', 'socmed_type', 'account_name', 'account_url'])
+            ->from('members_socmeds')
+            ->where('user_id = :uid')
+            ->where('deleted = :d')
+            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+            ->setParameter(':d', 'N')
+            ->execute();
+
+        $q_provinces = $this->db
+            ->select(['id', 'regional_name'])
+            ->from('regionals')
+            ->where('parent_id IS NULL')
+            ->where('city_code = :ccode')
+            ->orderBy('province_code, city_code')
+            ->setParameter(':ccode', '00', \Doctrine\DBAL\Types\Type::STRING)
+            ->execute();
+
+        $province_id = isset($post['province_id']) ? $post['province_id'] : $_SESSION['MembershipAuth']['province_id'];
+        $q_cities    = $this->db
+            ->select(['id', 'regional_name'])
+            ->from('regionals')
+            ->where('parent_id = :pvid')
+            ->orderBy('province_code, city_code')
+            ->setParameter(':pvid', $province_id, \Doctrine\DBAL\Types\Type::INTEGER)
+            ->execute();
+
+        $q_religions = $this->db
+            ->select(['religion_id', 'religion_name'])
+            ->from('religions')
+            ->execute();
+
+        $q_jobs = $this->db
+            ->select(['job_id'])
+            ->from('jobs')
+            ->execute();
+
+        $member          = $q_member->fetch();
+        $members_socmeds = $q_members_socmeds->fetchAll();
+        $provinces       = $this->arrayPairs($q_provinces->fetchAll(), 'id', 'regional_name');
+        $cities          = $this->arrayPairs($q_cities->fetchAll(), 'id', 'regional_name');
+        $religions       = $this->arrayPairs($q_religions->fetchAll(), 'religion_id', 'religion_name');
+        $jobs            = $this->arrayPairs($q_jobs->fetchAll(), 'job_id', 'job_id');
+        $genders         = ['female' => 'Wanita', 'male' => 'Pria'];
+
+        $this->db->close();
+
+        $this->view->addData(
+            array(
+                'page_title'     => 'Membership',
+                'sub_page_title' => 'Update Profile Anggota'
+            ),
+            'layouts::system'
+        );
+
+        return $this->view->render(
+            'profile-edit',
+            compact(
+                'member',
+                'provinces',
+                'cities',
+                'genders',
+                'religions',
+                'identity_types',
+                'socmedias',
+                'members_socmeds',
+                'jobs'
+            )
+        );
+    }
+
     public function edit(Request $request, Response $response, array $args)
     {
         $socmedias      = $this->settings['socmedias'];
@@ -291,88 +377,5 @@ class PortfoliosController extends Controllers
                 $this->flash->addMessage('error', 'System failed<br />' . $e->getMessage());
             }
         }
-
-        $q_member = $this->db
-            ->select(
-                'm.*',
-                'reg_prv.regional_name AS province',
-                'reg_cit.regional_name AS city'
-            )
-            ->from('members_profiles', 'm')
-            ->leftJoin('m', 'regionals', 'reg_prv', 'reg_prv.id = m.province_id')
-            ->leftJoin('m', 'regionals', 'reg_cit', 'reg_cit.id = m.city_id')
-            ->where('m.user_id = :uid')
-            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-            ->execute();
-
-        $q_members_socmeds = $this->db
-            ->select('member_socmed_id', 'socmed_type', 'account_name', 'account_url')
-            ->from('members_socmeds')
-            ->where('user_id = :uid')
-            ->where('deleted = :d')
-            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-            ->setParameter(':d', 'N')
-            ->execute();
-
-        $q_provinces = $this->db
-            ->select('id', 'regional_name')
-            ->from('regionals')
-            ->where('parent_id IS NULL')
-            ->where('city_code = :ccode')
-            ->orderBy('province_code, city_code')
-            ->setParameter(':ccode', '00', \Doctrine\DBAL\Types\Type::STRING)
-            ->execute();
-
-        $province_id = isset($post['province_id']) ? $post['province_id'] : $_SESSION['MembershipAuth']['province_id'];
-        $q_cities    = $this->db
-            ->select('id', 'regional_name')
-            ->from('regionals')
-            ->where('parent_id = :pvid')
-            ->orderBy('province_code, city_code')
-            ->setParameter(':pvid', $province_id, \Doctrine\DBAL\Types\Type::INTEGER)
-            ->execute();
-
-        $q_religions = $this->db
-            ->select('religion_id', 'religion_name')
-            ->from('religions')
-            ->execute();
-
-        $q_jobs = $this->db
-            ->select('job_id')
-            ->from('jobs')
-            ->execute();
-
-        $member          = $q_member->fetch();
-        $members_socmeds = $q_members_socmeds->fetchAll();
-        $provinces       = $this->arrayPairs($q_provinces->fetchAll(), 'id', 'regional_name');
-        $cities          = $this->arrayPairs($q_cities->fetchAll(), 'id', 'regional_name');
-        $religions       = $this->arrayPairs($q_religions->fetchAll(), 'religion_id', 'religion_name');
-        $jobs            = $this->arrayPairs($q_jobs->fetchAll(), 'job_id', 'job_id');
-        $genders         = ['female' => 'Wanita', 'male' => 'Pria'];
-
-        $this->db->close();
-
-        $this->view->addData(
-            array(
-                'page_title'     => 'Membership',
-                'sub_page_title' => 'Update Profile Anggota'
-            ),
-            'layouts::system'
-        );
-
-        return $this->view->render(
-            'profile-edit',
-            compact(
-                'member',
-                'provinces',
-                'cities',
-                'genders',
-                'religions',
-                'identity_types',
-                'socmedias',
-                'members_socmeds',
-                'jobs'
-            )
-        );
     }
 }

@@ -84,15 +84,15 @@
 
                         <?php if (isset($_SESSION['MembershipAuth'])): ?>
                         <li class="menu-item-simple-parent">
-                            <a href="<?php echo $this->pathFor('membership-profile'); ?>" style="text-decoration: underline; color:#478BCA;">
+                            <a href="<?php echo $this->pathFor('membership-account'); ?>" style="text-decoration: underline; color:#478BCA;">
 
                                 <img src="<?php echo $this->userPhoto($_SESSION['MembershipAuth']['photo'], ['width' => '40', 'height' => '40']) ?>" alt="user avatar" style="display: block; position: absolute; right: -40px; bottom: 21px; width: 40px; height: 40px;" />
 
                                 <?php echo '( '.$_SESSION['MembershipAuth']['username'].' )'; ?>
                             </a>
                             <ul class="sub-menu">
-                                <li><a href="<?php echo $this->pathFor('membership-profile'); ?>">My Membership Area</a></li>
-                                <li><a href="<?php echo $this->pathFor('membership-update-password'); ?>">Update Password</a></li>
+                                <li><a href="<?php echo $this->pathFor('membership-account'); ?>">My Membership Area</a></li>
+                                <li><a href="<?php echo $this->pathFor('membership-password-update'); ?>">Update Password</a></li>
                                 <li><a href="<?php echo $this->pathFor('membership-logout'); ?>">Logout</a></li>
                             </ul>
                         </li>

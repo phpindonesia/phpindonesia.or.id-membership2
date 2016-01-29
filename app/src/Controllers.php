@@ -73,7 +73,7 @@ abstract class Controllers
     /**
      * Assert is XHR request
      *
-     * @param \Slim\Http\Request $request
+     * @param \Slim\Http\Request  $request
      * @param \Slim\Http\Response $response
      * @throws \Slim\Exception\NotFoundException
      */
@@ -91,7 +91,30 @@ abstract class Controllers
      */
     protected function validationErrors(array $errors)
     {
-        $this->view->addData(['validation_errors' => $errors]);
+        $this->view->addData([
+            'formAlerts' => $errors
+        ], 'sections::alert');
+    }
+
+    /**
+     * Add Form alert
+     *
+     * @param string $type
+     * @param array  $message
+     */
+    protected function addAlert($type, $message)
+    {
+        if (!is_array($message)) {
+            $message = [$message];
+        }
+
+        if (!in_array($type, ['warning', 'success', 'error'])) {
+            $type = 'warning';
+        }
+
+        $this->view->addData([
+            'formAlert' => ['type' => $type, 'message' => $message]
+        ], 'sections::alert');
     }
 
     /**
@@ -131,5 +154,11 @@ abstract class Controllers
         }
 
         return $array;
+    }
+
+    protected function arrayFlattenValues($array)
+    {
+        $array = array_values($array);
+        return call_user_func_array('array_merge', $array);
     }
 }

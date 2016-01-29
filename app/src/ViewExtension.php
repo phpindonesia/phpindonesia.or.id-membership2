@@ -54,6 +54,7 @@ class ViewExtension implements ExtensionInterface
 
         $engine->registerFunction('userPhoto', [$this, 'userPhoto']);
         $engine->registerFunction('flashMessages', [$this->flash, 'getMessages']);
+        $engine->registerFunction('flashMessage', [$this->flash, 'getMessage']);
 
         // Register validation helpers
         $engine->registerFunction('validationErrors', function (array $errors = []) use ($engine) {
@@ -78,7 +79,7 @@ class ViewExtension implements ExtensionInterface
 
     public function userPhoto($public_id = null, $options = [])
     {
-        $default = $this->template->asset('/asset/images/team.png');
+        $default = $this->template->asset('/images/team.png');
         if (null === $public_id) {
             return $default;
         }

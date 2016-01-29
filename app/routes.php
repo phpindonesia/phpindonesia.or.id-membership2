@@ -1,51 +1,45 @@
 <?php
 use Membership\Controllers\AccountController;
-use Membership\Controllers\ActivationController;
 use Membership\Controllers\HomeController;
-use Membership\Controllers\PasswordController;
 use Membership\Controllers\PortfoliosController;
 use Membership\Controllers\ProfileController;
-use Membership\Controllers\RegionalsController;
 use Membership\Controllers\SkillsController;
+use Membership\Controllers\RegionalsController;
 
 $app->get('/', HomeController::class.':index')->setName('membership-index');
 
-$app->get('/login', AccountController::class.':loginPage')->setName('membership-login');
-$app->post('/login', AccountController::class.':login');
+$app->get('/login', HomeController::class.':loginPage')->setName('membership-login');
+$app->post('/login', HomeController::class.':login');
 
-$app->get('/register', AccountController::class.':registerPage')->setName('membership-register');
-$app->post('/register', AccountController::class.':register');
+$app->get('/register', HomeController::class.':registerPage')->setName('membership-register');
+$app->post('/register', HomeController::class.':register');
 
-$app->get('/logout', AccountController::class.':logout')->setName('membership-logout');
+$app->get('/logout', HomeController::class.':logout')->setName('membership-logout');
 
-$app->get('/account', ProfileController::class.':member')->setName('membership-account');
-$app->group('/profile', function () {
-    $this->get('/add', ProfileController::class.':addPage')->setName('membership-profile-add');
-    $this->post('/add', ProfileController::class.':add');
+$app->get('/profile/{username:[a-zA-Z]+}', ProfileController::class.':index')->setName('membership-profile');
 
-    $this->get('/javascript', ProfileController::class.':javascriptPage')->setName('membership-profile-javascript');
-    $this->get('/edit', ProfileController::class.':editPage')->setName('membership-profile-edit');
+$app->get('/forgot-password', ProfileController::class.':forgotPasswordPage')->setName('membership-password-forgot');
+$app->post('/forgot-password', ProfileController::class.':forgotPassword');
 
-    $this->get('/{name:[a-zA-Z]+}', ProfileController::class.':index')->setName('membership-profile');
+$app->get('/reset-password/{uid}/{reset_key}', ProfileController::class.':resetPasswordPage')->setName('membership-password-reset');
 
-    $this->delete('/{id:[0-9]+}', ProfileController::class.':delete')->setName('membership-profile-delete');
-});
+$app->group('/account', function () {
+    $this->get('/', AccountController::class.':index')->setName('membership-account');
 
-$app->group('/activation', function () {
-    $this->get('/activate/{uid}/{activation_key}', ActivationController::class.':activatePage')->setName('membership-activation-activate');
-    $this->post('/activate', ActivationController::class.':activate');
+    $this->get('/edit', AccountController::class.':editPage')->setName('membership-profile-edit');
+    $this->post('/edit', AccountController::class.':edit');
 
-    $this->get('/reactivate', ActivationController::class.':reactivate')->setName('membership-activation-reactivate');
-});
+    $this->get('/activate/{uid}/{activation_key}', AccountController::class.':activatePage')->setName('membership-activation-activate');
+    $this->post('/activate', AccountController::class.':activate');
 
-$app->group('/password', function () {
-    $this->get('/update', PasswordController::class.':updatePage')->setName('membership-password-update');
-    $this->post('/update', PasswordController::class.':update');
+    $this->get('/reactivate', AccountController::class.':reactivate')->setName('membership-activation-reactivate');
 
-    $this->get('/reset/{uid}/{reset_key}', PasswordController::class.':resetPage')->setName('membership-password-reset');
+    $this->get('/update-password', AccountController::class.':updatePasswordPage')->setName('membership-password-update');
+    $this->post('/update-password', AccountController::class.':updatePassword');
 
-    $this->get('/forgot', PasswordController::class.':forgotPage')->setName('membership-password-forgot');
-    $this->post('/forgot', PasswordController::class.':forgot');
+    $this->get('/javascript', AccountController::class.':javascriptPage')->setName('membership-profile-javascript');
+
+    $this->delete('/{id:[0-9]+}', AccountController::class.':delete')->setName('membership-profile-delete');
 });
 
 $app->group('/portfolio', function () {
@@ -65,8 +59,8 @@ $app->group('/skills', function () {
     $this->post('/add', SkillsController::class.':add');
 });
 
-$app->group('/common-data', function () {
-    $this->get('/cities/{province_id:[0-9]+}', CommonDataController::class.':cities')->setName('dataa-cities');
-    $this->get('/skills/{skills_id:[0-9]+}',   Controllers\CommonData::class.':skills')->setName('dataa-skills');
+$app->group('/regionals', function () {
+    $this->get('/provinces', RegionalsController::class.':provinces')->setName('regionals-provinces');
+    $this->get('/cities/{province_id:[0-9]+}', RegionalsController::class.':cities')->setName('regionals-cities');
 });
 

@@ -1,6 +1,4 @@
-<?php
-if ($this->flashMessages()):
-?>
+<?php if ($this->flashMessages()): ?>
 
 <?php
 $message_type = key($this->flashMessages());
@@ -15,6 +13,4 @@ elseif ($message_type == 'error'):
 endif;
 ?>
 
-<?php
-endif;
-?>
+<?php endif; ?>

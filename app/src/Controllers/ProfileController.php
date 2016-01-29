@@ -22,7 +22,7 @@ class ProfileController extends Controllers
             ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
             ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
             ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-            ->where('u.username', '=', $args['name'])
+            ->where('u.username', '=', $args['username'])
             ->execute();
 
         $member = $qMembers->fetch();
@@ -78,271 +78,212 @@ class ProfileController extends Controllers
         );
     }
 
-    public function member(Request $request, Response $response, array $args)
+    public function forgotPasswordPage(Request $request, Response $response, array $args)
     {
-        $qMembers = $this->db
-            ->select(
-                'm.*',
-                'reg_prv.regional_name AS province',
-                'reg_cit.regional_name AS city'
-            )
-            ->from('members_profiles', 'm')
-            ->leftJoin('m', 'regionals', 'reg_prv', 'reg_prv.id = m.province_id')
-            ->leftJoin('m', 'regionals', 'reg_cit', 'reg_cit.id = m.city_id')
-            ->where('m.user_id = :uid')
-            ->where('m.deleted = :d')
-            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-            ->setParameter(':d', 'N')
-            ->execute();
+        $this->enableCaptcha();
+        $this->setPageTitle('Membership', 'Forgot Password');
 
-        $qMembersSocmeds = $this->db
-            ->select('socmed_type', 'account_name', 'account_url')
-            ->from('members_socmeds')
+        $this->view->addData([
+            'helpTitle' => 'Bantuan Login?',
+            'helpContent' => [
+                'Jika belum terdaftar sebagai anggota, <a href="'.$this->router->pathFor('membership-register').'" title="">Daftar Disini</a> menjadi anggota PHP Indonesia.',
+                'Sudah pernah terdaftar menjadi anggota PHP Indonesia, silahkan <a href="'.$this->router->pathFor('membership-login').'" title="">Login Disini.'
+            ],
+        ], 'layouts::account');
+
+        return $this->view->render('password-forgot');
+    }
+
+    public function forgotPassword(Request $request, Response $response, array $args)
+    {
+        $validator = $this->validator;
+        $success_msg = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda. Terimakasih ^_^';
+        $success_msg_alt = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda.<br /><br /><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong><br /><br />Terimakasih ^_^';
+
+        $validator->createInput($_POST);
+
+        $validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {
+            $q_email_exist = $this->db
+                ->select('COUNT(*) AS total_data')
+                ->from('users')
+                ->where('email = :email')
+                ->where('activated = :act')
+                ->where('deleted = :d')
+                ->setParameter(':email', trim($post['email']))
+                ->setParameter(':act', 'Y', \Doctrine\DBAL\Types\Type::STRING)
+                ->setParameter(':d', 'N', \Doctrine\DBAL\Types\Type::STRING)
+                ->execute();
+
+            $email_exist = (int) $q_email_exist->fetch()['total_data'];
+            if ($email_exist > 0) {
+                return true;
+            }
+
+            return false;
+
+        }, 'Tidak terdaftar! atau Account anda belum aktif.');
+
+        if ($gcaptchaEnable == true) {
+            $validator->addNewRule('verify_captcha', function ($field, $value, array $params) use ($gcaptchaSecret) {
+                $result = false;
+
+                if (isset($post['g-recaptcha-response'])) {
+                    $recaptcha = new \ReCaptcha\ReCaptcha($gcaptchaSecret);
+                    $resp = $recaptcha->verify($post['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+                    $result = $resp->isSuccess();
+                }
+
+                return $result;
+
+            }, 'Tidak tepat!');
+        }
+
+        $validator->rule('required', 'email');
+        $validator->rule('email', 'email');
+        $validator->rule('check_email_exist', 'email');
+
+        if ($gcaptchaEnable == true) {
+            $validator->rule('verify_captcha', 'captcha');
+        }
+
+        if ($validator->validate()) {
+            $reset_key = md5(uniqid(rand(), true));
+            $reset_expired_date = date('Y-m-d H:i:s', time() + 7200); // 2 jam
+            $email_address = trim($post['email']);
+
+            $q_member = $this->db
+                ->select('user_id', 'username')
+                ->from('users')
+                ->where('email = :email')
+                ->setParameter(':email', $email_address)
+                ->execute();
+
+            $member = $q_member->fetch();
+
+            $this->db->insert('users_reset_pwd', array(
+                'user_id' => $member['user_id'],
+                'reset_key' => $reset_key,
+                'expired_date' => $reset_expired_date,
+                'email_sent' => 'N',
+                'created' => date('Y-m-d H:i:s'),
+                'deleted' => 'N'
+            ));
+
+            $this->db->close();
+
+            try {
+                $replacements = array();
+                $replacements[$email_address] = array(
+                    '{email_address}' => $email_address,
+                    '{request_reset_date}' => date('d-m-Y H:i:s'),
+                    '{reset_path}' => $this->router->pathFor('membership-reset-password', array(
+                        'uid' => $member['user_id'],
+                        'reset_key' => $reset_key
+                    )),
+                    '{reset_expired_date}' => date('d-m-Y H:i:s', strtotime($reset_expired_date)),
+                    '{base_url}' => $request->getUri()->getBaseUrl()
+                );
+
+                $message = Swift_Message::newInstance('PHP Indonesia - Konfirmasi lupa password')
+                    ->setFrom(array($this->settings['email']['sender_email'] => $this->settings['email']['sender_name']))
+                    ->setTo(array($email_address => $member['username']))
+                    ->setBody(file_get_contents(APP_DIR.'protected'._DS_.'views'._DS_.'email'._DS_.'forgot-password-confirmation.txt'));
+
+                $mailer = $this->get('mailer');
+                $mailer->registerPlugin(new Swift_Plugins_DecoratorPlugin($replacements));
+                $mailer->send($message);
+
+                // Update email sent status
+                $this->db->update('users_reset_pwd', array('email_sent' => 'Y'), array(
+                    'user_id' => $member['user_id'],
+                    'reset_key' => $reset_key
+                ));
+
+                $this->db->close();
+
+                $this->flash->addMessage('success', $success_msg);
+            } catch (Swift_TransportException $e) {
+                $this->flash->addMessage('success', $success_msg_alt);
+            }
+        } else {
+            $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
+        }
+
+        return $response->withRedirect($this->router->pathFor('membership-login'));
+    }
+
+    public function resetPassword(Request $request, Response $response, array $args)
+    {
+        $q_reset_exist_count = $this->db
+            ->select('COUNT(*) AS total_data')
+            ->from('users_reset_pwd')
             ->where('user_id = :uid')
+            ->where('reset_key = :resetkey')
             ->where('deleted = :d')
-            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+            ->where('email_sent = :sent')
+            ->where('expired_date > NOW()')
+            ->setParameter(':uid', $args['uid'])
+            ->setParameter(':resetkey', $args['reset_key'])
             ->setParameter(':d', 'N')
+            ->setParameter(':sent', 'Y')
             ->execute();
 
-        $qMembersPortfolios = $this->db
-            ->select(
-                'mp.member_portfolio_id',
-                'mp.company_name',
-                'ids.industry_name',
-                'mp.start_date_y',
-                'mp.start_date_m',
-                'mp.start_date_d',
-                'mp.end_date_y',
-                'mp.end_date_m',
-                'mp.end_date_d',
-                'mp.work_status',
-                'mp.job_title',
-                'mp.job_desc',
-                'mp.created'
-            )
-            ->from('members_portfolios', 'mp')
-            ->leftJoin('mp', 'industries', 'ids', 'mp.industry_id = ids.industry_id')
-            ->where('mp.user_id = :uid')
-            ->where('mp.deleted = :d')
-            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-            ->setParameter(':d', 'N')
-            ->execute();
+        $reset_exist_count = (int) $q_reset_exist_count->fetch()['total_data'];
 
-        $qMembers_skills = $this->db
-            ->select(
-                'ms.member_skill_id',
-                'ms.skill_self_assesment',
-                'sp.skill_name AS skill_parent_name',
-                'ss.skill_name'
-            )
-            ->from('members_skills', 'ms')
-            ->leftJoin('ms', 'skills', 'sp', 'ms.skill_parent_id = sp.skill_id')
-            ->leftJoin('ms', 'skills', 'ss', 'ms.skill_id = ss.skill_id')
-            ->where('ms.user_id = :uid')
-            ->where('ms.deleted = :d')
-            ->orderBy('sp.skill_name', 'ASC')
-            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-            ->setParameter(':d', 'N')
-            ->execute();
+        if ($reset_exist_count > 0) {
+            $success_msg = 'Password baru sementara anda sudah dikirim ke email. Segera check email anda. Terimakasih ^_^';
+            $success_msg_alt = 'Password baru sementara anda sudah dikirim ke email.<br /><br /><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong><br /><br />Terimakasih ^_^';
 
-        $member = $qMembers->fetch();
-        $member_portfolios = $qMembersPortfolios->fetchAll();
-        $member_skills = $qMembers_skills->fetchAll();
-        $member_socmeds = $qMembersSocmeds->fetchAll();
-        $socmedias = $this->settings['socmedias'];
-        $socmedias_logo = $this->settings['socmedias_logo'];
-        $months = $this->get('months');
+            // Fetch member basic info
+            $q_member = $this->db
+                ->select('username', 'email')->from('users')->where('user_id = :uid')
+                ->setParameter(':uid', $args['uid'])->execute();
 
-        /*
-         * Data view for portfolio-add
-         * //
-        */
-        $q_carerr_levels = $this->db
-        ->select('career_level_id')
-        ->from('career_levels')
-        ->orderBy('order_by', 'ASC')
-        ->execute();
+            $member = $q_member->fetch();
+            $email_address = $member['email'];
 
-        $q_industries = $this->db
-        ->select('industry_id', 'industry_name')
-        ->from('industries')
-        ->execute();
+            // Handle new temporary password
+            $salt_pwd = $this->settings['salt_pwd'];
+            $temp_pwd = substr(str_shuffle(md5(microtime())), 0, 10);
+            $salted_temp_pwd = md5($salt_pwd.$temp_pwd);
 
-        $career_levels = $this->arrayPairs($q_carerr_levels->fetchAll(), '{n}.career_level_id', '{n}.career_level_id');
-        $industries = $this->arrayPairs($q_industries->fetchAll(), '{n}.industry_id', '{n}.industry_name');
-        $years_range = $this->get('years_range');
-        $months_range = $this->get('months_range');
-        $days_range = $this->get('days_range');
+            $this->db->update('users', array(
+                'password' => $salted_temp_pwd,
+                'modified' => date('Y-m-d H:i:s'),
+                'modified_by' => 0
+            ), array('user_id' => $args['uid']));
 
-        // --- End data view for portfolio-add
+            $this->db->update('users_reset_pwd', array('deleted' => 'Y' ), array(
+                'user_id' => $args['uid'],
+                'reset_key' => $args['reset_key']
+            ));
 
-        /*
-         * Data view for skill-add
-         * //
-        */
-        $q_skills_main = $this->db
-        ->select('skill_id', 'skill_name')
-        ->from('skills')
-        ->where('parent_id IS NULL')
-        ->execute();
+            $this->db->close();
 
-        $skills_main = $this->arrayPairs($q_skills_main->fetchAll(), '{n}.skill_id', '{n}.skill_name');
-        $skills = array();
+            // Then send new temporary password to email
+            try {
+                $replacements = array();
+                $replacements[$email_address] = array(
+                    '{temp_pwd}' => $temp_pwd
+                );
 
-        if (isset($post['skill_id']) && $post['skill_parent_id'] != '') {
-            $q_skills = $this->db->select('skill_id', 'skill_name')
-            ->from('skills')
-            ->where('parent_id = :pid')
-            ->setParameter(':pid', $post['skill_parent_id'])
-            ->execute();
+                $message = Swift_Message::newInstance('PHP Indonesia - Password baru sementara')
+                    ->setFrom(array($this->settings['email']['sender_email'] => $this->settings['email']['sender_name']))
+                    ->setTo(array($email_address => $member['username']))
+                    ->setBody(file_get_contents(APP_DIR.'protected'._DS_.'views'._DS_.'email'._DS_.'password-change-ok-confirmation.txt'));
 
-            $skills = $this->arrayPairs($q_skills->fetchAll(), '{n}.skill_id', '{n}.skill_name');
-        }
+                $mailer = $this->get('mailer');
+                $mailer->registerPlugin(new Swift_Plugins_DecoratorPlugin($replacements));
+                $mailer->send($message);
 
-        // --- End data view for skill-add
-
-        $this->db->close();
-
-        $this->view->addData(
-            array(
-                'page_title' => 'Membership',
-                'sub_page_title' => 'Profil Anggota'
-            ),
-            'layouts::system'
-        );
-
-
-        /*
-         * Assign data view for portfolio-add
-         */
-        $this->view->addData(
-            compact(
-                'career_levels',
-                'industries',
-                'years_range',
-                'months_range',
-                'days_range'
-            ),
-            'sections/portfolio-add'
-        );
-
-        /*
-         * Assign data view for skill-add
-         */
-        $this->view->addData(
-            compact('skills_main', 'skills'),
-            'sections/skill-add'
-        );
-
-        return $this->view->render(
-            'profile',
-            compact(
-                'member',
-                'member_portfolios',
-                'member_skills',
-                'member_socmeds',
-                'socmedias',
-                'socmedias_logo',
-                'months'
-            )
-        );
-    }
-
-    public function javascript(Request $request, Response $response, array $args)
-    {
-        $open_portfolio = false;
-        $open_skill = false;
-        $worker = array('KARYAWAN', 'FREELANCER', 'OWNER', 'MAHASISWA-KARYAWAN');
-        $student = array('PELAJAR', 'MAHASISWA');
-
-        if (in_array($_SESSION['MembershipAuth']['job_id'], $worker)) {
-
-            if (!isset($_COOKIE['portfolio-popup'])) {
-                $q_check_portf = $this->db
-                    ->select('COUNT(*) AS total_data')
-                    ->from('members_portfolios')
-                    ->where('user_id = :uid')
-                    ->where('deleted = :d')
-                    ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-                    ->setParameter(':d', 'N')
-                    ->execute();
-
-                if ($q_check_portf->fetch()['total_data'] > 0) {
-                    $open_portfolio = false;
-                } else {
-                    $open_portfolio = true;
-                }
+                $this->flash->addMessage('success', $success_msg);
+            } catch (Swift_TransportException $e) {
+                $this->flash->addMessage('success', $success_msg_alt);
             }
-
-            if (!isset($_COOKIE['skill-popup'])) {
-                $q_check_skills = $this->db
-                    ->select('COUNT(*) AS total_data')
-                    ->from('members_skills')
-                    ->where('user_id = :uid')
-                    ->where('deleted = :d')
-                    ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-                    ->setParameter(':d', 'N')
-                    ->execute();
-
-                if ($q_check_skills->fetch()['total_data'] > 0) {
-                    $open_skill = false;
-                } else {
-                    $open_skill = true;
-                }
-            }
-
-        } else if (in_array($_SESSION['MembershipAuth']['job_id'], $student)) {
-
-            if (!isset($_COOKIE['skill-popup'])) {
-                $q_check_skills = $this->db
-                    ->select('COUNT(*) AS total_data')
-                    ->from('members_skills')
-                    ->where('user_id = :uid')
-                    ->where('deleted = :d')
-                    ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-                    ->setParameter(':d', 'N')
-                    ->execute();
-
-                if ($q_check_skills->fetch()['total_data'] > 0) {
-                    $open_skill = false;
-                } else {
-                    $open_skill = true;
-                }
-            }
+        } else {
+            $this->flash->addMessage('error', 'Bad Request');
         }
 
-        $response_n = $response->withStatus(200)
-            ->withHeader('Content-Type', 'application/javascript');
-
-        return $this->view->render(
-            $response_n,
-            'profile-javascript',
-            array(
-                'open_portfolio' => $open_portfolio,
-                'open_skill' => $open_skill
-            )
-        );
-    }
-
-    public function portfolioCookie(Request $request, Response $response, array $args)
-    {
-        if (!isset($_COOKIE['portfolio-popup'])) {
-            setcookie('portfolio-popup', 1, time()+86400);
-        }
-
-        return $response->withStatus(200)
-            ->withHeader('Content-Type', 'application/json')
-            ->write(json_encode(array('resp' => 'OK')));
-    }
-
-    public function skillsCookie(Request $request, Response $response, array $args)
-    {
-        if (!isset($_COOKIE['skill-popup'])) {
-            setcookie('skill-popup', 1, time()+86400);
-        }
-
-        return $response->withStatus(200)
-            ->withHeader('Content-Type', 'application/json')
-            ->write(json_encode(array('resp' => 'OK')));
+        return $response->withRedirect($this->router->pathFor('membership-login'));
     }
 }

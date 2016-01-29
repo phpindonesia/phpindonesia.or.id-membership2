@@ -15,7 +15,7 @@ $this->appendJs([
     <div class="container">
 
         <div style="margin-bottom: 70px; padding: 0; margin-top: -60px;">
-            <?php echo $this->insert('sections::flash-message') ?>
+            <?php echo $this->insert('sections::alert') ?>
         </div>
 
         <div class="column dt-sc-two-fifth first">

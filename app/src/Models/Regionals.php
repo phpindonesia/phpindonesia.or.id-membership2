@@ -8,7 +8,7 @@ class Regionals extends Models
     /**
      * {@inheritdoc}
      */
-    private $table = 'regionals';
+    protected $table = 'regionals';
 
     public function getProvinces()
     {

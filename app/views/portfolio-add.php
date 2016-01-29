@@ -13,7 +13,7 @@ $this->appendJs([
 
         <h3 style="border-bottom: 1px #000000 solid;">Add new portfolio item</h3>
 
-        <?php echo $this->insert('sections::flash-message') ?>
+        <?php echo $this->insert('sections::alert') ?>
 
         <form action="<?php echo $this->pathFor('membership-portfolio-add'); ?>" method="post" class="checkout" novalidate>
 
