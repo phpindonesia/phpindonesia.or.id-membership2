@@ -1,19 +1,20 @@
 <?php
 namespace Membership\Controllers;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
 use Membership\Controllers;
-use Slim\Exception\NotFoundException;
 
-class Password extends Controllers
+class PasswordController extends Controllers
 {
-    public function updatePage($request, $response, $args)
+    public function updatePage(Request $request, Response $response, array $args)
     {
         $this->setPageTitle('Membership', 'Update Password');
 
         return $this->view->render('password-update');
     }
 
-    public function update($request, $response, $args)
+    public function update(Request $request, Response $response, array $args)
     {
         $validator = $this->validator;
         $salt_pwd = $this->settings['salt_pwd'];
@@ -47,7 +48,7 @@ class Password extends Controllers
         }, 'Wrong! Please remember your old password');
 
         $validator->addNewRule('check_repassword', function ($field, $value, array $params) {
-            if ($value != $_POST['password']) {
+            if ($value != $post['password']) {
                 return false;
             }
 
@@ -59,7 +60,7 @@ class Password extends Controllers
         $validator->rule('check_repassword', 'repassword');
 
         if ($validator->validate()) {
-            $salted_new_pwd = md5($salt_pwd.$_POST['password']);
+            $salted_new_pwd = md5($salt_pwd.$post['password']);
 
             $this->db->update('users', array(
                 'password' => $salted_new_pwd,
@@ -77,7 +78,7 @@ class Password extends Controllers
         return $response->withRedirect($this->router->pathFor('membership-login'));
     }
 
-    public function forgotPage($request, $response, $args)
+    public function forgotPage(Request $request, Response $response, array $args)
     {
         $this->enableCaptcha();
         $this->setPageTitle('Membership', 'Forgot Password');
@@ -93,7 +94,7 @@ class Password extends Controllers
         return $this->view->render('password-forgot');
     }
 
-    public function forgot($request, $response, $args)
+    public function forgot(Request $request, Response $response, array $args)
     {
         $validator = $this->validator;
         $success_msg = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda. Terimakasih ^_^';
@@ -108,7 +109,7 @@ class Password extends Controllers
                 ->where('email = :email')
                 ->where('activated = :act')
                 ->where('deleted = :d')
-                ->setParameter(':email', trim($_POST['email']))
+                ->setParameter(':email', trim($post['email']))
                 ->setParameter(':act', 'Y', \Doctrine\DBAL\Types\Type::STRING)
                 ->setParameter(':d', 'N', \Doctrine\DBAL\Types\Type::STRING)
                 ->execute();
@@ -126,9 +127,9 @@ class Password extends Controllers
             $validator->addNewRule('verify_captcha', function ($field, $value, array $params) use ($gcaptchaSecret) {
                 $result = false;
 
-                if (isset($_POST['g-recaptcha-response'])) {
+                if (isset($post['g-recaptcha-response'])) {
                     $recaptcha = new \ReCaptcha\ReCaptcha($gcaptchaSecret);
-                    $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+                    $resp = $recaptcha->verify($post['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
                     $result = $resp->isSuccess();
                 }
 
@@ -148,7 +149,7 @@ class Password extends Controllers
         if ($validator->validate()) {
             $reset_key = md5(uniqid(rand(), true));
             $reset_expired_date = date('Y-m-d H:i:s', time() + 7200); // 2 jam
-            $email_address = trim($_POST['email']);
+            $email_address = trim($post['email']);
 
             $q_member = $this->db
                 ->select('user_id', 'username')
@@ -211,7 +212,7 @@ class Password extends Controllers
         return $response->withRedirect($this->router->pathFor('membership-login'));
     }
 
-    public function reset($request, $response, $args)
+    public function reset(Request $request, Response $response, array $args)
     {
         $q_reset_exist_count = $this->db
             ->select('COUNT(*) AS total_data')

@@ -1,14 +1,15 @@
 <?php
 namespace Membership\Controllers;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
 use Membership\Controllers;
 use Membership\Models\Users;
 use Membership\Models\Regionals;
-use Slim\Exception\NotFoundException;
 
-class Home extends Controllers
+class HomeController extends Controllers
 {
-    public function index($request, $response)
+    public function index(Request $request, Response $response, array $args)
     {
         $members = Users::factory($this->db)->getMembers($request);
         $provinces = $cities = [];

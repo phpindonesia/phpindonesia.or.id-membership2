@@ -2,10 +2,10 @@
 $this->layout('layouts::system');
 
 $this->appendJs([
-    $this->asset('/asset/js/membership.js')
+    $this->asset('/js/membership.js')
 ]);
 $this->appendCss([
-    $this->asset('/asset/css/chabibnr.css')
+    $this->asset('/css/chabibnr.css')
 ]);
 ?>
 
@@ -20,18 +20,18 @@ $this->appendCss([
 
                 <div class="form-group">
                     <label class="control-label">Provinsi</label>
-                    <?php echo $this->formInputSelect('province_id', $provinces, array(
+                    <?php echo $this->formInputSelect('province_id', $provinces, [
                         'id' => 'provinces-dd',
                         'class' => 'form-control'
-                    )); ?>
+                    ]); ?>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label">Kota</label>
-                    <?php echo $this->formInputSelect('city_id', $cities, array(
+                    <?php echo $this->formInputSelect('city_id', $cities, [
                         'id' => 'cities-dd',
                         'class' => 'form-control'
-                    )) ?>
+                    ]) ?>
                 </div>
 
                 <div class="form-group">
@@ -60,8 +60,8 @@ $this->appendCss([
                             </span>
                         </div>
                         <div class="card-profile-footer clearfix">
-                            <div><?php echo $member['province'] ?></div>
-                            <div><?php echo $member['city']; ?></div>
+                            <p><?php echo $member['province'] ?></p>
+                            <p><?php echo $member['city']; ?></p>
                             <a href="<?php echo $this->pathFor('membership-profile', ['name' => $member['username']]); ?>"
                                class="card-profile-action">
                                 <i class="fa fa-external-link"></i>

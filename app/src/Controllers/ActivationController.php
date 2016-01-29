@@ -1,12 +1,13 @@
 <?php
 namespace Membership\Controllers;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
 use Membership\Controllers;
-use Slim\Exception\NotFoundException;
 
-class Activation extends Controllers
+class ActivationController extends Controllers
 {
-    public function reactivatePage($request, $response, $args)
+    public function reactivatePage(Request $request, Response $response, array $args)
     {
         $this->enableCaptcha();
         $this->setPageTitle('Membership', 'Account Reactivation');
@@ -22,23 +23,12 @@ class Activation extends Controllers
         return $this->view->render('activation-reactivate');
     }
 
-    public function activate($request, $response, $args)
+    public function activate(Request $request, Response $response, array $args)
     {
-        $q_activation_exist_count = $this->db
-            ->select('COUNT(*) AS total_data')
-            ->from('users_activations')
-            ->where('user_id = :uid')
-            ->where('activation_key = :actkey')
-            ->where('deleted = :d')
-            ->where('expired_date > NOW()')
-            ->setParameter(':uid', $args['uid'])
-            ->setParameter(':actkey', $args['activation_key'])
-            ->setParameter(':d', 'N')
-            ->execute();
+        $actExistCount = Users::factory($this->db)
+            ->assertActivationExists($args['uid'], $args['activation_key']);
 
-        $activation_exist_count = (int) $q_activation_exist_count->fetch()['total_data'];
-
-        if ($activation_exist_count > 0) {
+        if ($actExistCount > 0) {
             $this->db->update('users', ['activated' => 'Y'], ['user_id' => $args['uid']]);
 
             $this->db->update('users_activations', ['deleted' => 'Y'], [
@@ -56,7 +46,7 @@ class Activation extends Controllers
         );
     }
 
-    public function reactivate($request, $response, $args)
+    public function reactivate(Request $request, Response $response, array $args)
     {
         $validator = $this->validator->createInput($_POST);
 
@@ -66,7 +56,7 @@ class Activation extends Controllers
                 ->from('users')
                 ->where('email = :email')
                 ->where('deleted = :d')
-                ->setParameter(':email', trim($_POST['email']))
+                ->setParameter(':email', trim($post['email']))
                 ->setParameter(':d', 'N')
                 ->execute();
 

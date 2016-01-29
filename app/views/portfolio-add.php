@@ -2,7 +2,7 @@
 $this->layout('layouts::system');
 
 $this->appendJs([
-    $this->asset('/asset/js/portfolio-add.js')
+    $this->asset('/js/portfolio-add.js')
 ]);
 ?>
 
@@ -25,9 +25,7 @@ $this->appendJs([
                         </th>
                         <td>
                             <input type="text" id="company-name" class="input_full" name="company_name" value="<?php echo $this->requestParam('company_name'); ?>" />
-                            <?php
-                            echo $this->formShowErrors('company_name', $validation_errors);
-                            ?>
+                            <?php echo $this->formShowErrors('company_name', $validation_errors); ?>
                         </td>
                     </tr>
 
@@ -36,16 +34,12 @@ $this->appendJs([
                             <label for="industry-id" style="font-weight: bold;">Perusahaan bergerak di Industri *</label>
                         </th>
                         <td>
-                            <?php
-                            echo $this->formInputSelect('industry_id', $industries, array(
+                            <?php echo $this->formInputSelect('industry_id', $industries, [
                                 'id' => 'industry-id',
                                 'class' => 'input_full'
-                            ));
-                            ?>
+                            ]) ?>
 
-                            <?php
-                            echo $this->formShowErrors('industry_id', $validation_errors);
-                            ?>
+                            <?php echo $this->formShowErrors('industry_id', $validation_errors); ?>
                         </td>
                     </tr>
 
@@ -57,32 +51,18 @@ $this->appendJs([
                             <ul class="date-parts">
                                 <li>
                                     <label style="display: block;">Tahun</label>
-                                    <?php
-                                    echo $this->formInputSelect('start_date_y', $years_range, array(
-                                        'id' => 'start-date-y'
-                                    ));
-                                    ?>
-
-                                    <?php
-                                    echo $this->formShowErrors('start_date_y', $validation_errors);
-                                    ?>
+                                    <?php echo $this->formInputSelect('start_date_y', $years_range, ['id' => 'start-date-y']) ?>
+                                    <?php echo $this->formShowErrors('start_date_y', $validation_errors); ?>
                                 </li>
 
                                 <li>
                                     <label style="display: block;">Bulan (opsional)</label>
-                                    <?php
-                                    echo $this->formInputSelect('start_date_m', $months_range, array(
-                                        'id' => 'start-date-m'
-                                    ));
-                                    ?>
+                                    <?php echo $this->formInputSelect('start_date_m', $months_range, ['id' => 'start-date-m']) ?>
                                 </li>
 
                                 <li>
                                     <label style="display: block;">Tanggal (opsional)</label>
-                                    <?php
-                                    echo $this->formInputSelect('start_date_d', $days_range, array(
-                                        'id' => 'start-date-d'
-                                    ));
+                                    <?php echo $this->formInputSelect('start_date_d', $days_range, ['id' => 'start-date-d']);
                                     ?>
                                 </li>
 
@@ -96,15 +76,13 @@ $this->appendJs([
                             <label style="font-weight: bold; display:block;">Status bekerja</label>
                         </th>
                         <td>
-                            <?php
-                            echo $this->formInputSelect('work_status', array('A' => 'Saya masih bekerja di perusahaan ini hingga saat ini', 'R' => 'Saya sudah tidak bekerja lagi di perusahaan ini'), array(
-                                'id' => 'work-status'
-                            ));
-                            ?>
+                            <?php echo $this->formInputSelect(
+                                'work_status',
+                                ['A' => 'Saya masih bekerja di perusahaan ini hingga saat ini', 'R' => 'Saya sudah tidak bekerja lagi di perusahaan ini'],
+                                ['id' => 'work-status']
+                            ) ?>
 
-                            <?php
-                            echo $this->formShowErrors('work_status', $validation_errors);
-                            ?>
+                            <?php echo $this->formShowErrors('work_status', $validation_errors); ?>
                         </td>
                     </tr>
 
@@ -118,29 +96,17 @@ $this->appendJs([
                             <ul class="date-parts">
                                 <li>
                                     <label style="display: block;">Tahun</label>
-                                    <?php
-                                    echo $this->formInputSelect('end_date_y', $years_range, array(
-                                        'id' => 'end-date-y'
-                                    ));
-                                    ?>
+                                    <?php echo $this->formInputSelect('end_date_y', $years_range, ['id' => 'end-date-y']); ?>
                                 </li>
 
                                 <li>
                                     <label style="display: block;">Bulan (opsional)</label>
-                                    <?php
-                                    echo $this->formInputSelect('end_date_m', $months_range, array(
-                                        'id' => 'end-date-m'
-                                    ));
-                                    ?>
+                                    <?php echo $this->formInputSelect('end_date_m', $months_range, ['id' => 'end-date-m']); ?>
                                 </li>
 
                                 <li>
                                     <label style="display: block;">Tanggal (opsional)</label>
-                                    <?php
-                                    echo $this->formInputSelect('end_date_d', $days_range, array(
-                                        'id' => 'end-date-d'
-                                    ));
-                                    ?>
+                                    <?php echo $this->formInputSelect('end_date_d', $days_range, ['id' => 'end-date-d']); ?>
                                 </li>
                             </ul>
 
@@ -153,9 +119,7 @@ $this->appendJs([
                         </th>
                         <td>
                             <input type="text" id="job-title" class="input_full" name="job_title" value="<?php echo $this->requestParam('job_title'); ?>" />
-                            <?php
-                            echo $this->formShowErrors('job_title', $validation_errors);
-                            ?>
+                            <?php echo $this->formShowErrors('job_title', $validation_errors); ?>
                         </td>
                     </tr>
 
@@ -165,9 +129,7 @@ $this->appendJs([
                         </th>
                         <td>
                             <textarea id="job-desc" class="input_full" name="job_desc"></textarea>
-                            <?php
-                            echo $this->formShowErrors('job_desc', $validation_errors);
-                            ?>
+                            <?php echo $this->formShowErrors('job_desc', $validation_errors); ?>
                         </td>
                     </tr>
 
@@ -176,15 +138,8 @@ $this->appendJs([
                             <label for="career-level-id" style="font-weight: bold;">Level *</label>
                         </th>
                         <td>
-                            <?php
-                            echo $this->formInputSelect('career_level_id', $career_levels, array(
-                                'id' => 'career-level-id'
-                            ));
-                            ?>
-
-                            <?php
-                            echo $this->formShowErrors('career_level_id', $validation_errors);
-                            ?>
+                            <?php echo $this->formInputSelect('career_level_id', $career_levels, ['id' => 'career-level-id']) ?>
+                            <?php echo $this->formShowErrors('career_level_id', $validation_errors); ?>
                         </td>
                     </tr>
 

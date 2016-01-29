@@ -1,9 +1,12 @@
 <?php
 namespace Membership\Middlewares;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
+
 class SkillsDelete
 {
-    public function __invoke($request, $response, $next)
+    public function __invoke(Request $request, Response $response, callable $next)
     {
         $routeInfo = $request->getAttribute('routeInfo');
         $query = $this['db']->createQueryBuilder()

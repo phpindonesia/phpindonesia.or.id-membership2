@@ -2,10 +2,10 @@
 $this->layout('layouts::system');
 
 $this->appendJs([
-    $this->asset('/asset/js/jquery.popupoverlay.js'),
+    $this->asset('/js/jquery.popupoverlay.js'),
     $this->pathFor('membership-profile-javascript'),
-    $this->asset('/asset/js/portfolio-add.js'),
-    $this->asset('/asset/js/skill-add.js')
+    $this->asset('/js/portfolio-add.js'),
+    $this->asset('/js/skill-add.js')
 ]);
 ?>
 
@@ -31,9 +31,7 @@ $this->appendJs([
                     <br />
 
                     <ul class="dt-sc-social-icons">
-                        <?php
-                        foreach ($member_socmeds as $socmed_item):
-                        ?>
+                        <?php foreach ($member_socmeds as $socmed_item): ?>
 
                             <li style="margin-right: 5px; padding: 3px; border: 1px #DDDDDD solid;">
                                 <a style="border: none; font: inherit;" href="<?php echo $socmed_item['account_url'] ?>">
@@ -42,9 +40,7 @@ $this->appendJs([
                                 </a>
                             </li>
 
-                        <?php
-                        endforeach;
-                        ?>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
 
@@ -130,9 +126,7 @@ $this->appendJs([
                                     <td style="width:200px; font-weight: bold;">Pekerjaan</td>
                                     <td>
                                         :
-                                        <?php
-                                        echo ucfirst($member['job_id']);
-                                        ?>
+                                        <?php echo ucfirst($member['job_id']); ?>
                                     </td>
                                 </tr>
 

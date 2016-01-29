@@ -5,6 +5,11 @@ use Membership\Models;
 
 class Skills extends Models
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected $table = 'skills';
+
     public function getChilds($parent)
     {
         $stmt = $this->db->select(['skill_id', 'skill_name'])

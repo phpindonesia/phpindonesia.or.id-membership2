@@ -1,17 +1,18 @@
 <?php
 namespace Membership\Middlewares;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
+
 class Portfolio
 {
-    public function __invoke($request, $response, $next)
+    public function __invoke(Request $request, Response $response, callable $next)
     {
         $routeInfo = $request->getAttribute('routeInfo');
         $query = $this->db->select('count(*) num', 'user_id', 'member_portfolio_id')
             ->from('members_portfolios')
-            ->where('member_portfolio_id = :portId')
-            ->where('user_id = :userId')
-            ->setParameter(':portId', $routeInfo[2]['id'])
-            ->setParameter(':userId', $_SESSION['MembershipAuth']['user_id'])
+            ->where('member_portfolio_id', '=', $routeInfo[2]['id'])
+            ->where('user_id', '=', $_SESSION['MembershipAuth']['user_id'])
             ->execute();
 
         $user = $query->fetch();

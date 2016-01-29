@@ -5,6 +5,9 @@ use Membership\Models;
 
 class Regionals extends Models
 {
+    /**
+     * {@inheritdoc}
+     */
     private $table = 'regionals';
 
     public function getProvinces()

@@ -1,11 +1,13 @@
 <?php
 namespace Membership\Controllers;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
 use Membership\Controllers;
 
-class CommonData extends Controllers
+class RegionalsController extends Controllers
 {
-    public function sities($request, $response, $args)
+    public function sities(Request $request, Response $response, array $args)
     {
         $this->assertXhrRequest($request, $response);
 

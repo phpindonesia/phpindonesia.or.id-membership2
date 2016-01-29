@@ -1,13 +1,15 @@
 <?php
 namespace Membership\Controllers;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
 use Membership\Controllers;
 use Membership\Models\Jobs;
 use Membership\Models\Regionals;
 
-class Account extends Controllers
+class AccountController extends Controllers
 {
-    public function loginPage($request, $response, $args)
+    public function loginPage(Request $request, Response $response, array $args)
     {
         $this->setPageTitle('Membership', 'Login Anggota');
 
@@ -22,12 +24,12 @@ class Account extends Controllers
         return $this->view->render('account-login');
     }
 
-    public function login($request, $response, $args)
+    public function login(Request $request, Response $response, array $args)
     {
         $post = $request->getParsedBody();
         $validation = $this->validator
             ->rule('required', ['username', 'email', 'password'])
-            ->rule('email',    'email');
+            ->rule('email',    ['email']);
 
         if (!$validation->validate()) {
             $this->validationErrors($validation->errors());
@@ -42,8 +44,11 @@ class Account extends Controllers
             ->from('users u')
             ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
             ->leftJoin('members_profiles up', 'u.user_id', '=', 'up.user_id')
-            ->where('u.username')->where('u.password')->where('u.email')->where('ur.role_id')
-            ->execute([$post['username'], $post['password'], $post['email'], 'member']);
+            ->where('u.username', '=', $post['username'])
+            ->where('u.password', '=', $post['password'])
+            ->where('u.email', '=', $post['email'])
+            ->where('ur.role_id', '=', 'member')
+            ->execute();
 
         $user = $query->fetch();
 
@@ -82,7 +87,7 @@ class Account extends Controllers
         return $this->view->render('account-login');
     }
 
-    public function registerPage($request, $response, $args)
+    public function registerPage(Request $request, Response $response, array $args)
     {
         $qProvinces = Regionals::factory($this->db)->getProvinces();
         $qJobs = Jobs::factory($this->db)->getIds();
@@ -110,7 +115,7 @@ class Account extends Controllers
         return $this->view->render('account-register', compact('provinces', 'cities', 'jobs'));
     }
 
-    public function register($request, $response, $args)
+    public function register(Request $request, Response $response, array $args)
     {
         $gcaptchaSitekey = $this->settings['gcaptcha']['site_key'];
         $gcaptchaSecret = $this->settings['gcaptcha']['secret'];
@@ -119,7 +124,7 @@ class Account extends Controllers
         if ($request->isPost()) {
             $validator = $this->validator;
             $validator->createInput($_POST);
-            $validator->rule('required', array(
+            $validator->rule('required', [
                 'username',
                 'password',
                 'repassword',
@@ -130,16 +135,14 @@ class Account extends Controllers
                 'job_id',
                 'fullname',
                 'gender_id'
-            ));
+            ]);
 
             if ($gcaptchaEnable == true) {
                 $validator->addNewRule('verify_captcha', function ($field, $value, array $params) use ($gcaptchaSecret) {
                     $result = false;
-
-                    if (isset($_POST['g-recaptcha-response'])) {
+                    if (isset($post['g-recaptcha-response'])) {
                         $recaptcha = new \ReCaptcha\ReCaptcha($gcaptchaSecret);
-                        $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
-
+                        $resp = $recaptcha->verify($post['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
                         $result = $resp->isSuccess();
                     }
 
@@ -149,7 +152,7 @@ class Account extends Controllers
             }
 
             $validator->addNewRule('check_repassword', function ($field, $value, array $params) {
-                if ($value != $_POST['password']) {
+                if ($value != $post['password']) {
                     return false;
                 }
 
@@ -163,7 +166,7 @@ class Account extends Controllers
                     ->from('users')
                     ->where('email = :email')
                     ->where('deleted = :d')
-                    ->setParameter(':email', trim(strtolower($_POST['email'])))
+                    ->setParameter(':email', trim(strtolower($post['email'])))
                     ->setParameter(':d', 'N')
                     ->execute();
 
@@ -184,7 +187,7 @@ class Account extends Controllers
                     ->from('users')
                     ->where('username = :uname')
                     ->where('deleted = :d')
-                    ->setParameter(':uname', trim(strtolower($_POST['username'])))
+                    ->setParameter(':uname', trim(strtolower($post['username'])))
                     ->setParameter(':d', 'N')
                     ->execute();
 
@@ -209,11 +212,11 @@ class Account extends Controllers
             }
 
             if ($validator->validate()) {
-                $salt_pwd = md5($this->settings['salt_pwd'].$_POST['password']);
-                $area = trim($_POST['area']);
+                $salt_pwd = md5($this->settings['salt_pwd'].$post['password']);
+                $area = trim($post['area']);
                 $area = empty($area) ? null : $area;
-                $fullname = ucwords(trim($_POST['fullname']));
-                $email_address = trim($_POST['email']);
+                $fullname = ucwords(trim($post['fullname']));
+                $email_address = trim($post['email']);
 
                 $last_user_id = null;
                 $activation_key = md5(uniqid(rand(), true));
@@ -227,11 +230,11 @@ class Account extends Controllers
 
                 try {
                     $this->db->insert('users', array(
-                        'username' => filter_var(trim($_POST['username']), FILTER_SANITIZE_STRING),
+                        'username' => filter_var(trim($post['username']), FILTER_SANITIZE_STRING),
                         'password' => $salt_pwd,
                         'email' => $email_address,
-                        'province_id' => $_POST['province_id'],
-                        'city_id' => $_POST['city_id'],
+                        'province_id' => $post['province_id'],
+                        'city_id' => $post['city_id'],
                         'area' => $area,
                         'created' => date('Y-m-d H:i:s'),
                         'created_by' => 0
@@ -249,11 +252,11 @@ class Account extends Controllers
                     $this->db->insert('members_profiles', array(
                         'user_id' => $last_user_id,
                         'fullname' => $fullname,
-                        'gender' => $_POST['gender_id'],
-                        'province_id' => $_POST['province_id'],
-                        'city_id' => $_POST['city_id'],
+                        'gender' => $post['gender_id'],
+                        'province_id' => $post['province_id'],
+                        'city_id' => $post['city_id'],
                         'area' => $area,
-                        'job_id' => $_POST['job_id'],
+                        'job_id' => $post['job_id'],
                         'created' => date('Y-m-d H:i:s'),
                         'created_by' => 0
                     ));
@@ -276,7 +279,6 @@ class Account extends Controllers
                     $trx_success = false;
 
                     $this->flash->addMessage('error', 'System gagal!<br />'.$e->getMessage());
-
                 }
 
                 // Sending activation email handler //
@@ -293,9 +295,9 @@ class Account extends Controllers
                         );
 
                         $message = Swift_Message::newInstance('PHP Indonesia - Aktivasi Membership')
-                        ->setFrom(array($this->settings['email']['sender_email'] => $this->settings['email']['sender_name']))
-                        ->setTo(array($email_address => $fullname))
-                        ->setBody(file_get_contents(APP_DIR.'protected'._DS_.'views'._DS_.'email'._DS_.'activation.txt'));
+                            ->setFrom(array($this->settings['email']['sender_email'] => $this->settings['email']['sender_name']))
+                            ->setTo(array($email_address => $fullname))
+                            ->setBody(file_get_contents(APP_DIR.'protected'._DS_.'views'._DS_.'email'._DS_.'activation.txt'));
 
                         $mailer = $this->get('mailer');
                         $mailer->registerPlugin(new Swift_Plugins_DecoratorPlugin($replacements));
@@ -310,21 +312,19 @@ class Account extends Controllers
                         $this->db->close();
 
                         $this->flash->addMessage('success', $register_success_msg);
-                        return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-index'));
-
                     } catch (Swift_TransportException $e) {
                         $this->flash->addMessage('success', $register_success_msg_alt);
-                        return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-index'));
                     }
                 }
-
             } else {
                 $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
             }
         }
+
+        return $response->withRedirect($this->router->pathFor('membership-index'));
     }
 
-    public function logout($request, $response, $args)
+    public function logout(Request $request, Response $response, array $args)
     {
         $_SESSION = [];
 

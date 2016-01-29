@@ -1,169 +1,161 @@
 <?php
 namespace Membership\Controllers;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
 use Membership\Controllers;
-use Slim\Exception\NotFoundException;
 
-class Portfolios extends Controllers
+class PortfoliosController extends Controllers
 {
     public function index($request, $response)
     {
         $this->setPageTitle('Membership', 'Keanggotaan');
 
         return $this->view->render(
-            'membership/index',
+            'portfolio-index',
             compact('members','provinces', 'cities', 'html_view_pager')
         );
     }
 
-    public function add($request, $response, $args)
+    public function addPage(Request $request, Response $response, array $args)
     {
-        $db = $this->db;
-
-        if ($request->isPost()) {
-            $validator = $this->validator;
-            $validator->createInput($_POST);
-            $validator->rule('required', array(
-                'company_name',
-                'industry_id',
-                'start_date_y',
-                'work_status',
-                'job_title',
-                'job_desc',
-                'career_level_id'
-            ));
-
-            if ($_POST['work_status'] == 'R') {
-                $validator->rule('required', 'end_date_y');
-            }
-
-            if ($validator->validate()) {
-
-                if ($_POST['work_status'] == 'A') {
-                    $_POST['end_date_y'] = null;
-                    $_POST['end_date_m'] = null;
-                    $_POST['end_date_d'] = null;
-                }
-
-                $this->db->insert('members_portfolios', array(
-                    'user_id' => $_SESSION['MembershipAuth']['user_id'],
-                    'company_name' => filter_var(trim($_POST['company_name']), FILTER_SANITIZE_STRING),
-                    'industry_id' => filter_var(trim($_POST['industry_id']), FILTER_SANITIZE_STRING),
-                    'start_date_y' => filter_var(trim($_POST['start_date_y']), FILTER_SANITIZE_STRING),
-                    'start_date_m' => $_POST['start_date_m'] == '' ? null : filter_var(trim($_POST['start_date_m']), FILTER_SANITIZE_STRING),
-                    'start_date_d' => $_POST['start_date_d'] == '' ? null : filter_var(trim($_POST['start_date_d']), FILTER_SANITIZE_STRING),
-                    'end_date_y' => filter_var(trim($_POST['end_date_y']), FILTER_SANITIZE_STRING),
-                    'end_date_m' => $_POST['end_date_m'] == '' ? null : filter_var(trim($_POST['end_date_m']), FILTER_SANITIZE_STRING),
-                    'end_date_d' => $_POST['end_date_d'] == '' ? null : filter_var(trim($_POST['end_date_d']), FILTER_SANITIZE_STRING),
-                    'work_status' => filter_var(trim($_POST['work_status']), FILTER_SANITIZE_STRING),
-                    'job_title' => filter_var(trim($_POST['job_title']), FILTER_SANITIZE_STRING),
-                    'job_desc' => filter_var(trim($_POST['job_desc']), FILTER_SANITIZE_STRING),
-                    'career_level_id' => filter_var(trim($_POST['career_level_id']), FILTER_SANITIZE_STRING),
-                    'created' => date('Y-m-d H:i:s'),
-                    'created_by' => $_SESSION['MembershipAuth']['user_id'],
-                    'deleted' => 'N'
-                ));
-
-                $this->flash->addMessage('success', 'Item portfolio baru berhasil ditambahkan. Selamat! . Silahkan tambahkan lagi item portfolio anda.');
-                return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-profile'));
-
-            } else {
-                $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
-            }
-        }
-
-        $q_carerr_levels = $this->db
+        $qCarerrLevels = $this->db
             ->select('career_level_id')
             ->from('career_levels')
             ->orderBy('order_by', 'ASC')
             ->execute();
 
-        $q_industries = $this->db
+        $qIndustries = $this->db
             ->select('industry_id', 'industry_name')
             ->from('industries')
             ->execute();
 
-        $career_levels = $this->arrayPairs($q_carerr_levels->fetchAll(), '{n}.career_level_id', '{n}.career_level_id');
-        $industries = $this->arrayPairs($q_industries->fetchAll(), '{n}.industry_id', '{n}.industry_name');
+        $career_levels = $this->arrayPairs($qCarerrLevels->fetchAll(), 'career_level_id');
+        $industries = $this->arrayPairs($qIndustries->fetchAll(), 'industry_id', 'industry_name');
         $years_range = $this->get('years_range');
         $months_range = $this->get('months_range');
         $days_range = $this->get('days_range');
 
-        $this->view->addData(
-            array(
-                'page_title' => 'Membership',
-                'sub_page_title' => 'Add new portfolio'
-            ),
-            'layouts::system'
-        );
+        $this->setPageTitle('Membership', 'Add new portfolio');
 
         return $this->view->render(
-            'membership/portfolio-add',
+            'portfolio-add',
             compact('career_levels', 'industries', 'years_range', 'months_range', 'days_range')
         );
     }
 
-    public function edit($request, $response, $args)
+    public function add(Request $request, Response $response, array $args)
+    {
+        $post = $request->getParsedBody();
+        $validator = $this->validator->rule('required', [
+            'company_name',
+            'industry_id',
+            'start_date_y',
+            'work_status',
+            'job_title',
+            'job_desc',
+            'career_level_id'
+        ]);
+
+        if ($post['work_status'] == 'R') {
+            $validator->rule('required', 'end_date_y');
+        }
+
+        if ($validator->validate()) {
+            $this->db->insert('members_portfolios', [
+                'user_id'         => $_SESSION['MembershipAuth']['user_id'],
+                'company_name'    => $post['company_name'],
+                'industry_id'     => $post['industry_id'],
+                'start_date_y'    => $post['start_date_y'],
+                'start_date_m'    => $post['work_status'] == 'A' ? null : $request->getParsedBodyParam('start_date_m'),
+                'start_date_d'    => $post['work_status'] == 'A' ? null : $request->getParsedBodyParam('start_date_d'),
+                'end_date_y'      => $post['end_date_y'],
+                'end_date_m'      => $post['work_status'] == 'A' ? null : $request->getParsedBodyParam('end_date_m'),
+                'end_date_d'      => $post['work_status'] == 'A' ? null : $request->getParsedBodyParam('end_date_d'),
+                'work_status'     => $post['work_status'],
+                'job_title'       => $post['job_title'],
+                'job_desc'        => $post['job_desc'],
+                'career_level_id' => $post['career_level_id'],
+                'created'         => date('Y-m-d H:i:s'),
+                'created_by'      => $_SESSION['MembershipAuth']['user_id'],
+                'deleted'         => 'N'
+            ]);
+
+            $this->flash->addMessage('success', 'Item portfolio baru berhasil ditambahkan. Selamat! . Silahkan tambahkan lagi item portfolio anda.');
+        } else {
+            $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
+        }
+
+        return $response->withRedirect(
+            $this->router->pathFor('membership-profile')
+        );
+    }
+
+    public function edit(Request $request, Response $response, array $args)
     {
         $socmedias      = $this->settings['socmedias'];
-        $identity_types = array('ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa');
+        $identity_types = ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'];
 
         if ($request->isPost()) {
             // input collection
-            $member = array(
-                'email'       => trim(htmlspecialchars($_POST['email'])),
-                'province_id' => $_POST['province_id'],
-                'city_id'     => $_POST['city_id'],
-                'area'        => trim(htmlspecialchars($_POST['area'])),
+            $member = [
+                'email'       => trim(htmlspecialchars($post['email'])),
+                'province_id' => $post['province_id'],
+                'city_id'     => $post['city_id'],
+                'area'        => trim(htmlspecialchars($post['area'])),
                 'modified'    => date('Y-m-d H:i:s'),
                 'modified_by' => $_SESSION['MembershipAuth']['user_id'],
-            );
+            ];
 
-            $members_profiles = array(
-                'fullname'        => strtoupper(trim(strip_tags($_POST['fullname']))),
-                'contact_phone'   => trim(htmlspecialchars($_POST['contact_phone'])),
-                'birth_place'     => trim(strtoupper(htmlspecialchars($_POST['birth_place']))),
-                'birth_date'      => trim(htmlspecialchars($_POST['birth_date'])),
-                'identity_number' => trim(htmlspecialchars($_POST['identity_number'])),
-                'identity_type'   => trim(htmlspecialchars($_POST['identity_type'])),
-                'religion_id'     => $_POST['religion_id'],
+            $members_profiles = [
+                'fullname'        => strtoupper(trim(strip_tags($post['fullname']))),
+                'contact_phone'   => trim(htmlspecialchars($post['contact_phone'])),
+                'birth_place'     => trim(strtoupper(htmlspecialchars($post['birth_place']))),
+                'birth_date'      => trim(htmlspecialchars($post['birth_date'])),
+                'identity_number' => trim(htmlspecialchars($post['identity_number'])),
+                'identity_type'   => trim(htmlspecialchars($post['identity_type'])),
+                'religion_id'     => $post['religion_id'],
                 'province_id'     => $member['province_id'],
                 'city_id'         => $member['city_id'],
                 'area'            => $member['area'],
-                'job_id'          => trim(htmlspecialchars($_POST['job_id'])),
+                'job_id'          => trim(htmlspecialchars($post['job_id'])),
                 'modified'        => date('Y-m-d H:i:s'),
                 'modified_by'     => $_SESSION['MembershipAuth']['user_id']
-            );
+            ];
 
             // validation layer
             $validator = $this->validator;
             $validator->createInput($_POST);
 
-            $validator->rule(array(
-                'required'   => array(
+            $validator->rules([
+                'required'   => [
                     ['fullname'],
                     ['email'],
                     ['province_id'],
                     ['city_id'],
                     ['area'],
                     ['job_id']
-                ),
-                'regex'      => array(
+                ],
+                'regex'      => [
                     ['fullname', ':^[A-z\s]+$:'],
                     ['contact_phone', ':^[-\+\d]+$:'],
                     ['identity_number', ':^[-\+\d]+$:'],
-                ),
-                'lengthMax'  => array(
+                ],
+                'lengthMax'  => [
                     ['fullname', 32],
                     ['contact_phone', 16],
                     ['area', 64],
                     ['identity_number', 32],
                     ['birth_place', 32],
-                ),
+                ],
                 'email'      => 'email',
-                'dateFormat' => array(['birth_date', 'Y-m-d']),
-                'in'         => array(['identity_type', array_keys($identity_types)]),
-            ));
+                'dateFormat' => [
+                    ['birth_date', 'Y-m-d']
+                ],
+                'in'         => [
+                    ['identity_type', array_keys($identity_types)]
+                ],
+            ]);
 
             $validator->label([
                 'province_id'     => 'Provinsi',
@@ -216,12 +208,12 @@ class Portfolios extends Controllers
             }
 
             // Handle social medias
-            $data_socmed = array();
+            $data_socmed = [];
 
-            if (isset($_POST['socmeds']) && !empty($_POST['socmeds'])) {
+            if (isset($post['socmeds']) && !empty($post['socmeds'])) {
                 $socmeds = array_keys($socmedias);
 
-                foreach ($_POST['socmeds'] as $i => $item) {
+                foreach ($post['socmeds'] as $i => $item) {
                     if (empty($item['socmed_type'])) continue;
                     if (empty($item['account_name']) && empty($item['account_url'])) continue;
 
@@ -253,8 +245,8 @@ class Portfolios extends Controllers
                     $this->db->update('users', $member, array('user_id' => $_SESSION['MembershipAuth']['user_id']));
 
                     // social media deletions
-                    if (isset($_POST['socmeds_delete'])) {
-                        foreach ($_POST['socmeds_delete'] as $item) {
+                    if (isset($post['socmeds_delete'])) {
+                        foreach ($post['socmeds_delete'] as $item) {
                             $this->db->update('members_socmeds', array('deleted' => 'Y'), array(
                                 'user_id'     => $_SESSION['MembershipAuth']['user_id'],
                                 'socmed_type' => $item
@@ -301,54 +293,54 @@ class Portfolios extends Controllers
         }
 
         $q_member = $this->db
-        ->select(
-            'm.*',
-            'reg_prv.regional_name AS province',
-            'reg_cit.regional_name AS city'
-        )
-        ->from('members_profiles', 'm')
-        ->leftJoin('m', 'regionals', 'reg_prv', 'reg_prv.id = m.province_id')
-        ->leftJoin('m', 'regionals', 'reg_cit', 'reg_cit.id = m.city_id')
-        ->where('m.user_id = :uid')
-        ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-        ->execute();
+            ->select(
+                'm.*',
+                'reg_prv.regional_name AS province',
+                'reg_cit.regional_name AS city'
+            )
+            ->from('members_profiles', 'm')
+            ->leftJoin('m', 'regionals', 'reg_prv', 'reg_prv.id = m.province_id')
+            ->leftJoin('m', 'regionals', 'reg_cit', 'reg_cit.id = m.city_id')
+            ->where('m.user_id = :uid')
+            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+            ->execute();
 
         $q_members_socmeds = $this->db
-        ->select('member_socmed_id', 'socmed_type', 'account_name', 'account_url')
-        ->from('members_socmeds')
-        ->where('user_id = :uid')
-        ->where('deleted = :d')
-        ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-        ->setParameter(':d', 'N')
-        ->execute();
+            ->select('member_socmed_id', 'socmed_type', 'account_name', 'account_url')
+            ->from('members_socmeds')
+            ->where('user_id = :uid')
+            ->where('deleted = :d')
+            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+            ->setParameter(':d', 'N')
+            ->execute();
 
         $q_provinces = $this->db
-        ->select('id', 'regional_name')
-        ->from('regionals')
-        ->where('parent_id IS NULL')
-        ->where('city_code = :ccode')
-        ->orderBy('province_code, city_code')
-        ->setParameter(':ccode', '00', \Doctrine\DBAL\Types\Type::STRING)
-        ->execute();
+            ->select('id', 'regional_name')
+            ->from('regionals')
+            ->where('parent_id IS NULL')
+            ->where('city_code = :ccode')
+            ->orderBy('province_code, city_code')
+            ->setParameter(':ccode', '00', \Doctrine\DBAL\Types\Type::STRING)
+            ->execute();
 
-        $province_id = isset($_POST['province_id']) ? $_POST['province_id'] : $_SESSION['MembershipAuth']['province_id'];
+        $province_id = isset($post['province_id']) ? $post['province_id'] : $_SESSION['MembershipAuth']['province_id'];
         $q_cities    = $this->db
-        ->select('id', 'regional_name')
-        ->from('regionals')
-        ->where('parent_id = :pvid')
-        ->orderBy('province_code, city_code')
-        ->setParameter(':pvid', $province_id, \Doctrine\DBAL\Types\Type::INTEGER)
-        ->execute();
+            ->select('id', 'regional_name')
+            ->from('regionals')
+            ->where('parent_id = :pvid')
+            ->orderBy('province_code, city_code')
+            ->setParameter(':pvid', $province_id, \Doctrine\DBAL\Types\Type::INTEGER)
+            ->execute();
 
         $q_religions = $this->db
-        ->select('religion_id', 'religion_name')
-        ->from('religions')
-        ->execute();
+            ->select('religion_id', 'religion_name')
+            ->from('religions')
+            ->execute();
 
         $q_jobs = $this->db
-        ->select('job_id')
-        ->from('jobs')
-        ->execute();
+            ->select('job_id')
+            ->from('jobs')
+            ->execute();
 
         $member          = $q_member->fetch();
         $members_socmeds = $q_members_socmeds->fetchAll();
@@ -356,7 +348,7 @@ class Portfolios extends Controllers
         $cities          = $this->arrayPairs($q_cities->fetchAll(), 'id', 'regional_name');
         $religions       = $this->arrayPairs($q_religions->fetchAll(), 'religion_id', 'religion_name');
         $jobs            = $this->arrayPairs($q_jobs->fetchAll(), 'job_id', 'job_id');
-        $genders         = array('female' => 'Wanita', 'male' => 'Pria');
+        $genders         = ['female' => 'Wanita', 'male' => 'Pria'];
 
         $this->db->close();
 
@@ -369,7 +361,7 @@ class Portfolios extends Controllers
         );
 
         return $this->view->render(
-            'membership/profile-edit',
+            'profile-edit',
             compact(
                 'member',
                 'provinces',

@@ -5,16 +5,10 @@ use Membership\Models;
 
 class Users extends Models implements \Countable
 {
-    public function count(callable $callable = null)
-    {
-        $query = $this->db->count('user_id', 'count')->from('users');
-
-        if (null !== $callable) {
-            $callable($query);
-        }
-
-        return (int) $query->execute()->fetch()['count'];
-    }
+    /**
+     * {@inheritdoc}
+     */
+    protected $table = 'users';
 
     public function updateLogin($userId)
     {
@@ -28,21 +22,33 @@ class Users extends Models implements \Countable
     public function assertUsernameExists($username)
     {
         $username = strtolower($username);
-        $result = $this->count(function ($query) use ($username) {
+        $count = $this->count(function ($query) use ($username) {
             $query->where('username', '=', $username);
         });
 
-        return $result > 0;
+        return $count > 0;
     }
 
     public function assertEmailExists($email)
     {
         $email = strtolower($email);
-        $result = $this->count(function ($query) use ($email) {
+        $count = $this->count(function ($query) use ($email) {
             $query->where('email', '=', $email);
         });
 
-        return $result > 0;
+        return $count > 0;
+    }
+
+    public function assertActivationExists($userId, $key)
+    {
+        $count = $this->count(function ($query) use ($userId, $key) {
+            $query->where('user_id', '=', $userId)
+                ->where('activation_key', '=', $key)
+                ->where('deleted', '=', 'N')
+                ->where('expired_date', '>', date('Y-m-d'));
+        });
+
+        return $count > 0;
     }
 
     public function getMembers($request)

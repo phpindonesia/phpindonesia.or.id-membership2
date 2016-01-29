@@ -2,7 +2,7 @@
 $this->layout('layouts::system');
 
 $this->appendJs([
-    $this->asset('/asset/js/skill-add.js')
+    $this->asset('/js/skill-add.js')
 ]);
 ?>
 

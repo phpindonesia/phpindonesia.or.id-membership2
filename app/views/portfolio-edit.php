@@ -2,7 +2,7 @@
 $this->layout('layouts::system');
 
 $this->appendJs([
-    $this->asset('/asset/js/portfolio-add.js')
+    $this->asset('/js/portfolio-add.js')
 ]);
 ?>
 
@@ -15,7 +15,7 @@ $this->appendJs([
 
         <?php echo $this->insert('sections::flash-message') ?>
 
-        <form action="<?php echo $this->pathFor('membership-portfolio-edit', array('id' => $portfolio['member_portfolio_id'])); ?>" method="post" class="checkout" novalidate>
+        <form action="<?php echo $this->pathFor('membership-portfolio-edit', ['id' => $portfolio['member_portfolio_id']]); ?>" method="post" class="checkout" novalidate>
             <input type="hidden" name="member_portfolio_id" value="<?php echo $portfolio['member_portfolio_id']; ?>" />
 
             <table class="form-oprek">
@@ -26,9 +26,7 @@ $this->appendJs([
                         </th>
                         <td>
                             <input type="text" id="company-name" class="input_full" name="company_name" value="<?php echo $this->requestParam('company_name', $portfolio['company_name']); ?>" />
-                            <?php
-                            echo $this->formShowErrors('company_name', $validation_errors);
-                            ?>
+                            <?php echo $this->formShowErrors('company_name', $validation_errors); ?>
                         </td>
                     </tr>
 
@@ -37,17 +35,13 @@ $this->appendJs([
                             <label for="industry-id" style="font-weight: bold;">Perusahaan bergerak di Industri *</label>
                         </th>
                         <td>
-                            <?php
-                            echo $this->formInputSelect('industry_id', $industries, array(
+                            <?php echo $this->formInputSelect('industry_id', $industries, array(
                                 'default' => $portfolio['industry_id'],
                                 'id' => 'industry-id',
                                 'class' => 'input_full'
-                            ));
-                            ?>
+                            )) ?>
 
-                            <?php
-                            echo $this->formShowErrors('industry_id', $validation_errors);
-                            ?>
+                            <?php echo $this->formShowErrors('industry_id', $validation_errors); ?>
                         </td>
                     </tr>
 
@@ -59,36 +53,28 @@ $this->appendJs([
                             <ul class="date-parts">
                                 <li>
                                     <label style="display: block;">Tahun</label>
-                                    <?php
-                                    echo $this->formInputSelect('start_date_y', $years_range, array(
+                                    <?php echo $this->formInputSelect('start_date_y', $years_range, array(
                                         'default' => $portfolio['start_date_y'],
                                         'id' => 'start-date-y'
-                                    ));
-                                    ?>
+                                    )) ?>
 
-                                    <?php
-                                    echo $this->formShowErrors('start_date_y', $validation_errors);
-                                    ?>
+                                    <?php echo $this->formShowErrors('start_date_y', $validation_errors); ?>
                                 </li>
 
                                 <li>
                                     <label style="display: block;">Bulan (opsional)</label>
-                                    <?php
-                                    echo $this->formInputSelect('start_date_m', $months_range, array(
+                                    <?php echo $this->formInputSelect('start_date_m', $months_range, array(
                                         'default' => $portfolio['start_date_m'],
                                         'id' => 'start-date-m'
-                                    ));
-                                    ?>
+                                    )) ?>
                                 </li>
 
                                 <li>
                                     <label style="display: block;">Tanggal (opsional)</label>
-                                    <?php
-                                    echo $this->formInputSelect('start_date_d', $days_range, array(
+                                    <?php echo $this->formInputSelect('start_date_d', $days_range, array(
                                         'default' => $portfolio['start_date_d'],
                                         'id' => 'start-date-d'
-                                    ));
-                                    ?>
+                                    )) ?>
                                 </li>
                             </ul>
 
@@ -100,22 +86,17 @@ $this->appendJs([
                             <label style="font-weight: bold; display:block;">Status bekerja</label>
                         </th>
                         <td>
-                            <?php
-                            echo $this->formInputSelect('work_status', array('A' => 'Saya masih bekerja di perusahaan ini hingga saat ini', 'R' => 'Saya sudah tidak bekerja lagi di perusahaan ini'), array(
-                                'default' => $portfolio['work_status'],
-                                'id' => 'work-status'
-                            ));
-                            ?>
+                            <?php echo $this->formInputSelect(
+                                'work_status',
+                                ['A' => 'Saya masih bekerja di perusahaan ini hingga saat ini', 'R' => 'Saya sudah tidak bekerja lagi di perusahaan ini'],
+                                ['default' => $portfolio['work_status'], 'id' => 'work-status']
+                            ) ?>
 
-                            <?php
-                            echo $this->formShowErrors('work_status', $validation_errors);
-                            ?>
+                            <?php echo $this->formShowErrors('work_status', $validation_errors); ?>
                         </td>
                     </tr>
 
-                    <?php
-                    if ($portfolio['work_status'] == 'R'):
-                    ?>
+                    <?php if ($portfolio['work_status'] == 'R'): ?>
 
                     <tr id="akhir-bekerja-block">
                         <th>
@@ -123,45 +104,36 @@ $this->appendJs([
                         </th>
 
                         <td>
-
                             <ul class="date-parts">
                                 <li>
                                     <label style="display: block;">Tahun</label>
-                                    <?php
-                                    echo $this->formInputSelect('end_date_y', $years_range, array(
+                                    <?php echo $this->formInputSelect('end_date_y', $years_range, array(
                                         'default' => $portfolio['end_date_y'],
                                         'id' => 'end-date-y'
-                                    ));
-                                    ?>
+                                    )) ?>
                                 </li>
 
                                 <li>
                                     <label style="display: block;">Bulan (opsional)</label>
-                                    <?php
-                                    echo $this->formInputSelect('end_date_m', $months_range, array(
+                                    <?php echo $this->formInputSelect('end_date_m', $months_range, array(
                                         'default' => $portfolio['end_date_m'],
                                         'id' => 'end-date-m'
-                                    ));
-                                    ?>
+                                    )) ?>
                                 </li>
 
                                 <li>
                                     <label style="display: block;">Tanggal (opsional)</label>
-                                    <?php
-                                    echo $this->formInputSelect('end_date_d', $days_range, array(
+                                    <?php echo $this->formInputSelect('end_date_d', $days_range, array(
                                         'default' => $portfolio['end_date_d'],
                                         'id' => 'end-date-d'
-                                    ));
-                                    ?>
+                                    )) ?>
                                 </li>
                             </ul>
 
                         </td>
                     </tr>
 
-                    <?php
-                    endif;
-                    ?>
+                    <?php endif; ?>
 
                     <tr>
                         <th>
@@ -169,9 +141,7 @@ $this->appendJs([
                         </th>
                         <td>
                             <input type="text" id="job-title" class="input_full" name="job_title" value="<?php echo $this->requestParam('job_title', $portfolio['job_title']); ?>" />
-                            <?php
-                            echo $this->formShowErrors('job_title', $validation_errors);
-                            ?>
+                            <?php echo $this->formShowErrors('job_title', $validation_errors); ?>
                         </td>
                     </tr>
 
@@ -181,9 +151,7 @@ $this->appendJs([
                         </th>
                         <td>
                             <textarea id="job-desc" class="input_full" name="job_desc"><?php echo $portfolio['job_desc']; ?></textarea>
-                            <?php
-                            echo $this->formShowErrors('job_desc', $validation_errors);
-                            ?>
+                            <?php echo $this->formShowErrors('job_desc', $validation_errors); ?>
                         </td>
                     </tr>
 
@@ -192,16 +160,12 @@ $this->appendJs([
                             <label for="career-level-id" style="font-weight: bold;">Level *</label>
                         </th>
                         <td>
-                            <?php
-                            echo $this->formInputSelect('career_level_id', $career_levels, array(
+                            <?php echo $this->formInputSelect('career_level_id', $career_levels, [
                                 'default' => $portfolio['career_level_id'],
                                 'id' => 'career-level-id'
-                            ));
-                            ?>
+                            ]) ?>
 
-                            <?php
-                            echo $this->formShowErrors('career_level_id', $validation_errors);
-                            ?>
+                            <?php echo $this->formShowErrors('career_level_id', $validation_errors); ?>
                         </td>
                     </tr>
 

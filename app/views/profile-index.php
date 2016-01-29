@@ -92,28 +92,19 @@
                 </thead>
 
                 <tbody>
-                    <?php
-                    $num = 1;
-                    foreach ($member_portfolios as $item_portfolio):
-                    ?>
+                    <?php $num = 1; foreach ($member_portfolios as $item_portfolio): ?>
 
                     <tr>
                         <td>
-                            <?php
-                            echo $num;
-                            ?>
+                            <?php echo $num; ?>
                         </td>
 
                         <td>
-                            <?php
-                            echo filter_var(trim($item_portfolio['company_name']),FILTER_SANITIZE_STRING);
-                            ?>
+                            <?php echo filter_var(trim($item_portfolio['company_name']),FILTER_SANITIZE_STRING); ?>
                         </td>
 
                         <td>
-                            <?php
-                            echo filter_var(trim($item_portfolio['industry_name']), FILTER_SANITIZE_STRING);
-                            ?>
+                            <?php echo filter_var(trim($item_portfolio['industry_name']), FILTER_SANITIZE_STRING); ?>
                         </td>
 
                         <td>
@@ -157,22 +148,15 @@
                         </td>
 
                         <td>
-                            <?php
-                            echo filter_var(trim($item_portfolio['job_title']), FILTER_SANITIZE_STRING);
-                            ?>
+                            <?php echo filter_var(trim($item_portfolio['job_title']), FILTER_SANITIZE_STRING); ?>
                         </td>
 
                         <td>
-                            <?php
-                            echo filter_var(trim($item_portfolio['job_desc']), FILTER_SANITIZE_STRING);
-                            ?>
+                            <?php echo filter_var(trim($item_portfolio['job_desc']), FILTER_SANITIZE_STRING); ?>
                         </td>
                     </tr>
 
-                    <?php
-                    $num++;
-                    endforeach;
-                    ?>
+                    <?php $num++; endforeach; ?>
                 </tbody>
 
             </table>

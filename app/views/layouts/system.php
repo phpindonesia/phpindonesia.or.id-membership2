@@ -14,13 +14,13 @@
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/shortcodes.css">
     <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/responsive.css"> -->
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/skins/blue/style.css">
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('asset/css/bootstrap.css') ?>">
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('asset/css/font-awesome.css') ?>">
-    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/prettyPhoto.css">
+    <link rel="stylesheet" href="<?php echo $this->asset('/css/bootstrap.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->asset('/css/font-awesome.css') ?>">
+    <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/prettyPhoto.css"> -->
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/meanmenu.css">
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/animations.css">
-    <!-- <link rel="stylesheet" href="<?php echo $this->baseUrl('asset/css/responsive.css') ?>"> -->
-    <!-- <link rel="stylesheet" href="<?php echo $this->baseUrl('asset/css/formalize.css') ?>"> -->
+    <!-- <link rel="stylesheet" href="<?php echo $this->asset('/css/responsive.css') ?>"> -->
+    <!-- <link rel="stylesheet" href="<?php echo $this->asset('/css/formalize.css') ?>"> -->
     <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/formalize.css"> -->
     <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/responsive2.css"> -->
 
@@ -82,11 +82,10 @@
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/twitter/jquery.tweet.min.js"></script>
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/plugins.js"></script>
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/custom.js"></script>
-    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery.formalize.min.js"></script>
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/okzoom.min.js"></script>
 
-    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery.formalize.min.js"></script>
-    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/app/app.js"></script>
+    <script src="<?php echo $this->asset('/js/jquery.formalize.min.js') ?>"></script>
+    <script src="<?php echo $this->asset('/js/membership.js') ?>"></script>
 
     <?php if (isset($base_js)): foreach ($base_js as $js): ?>
         <script src="<?php echo $js ?>"></script>

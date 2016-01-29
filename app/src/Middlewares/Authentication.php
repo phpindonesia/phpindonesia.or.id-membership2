@@ -1,6 +1,8 @@
 <?php
 namespace Membership\Middlewares;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
 use Slim\Flash\Messages;
 use Slim\Router;
 
@@ -28,14 +30,17 @@ class Authentication
         $this->router = $router;
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke(Request $request, Response $response, callable $next)
     {
         $uri = $request->getUri();
         $path = $uri->getPath();
 
         if (!$this->assertContainPublicRoute($path) && !isset($_SESSION['MembershipAuth'])) {
             $this->flash->addMessage('error', 'You are not authenticated');
-            return $response->withRedirect($this->router->pathFor('membership-login'));
+
+            return $response->withRedirect(
+                $this->router->pathFor('membership-login')
+            );
         }
 
         return $next($request, $response);
