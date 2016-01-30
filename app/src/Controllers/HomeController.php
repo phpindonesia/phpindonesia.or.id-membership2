@@ -42,7 +42,7 @@ class HomeController extends Controllers
             ],
         ], 'layouts::account');
 
-        return $this->view->render('account-login');
+        return $this->view->render('home-login');
     }
 
     public function login(Request $request, Response $response, array $args)
@@ -120,7 +120,7 @@ class HomeController extends Controllers
         $this->enableCaptcha();
         $this->setPageTitle('Membership', 'Registrasi Anggota');
 
-        return $this->view->render('account-register', compact('provinces', 'cities', 'jobs'));
+        return $this->view->render('home-register', compact('provinces', 'cities', 'jobs'));
     }
 
     public function register(Request $request, Response $response, array $args)

@@ -14,9 +14,9 @@ $this->appendJs([
 
         <h3 style="border-bottom: 1px #000000 solid;">Update My Basic Profile</h3>
 
-        <?php echo $this->insert('sections::flash-message'); ?>
+        <?php echo $this->insert('sections::alert') ?>
 
-        <form action="<?php echo $this->pathFor('membership-profile-edit'); ?>" method="post" enctype="multipart/form-data" class="checkout" novalidate>
+        <form action="<?php echo $this->pathFor('membership-account-edit'); ?>" method="post" enctype="multipart/form-data" class="checkout" novalidate>
 
             <div class="left-col-oprek">
 
@@ -282,7 +282,7 @@ $this->appendJs([
 
                                     <td>
                                         <?php echo $this->formInputSelect('socmed_type',
-                                            array_combine(array_keys($socmedias), \Cake\Utility\Hash::extract($socmedias, '{s}.0')),
+                                            array_combine(array_keys($socmedias), array_keys($socmedias)),
                                             array('id' => 'meds-dd', 'class' => 'input_full')
                                         ) ?>
                                     </td>
@@ -323,8 +323,8 @@ $this->appendJs([
             </div>
 
             <div style="clear: both; margin-bottom: 25px; background-color:#478BCA; padding: 10px;">
-                <input value="Update Data" type="submit">
-                <button type="button" onclick="location.href='<?php echo $this->pathFor('membership-profile'); ?>';">Cancel and Back</button>
+                <input value="Update Data" class="btn btn-primary" type="submit">
+                <button type="button" class="btn btn-default" onclick="location.href='<?php echo $this->pathFor('membership-account'); ?>';">Cancel and Back</button>
             </div>
 
         </form>

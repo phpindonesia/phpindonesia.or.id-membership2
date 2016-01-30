@@ -75,7 +75,7 @@
                             <ul class="sub-menu">
                                 <li><a href="<?php echo $this->pathFor('membership-login') ?>">Login</a></li>
                                 <li><a href="<?php echo $this->pathFor('membership-register') ?>">Register</a></li>
-                                <li><a href="<?php echo $this->pathFor('membership-password-forgot') ?>">Forgot Password</a></li>
+                                <li><a href="<?php echo $this->pathFor('membership-forgot-password') ?>">Forgot Password</a></li>
                             </ul>
                         </li>
                         <?php endif ?>
@@ -92,7 +92,7 @@
                             </a>
                             <ul class="sub-menu">
                                 <li><a href="<?php echo $this->pathFor('membership-account'); ?>">My Membership Area</a></li>
-                                <li><a href="<?php echo $this->pathFor('membership-password-update'); ?>">Update Password</a></li>
+                                <li><a href="<?php echo $this->pathFor('membership-update-password'); ?>">Update Password</a></li>
                                 <li><a href="<?php echo $this->pathFor('membership-logout'); ?>">Logout</a></li>
                             </ul>
                         </li>

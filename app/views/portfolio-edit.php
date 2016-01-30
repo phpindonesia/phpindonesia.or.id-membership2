@@ -175,7 +175,7 @@ $this->appendJs([
                         </th>
                         <td>
                             <input type="submit" class="button" value="Update Data" />
-                            <button type="button" onclick="location.href='<?php echo $this->pathFor('membership-profile'); ?>';">Cancel and Back</button>
+                            <button type="button" onclick="location.href='<?php echo $this->pathFor('membership-account'); ?>';">Cancel and Back</button>
                         </td>
                     </tr>
                 </tbody>

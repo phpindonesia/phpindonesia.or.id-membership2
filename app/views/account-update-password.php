@@ -1,6 +1,6 @@
 <?php $this->layout('layouts::account') ?>
 
-<form action="<?php echo $this->pathFor('membership-password-forgot'); ?>" method="post" novalidate>
+<form action="<?php echo $this->pathFor('membership-forgot-password'); ?>" method="post" novalidate>
 
     <h3 class="aligncenter"> <i class="fa fa-key"></i> Update Password</h3>
 
