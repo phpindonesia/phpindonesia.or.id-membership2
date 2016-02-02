@@ -58,6 +58,31 @@ class Users extends Models
         return $count > 0;
     }
 
+    public function activate($userId, $activationKey)
+    {
+        $this->db->beginTransaction();
+
+        try {
+            $userId = (int) $userId;
+
+            $this->update(['activated' => 'Y'], $userId);
+
+            $this->db->update(['deleted' => 'Y'])
+                ->table('users_activations')
+                ->where($this->primary, '=', $userId)
+                ->where('activation_key'. '=', $activationKey)
+                ->execute();
+
+            $this->db->commit();
+
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+
+            return false;
+        }
+    }
+
     public function authenticate($login, $password)
     {
         $query = $this->db->select([

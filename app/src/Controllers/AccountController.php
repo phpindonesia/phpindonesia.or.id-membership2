@@ -457,17 +457,10 @@ class AccountController extends Controllers
 
     public function activate(Request $request, Response $response, array $args)
     {
-        $actExistCount = $this->data(Users::class)
-            ->assertActivationExists($args['uid'], $args['activation_key']);
+        $user = $this->data(Users::class);
+        $actExistCount = $user->assertActivationExists($args['uid'], $args['activation_key']);
 
-        if ($actExistCount > 0) {
-            $this->db->update('users', ['activated' => 'Y'], ['user_id' => $args['uid']]);
-
-            $this->db->update('users_activations', ['deleted' => 'Y'], [
-                'user_id' => $args['uid'],
-                'activation_key' => $args['activation_key']
-            ]);
-
+        if ($actExistCount === 1 && $user->activate($args['uid'], $args['activation_key'])) {
             $this->flash->addMessage('success', 'Selamat! Account anda sudah aktif. Silahkan login...');
         } else {
             $this->flash->addMessage('error', 'Bad Request');
