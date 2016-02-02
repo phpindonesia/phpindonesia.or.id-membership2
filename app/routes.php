@@ -32,7 +32,12 @@ $app->get('/profile/{username}', ProfileController::class.':index')->setName('me
 $app->get('/forgot-password', ProfileController::class.':forgotPasswordPage')->setName('membership-forgot-password');
 $app->post('/forgot-password', ProfileController::class.':forgotPassword');
 
-$app->get('/reset-password/{uid}/{reset_key}', ProfileController::class.':resetPasswordPage')->setName('membership-reset-password');
+$app->get('/reset-password/{uid}/{reset_key}', ProfileController::class.':resetPassword')->setName('membership-reset-password');
+
+$app->get('/activate/{uid}/{activation_key}', AccountController::class.':activate')->setName('membership-account-activate');
+
+$app->get('/reactivate', AccountController::class.':reactivatePage')->setName('membership-account-reactivate');
+$app->post('/reactivate', AccountController::class.':reactivate');
 
 $app->group('/account', function () {
 
@@ -40,11 +45,6 @@ $app->group('/account', function () {
 
     $this->get('/edit', AccountController::class.':editPage')->setName('membership-account-edit');
     $this->post('/edit', AccountController::class.':edit');
-
-    $this->get('/activate/{uid}/{activation_key}', AccountController::class.':activatePage')->setName('membership-account-activate');
-    $this->post('/activate', AccountController::class.':activate');
-
-    $this->get('/reactivate', AccountController::class.':reactivate')->setName('membership-account-reactivate');
 
     $this->get('/update-password', AccountController::class.':updatePasswordPage')->setName('membership-update-password');
     $this->post('/update-password', AccountController::class.':updatePassword');
@@ -72,18 +72,6 @@ $app->group('/account', function () {
         $this->get('/add', SkillsController::class.':addPage')->setName('membership-skills-add');
         $this->post('/add', SkillsController::class.':add');
     });
-
-})->add(function ($request, $response, $next) {
-
-    if (!isset($_SESSION['MembershipAuth'])) {
-        $this->flash->addMessage('error', 'You are not authenticated');
-
-        return $response->withRedirect(
-            $this->router->pathFor('membership-login')
-        );
-    }
-
-    return $next($request, $response);
 
 });
 

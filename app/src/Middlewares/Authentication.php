@@ -32,6 +32,14 @@ class Authentication
 
     public function __invoke(Request $request, Response $response, callable $next)
     {
+        if (!empty($inputs = $request->getParsedBody())) {
+            $request = $request->withParsedBody(
+                array_filter($inputs, function (&$value) {
+                    $value = $value ? filter_var(trim($value), FILTER_SANITIZE_STRING) : null;
+                })
+            );
+        }
+
         $uri = $request->getUri();
         $path = $uri->getPath();
 

@@ -9,6 +9,7 @@ class AccountController extends Controllers
 {
     public function index(Request $request, Response $response, array $args)
     {
+        $users = $this->data(Users::class);
         $qMembers = $this->db->select([
                 'm.*',
                 'reg_prv.regional_name province',
@@ -17,13 +18,13 @@ class AccountController extends Controllers
             ->from('members_profiles m')
             ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
             ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-            ->where('m.user_id', '=', $_SESSION['MembershipAuth']['user_id'])
+            ->where('m.user_id', '=', $users->current('user_id'))
             ->where('m.deleted', '=', 'N')
             ->execute();
 
         $qMembersSocmeds = $this->db->select(['socmed_type', 'account_name', 'account_url'])
             ->from('members_socmeds')
-            ->where('user_id', '=', $_SESSION['MembershipAuth']['user_id'])
+            ->where('user_id', '=', $users->current('user_id'))
             ->where('deleted', '=', 'N')
             ->execute();
 
@@ -44,7 +45,7 @@ class AccountController extends Controllers
             ])
             ->from('members_portfolios mp')
             ->leftJoin('industries ids', 'mp.industry_id', '=', 'ids.industry_id')
-            ->where('mp.user_id', '=', $_SESSION['MembershipAuth']['user_id'])
+            ->where('mp.user_id', '=', $users->current('user_id'))
             ->where('mp.deleted', '=', 'N')
             ->execute();
 
@@ -57,7 +58,7 @@ class AccountController extends Controllers
             ->from('members_skills ms')
             ->leftJoin('skills sp', 'ms.skill_parent_id', '=', 'sp.skill_id')
             ->leftJoin('skills ss', 'ms.skill_id', '=', 'ss.skill_id')
-            ->where('ms.user_id', '=', $_SESSION['MembershipAuth']['user_id'])
+            ->where('ms.user_id', '=', $users->current('user_id'))
             ->where('ms.deleted', '=', 'N')
             ->orderBy('sp.skill_name', 'ASC')
             ->execute();
@@ -73,17 +74,17 @@ class AccountController extends Controllers
         /*
          * Data view for portfolio-add
          */
-        $q_carerr_levels = $this->db->select(['career_level_id'])
+        $qCarerrLevels = $this->db->select(['career_level_id'])
             ->from('career_levels')
             ->orderBy('order_by', 'ASC')
             ->execute();
 
-        $q_industries = $this->db->select(['industry_id', 'industry_name'])
+        $qIndustries = $this->db->select(['industry_id', 'industry_name'])
             ->from('industries')
             ->execute();
 
-        $career_levels = array_pairs($q_carerr_levels->fetchAll(), 'career_level_id', 'career_level_id');
-        $industries = array_pairs($q_industries->fetchAll(), 'industry_id', 'industry_name');
+        $career_levels = array_pairs($qCarerrLevels->fetchAll(), 'career_level_id');
+        $industries = array_pairs($qIndustries->fetchAll(), 'industry_id', 'industry_name');
         $years_range = years_range();
         $months_range = months_range();
         $days_range = days_range();
@@ -93,21 +94,21 @@ class AccountController extends Controllers
         /*
          * Data view for skill-add
          */
-        $q_skills_main = $this->db->select(['skill_id', 'skill_name'])
+        $qSkills_main = $this->db->select(['skill_id', 'skill_name'])
             ->from('skills')
             ->whereNull('parent_id')
             ->execute();
 
-        $skills_main = array_pairs($q_skills_main->fetchAll(), 'skill_id', 'skill_name');
+        $skills_main = array_pairs($qSkills_main->fetchAll(), 'skill_id', 'skill_name');
         $skills = array();
 
         if (isset($post['skill_id']) && $post['skill_parent_id'] != '') {
-            $q_skills = $this->db->select(['skill_id', 'skill_name'])
+            $qSkills = $this->db->select(['skill_id', 'skill_name'])
                 ->from('skills')
                 ->where('parent_id', '=', $post['skill_parent_id'])
                 ->execute();
 
-            $skills = array_pairs($q_skills->fetchAll(), 'skill_id', 'skill_name');
+            $skills = array_pairs($qSkills->fetchAll(), 'skill_id', 'skill_name');
         }
 
         // --- End data view for skill-add
@@ -152,7 +153,8 @@ class AccountController extends Controllers
 
     public function editPage(Request $request, Response $response, array $args)
     {
-        $q_member = $this->db->select([
+        $users = $this->data(Users::class);
+        $qMember = $this->db->select([
                 'm.*',
                 'reg_prv.regional_name province',
                 'reg_cit.regional_name city'
@@ -160,42 +162,42 @@ class AccountController extends Controllers
             ->from('members_profiles m')
             ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
             ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-            ->where('m.user_id', '=', $_SESSION['MembershipAuth']['user_id'])
+            ->where('m.user_id', '=', $users->current('user_id'))
             ->execute();
 
-        $q_members_socmeds = $this->db->select(['member_socmed_id', 'socmed_type', 'account_name', 'account_url'])
+        $qMembers_socmeds = $this->db->select(['member_socmed_id', 'socmed_type', 'account_name', 'account_url'])
             ->from('members_socmeds')
-            ->where('user_id', '=', $_SESSION['MembershipAuth']['user_id'])
+            ->where('user_id', '=', $users->current('user_id'))
             ->where('deleted', '=', 'N')
             ->execute();
 
-        $q_provinces = $this->db->select(['id', 'regional_name'])
+        $qProvinces = $this->db->select(['id', 'regional_name'])
             ->from('regionals')
             ->whereNull('parent_id')
             ->where('city_code', '=', '00')
             ->orderBy('province_code, city_code')
             ->execute();
 
-        $q_cities = $this->db->select(['id', 'regional_name'])
+        $qCities = $this->db->select(['id', 'regional_name'])
             ->from('regionals')
             ->where('parent_id', '=', $_SESSION['MembershipAuth']['province_id'])
             ->orderBy('province_code, city_code')
             ->execute();
 
-        $q_religions = $this->db->select(['religion_id', 'religion_name'])
+        $qReligions = $this->db->select(['religion_id', 'religion_name'])
             ->from('religions')
             ->execute();
 
-        $q_jobs = $this->db->select(['job_id'])
+        $qJobs = $this->db->select(['job_id'])
             ->from('jobs')
             ->execute();
 
-        $member = $q_member->fetch();
-        $members_socmeds = $q_members_socmeds->fetchAll();
-        $provinces = array_pairs($q_provinces->fetchAll(), 'id', 'regional_name');
-        $cities = array_pairs($q_cities->fetchAll(), 'id', 'regional_name');
-        $religions = array_pairs($q_religions->fetchAll(), 'religion_id', 'religion_name');
-        $jobs = array_pairs($q_jobs->fetchAll(), 'job_id', 'job_id');
+        $member = $qMember->fetch();
+        $members_socmeds = $qMembers_socmeds->fetchAll();
+        $provinces = array_pairs($qProvinces->fetchAll(), 'id', 'regional_name');
+        $cities = array_pairs($qCities->fetchAll(), 'id', 'regional_name');
+        $religions = array_pairs($qReligions->fetchAll(), 'religion_id', 'religion_name');
+        $jobs = array_pairs($qJobs->fetchAll(), 'job_id', 'job_id');
 
         $genders = ['female' => 'Wanita', 'male' => 'Pria'];
         $identity_types = ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'];
@@ -221,7 +223,8 @@ class AccountController extends Controllers
 
     public function edit(Request $request, Response $response, array $args)
     {
-        $post = $request->getParsedBody();
+        $post      = $request->getParsedBody();
+        $users     = $this->data(Users::class);
         $validator = $this->validator->rule('required', [
             'fullname',
             'email',
@@ -234,29 +237,22 @@ class AccountController extends Controllers
         $validator->rule('email', 'email');
 
         if ($validator->validate()) {
-            $area = trim($post['area']);
-            $area = empty($area) ? null : $area;
-            $identity_number = trim($post['identity_number']);
-            $identity_number = empty($identity_number) ? null : filter_var(trim($identity_number), FILTER_SANITIZE_STRING);
-            $identity_type = $post['identity_type'] == '' ? null : filter_var(trim($post['identity_type']), FILTER_SANITIZE_STRING);
-            $religion_id = $post['religion_id'] == '' ? null : filter_var(trim($post['religion_id']), FILTER_SANITIZE_STRING);
-
-            $db->beginTransaction();
+            $this->db->beginTransaction();
             try {
                 $members_profiles = [
-                    'fullname' => filter_var(trim($post['fullname']), FILTER_SANITIZE_STRING),
-                    'contact_phone' => filter_var(trim($post['contact_phone']), FILTER_SANITIZE_STRING),
-                    'birth_place' => filter_var(trim(strtoupper($post['birth_place'])), FILTER_SANITIZE_STRING),
-                    'birth_date' => $post['birth_date'] == '' ? null : filter_var(trim($post['birth_date']), FILTER_SANITIZE_STRING),
-                    'identity_number' => $identity_number,
-                    'identity_type' => $identity_type,
-                    'religion_id' => $religion_id,
-                    'province_id' => filter_var(trim($post['province_id']), FILTER_SANITIZE_STRING),
-                    'city_id' => filter_var(trim($post['city_id']), FILTER_SANITIZE_STRING),
-                    'area' => filter_var(trim($area), FILTER_SANITIZE_STRING),
-                    'job_id' => filter_var(trim($post['job_id']), FILTER_SANITIZE_STRING),
-                    'modified' => date('Y-m-d H:i:s'),
-                    'modified_by' => $_SESSION['MembershipAuth']['user_id']
+                    'fullname'        => $post['fullname'],
+                    'contact_phone'   => $post['contact_phone'],
+                    'birth_place'     => strtoupper($post['birth_place']),
+                    'birth_date'      => $post['birth_date'],
+                    'identity_number' => $post['identity_number'],
+                    'identity_type'   => $post['identity_type'],
+                    'religion_id'     => $post['religion_id'],
+                    'province_id'     => $post['province_id'],
+                    'city_id'         => $post['city_id'],
+                    'area'            => $post['area'],
+                    'job_id'          => $post['job_id'],
+                    'modified'        => date('Y-m-d H:i:s'),
+                    'modified_by'     => $users->current('user_id')
                 ];
 
                 // Handle Photo Profile Upload
@@ -266,9 +262,8 @@ class AccountController extends Controllers
                     finfo_close($finfo);
 
                     $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
-                    $env_mode = $this->get('settings')['mode'];
-                    $cdn_upload_path = 'phpindonesia/'.$env_mode.'/';
-                    $new_fname = $_SESSION['MembershipAuth']['user_id'].'-'.date('YmdHis');
+                    $cdn_upload_path = 'phpindonesia/'.$this->settings['mode'].'/';
+                    $new_fname = $users->current('user_id').'-'.date('YmdHis');
 
                     $options = [
                         'public_id' => $cdn_upload_path.$new_fname,
@@ -298,63 +293,60 @@ class AccountController extends Controllers
                 }
 
                 // Update profile data record
-                $db->update('members_profiles', $members_profiles, array(
-                    'user_id' => $_SESSION['MembershipAuth']['user_id']
+                $this->db->update('members_profiles', $members_profiles, array(
+                    'user_id' => $users->current('user_id')
                 ));
 
-                $db->update('users', array(
+                $this->db->update('users', array(
                     'email' => trim($post['email']),
                     'province_id' => $post['province_id'],
                     'city_id' => $post['city_id'],
-                    'area' => $area,
+                    'area' => $post['area'],
                     'modified' => date('Y-m-d H:i:s'),
-                    'modified_by' => $_SESSION['MembershipAuth']['user_id']
-                ), array('user_id' => $_SESSION['MembershipAuth']['user_id']));
+                    'modified_by' => $users->current('user_id')
+                ), array('user_id' => $users->current('user_id')));
 
                 // Handle social medias
-                if (isset($post['socmeds']) && !empty($post['socmeds'])) {
+                if ($post['socmeds']) {
                     foreach ($post['socmeds'] as $item) {
                         $row = array(
-                            'user_id' => $_SESSION['MembershipAuth']['user_id'],
-                            'socmed_type' => filter_var(trim($item['socmed_type']), FILTER_SANITIZE_STRING),
-                            'account_name' => filter_var(trim($item['account_name']), FILTER_SANITIZE_STRING),
-                            'account_url' => filter_var(trim($item['account_url']), FILTER_SANITIZE_STRING),
+                            'user_id' => $users->current('user_id'),
+                            'socmed_type' => $item['socmed_type'],
+                            'account_name' => $item['account_name'],
+                            'account_url' => $item['account_url'],
                             'created' => date('Y-m-d H:i:s')
                         );
 
                         if ($item['member_socmed_id'] == 0) {
-                            $db->insert('members_socmeds', $row);
+                            $this->db->insert('members_socmeds', $row);
                         } else {
                             unset($row['created']);
                             $row['modified'] = date('Y-m-d H:i:s');
 
-                            $db->update('members_socmeds', $row, array(
+                            $this->db->update('members_socmeds', $row, array(
                                 'member_socmed_id' => $item['member_socmed_id']
                             ));
                         }
-
                     }
                 }
 
                 if (isset($post['socmeds_delete'])) {
                     foreach ($post['socmeds_delete'] as $item) {
-                        $db->update('members_socmeds', array('deleted' => 'Y'), array(
-                            'user_id' => $_SESSION['MembershipAuth']['user_id'],
+                        $this->db->update('members_socmeds', array('deleted' => 'Y'), array(
+                            'user_id' => $users->current('user_id'),
                             'socmed_type' => $item
                         ));
                     }
                 }
 
-                $db->commit();
+                $this->db->commit();
 
                 $this->flash->addMessage('success', 'Profile information successfuly updated! Congratulation!');
             } catch (Exception $e) {
-                $db->rollback();
+                $this->db->rollback();
 
                 $this->flash->addMessage('error', 'System failed<br>'.$e->getMessage());
             }
-
-            $db->close();
         } else {
             $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
         }
@@ -368,62 +360,44 @@ class AccountController extends Controllers
     {
         $this->setPageTitle('Membership', 'Update Password');
 
+        $this->enableCaptcha();
+
         return $this->view->render('account-update-password');
     }
 
     public function updatePassword(Request $request, Response $response, array $args)
     {
-        $validator = $this->validator;
-        $salt_pwd = $this->settings['salt_pwd'];
-
-        $validator->createInput($_POST);
-        $validator->rule('required', array(
+        $users     = $this->data(Users::class);
+        $saltPass  = $this->settings['salt_pwd'];
+        $password  = $request->getParsedBodyParam('password');
+        $validator = $this->validator->rule('required', [
             'oldpassword',
             'password',
             'repassword'
-        ));
+        ]);
 
-        $validator->addNewRule('check_oldpassword', function ($field, $value, array $params) use ($db, $salt_pwd) {
-            $salted_current_pwd = md5($salt_pwd.$value);
+        $validator->addNewRule('check_oldpassword', function ($field, $value, array $params) use ($users, $saltPass) {
+            $password = md5($saltPass.$value);
+            $countPass = $users->count(function ($query) use ($password) {
+                $query->where('user_id', '=', $users->current())
+                    ->where('password', '=', $password);
+            });
 
-            $q_current_pwd_count = $this->db
-                ->select('COUNT(*) AS total_data')
-                ->from('users')
-                ->where('user_id = :uid')
-                ->where('password = :pwd')
-                ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-                ->setParameter(':pwd', $salted_current_pwd)
-                ->execute();
-
-            $current_pwd_count = (int) $q_current_pwd_count->fetch()['total_data'];
-            if ($current_pwd_count > 0) {
-                return true;
-            }
-
-            return false;
-
+            return $countPass > 0;
         }, 'Wrong! Please remember your old password');
 
-        $validator->addNewRule('check_repassword', function ($field, $value, array $params) {
-            if ($value != $post['password']) {
-                return false;
-            }
-
-            return true;
-
+        $validator->addNewRule('check_repassword', function ($field, $value, array $params) use ($password) {
+            return $value == $password;
         }, 'Not match with choosen new password');
 
         $validator->rule('check_oldpassword', 'oldpassword');
         $validator->rule('check_repassword', 'repassword');
 
         if ($validator->validate()) {
-            $salted_new_pwd = md5($salt_pwd.$post['password']);
-
-            $this->db->update('users', array(
-                'password' => $salted_new_pwd,
-                'modified' => date('Y-m-d H:i:s'),
-                'modified_by' => $_SESSION['MembershipAuth']['user_id']
-            ), array('user_id' => $_SESSION['MembershipAuth']['user_id']));
+            $users->update(
+                ['password' => $this->salt($password)],
+                $users->current()
+            );
 
             $this->flash->addMessage('success', 'Password anda berhasil diubah! Selamat!');
 
@@ -437,6 +411,22 @@ class AccountController extends Controllers
         }
 
         return $response->withRedirect($this->router->pathFor('membership-login'));
+    }
+
+    public function activate(Request $request, Response $response, array $args)
+    {
+        $users = $this->data(Users::class);
+        $actExistCount = $users->assertActivationExists($args['uid'], $args['activation_key']);
+
+        if ($actExistCount === 1 && $users->activate($args['uid'], $args['activation_key'])) {
+            $this->flash->addMessage('success', 'Selamat! Account anda sudah aktif. Silahkan login...');
+        } else {
+            $this->flash->addMessage('error', 'Bad Request');
+        }
+
+        return $response->withRedirect(
+            $this->router->pathFor('membership-login')
+        );
     }
 
     public function reactivatePage(Request $request, Response $response, array $args)
@@ -455,28 +445,12 @@ class AccountController extends Controllers
         return $this->view->render('account-reactivate');
     }
 
-    public function activate(Request $request, Response $response, array $args)
-    {
-        $user = $this->data(Users::class);
-        $actExistCount = $user->assertActivationExists($args['uid'], $args['activation_key']);
-
-        if ($actExistCount === 1 && $user->activate($args['uid'], $args['activation_key'])) {
-            $this->flash->addMessage('success', 'Selamat! Account anda sudah aktif. Silahkan login...');
-        } else {
-            $this->flash->addMessage('error', 'Bad Request');
-        }
-
-        return $response->withRedirect(
-            $this->router->pathFor('membership-login')
-        );
-    }
-
     public function reactivate(Request $request, Response $response, array $args)
     {
         $validator = $this->validator->createInput($_POST);
 
         $validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {
-            $q_email_exist = $this->db
+            $qEmail_exist = $this->db
                 ->select('COUNT(*) AS total_data')
                 ->from('users')
                 ->where('email = :email')
@@ -485,7 +459,7 @@ class AccountController extends Controllers
                 ->setParameter(':d', 'N')
                 ->execute();
 
-            $email_exist = (int) $q_email_exist->fetch()['total_data'];
+            $email_exist = (int) $qEmail_exist->fetch()['total_data'];
             if ($email_exist > 0) {
                 return true;
             }
@@ -512,16 +486,16 @@ class AccountController extends Controllers
         if (in_array($_SESSION['MembershipAuth']['job_id'], $worker)) {
 
             if (!isset($_COOKIE['portfolio-popup'])) {
-                $q_check_portf = $this->db
+                $qCheck_portf = $this->db
                     ->select('COUNT(*) AS total_data')
                     ->from('members_portfolios')
                     ->where('user_id = :uid')
                     ->where('deleted = :d')
-                    ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+                    ->setParameter(':uid', $users->current('user_id'))
                     ->setParameter(':d', 'N')
                     ->execute();
 
-                if ($q_check_portf->fetch()['total_data'] > 0) {
+                if ($qCheck_portf->fetch()['total_data'] > 0) {
                     $open_portfolio = false;
                 } else {
                     $open_portfolio = true;
@@ -529,16 +503,16 @@ class AccountController extends Controllers
             }
 
             if (!isset($_COOKIE['skill-popup'])) {
-                $q_check_skills = $this->db
+                $qCheck_skills = $this->db
                     ->select('COUNT(*) AS total_data')
                     ->from('members_skills')
                     ->where('user_id = :uid')
                     ->where('deleted = :d')
-                    ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+                    ->setParameter(':uid', $users->current('user_id'))
                     ->setParameter(':d', 'N')
                     ->execute();
 
-                if ($q_check_skills->fetch()['total_data'] > 0) {
+                if ($qCheck_skills->fetch()['total_data'] > 0) {
                     $open_skill = false;
                 } else {
                     $open_skill = true;
@@ -548,16 +522,16 @@ class AccountController extends Controllers
         } else if (in_array($_SESSION['MembershipAuth']['job_id'], $student)) {
 
             if (!isset($_COOKIE['skill-popup'])) {
-                $q_check_skills = $this->db
+                $qCheck_skills = $this->db
                     ->select('COUNT(*) AS total_data')
                     ->from('members_skills')
                     ->where('user_id = :uid')
                     ->where('deleted = :d')
-                    ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+                    ->setParameter(':uid', $users->current('user_id'))
                     ->setParameter(':d', 'N')
                     ->execute();
 
-                if ($q_check_skills->fetch()['total_data'] > 0) {
+                if ($qCheck_skills->fetch()['total_data'] > 0) {
                     $open_skill = false;
                 } else {
                     $open_skill = true;

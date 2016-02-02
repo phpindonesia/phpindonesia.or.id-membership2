@@ -133,4 +133,17 @@ abstract class Controllers
 
         return $settings;
     }
+
+    /**
+     * Simple helper to salt the password
+     *
+     * @param string $password
+     * @return string
+     */
+    protected function salt($password)
+    {
+        $salt = $this->settings->get('salt_pwd');
+
+        return md5($salt . $password);
+    }
 }

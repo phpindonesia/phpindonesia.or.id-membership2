@@ -2,6 +2,7 @@
 namespace Membership;
 
 use Slim\PDO\Database;
+use Slim\Collection;
 
 abstract class Models implements \Countable
 {
@@ -9,11 +10,6 @@ abstract class Models implements \Countable
      * @var \Slim\PDO\Database
      */
     protected $db;
-
-    /**
-     * @var \Slim\Collection
-     */
-    protected $session;
 
     /**
      * @var string
@@ -41,11 +37,36 @@ abstract class Models implements \Countable
     protected $authorize = false;
 
     /**
+     * @var array|null|\Slim\Interfaces\CollectionInterface
+     */
+    protected $current = null;
+
+    /**
      * @param \Slim\PDO\Database $db
      */
-    public function __construct(Database $db, $session)
+    public function __construct(Database $db)
     {
         $this->db = $db;
+        // Anyone have better idea? :sweat_smile:
+        if (isset($_SESSION['MembershipAuth']['user_id'])) {
+            $this->current = new Collection($_SESSION['MembershipAuth']);
+            $this->current->set('user_id', (int) $this->current->get('user_id'));
+        }
+    }
+
+    /**
+     * Retrieve current user id
+     *
+     * @param string $key Collection key
+     * @return int
+     */
+    public function current($key = null, $default = null)
+    {
+        if (!is_null($key)) {
+            return $this->current->get($key, $default);
+        }
+
+        return $this->current;
     }
 
     /**
@@ -68,8 +89,8 @@ abstract class Models implements \Countable
         }
 
         if (true === $this->authorize) {
-            $pairs['create_by'] = $this->session->get('user_id');
-            $pairs['modified_by'] = $this->session->get('user_id');
+            $pairs['create_by']   = $this->current()['user_id'];
+            $pairs['modified_by'] = $this->current()['user_id'];
         }
 
         $query = $this->db->insert(array_keys($pairs))
@@ -138,7 +159,7 @@ abstract class Models implements \Countable
         }
 
         if (true === $this->authorize) {
-            $pairs['modified_by'] = $this->session->get('user_id');
+            $pairs['modified_by'] = $this->current()['user_id'];
         }
 
         $query = $this->db->update($pairs)->table($this->table);

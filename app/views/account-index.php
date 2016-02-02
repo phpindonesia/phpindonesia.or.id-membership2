@@ -158,28 +158,18 @@ $this->appendJs([
                 </thead>
 
                 <tbody>
-                    <?php
-                    $num = 1;
-                    foreach ($member_portfolios as $item_portfolio):
-                    ?>
-
+                    <?php $num = 1; foreach ($member_portfolios as $item_portfolio): ?>
                     <tr>
                         <td>
-                            <?php
-                            echo $num;
-                            ?>
+                            <?php echo $num; ?>
                         </td>
 
                         <td>
-                            <?php
-                            echo filter_var(trim($item_portfolio['company_name']),FILTER_SANITIZE_STRING);
-                            ?>
+                            <?php echo $this->e($item_portfolio['company_name']) ?>
                         </td>
 
                         <td>
-                            <?php
-                            echo filter_var(trim($item_portfolio['industry_name']), FILTER_SANITIZE_STRING);
-                            ?>
+                            <?php echo $this->e($item_portfolio['industry_name']); ?>
                         </td>
 
                         <td>
@@ -195,7 +185,7 @@ $this->appendJs([
                             }
 
                             if ($item_portfolio['start_date_y'] != null) {
-                                $periode_str .= filter_var(trim($item_portfolio['start_date_y']), FILTER_SANITIZE_STRING);
+                                $periode_str .= $this->e($item_portfolio['start_date_y']);
                             }
 
                             if ($item_portfolio['work_status'] == 'R') {
@@ -217,29 +207,22 @@ $this->appendJs([
                                 $periode_str .= ' s/d Sekarang';
                             }
 
-                            echo filter_var(trim($periode_str), FILTER_SANITIZE_STRING);
+                            echo $this->e($periode_str);
                             ?>
                         </td>
 
                         <td>
-                            <?php
-                            echo filter_var(trim($item_portfolio['job_title']), FILTER_SANITIZE_STRING);
-                            ?>
+                            <?php echo $this->e($item_portfolio['job_title']); ?>
                         </td>
 
                         <td>
-                            <?php
-                            echo filter_var(trim($item_portfolio['job_desc']), FILTER_SANITIZE_STRING);
-                            ?>
+                            <?php echo $this->e($item_portfolio['job_desc']); ?>
                         </td>
 
                         <td><a href="<?php echo $this->pathFor('membership-portfolio-edit', array('id' => $item_portfolio['member_portfolio_id'])); ?>" title="Edit item portfolio ini"><i class="fa fa-edit"></i> Edit</a></td>
                     </tr>
 
-                    <?php
-                    $num++;
-                    endforeach;
-                    ?>
+                    <?php $num++; endforeach; ?>
                 </tbody>
 
             </table>
@@ -261,10 +244,7 @@ $this->appendJs([
 
                 <tbody>
 
-                    <?php
-                    $num_skill = 1;
-                    foreach ($member_skills as $item_skill):
-                    ?>
+                    <?php $num_skill = 1; foreach ($member_skills as $item_skill): ?>
                     <tr>
                         <td>
                             <?php echo $num_skill; ?>
@@ -283,17 +263,14 @@ $this->appendJs([
                         </td>
 
                         <td>
-                            <?php
-                            $unique = md5($num_skill.$item_skill['member_skill_id']);
-                            ?>
-                            <form action="<?php echo $this->pathFor('membership-skills-delete', array('id' => $item_skill['member_skill_id'])); ?>" name="post_<?php echo $unique; ?>" id="post_<?php echo $unique; ?>" style="display:none;" method="post"><input autocomplete="off" name="_method" value="POST" type="hidden"></form>
+                            <?php $unique = md5($num_skill.$item_skill['member_skill_id']); ?>
+                            <form action="<?php echo $this->pathFor('membership-skills-edit', array('id' => $item_skill['member_skill_id'])); ?>" name="post_<?php echo $unique; ?>" id="post_<?php echo $unique; ?>" style="display:none;" method="post">
+                                <input name="_METHOD" value="DELETE" type="hidden">
+                            </form>
                             <a href="#" onclick="if (confirm('Delete this skill item?')) { document.post_<?php echo $unique; ?>.submit(); } event.returnValue = false; return false;"><i class="fa fa-trash"></i> Delete</a>
                         </td>
                     </tr>
-                    <?php
-                    $num_skill++;
-                    endforeach;
-                    ?>
+                    <?php $num_skill++; endforeach; ?>
 
                 </tbody>
             </table>
