@@ -133,32 +133,4 @@ abstract class Controllers
 
         return $settings;
     }
-
-    /**
-     * Combine array into single key value pairs
-     *
-     * @param array       $values
-     * @param string      $key
-     * @param string|null $val
-     * @return array
-     */
-    protected function arrayPairs(array $values, $key, $val = null)
-    {
-        $array = [];
-        $val = $val ?: $key;
-
-        foreach ($values as $value) {
-            if (isset($value[$key]) && isset($value[$val])) {
-                $array[$value[$key]] = $value[$val];
-            }
-        }
-
-        return $array;
-    }
-
-    protected function arrayFlattenValues($array)
-    {
-        $array = array_values($array);
-        return call_user_func_array('array_merge', $array);
-    }
 }

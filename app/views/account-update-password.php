@@ -6,7 +6,7 @@
 
     <div class="form-group">
         <label for="oldpassword" class="control-label">Old Password *</label>
-        <input id="oldpassword" class="form-control" name="oldpassword" required="required" type="password" value="<?php echo $this->requestParam('oldpassword'); ?>" />
+        <input id="oldpassword" class="form-control" name="oldpassword" required="required" type="password" value="<?php echo $this->parsedBodyParam('oldpassword'); ?>" />
         <p class="help-block">
             <?php echo $this->formShowErrors('oldpassword', $validation_errors); ?>
         </p>
@@ -14,7 +14,7 @@
 
     <div class="form-group">
         <label for="password" class="control-label">New Password *</label>
-        <input id="password" class="form-control" name="password" required="required" type="password" value="<?php echo $this->requestParam('password'); ?>" />
+        <input id="password" class="form-control" name="password" required="required" type="password" value="<?php echo $this->parsedBodyParam('password'); ?>" />
         <p class="help-block">
             <?php echo $this->formShowErrors('password', $validation_errors); ?>
         </p>
@@ -22,7 +22,7 @@
 
     <div class="form-group">
         <label for="repassword" class="control-label">Retype New Password *</label>
-        <input id="repassword" class="form-control" name="repassword" required="required" type="password" value="<?php echo $this->requestParam('repassword'); ?>" />
+        <input id="repassword" class="form-control" name="repassword" required="required" type="password" value="<?php echo $this->parsedBodyParam('repassword'); ?>" />
         <p class="help-block">
             <?php echo $this->formShowErrors('repassword', $validation_errors); ?>
         </p>

@@ -4,6 +4,7 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
+use Membership\Models\Skills;
 
 class SkillsController extends Controllers
 {
@@ -12,7 +13,7 @@ class SkillsController extends Controllers
         $this->assertXhrRequest($request, $response);
 
         return $response->withJson(
-            Skills::factory($this->db)->getChilds($args['skill_id'])
+            $this->data(Skills::class)->getChilds($args['skill_id'])
         );
     }
 
@@ -42,7 +43,7 @@ class SkillsController extends Controllers
 
             $this->db->close();
 
-            $this->flash->addMessage('success', 'Item skill baru berhasil ditambahkan. Selamat! . Silahkan tambahkan lagi item skill anda.');
+            $this->flash->addMessage('success', 'Item skill baru berhasil ditambahkan. Selamat!.  Silahkan tambahkan lagi item skill anda.');
         } else {
             $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
         }
@@ -60,7 +61,7 @@ class SkillsController extends Controllers
             ->where('parent_id IS NULL')
             ->execute();
 
-        $skills_main = $this->arrayPairs($q_skills_main->fetchAll(), 'skill_id', 'skill_name');
+        $skills_main = array_pairs($q_skills_main->fetchAll(), 'skill_id', 'skill_name');
         $skills = [];
 
         if (isset($post['skill_id']) && $post['skill_parent_id'] != '') {
@@ -71,7 +72,7 @@ class SkillsController extends Controllers
                 ->setParameter(':pid', $post['skill_parent_id'])
                 ->execute();
 
-            $skills = $this->arrayPairs($q_skills->fetchAll(), 'skill_id', 'skill_name');
+            $skills = array_pairs($q_skills->fetchAll(), 'skill_id', 'skill_name');
         }
 
         $this->setPageTitle('Membership', 'Add new techno skill item');

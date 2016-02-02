@@ -6,7 +6,7 @@
 
     <div class="form-group">
         <label for="email" class="control-label">Email *</label>
-        <input id="email" class="form-control" name="email" required="required" type="email" value="<?php echo $this->requestParam('email'); ?>" />
+        <input id="email" class="form-control" name="email" required="required" type="email" value="<?php echo $this->parsedBodyParam('email'); ?>" />
         <p class="help-block">
             <?php echo $this->formShowErrors('email', $validation_errors); ?>
             Account Reactivation adalah tool untuk mengajukan permintaan pengiriman ulang email aktivasi account.

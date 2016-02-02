@@ -3,34 +3,87 @@ namespace Membership;
 
 use Slim\PDO\Database;
 
-abstract class Models
+abstract class Models implements \Countable
 {
-    /**
-     * @var string
-     */
-    protected $table = '';
-
     /**
      * @var \Slim\PDO\Database
      */
     protected $db;
 
     /**
+     * @var \Slim\Collection
+     */
+    protected $session;
+
+    /**
+     * @var string
+     */
+    protected $table = '';
+
+    /**
+     * @var string
+     */
+    protected $primary = '';
+
+    /**
+     * @var bool
+     */
+    protected $destructive = false;
+
+    /**
+     * @var bool
+     */
+    protected $timestamps = true;
+
+    /**
+     * @var bool
+     */
+    protected $authorize = false;
+
+    /**
      * @param \Slim\PDO\Database $db
      */
-    public static function factory(Database $db)
+    public function __construct(Database $db, $session)
     {
-        $self = new static;
-        $self->db = $db;
+        $this->db = $db;
+    }
 
-        return $self;
+    /**
+     * Create new data
+     *
+     * @param array $pairs column value pairs of data
+     * @return int|false
+     */
+    public function create(array $pairs)
+    {
+        if (!$this->table) {
+            return false;
+        }
+
+        if (true === $this->timestamps) {
+            if (!isset($pairs['created'])) {
+                $pairs['created'] = date('Y-m-d h:i:s');
+            }
+            $pairs['modified'] = null;
+        }
+
+        if (true === $this->authorize) {
+            $pairs['create_by'] = $this->session->get('user_id');
+            $pairs['modified_by'] = $this->session->get('user_id');
+        }
+
+        $query = $this->db->insert(array_keys($pairs))
+            ->into($this->table)
+            ->values(array_values($pairs));
+
+        return (int) $query->execute(true);
     }
 
     /**
      * Get basic data
      *
-     * @param  string[]      $columns  Array of column
-     * @param  callable|null $callable [description]
+     * @param string[]      $columns  Array of column
+     * @param callable|null $callable [description]
      * @return \PDOStatement|false
      */
     public function get(array $columns = [], callable $callable = null)
@@ -39,8 +92,7 @@ abstract class Models
             return false;
         }
 
-        $query = $this->db->select($column)
-            ->from($this->table);
+        $query = $this->db->select($columns)->from($this->table);
 
         if (null !== $callable) {
             $callable($query);
@@ -50,34 +102,29 @@ abstract class Models
     }
 
     /**
-     * Create new data
+     * Find existing item(s) from table
      *
-     * @param  array  $pairs column value pairs of data
-     * @return int|false
+     * @param callable|array|numeric $terms column value pairs of term data you wanna find to
+     * @return \PDOStatement|false
      */
-    public function create(array $pairs)
+    public function find($terms = null)
     {
         if (!$this->table) {
             return false;
         }
 
-        if (!isset($pairs['created'])) {
-            $pairs['created'] = date('Y-m-d h:i:s');
-        }
+        $query = $this->db->select()->from($this->table);
 
-        $pairs['modified'] = null;
-        $query = $this->db->insert(array_keys($pairs))
-            ->into($this->table)
-            ->values(array_values($pairs));
+        $this->normalizeTerms($query, $terms);
 
-        return (int) $query->execute(true);
+        return $query->execute();
     }
 
     /**
-     * Update existing data
+     * Update existing item from table
      *
-     * @param  array          $pairs column value pairs of data
-     * @param  callable|array $terms column value pairs of term data you wanna update to
+     * @param array                  $pairs column value pairs of data
+     * @param callable|array|numeric $terms column value pairs of term data you wanna update to
      * @return int|false
      */
     public function update(array $pairs, $terms = null)
@@ -86,12 +133,38 @@ abstract class Models
             return false;
         }
 
-        if (!isset($pairs['modified'])) {
+        if (!isset($pairs['modified']) && true === $this->timestamps) {
             $pairs['modified'] = date('Y-m-d h:i:s');
         }
 
-        $query = $this->db->update($pairs)
-            ->table($this->table);
+        if (true === $this->authorize) {
+            $pairs['modified_by'] = $this->session->get('user_id');
+        }
+
+        $query = $this->db->update($pairs)->table($this->table);
+
+        $this->normalizeTerms($query, $terms);
+
+        return $query->execute();
+    }
+
+    /**
+     * Delete Item from table
+     *
+     * @param callable|array|numeric $terms
+     * @return int
+     */
+    public function delete($terms)
+    {
+        if (!$this->table) {
+            return false;
+        }
+
+        if (false === $this->destructive) {
+            return $this->update(['deleted' => 'Y'], $terms);
+        }
+
+        $query = $this->db->delete($this->table);
 
         $this->normalizeTerms($query, $terms);
 
@@ -101,13 +174,17 @@ abstract class Models
     /**
      * Count all data
      *
-     * @param  callable|null $callable Use it if you want more terms
-     * @param  string        $column   Column to count
-     * @param  bool          $distinct Need a distinct count?
+     * @param callable|null $callable Use it if you want more terms
+     * @param string        $column   Column to count
+     * @param bool          $distinct Need a distinct count?
      * @return int
      */
     public function count(callable $callable = null, $column = '', $distinct = false)
     {
+        if (!$this->table) {
+            return 0;
+        }
+
         $query = $this->db->count($column ?: '*', 'count', $distinct)->from($this->table);
 
         if (null !== $callable) {
@@ -120,11 +197,15 @@ abstract class Models
     /**
      * Normalize query terms
      *
-     * @param  \Slim\PDO\Statement\StatementContainer $query
-     * @param  callable|array                         $terms
+     * @param \Slim\PDO\Statement\StatementContainer $query
+     * @param callable|array|numeric                 $terms
      */
     protected function normalizeTerms($query, &$terms)
     {
+        if (empty($query)) {
+            return false;
+        }
+
         if (is_callable($terms)) {
             $terms($query);
         } elseif (is_array($terms)) {
@@ -134,8 +215,14 @@ abstract class Models
                     list($key, $sign) = explode(' ', $key);
                 }
 
-                $query->where($key, $sign, $value);
+                if (null !== $value) {
+                    $query->where($key, $sign, $value);
+                } else {
+                    $query->whereNull($key);
+                }
             }
+        } elseif (is_numeric($terms) && !is_float($terms)) {
+            $query->where($this->primary, '=', (int) $terms);
         }
     }
 }

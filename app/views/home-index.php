@@ -36,7 +36,7 @@ $this->appendCss([
 
                 <div class="form-group">
                     <label class="control-label">Area</label>
-                    <input type="text" id="area" class="form-control" name="area" value="<?php echo $this->requestParam('area', null, true); ?>"/>
+                    <input type="text" id="area" class="form-control" name="area" value="<?php echo $this->parsedBodyParam('area', null, true); ?>"/>
                 </div>
 
                 <div class="form-group">
@@ -62,7 +62,7 @@ $this->appendCss([
                         <div class="card-profile-footer clearfix">
                             <p><?php echo $member['province'] ?></p>
                             <p><?php echo $member['city']; ?></p>
-                            <a href="<?php echo $this->pathFor('membership-profile', ['name' => $member['username']]); ?>"
+                            <a href="<?php echo $this->pathFor('membership-profile', ['username' => $member['username']]); ?>"
                                class="card-profile-action">
                                 <i class="fa fa-external-link"></i>
                             </a>

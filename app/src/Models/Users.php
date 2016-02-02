@@ -4,20 +4,26 @@ namespace Membership\Models;
 use Membership\Models;
 use InvalidArgumentException;
 
-class Users extends Models implements \Countable
+class Users extends Models
 {
     /**
      * {@inheritdoc}
      */
     protected $table = 'users';
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $primary = 'user_id';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $authorize = true;
+
     public function updateLogin($userId)
     {
-        return $this->db
-            ->update(['last_login' => date('Y-m-d H:i:s')])
-            ->table('users')
-            ->where('user_id', '=', $userId)
-            ->execute();
+        return $this->update(['last_login' => date('Y-m-d H:i:s')], (int) $userId);
     }
 
     public function assertUsernameExists($username)
@@ -82,7 +88,7 @@ class Users extends Models implements \Countable
 
     public function getMembers($request)
     {
-        $stmt = $this->db->select([
+        $query = $this->db->select([
                 'u.user_id',
                 'u.username',
                 'u.email',
@@ -91,8 +97,8 @@ class Users extends Models implements \Countable
                 'm.fullname',
                 'm.gender',
                 'm.photo',
-                'reg_prv.regional_name AS province',
-                'reg_cit.regional_name AS city',
+                'reg_prv.regional_name province',
+                'reg_cit.regional_name city',
             ])
             ->from('users u')
             ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
@@ -102,22 +108,20 @@ class Users extends Models implements \Countable
             ->where('ur.role_id', '=', 'member')
             ->where('u.activated', '=', 'Y');
 
-        if ($request->getQueryParam('province_id') !== null) {
-            $stmt->where('m.province_id', '=', $request->getQueryParam('province_id'));
+        if ($request->getQueryParam('province_id')) {
+            $query->where('m.province_id', '=', (int) $request->getQueryParam('province_id'));
         }
 
-        if ($request->getQueryParam('city_id') !== null) {
-            $stmt->where('m.city_id', '=', $request->getQueryParam('city_id'));
+        if ($request->getQueryParam('city_id')) {
+            $query->where('m.city_id', '=', (int) $request->getQueryParam('city_id'));
         }
 
-        if ($request->getQueryParam('area') !== null) {
-            $stmt->whereLike('m.area', $request->getQueryParam('area'));
+        if ($request->getQueryParam('area')) {
+            $query->whereLike('m.area', $request->getQueryParam('area'));
         }
 
-        $stmt->orderBy('u.created', 'DESC');
-        $stmt->limit(20);
-        $stmt->offset($request->getQueryParam('page') ?: 0);
+        $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page'));
 
-        return $stmt->execute()->fetchAll();
+        return $query->execute()->fetchAll();
     }
 }

@@ -27,7 +27,7 @@ $this->appendJs([
                 </div>
 
                 <div class="team-details">
-                    <h6><?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></h6>
+                    <h6><?php echo $this->e($member['fullname']) ?></h6>
                     <br />
 
                     <ul class="dt-sc-social-icons">
@@ -66,12 +66,12 @@ $this->appendJs([
 
                                 <tr>
                                     <td style="width:200px; font-weight: bold;">Nama Lengkap</td>
-                                    <td>: <?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></td>
+                                    <td>: <?php echo $this->e($member['fullname']) ?></td>
                                 </tr>
 
                                 <tr>
                                     <td style="width:200px; font-weight: bold;">Gender</td>
-                                    <td>: <?php echo filter_var(trim(ucfirst($member['gender'])), FILTER_SANITIZE_STRING); ?></td>
+                                    <td>: <?php echo $this->e(ucfirst($member['gender'])); ?></td>
                                 </tr>
 
                                 <tr>
@@ -81,7 +81,7 @@ $this->appendJs([
 
                                 <tr>
                                     <td style="width:200px; font-weight: bold;">Phone</td>
-                                    <td>: <?php echo filter_var(trim($member['contact_phone']), FILTER_SANITIZE_STRING); ?></td>
+                                    <td>: <?php echo $this->e($member['contact_phone']); ?></td>
                                 </tr>
 
                                 <tr>
@@ -89,9 +89,9 @@ $this->appendJs([
                                     <td>
                                         :
                                         <?php
-                                        echo $member['birth_place'] == null ? '-' : filter_var(trim(ucfirst($member['birth_place'])), FILTER_SANITIZE_STRING);
+                                        echo $member['birth_place'] == null ? '-' : $this->e(ucfirst($member['birth_place']));
                                         echo ' , ';
-                                        echo $member['birth_date'] == null ? '-' : filter_var(trim($member['birth_date']), FILTER_SANITIZE_STRING);
+                                        echo $member['birth_date'] == null ? '-' : $this->e($member['birth_date']);
                                         ?>
                                     </td>
                                 </tr>
@@ -101,9 +101,9 @@ $this->appendJs([
                                     <td>
                                         :
                                         <?php
-                                        echo $member['identity_type'] == null ? '-' : filter_var(trim($member['identity_type']), FILTER_SANITIZE_STRING);
+                                        echo $member['identity_type'] == null ? '-' : $this->e($member['identity_type']);
                                         echo ' : ';
-                                        echo $member['identity_number'] == null ? '-' : filter_var(trim($member['identity_number']), FILTER_SANITIZE_STRING);
+                                        echo $member['identity_number'] == null ? '-' : $this->e($member['identity_number']);
                                         ?>
                                     </td>
                                 </tr>
@@ -113,11 +113,11 @@ $this->appendJs([
                                     <td>
                                         :
                                         <?php
-                                        echo $member['area'] == '' ? '-' : filter_var(trim(ucwords($member['area'])), FILTER_SANITIZE_STRING);
+                                        echo $member['area'] == '' ? '-' : $this->e(ucwords($member['area']));
                                         echo ' , ';
-                                        echo filter_var(trim($member['city']), FILTER_SANITIZE_STRING);
+                                        echo $this->e($member['city']);
                                         echo ' , ';
-                                        echo filter_var(trim($member['province']), FILTER_SANITIZE_STRING)
+                                        echo $this->e($member['province'])
                                         ?>
                                     </td>
                                 </tr>
@@ -298,27 +298,5 @@ $this->appendJs([
                 </tbody>
             </table>
 
-    </div>
-
-</div>
-
-<div class="dt-sc-margin50"></div>
-
-<!-- PORTFOLIO & SKILL ADD SECTION -->
-<div id="portfolio-popup" class="well" style="background-color: #FFFFFF;">
-
-    <?php echo $this->insert('sections::portfolio-add') ?>
-
-    <div style="position: absolute; top: 5px; right: 5px;">
-        <button class="portfolio-popup-close">Close [X]</button>
-    </div>
-</div>
-
-<div id="skill-popup" class="well" style="background-color: #FFFFFF;">
-
-    <?php echo $this->insert('sections::skill-add') ?>
-
-    <div style="position: absolute; top: 5px; right: 5px;">
-        <button class="skill-popup-close">Close [X]</button>
     </div>
 </div>

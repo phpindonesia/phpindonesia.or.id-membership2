@@ -12,10 +12,8 @@ class SkillsDelete
         $query = $this['db']->createQueryBuilder()
             ->select('COUNT(*) AS total_data')
             ->from('members_skills')
-            ->where('member_skill_id = :msid')
-            ->where('user_id = :uid')
-            ->setParameter(':msid', $routeInfo[2]['id'])
-            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
+            ->where('member_skill_id', '=', $routeInfo[2]['id'])
+            ->where('user_id', '=', $_SESSION['MembershipAuth']['user_id'])
             ->execute();
 
         $owner = (int) $query->fetch()['total_data'];

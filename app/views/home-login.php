@@ -5,12 +5,12 @@
 
     <div class="form-group">
         <label for="login" class="control-label">Username / Email</label>
-        <input id="login" class="form-control" name="login" required="required" type="text" value="<?php echo $this->requestParam('login'); ?>" />
+        <input id="login" class="form-control" name="login" required="required" type="text" value="<?php echo $this->parsedBodyParam('login'); ?>" />
     </div>
 
     <div class="form-group">
         <label for="password" class="control-label">Password</label>
-        <input id="password" class="form-control" name="password" required="required" type="password" value="<?php echo $this->requestParam('password'); ?>" />
+        <input id="password" class="form-control" name="password" required="required" type="password" value="<?php echo $this->parsedBodyParam('password'); ?>" />
     </div>
 
     <div class="form-group">

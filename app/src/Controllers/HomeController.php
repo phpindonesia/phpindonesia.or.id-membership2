@@ -12,19 +12,19 @@ class HomeController extends Controllers
 {
     public function index(Request $request, Response $response, array $args)
     {
-        $members = Users::factory($this->db)->getMembers($request);
         $provinces = $cities = [];
 
-        foreach (Regionals::factory($this->db)->getProvinces() as $prov) {
+        foreach ($this->data(Regionals::class)->getProvinces() as $prov) {
             $provinces[$prov['id']] = $prov['regional_name'];
         }
 
         if ($province_id = $request->getQueryParam('province_id')) {
-            foreach (Regionals::factory($this->db)->getCities($province_id) as $city) {
-                $cities[$city['id']] = $prov['regional_name'];
+            foreach ($this->data(Regionals::class)->getCities($province_id) as $city) {
+                $cities[$city['id']] = $city['regional_name'];
             }
         }
 
+        $members = $this->data(Users::class)->getMembers($request);
         $this->setPageTitle('Membership', 'Keanggotaan');
 
         return $this->view->render('home-index', compact('members','provinces', 'cities'));
@@ -38,7 +38,7 @@ class HomeController extends Controllers
             'helpTitle' => 'Bantuan Login?',
             'helpContent' => [
                 'Jika belum terdaftar sebagai anggota, <a href="'.$this->router->pathFor('membership-register').'" title="">Daftar Disini</a> menjadi anggota PHP Indonesia.',
-                'Hilang atau lupa password login, silahkan <a href="'.$this->router->pathFor('membership-password-forgot').'" title="">Reset Password</a> Anda.'
+                'Hilang atau lupa password login, silahkan <a href="'.$this->router->pathFor('membership-forgot-password').'" title="">Reset Password</a> Anda.'
             ],
         ], 'layouts::account');
 
@@ -56,7 +56,7 @@ class HomeController extends Controllers
 
         if (!$validator->validate()) {
             $errors = $validator->errors();
-            $this->flash->addMessage('error', '<p>'.implode('</p><p>', $this->arrayFlattenValues($errors)).'</p>');
+            $this->flash->addMessage('error', '<p>'.implode('</p><p>', array_flatten($errors)).'</p>');
 
             return $response->withRedirect(
                 $this->router->pathFor('membership-login')
@@ -65,7 +65,7 @@ class HomeController extends Controllers
 
         try {
             $password = md5($this->settings['salt_pwd'].$post['password']);
-            $user = Users::factory($this->db)->authenticate($post['login'], $password);
+            $user = $this->data(Users::class)->authenticate($post['login'], $password);
         } catch (\InvalidArgumentException $e) {
             $this->flash->addMessage('error', $e->getMessage());
 
@@ -97,23 +97,23 @@ class HomeController extends Controllers
 
     public function registerPage(Request $request, Response $response, array $args)
     {
-        $qProvinces = Regionals::factory($this->db)->getProvinces();
-        $qJobs = Jobs::factory($this->db)->getIds();
+        $qProvinces = $this->data(Regionals::class)->getProvinces();
+        $qJobs = $this->data(Jobs::class)->getIds();
 
         $cities = [];
         if ($provinceId = $request->getParam('province_id')) {
-            $qCities = Regionals::factory($this->db)->getCities($provinceId);
-            $cities = $this->arrayPairs($qCities, 'id', 'regional_name');
+            $qCities = $this->data(Regionals::class)->getCities($provinceId);
+            $cities = array_pairs($qCities, 'id', 'regional_name');
         }
 
-        $provinces = $this->arrayPairs($qProvinces, 'id', 'regional_name');
-        $jobs = $this->arrayPairs($qJobs, 'job_id');
+        $provinces = array_pairs($qProvinces, 'id', 'regional_name');
+        $jobs = array_pairs($qJobs, 'job_id');
 
         $this->view->addData([
             'helpTitle' => 'Bantuan Register?',
             'helpContent' => [
                 'Sudah pernah terdaftar menjadi anggota PHP Indonesia, silahkan <a href="'.$this->router->pathFor('membership-login').'" title="">Login Disini',
-                'Hilang atau lupa password login, silahkan <a href="'.$this->router->pathFor('membership-password-forgot').'" title="">Reset Password</a> Anda.'
+                'Hilang atau lupa password login, silahkan <a href="'.$this->router->pathFor('membership-forgot-password').'" title="">Reset Password</a> Anda.'
             ],
         ], 'layouts::account');
 

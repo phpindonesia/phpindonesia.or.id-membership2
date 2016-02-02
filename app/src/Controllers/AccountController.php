@@ -68,7 +68,7 @@ class AccountController extends Controllers
         $member_socmeds = $qMembersSocmeds->fetchAll();
         $socmedias = $this->settings['socmedias'];
         $socmedias_logo = $this->settings['socmedias_logo'];
-        $months = []; // $this->get('months');
+        $months = months();
 
         /*
          * Data view for portfolio-add
@@ -82,11 +82,11 @@ class AccountController extends Controllers
             ->from('industries')
             ->execute();
 
-        $career_levels = $this->arrayPairs($q_carerr_levels->fetchAll(), 'career_level_id', 'career_level_id');
-        $industries = $this->arrayPairs($q_industries->fetchAll(), 'industry_id', 'industry_name');
-        $years_range = []; // $this->get('years_range');
-        $months_range = []; // $this->get('months_range');
-        $days_range = []; // $this->get('days_range');
+        $career_levels = array_pairs($q_carerr_levels->fetchAll(), 'career_level_id', 'career_level_id');
+        $industries = array_pairs($q_industries->fetchAll(), 'industry_id', 'industry_name');
+        $years_range = years_range();
+        $months_range = months_range();
+        $days_range = days_range();
 
         // --- End data view for portfolio-add
 
@@ -98,7 +98,7 @@ class AccountController extends Controllers
             ->whereNull('parent_id')
             ->execute();
 
-        $skills_main = $this->arrayPairs($q_skills_main->fetchAll(), 'skill_id', 'skill_name');
+        $skills_main = array_pairs($q_skills_main->fetchAll(), 'skill_id', 'skill_name');
         $skills = array();
 
         if (isset($post['skill_id']) && $post['skill_parent_id'] != '') {
@@ -107,7 +107,7 @@ class AccountController extends Controllers
                 ->where('parent_id', '=', $post['skill_parent_id'])
                 ->execute();
 
-            $skills = $this->arrayPairs($q_skills->fetchAll(), 'skill_id', 'skill_name');
+            $skills = array_pairs($q_skills->fetchAll(), 'skill_id', 'skill_name');
         }
 
         // --- End data view for skill-add
@@ -192,10 +192,10 @@ class AccountController extends Controllers
 
         $member = $q_member->fetch();
         $members_socmeds = $q_members_socmeds->fetchAll();
-        $provinces = $this->arrayPairs($q_provinces->fetchAll(), 'id', 'regional_name');
-        $cities = $this->arrayPairs($q_cities->fetchAll(), 'id', 'regional_name');
-        $religions = $this->arrayPairs($q_religions->fetchAll(), 'religion_id', 'religion_name');
-        $jobs = $this->arrayPairs($q_jobs->fetchAll(), 'job_id', 'job_id');
+        $provinces = array_pairs($q_provinces->fetchAll(), 'id', 'regional_name');
+        $cities = array_pairs($q_cities->fetchAll(), 'id', 'regional_name');
+        $religions = array_pairs($q_religions->fetchAll(), 'religion_id', 'religion_name');
+        $jobs = array_pairs($q_jobs->fetchAll(), 'job_id', 'job_id');
 
         $genders = ['female' => 'Wanita', 'male' => 'Pria'];
         $identity_types = ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'];
@@ -453,7 +453,7 @@ class AccountController extends Controllers
 
     public function activate(Request $request, Response $response, array $args)
     {
-        $actExistCount = Users::factory($this->db)
+        $actExistCount = $this->data(Users::class)
             ->assertActivationExists($args['uid'], $args['activation_key']);
 
         if ($actExistCount > 0) {

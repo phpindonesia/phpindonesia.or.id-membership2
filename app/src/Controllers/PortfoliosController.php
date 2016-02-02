@@ -4,44 +4,21 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
+use Membership\Models\Careers;
+use Membership\Models\MemberPortfolios;
 
 class PortfoliosController extends Controllers
 {
-    public function index($request, $response)
-    {
-        $this->setPageTitle('Membership', 'Keanggotaan');
-
-        return $this->view->render(
-            'portfolio-index',
-            compact('members','provinces', 'cities', 'html_view_pager')
-        );
-    }
-
     public function addPage(Request $request, Response $response, array $args)
     {
-        $qCarerrLevels = $this->db
-            ->select('career_level_id')
-            ->from('career_levels')
-            ->orderBy('order_by', 'ASC')
-            ->execute();
-
-        $qIndustries = $this->db
-            ->select('industry_id', 'industry_name')
-            ->from('industries')
-            ->execute();
-
-        $career_levels = $this->arrayPairs($qCarerrLevels->fetchAll(), 'career_level_id');
-        $industries = $this->arrayPairs($qIndustries->fetchAll(), 'industry_id', 'industry_name');
-        $years_range = $this->get('years_range');
-        $months_range = $this->get('months_range');
-        $days_range = $this->get('days_range');
-
         $this->setPageTitle('Membership', 'Add new portfolio');
 
-        return $this->view->render(
-            'portfolio-add',
-            compact('career_levels', 'industries', 'years_range', 'months_range', 'days_range')
-        );
+        $career = $this->data(Careers::class);
+
+        return $this->view->render('portfolio-add',[
+            'career_levels' => array_pairs($career->getLevels(), 'career_level_id'),
+            'industries'    => array_pairs($career->getIndustries(), 'industry_id', 'industry_name')
+        ]);
     }
 
     public function add(Request $request, Response $response, array $args)
@@ -93,88 +70,22 @@ class PortfoliosController extends Controllers
 
     public function editPage(Request $request, Response $response, array $args)
     {
-        $q_member = $this->db
-            ->select([
-                'm.*',
-                'reg_prv.regional_name AS province',
-                'reg_cit.regional_name AS city'
-            ])
-            ->from('members_profiles', 'm')
-            ->leftJoin('m', 'regionals', 'reg_prv', 'reg_prv.id = m.province_id')
-            ->leftJoin('m', 'regionals', 'reg_cit', 'reg_cit.id = m.city_id')
-            ->where('m.user_id = :uid')
-            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-            ->execute();
+        $career = $this->data(Careers::class);
+        $portfolio = $this->data(MemberPortfolios::class)->find([
+            'member_portfolio_id' => (int) $args['id'],
+            'deleted' => 'N',
+        ]);
 
-        $q_members_socmeds = $this->db
-            ->select(['member_socmed_id', 'socmed_type', 'account_name', 'account_url'])
-            ->from('members_socmeds')
-            ->where('user_id = :uid')
-            ->where('deleted = :d')
-            ->setParameter(':uid', $_SESSION['MembershipAuth']['user_id'])
-            ->setParameter(':d', 'N')
-            ->execute();
+        $this->view->addData([
+            'career_levels' => array_pairs($career->getLevels(), 'career_level_id'),
+            'industries'    => array_pairs($career->getIndustries(), 'industry_id', 'industry_name')
+        ], 'sections::portfolio-form');
 
-        $q_provinces = $this->db
-            ->select(['id', 'regional_name'])
-            ->from('regionals')
-            ->where('parent_id IS NULL')
-            ->where('city_code = :ccode')
-            ->orderBy('province_code, city_code')
-            ->setParameter(':ccode', '00', \Doctrine\DBAL\Types\Type::STRING)
-            ->execute();
+        $this->setPageTitle('Membership', 'Update portfolio item');
 
-        $province_id = isset($post['province_id']) ? $post['province_id'] : $_SESSION['MembershipAuth']['province_id'];
-        $q_cities    = $this->db
-            ->select(['id', 'regional_name'])
-            ->from('regionals')
-            ->where('parent_id = :pvid')
-            ->orderBy('province_code, city_code')
-            ->setParameter(':pvid', $province_id, \Doctrine\DBAL\Types\Type::INTEGER)
-            ->execute();
-
-        $q_religions = $this->db
-            ->select(['religion_id', 'religion_name'])
-            ->from('religions')
-            ->execute();
-
-        $q_jobs = $this->db
-            ->select(['job_id'])
-            ->from('jobs')
-            ->execute();
-
-        $member          = $q_member->fetch();
-        $members_socmeds = $q_members_socmeds->fetchAll();
-        $provinces       = $this->arrayPairs($q_provinces->fetchAll(), 'id', 'regional_name');
-        $cities          = $this->arrayPairs($q_cities->fetchAll(), 'id', 'regional_name');
-        $religions       = $this->arrayPairs($q_religions->fetchAll(), 'religion_id', 'religion_name');
-        $jobs            = $this->arrayPairs($q_jobs->fetchAll(), 'job_id', 'job_id');
-        $genders         = ['female' => 'Wanita', 'male' => 'Pria'];
-
-        $this->db->close();
-
-        $this->view->addData(
-            array(
-                'page_title'     => 'Membership',
-                'sub_page_title' => 'Update Profile Anggota'
-            ),
-            'layouts::system'
-        );
-
-        return $this->view->render(
-            'profile-edit',
-            compact(
-                'member',
-                'provinces',
-                'cities',
-                'genders',
-                'religions',
-                'identity_types',
-                'socmedias',
-                'members_socmeds',
-                'jobs'
-            )
-        );
+        return $this->view->render('portfolio-edit', [
+            'portfolio' => $portfolio->fetch(),
+        ]);
     }
 
     public function edit(Request $request, Response $response, array $args)
@@ -356,7 +267,6 @@ class PortfoliosController extends Controllers
                     }
 
                     $this->db->commit();
-                    $this->db->close();
 
                     // also update session data
                     unset($member['modified'], $member['modified_by'], $member['area']);
@@ -372,10 +282,16 @@ class PortfoliosController extends Controllers
                 }
             } catch(Exception $e) {
                 $this->db->rollback();
-                $this->db->close();
 
                 $this->flash->addMessage('error', 'System failed<br />' . $e->getMessage());
             }
         }
+    }
+
+    public function deleted(Request $request, Response $response, array $args)
+    {
+        return $response->withRedirect(
+            $this->router->pathFor('membership-profile')
+        );
     }
 }

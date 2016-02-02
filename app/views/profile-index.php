@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="team-details">
-                    <h6><?php echo filter_var(trim($member['fullname'])); ?></h6>
+                    <h6><?php echo $this->e($member['fullname']) ?></h6>
 
                     <br />
 
@@ -47,7 +47,7 @@
                             <tbody>
                                 <tr>
                                     <td style="width:200px; font-weight: bold;">Nama Lengkap</td>
-                                    <td>: <?php echo filter_var(trim($member['fullname']), FILTER_SANITIZE_STRING); ?></td>
+                                    <td>: <?php echo $this->e($member['fullname']) ?></td>
                                 </tr>
 
                                 <tr>
@@ -62,7 +62,7 @@
 
                                 <tr>
                                     <td style="width:200px; font-weight: bold;">Domisili</td>
-                                    <td>: <?php echo $member['province'].', '.$member['city'].', '.filter_var(trim($member['area']), FILTER_SANITIZE_STRING); ?></td>
+                                    <td>: <?php echo $member['province'].', '.$member['city'].', '.$this->e($member['area']); ?></td>
                                 </tr>
 
                             </tbody>
@@ -100,29 +100,30 @@
                         </td>
 
                         <td>
-                            <?php echo filter_var(trim($item_portfolio['company_name']),FILTER_SANITIZE_STRING); ?>
+                            <?php echo $this->e($item_portfolio['company_name']) ?>
                         </td>
 
                         <td>
-                            <?php echo filter_var(trim($item_portfolio['industry_name']), FILTER_SANITIZE_STRING); ?>
+                            <?php echo $this->e($item_portfolio['industry_name']); ?>
                         </td>
 
                         <td>
                             <?php
                             $periode_str = '';
+                            $months = months();
 
                             // Start
-                            // if ($item_portfolio['start_date_d'] != null) {
-                            //     $periode_str .= $item_portfolio['start_date_d'].' ';
-                            // }
+                            if ($item_portfolio['start_date_d'] != null) {
+                                $periode_str .= $item_portfolio['start_date_d'].' ';
+                            }
 
-                            // if ($item_portfolio['start_date_m'] != null) {
-                            //     $periode_str .= $months[$item_portfolio['start_date_m']].' ';
-                            // }
+                            if ($item_portfolio['start_date_m'] != null) {
+                                $periode_str .= $months[$item_portfolio['start_date_m']].' ';
+                            }
 
-                            // if ($item_portfolio['start_date_y'] != null) {
-                            //     $periode_str .= filter_var(trim($item_portfolio['start_date_y']), FILTER_SANITIZE_STRING);
-                            // }
+                            if ($item_portfolio['start_date_y'] != null) {
+                                $periode_str .= $this->e($item_portfolio['start_date_y']);
+                            }
 
                             if ($item_portfolio['work_status'] == 'R') {
                                 $periode_str .= ' s/d ';
@@ -143,16 +144,16 @@
                                 $periode_str .= ' s/d Sekarang';
                             }
 
-                            echo filter_var(trim($periode_str), FILTER_SANITIZE_STRING);
+                            echo $this->e($periode_str);
                             ?>
                         </td>
 
                         <td>
-                            <?php echo filter_var(trim($item_portfolio['job_title']), FILTER_SANITIZE_STRING); ?>
+                            <?php echo $this->e($item_portfolio['job_title']) ?>
                         </td>
 
                         <td>
-                            <?php echo filter_var(trim($item_portfolio['job_desc']), FILTER_SANITIZE_STRING); ?>
+                            <?php echo $this->e($item_portfolio['job_desc']) ?>
                         </td>
                     </tr>
 

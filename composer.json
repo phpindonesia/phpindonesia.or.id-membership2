@@ -17,6 +17,9 @@
     "autoload": {
         "psr-4": {
             "Membership\\": "app/src/"
-        }
+        },
+        "files": [
+            "app/src/helpers.php"
+        ]
     }
 }

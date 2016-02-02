@@ -27,7 +27,7 @@ $this->appendJs([
                                 <label for="fullname" style="font-weight: bold;">Nama Lengkap *</label>
                             </th>
                             <td>
-                                <input type="text" class="input_full" id="fullname" name="fullname" value="<?php echo $this->requestParam('fullname', $member['fullname']); ?>" />
+                                <input type="text" class="input_full" id="fullname" name="fullname" value="<?php echo $this->parsedBodyParam('fullname', $member['fullname']); ?>" />
                                 <?php echo $this->formShowErrors('fullname', $validation_errors); ?>
                             </td>
                         </tr>
@@ -37,7 +37,7 @@ $this->appendJs([
                                 <label for="email" style="font-weight: bold;">Email *</label>
                             </th>
                             <td>
-                                <input type="text" class="input_full" id="email" name="email" value="<?php echo $this->requestParam('email', $_SESSION['MembershipAuth']['email']); ?>" />
+                                <input type="text" class="input_full" id="email" name="email" value="<?php echo $this->parsedBodyParam('email', $_SESSION['MembershipAuth']['email']); ?>" />
                                 <?php echo $this->formShowErrors('email', $validation_errors); ?>
                             </td>
                         </tr>
@@ -47,7 +47,7 @@ $this->appendJs([
                                 <label for="contact_phone" style="font-weight: bold;">Telepon</label>
                             </th>
                             <td>
-                                <input type="text" class="input_full" id="contact_phone" name="contact_phone" value="<?php echo $this->requestParam('contact_phone', $member['contact_phone']); ?>" />
+                                <input type="text" class="input_full" id="contact_phone" name="contact_phone" value="<?php echo $this->parsedBodyParam('contact_phone', $member['contact_phone']); ?>" />
                                 <?php echo $this->formShowErrors('contact_phone', $validation_errors); ?>
                             </td>
                         </tr>
@@ -91,7 +91,7 @@ $this->appendJs([
                                 <label for="area" style="font-weight: bold;">Area *</label>
                             </th>
                             <td>
-                                <input type="text" class="input_full" id="area" name="area" value="<?php echo $this->requestParam('area', $member['area']); ?>" />
+                                <input type="text" class="input_full" id="area" name="area" value="<?php echo $this->parsedBodyParam('area', $member['area']); ?>" />
                                 <?php echo $this->formShowErrors('area', $validation_errors); ?>
                             </td>
                         </tr>
@@ -136,7 +136,7 @@ $this->appendJs([
                             </th>
 
                             <td>
-                                <input type="text" class="input_full" id="identity_number" name="identity_number" value="<?php echo $this->requestParam('identity_number', $member['identity_number']); ?>" />
+                                <input type="text" class="input_full" id="identity_number" name="identity_number" value="<?php echo $this->parsedBodyParam('identity_number', $member['identity_number']); ?>" />
                                 <?php echo $this->formShowErrors('identity_number', $validation_errors); ?>
                             </td>
                         </tr>
@@ -147,7 +147,7 @@ $this->appendJs([
                             </th>
 
                             <td>
-                                <input type="text" class="input_full" id="birth_place" name="birth_place" value="<?php echo $this->requestParam('birth_place', $member['birth_place']); ?>" />
+                                <input type="text" class="input_full" id="birth_place" name="birth_place" value="<?php echo $this->parsedBodyParam('birth_place', $member['birth_place']); ?>" />
                                 <?php echo $this->formShowErrors('birth_place', $validation_errors); ?>
                             </td>
                         </tr>

@@ -10,20 +10,33 @@ class Skills extends Models
      */
     protected $table = 'skills';
 
-    public function getChilds($parent)
-    {
-        $stmt = $this->db->select(['skill_id', 'skill_name'])
-            ->from('skills')->where('parent_id', '=', $parent);
+    /**
+     * {@inheritdoc}
+     */
+    protected $primary = 'skill_id';
 
-        return $stmt->execute()->fetchAll();
-    }
+    /**
+     * {@inheritdoc}
+     */
+    protected $authorize = false;
 
     public function getParents()
     {
-        $stmt = $this->db->select(['skill_id', 'skill_name'])
-            ->from('skills')
-            ->whereNull('parent_id');
+        $result = $this->get(
+            [$this->primary, 'skill_name'],
+            ['parent_id' => null]
+        );
 
-        return $stmt->execute()->fetchAll();
+        return $result->fetchAll();
+    }
+
+    public function getChilds($parentId)
+    {
+        $result = $this->get(
+            [$this->primary, 'skill_name'],
+            ['parent_id' => (int) $parentId]
+        );
+
+        return $result->fetchAll();
     }
 }

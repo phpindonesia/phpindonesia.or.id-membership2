@@ -47,7 +47,7 @@ class ViewExtension implements ExtensionInterface
             'base_css' => [],
         ]);
 
-        $engine->registerFunction('requestParam', [$this, 'getDefaultValue']);
+        $engine->registerFunction('parsedBodyParam', [$this->request, 'getParsedBodyParam']);
         $engine->registerFunction('formInputSelect', [$this, 'inputSelect']);
         $engine->registerFunction('formErrorClass', [$this, 'errorClass']);
         $engine->registerFunction('formShowErrors', [$this, 'showError']);
@@ -72,11 +72,6 @@ class ViewExtension implements ExtensionInterface
         });
     }
 
-    public function getDefaultValue($name, $default = null)
-    {
-        $this->request->getParam($name, $default);
-    }
-
     public function userPhoto($public_id = null, $options = [])
     {
         $default = $this->template->asset('/images/team.png');
@@ -92,7 +87,6 @@ class ViewExtension implements ExtensionInterface
 
             $cdn_upload_path = 'phpindonesia/'.$this->mode.'/';
             return \Cloudinary::cloudinary_url($cdn_upload_path.$public_id, $options);
-
         } catch (\Exception $e) {
             return $default;
         }
@@ -101,7 +95,7 @@ class ViewExtension implements ExtensionInterface
     public function inputSelect($name, array $data, array $attributes = [])
     {
         $default = isset($attributes['default']) ? $attributes['default'] : null;
-        $reqParam = $this->request->getParam($name, $default);
+        $reqParam = $this->request->getParsedBodyParam($name, $default);
         unset($attributes['default']);
 
         $attrs = [];
@@ -141,11 +135,9 @@ class ViewExtension implements ExtensionInterface
     public function showError($name, array $errors)
     {
         $errors_str = '';
-        if (is_array($errors)) {
-            if (isset($errors[$name])) {
-                foreach ($errors[$name] as $item) {
-                    $errors_str .= '<label class="error">'.$item.'</label><br />';
-                }
+        if (isset($errors[$name])) {
+            foreach ($errors[$name] as $item) {
+                $errors_str .= '<label class="error">'.$item.'</label><br />';
             }
         }
 

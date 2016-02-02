@@ -6,6 +6,13 @@ use Membership\Controllers\ProfileController;
 use Membership\Controllers\SkillsController;
 use Membership\Controllers\RegionalsController;
 
+/**
+ * Route definitions
+ *
+ * - All GET Routes should be named
+ * - Every request method (GET, POST, UPDATE, DELETE) with same path should resolve by different class method
+ */
+
 $app->get('/', HomeController::class.':index')->setName('membership-index');
 
 $app->get('/login', HomeController::class.':loginPage')->setName('membership-login');
@@ -16,7 +23,11 @@ $app->post('/register', HomeController::class.':register');
 
 $app->get('/logout', HomeController::class.':logout')->setName('membership-logout');
 
-$app->get('/profile/{username:[a-zA-Z]+}', ProfileController::class.':index')->setName('membership-profile');
+/**
+ * TODO: normalize username,
+ * - Username should accept alphanumeric, dash and underscore only
+ */
+$app->get('/profile/{username}', ProfileController::class.':index')->setName('membership-profile');
 
 $app->get('/forgot-password', ProfileController::class.':forgotPasswordPage')->setName('membership-forgot-password');
 $app->post('/forgot-password', ProfileController::class.':forgotPassword');
@@ -24,7 +35,7 @@ $app->post('/forgot-password', ProfileController::class.':forgotPassword');
 $app->get('/reset-password/{uid}/{reset_key}', ProfileController::class.':resetPasswordPage')->setName('membership-reset-password');
 
 $app->group('/account', function () {
-    $this->get('/', AccountController::class.':index')->setName('membership-account');
+    $this->get('[/]', AccountController::class.':index')->setName('membership-account');
 
     $this->get('/edit', AccountController::class.':editPage')->setName('membership-account-edit');
     $this->post('/edit', AccountController::class.':edit');
@@ -40,23 +51,34 @@ $app->group('/account', function () {
     $this->get('/javascript', AccountController::class.':javascriptPage')->setName('membership-account-javascript');
 
     $this->delete('/{id:[0-9]+}', AccountController::class.':delete')->setName('membership-account-delete');
-});
 
-$app->group('/portfolio', function () {
-    $this->get('/add', PortfoliosController::class.':addPage')->setName('membership-portfolio-add');
-    $this->post('/add', PortfoliosController::class.':add');
+    $this->group('/portfolio', function () {
+        $this->get('/{id:[0-9]+}', PortfoliosController::class.':editPage')->setName('membership-portfolio-edit');
+        $this->post('/{id:[0-9]+}', PortfoliosController::class.':edit');
+        $this->delete('/{id:[0-9]+}', PortfoliosController::class.':delete');
 
-    $this->get('/edit', PortfoliosController::class.':editPage')->setName('membership-portfolio-edit');
-    $this->post('/edit', PortfoliosController::class.':edit');
-});
+        $this->get('/add', PortfoliosController::class.':addPage')->setName('membership-portfolio-add');
+        $this->post('/add', PortfoliosController::class.':add');
+    });
 
-$app->group('/skills', function () {
-    $this->get('', SkillsController::class.':index')->setName('membership-skills');
+    $this->group('/skills', function () {
+        $this->get('[/]', SkillsController::class.':index')->setName('membership-skills');
 
-    $this->delete('/{id:[0-9]+}', SkillsController::class.':delete')->setName('membership-skills-delete');
+        $this->delete('/{id:[0-9]+}', SkillsController::class.':delete')->setName('membership-skills-delete');
 
-    $this->get('/add', SkillsController::class.':addPage')->setName('membership-skills-add');
-    $this->post('/add', SkillsController::class.':add');
+        $this->get('/add', SkillsController::class.':addPage')->setName('membership-skills-add');
+        $this->post('/add', SkillsController::class.':add');
+    });
+})->add(function ($request, $response, $next) {
+    if (!isset($_SESSION['MembershipAuth'])) {
+        $this->flash->addMessage('error', 'You are not authenticated');
+
+        return $response->withRedirect(
+            $this->router->pathFor('membership-login')
+        );
+    }
+
+    return $next($request, $response);
 });
 
 $app->group('/regionals', function () {
