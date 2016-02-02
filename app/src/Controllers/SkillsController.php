@@ -49,7 +49,9 @@ class SkillsController extends Controllers
         }
 
         return $response->withRedirect(
-            $this->router->pathFor('membership-profile')
+            $this->router->pathFor('membership-profile', [
+                'username' => $_SESSION['MembershipAuth']['username']
+            ])
         );
     }
 
@@ -83,6 +85,24 @@ class SkillsController extends Controllers
         );
     }
 
+    public function editPage(Request $request, Response $response, array $args)
+    {
+        return $response->withRedirect(
+            $this->router->pathFor('membership-profile', [
+                'username' => $_SESSION['MembershipAuth']['username']
+            ])
+        );
+    }
+
+    public function edit(Request $request, Response $response, array $args)
+    {
+        return $response->withRedirect(
+            $this->router->pathFor('membership-profile', [
+                'username' => $_SESSION['MembershipAuth']['username']
+            ])
+        );
+    }
+
     public function delete(Request $request, Response $response, array $args)
     {
         $this->db->update('members_skills', array(
@@ -95,7 +115,9 @@ class SkillsController extends Controllers
         $this->flash->addMessage('success', 'Item Skill berhasil dihapus');
 
         return $response->withRedirect(
-            $this->router->pathFor('membership-profile')
+            $this->router->pathFor('membership-profile', [
+                'username' => $_SESSION['MembershipAuth']['username']
+            ])
         );
     }
 }

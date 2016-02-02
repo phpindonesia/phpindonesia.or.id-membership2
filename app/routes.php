@@ -35,6 +35,7 @@ $app->post('/forgot-password', ProfileController::class.':forgotPassword');
 $app->get('/reset-password/{uid}/{reset_key}', ProfileController::class.':resetPasswordPage')->setName('membership-reset-password');
 
 $app->group('/account', function () {
+
     $this->get('[/]', AccountController::class.':index')->setName('membership-account');
 
     $this->get('/edit', AccountController::class.':editPage')->setName('membership-account-edit');
@@ -64,12 +65,16 @@ $app->group('/account', function () {
     $this->group('/skills', function () {
         $this->get('[/]', SkillsController::class.':index')->setName('membership-skills');
 
+        $this->get('/{id:[0-9]+}', SkillsController::class.':editPage')->setName('membership-portfolio-edit');
+        $this->post('/{id:[0-9]+}', SkillsController::class.':edit');
         $this->delete('/{id:[0-9]+}', SkillsController::class.':delete')->setName('membership-skills-delete');
 
         $this->get('/add', SkillsController::class.':addPage')->setName('membership-skills-add');
         $this->post('/add', SkillsController::class.':add');
     });
+
 })->add(function ($request, $response, $next) {
+
     if (!isset($_SESSION['MembershipAuth'])) {
         $this->flash->addMessage('error', 'You are not authenticated');
 
@@ -79,10 +84,13 @@ $app->group('/account', function () {
     }
 
     return $next($request, $response);
+
 });
 
 $app->group('/regionals', function () {
+
     $this->get('/provinces', RegionalsController::class.':provinces')->setName('regionals-provinces');
     $this->get('/cities/{province_id:[0-9]+}', RegionalsController::class.':cities')->setName('regionals-cities');
+
 });
 

@@ -64,7 +64,9 @@ class PortfoliosController extends Controllers
         }
 
         return $response->withRedirect(
-            $this->router->pathFor('membership-profile')
+            $this->router->pathFor('membership-profile', [
+                'username' => $_SESSION['MembershipAuth']['username']
+            ])
         );
     }
 
@@ -276,7 +278,6 @@ class PortfoliosController extends Controllers
                     $_SESSION['MembershipAuth'] = array_merge($_SESSION['MembershipAuth'], $member);
 
                     $this->flash->addMessage('success', 'Profile information successfuly updated! Congratulation!');
-                    return $response->withStatus(302)->withHeader('Location', $this->router->pathFor('membership-profile'));
                 } else {
                     $this->flash->addMessage('warning', 'Some of fields are invalid!');
                 }
@@ -286,12 +287,20 @@ class PortfoliosController extends Controllers
                 $this->flash->addMessage('error', 'System failed<br />' . $e->getMessage());
             }
         }
+
+        return $response->withRedirect(
+            $this->router->pathFor('membership-profile', [
+                'username' => $_SESSION['MembershipAuth']['username']
+            ])
+        );
     }
 
     public function deleted(Request $request, Response $response, array $args)
     {
         return $response->withRedirect(
-            $this->router->pathFor('membership-profile')
+            $this->router->pathFor('membership-profile', [
+                'username' => $_SESSION['MembershipAuth']['username']
+            ])
         );
     }
 }
