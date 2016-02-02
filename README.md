@@ -1,25 +1,38 @@
-# phpindonesia.or.id-membership2
-PHP Indonesia - Membership Application - Reloaded
+# PHP Indonesia - Membership Application - Reloaded
 
-Platform:
+## Kebutuhan
 
-1. PHP
-2. MariaDB / MySQL
+- PHP 5.5 keatas.
+- HTTP Server, misal NginX or Apache.
+- MySQL Server 5.x keatas untuk database utama.
 
-Cara Install:
+## Instalasi
 
-1. Clone repository ini di direktori document root anda. Contoh: C:\xampp\htdocs atau /var/www
-2. Create database dengan nama bebas. Contoh: `dev-spirit`.
-3. Import file database struktur `dev-spirit.sql`
-4. Copy file `settings.php.disable` lalu rename hasil copy nya menjadi bernama `settings.php`. File `settings.php.disable` jangan dihapus atau di-rename.
-5. Edit nilai-nilai di settings.php sesuai kebutuhan.
-6. Buat direktori `files/photoprofile` di dalam direktori `public/` .
-7. Akses app dengan alamat berikut: `http://localhost/phpindonesia.or.id-membership2/apps/membership`
+Cukup clone repositori ini, ke direktori lokal anda
 
-Jika app ini diinstall di virtual host, maka akses dengan alamat: `http://virtual.host.anda/apps/membership` 
+```bash
+$ git clone git@github.com/username/repo --depth 1 phpid-membership
+$ cd phpid-membership
+```
 
-Cara berkontribusi:
+Buat database baru, terserah namanya apa (Misal. `phpid-membership`). Bisa gunakan PHPMyAdmin atau cukup tuliskan di terminal.
 
-1. Forking repository ini
-2. Lakukan semua perubahan - perubahan di branch `development`
-3. Hanya menerima pull-request ke branch `development` saja.
+```bash
+$ mysql -uroot -p create database [db-name]
+```
+
+Import kedua file `.sql` yang ada dalam folder `app/data` ke database yang telah anda buat:
+
+1. `membership-schema.sql`
+2. `membership-values.sql`
+
+Copy-Paste file `settings.php.disable` dan rename menjadi `settings.php` lalu sesuaikan isi konfigurasi didalamnya.
+
+Terakhir, buka url sesuai dengan konfigurasi lokal server anda. Misal [`http://localhost/phpid-membership`](http://localhost/phpid-membership).
+
+# Cara berkontribusi:
+
+1. Fork dan Clone repositori ini,
+2. Buat branch baru, usahakan beri nama sesuai dengan apa yang akan anda lakukan. Misal: `feature-keren` atau `fix-issue-123`,
+3. Setelah editing selesai, Push dan kirim Pull Request ke branch `development`,
+4. Jelaskan kontribusi apa yang anda lakukan pada Pull Request tersebut.
