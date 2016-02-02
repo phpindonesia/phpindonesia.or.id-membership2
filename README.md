@@ -1,12 +1,12 @@
-# PHP Indonesia - Membership Application - Reloaded
+# PHP Indonesia - Membership App - Reloaded
 
-## Kebutuhan
+### Kebutuhan
 
 - PHP 5.5 keatas.
 - HTTP Server, misal NginX or Apache.
 - MySQL Server 5.x keatas untuk database utama.
 
-## Instalasi
+### Instalasi
 
 Cukup clone repositori ini, ke direktori lokal anda
 
@@ -30,7 +30,17 @@ Copy-Paste file `settings.php.disable` dan rename menjadi `settings.php` lalu se
 
 Terakhir, buka url sesuai dengan konfigurasi lokal server anda. Misal [`http://localhost/phpid-membership`](http://localhost/phpid-membership).
 
-# Cara berkontribusi:
+### Struktur Direktori
+
+| Path | Keterangan |
+| --- | --- |
+| `app/` | Direktori utama aplikasi |
+| `app/data/` | Direktori database |
+| `app/src/` | Direktori source code aplikasi |
+| `app/views/` | Direktori template |
+| `www/` | Direktori public |
+
+### Cara berkontribusi:
 
 1. Fork dan Clone repositori ini,
 2. Buat branch baru, usahakan beri nama sesuai dengan apa yang akan anda lakukan. Misal: `feature-keren` atau `fix-issue-123`,
