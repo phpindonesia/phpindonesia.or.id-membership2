@@ -30,6 +30,11 @@ class Regionals extends Models
      */
     protected $authorize = false;
 
+    /**
+     * Retrieve province list
+     *
+     * @return array
+     */
     public function getProvinces()
     {
         return $this->get([$this->primary, 'regional_name'], function ($query) {
@@ -39,11 +44,17 @@ class Regionals extends Models
         })->fetchAll();
     }
 
+    /**
+     * Retrieve city list by $provinceId
+     *
+     * @param int $provinceId
+     * @return array
+     */
     public function getCities($provinceId)
     {
         return $this->get([$this->primary, 'regional_name'], function ($query) use ($provinceId) {
             $query->where('parent_id', '=', (int) $provinceId)
                 ->orderBy('city_code');
-        });
+        })->fetchAll();
     }
 }

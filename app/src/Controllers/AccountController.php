@@ -4,227 +4,54 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
+use Membership\Models\Users;
+use Membership\Models\Skills;
+use Membership\Models\Careers;
+use Membership\Models\Religions;
+use Membership\Models\Regionals;
+use Membership\Models\MemberProfile;
+use Membership\Models\MemberSocmeds;
 
 class AccountController extends Controllers
 {
     public function index(Request $request, Response $response, array $args)
     {
         $users = $this->data(Users::class);
-        $qMembers = $this->db->select([
-                'm.*',
-                'reg_prv.regional_name province',
-                'reg_cit.regional_name city'
-            ])
-            ->from('members_profiles m')
-            ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
-            ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-            ->where('m.user_id', '=', $users->current('user_id'))
-            ->where('m.deleted', '=', 'N')
-            ->execute();
-
-        $qMembersSocmeds = $this->db->select(['socmed_type', 'account_name', 'account_url'])
-            ->from('members_socmeds')
-            ->where('user_id', '=', $users->current('user_id'))
-            ->where('deleted', '=', 'N')
-            ->execute();
-
-        $qMembersPortfolios = $this->db->select([
-                'mp.member_portfolio_id',
-                'mp.company_name',
-                'ids.industry_name',
-                'mp.start_date_y',
-                'mp.start_date_m',
-                'mp.start_date_d',
-                'mp.end_date_y',
-                'mp.end_date_m',
-                'mp.end_date_d',
-                'mp.work_status',
-                'mp.job_title',
-                'mp.job_desc',
-                'mp.created'
-            ])
-            ->from('members_portfolios mp')
-            ->leftJoin('industries ids', 'mp.industry_id', '=', 'ids.industry_id')
-            ->where('mp.user_id', '=', $users->current('user_id'))
-            ->where('mp.deleted', '=', 'N')
-            ->execute();
-
-        $qMembers_skills = $this->db->select([
-                'ms.member_skill_id',
-                'ms.skill_self_assesment',
-                'sp.skill_name AS skill_parent_name',
-                'ss.skill_name'
-            ])
-            ->from('members_skills ms')
-            ->leftJoin('skills sp', 'ms.skill_parent_id', '=', 'sp.skill_id')
-            ->leftJoin('skills ss', 'ms.skill_id', '=', 'ss.skill_id')
-            ->where('ms.user_id', '=', $users->current('user_id'))
-            ->where('ms.deleted', '=', 'N')
-            ->orderBy('sp.skill_name', 'ASC')
-            ->execute();
-
-        $member = $qMembers->fetch();
-        $member_portfolios = $qMembersPortfolios->fetchAll();
-        $member_skills = $qMembers_skills->fetchAll();
-        $member_socmeds = $qMembersSocmeds->fetchAll();
-        $socmedias = $this->settings['socmedias'];
-        $socmedias_logo = $this->settings['socmedias_logo'];
-        $months = months();
-
-        /*
-         * Data view for portfolio-add
-         */
-        $qCarerrLevels = $this->db->select(['career_level_id'])
-            ->from('career_levels')
-            ->orderBy('order_by', 'ASC')
-            ->execute();
-
-        $qIndustries = $this->db->select(['industry_id', 'industry_name'])
-            ->from('industries')
-            ->execute();
-
-        $career_levels = array_pairs($qCarerrLevels->fetchAll(), 'career_level_id');
-        $industries = array_pairs($qIndustries->fetchAll(), 'industry_id', 'industry_name');
-        $years_range = years_range();
-        $months_range = months_range();
-        $days_range = days_range();
-
-        // --- End data view for portfolio-add
-
-        /*
-         * Data view for skill-add
-         */
-        $qSkills_main = $this->db->select(['skill_id', 'skill_name'])
-            ->from('skills')
-            ->whereNull('parent_id')
-            ->execute();
-
-        $skills_main = array_pairs($qSkills_main->fetchAll(), 'skill_id', 'skill_name');
-        $skills = array();
-
-        if (isset($post['skill_id']) && $post['skill_parent_id'] != '') {
-            $qSkills = $this->db->select(['skill_id', 'skill_name'])
-                ->from('skills')
-                ->where('parent_id', '=', $post['skill_parent_id'])
-                ->execute();
-
-            $skills = array_pairs($qSkills->fetchAll(), 'skill_id', 'skill_name');
-        }
-
-        // --- End data view for skill-add
 
         $this->setPageTitle('Membership', 'Profil Anggota');
 
-        /*
-         * Assign data view for portfolio-add
-         */
-        $this->view->addData(
-            compact(
-                'career_levels',
-                'industries',
-                'years_range',
-                'months_range',
-                'days_range'
-            ),
-            'sections::portfolio-add'
-        );
-
-        /*
-         * Assign data view for skill-add
-         */
-        $this->view->addData(
-            compact('skills_main', 'skills'),
-            'sections::skill-add'
-        );
-
-        return $this->view->render(
-            'account-index',
-            compact(
-                'member',
-                'member_portfolios',
-                'member_skills',
-                'member_socmeds',
-                'socmedias',
-                'socmedias_logo',
-                'months'
-            )
-        );
+        return $this->view->render('account-index', [
+            'member'            => $users->getProfile(),
+            'member_portfolios' => $users->getPortfolios(),
+            'member_skills'     => $users->getSkills(),
+            'member_socmeds'    => $users->getSocmends(),
+            'socmedias'         => $this->settings->get('socmedias'),
+        ]);
     }
 
     public function editPage(Request $request, Response $response, array $args)
     {
         $users = $this->data(Users::class);
-        $qMember = $this->db->select([
-                'm.*',
-                'reg_prv.regional_name province',
-                'reg_cit.regional_name city'
-            ])
-            ->from('members_profiles m')
-            ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
-            ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-            ->where('m.user_id', '=', $users->current('user_id'))
-            ->execute();
-
-        $qMembers_socmeds = $this->db->select(['member_socmed_id', 'socmed_type', 'account_name', 'account_url'])
-            ->from('members_socmeds')
-            ->where('user_id', '=', $users->current('user_id'))
-            ->where('deleted', '=', 'N')
-            ->execute();
-
-        $qProvinces = $this->db->select(['id', 'regional_name'])
-            ->from('regionals')
-            ->whereNull('parent_id')
-            ->where('city_code', '=', '00')
-            ->orderBy('province_code, city_code')
-            ->execute();
-
-        $qCities = $this->db->select(['id', 'regional_name'])
-            ->from('regionals')
-            ->where('parent_id', '=', $_SESSION['MembershipAuth']['province_id'])
-            ->orderBy('province_code, city_code')
-            ->execute();
-
-        $qReligions = $this->db->select(['religion_id', 'religion_name'])
-            ->from('religions')
-            ->execute();
-
-        $qJobs = $this->db->select(['job_id'])
-            ->from('jobs')
-            ->execute();
-
-        $member = $qMember->fetch();
-        $members_socmeds = $qMembers_socmeds->fetchAll();
-        $provinces = array_pairs($qProvinces->fetchAll(), 'id', 'regional_name');
-        $cities = array_pairs($qCities->fetchAll(), 'id', 'regional_name');
-        $religions = array_pairs($qReligions->fetchAll(), 'religion_id', 'religion_name');
-        $jobs = array_pairs($qJobs->fetchAll(), 'job_id', 'job_id');
-
-        $genders = ['female' => 'Wanita', 'male' => 'Pria'];
-        $identity_types = ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'];
-        $socmedias = $this->settings['socmedias'];
+        $regionals = $this->data(Regionals::class);
+        $religions = $this->data(Religions::class);
 
         $this->setPageTitle('Membership', 'Update Profile Anggota');
 
-        return $this->view->render(
-            'account-edit',
-            compact(
-                'member',
-                'provinces',
-                'cities',
-                'genders',
-                'religions',
-                'identity_types',
-                'socmedias',
-                'members_socmeds',
-                'jobs'
-            )
-        );
+        return $this->view->render('account-edit', [
+            'member'         => $users->getProfile(),
+            'member_socmeds' => $users->getSocmends(),
+            'religions'      => array_pairs($religions->get()->fetchAll(), 'religion_id', 'religion_name'),
+            'provinces'      => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
+            'cities'         => array_pairs($regionals->getCities($users->current('province_id')), 'id', 'regional_name'),
+            'jobs'           => array_pairs($this->data(Careers::class)->getJobs(), 'job_id'),
+            'genders'        => ['female' => 'Wanita', 'male' => 'Pria'],
+            'identity_types' => ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'],
+            'socmedias'      => $this->settings->get('socmedias'),
+        ]);
     }
 
     public function edit(Request $request, Response $response, array $args)
     {
-        $post      = $request->getParsedBody();
-        $users     = $this->data(Users::class);
         $validator = $this->validator->rule('required', [
             'fullname',
             'email',
@@ -237,105 +64,66 @@ class AccountController extends Controllers
         $validator->rule('email', 'email');
 
         if ($validator->validate()) {
+            $input = $request->getParsedBody();
+            $users = $this->data(Users::class);
+            $profile = $this->data(MemberProfile::class);
+            $socmeds = $this->data(MemberSocmeds::class);
+
+            $memberProfile = [
+                'fullname'        => $input['fullname'],
+                'contact_phone'   => $input['contact_phone'],
+                'birth_place'     => strtoupper($input['birth_place']),
+                'birth_date'      => $input['birth_date'],
+                'identity_number' => $input['identity_number'],
+                'identity_type'   => $input['identity_type'],
+                'religion_id'     => $input['religion_id'],
+                'province_id'     => $input['province_id'],
+                'city_id'         => $input['city_id'],
+                'area'            => $input['area'],
+                'job_id'          => $input['job_id']
+            ];
+
             $this->db->beginTransaction();
+
             try {
-                $members_profiles = [
-                    'fullname'        => $post['fullname'],
-                    'contact_phone'   => $post['contact_phone'],
-                    'birth_place'     => strtoupper($post['birth_place']),
-                    'birth_date'      => $post['birth_date'],
-                    'identity_number' => $post['identity_number'],
-                    'identity_type'   => $post['identity_type'],
-                    'religion_id'     => $post['religion_id'],
-                    'province_id'     => $post['province_id'],
-                    'city_id'         => $post['city_id'],
-                    'area'            => $post['area'],
-                    'job_id'          => $post['job_id'],
-                    'modified'        => date('Y-m-d H:i:s'),
-                    'modified_by'     => $users->current('user_id')
-                ];
-
-                // Handle Photo Profile Upload
-                if ($_FILES['photo']['error'] == UPLOAD_ERR_OK) {
-                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                    $mime_type = finfo_file($finfo, $_FILES['photo']['tmp_name']);
-                    finfo_close($finfo);
-
-                    $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
-                    $cdn_upload_path = 'phpindonesia/'.$this->settings['mode'].'/';
-                    $new_fname = $users->current('user_id').'-'.date('YmdHis');
-
-                    $options = [
-                        'public_id' => $cdn_upload_path.$new_fname,
-                        'tags' => ['user-avatar'],
-                    ];
-
-                    if ((in_array($mime_type, ['image/jpeg', 'image/png'])) && ($ext != 'php')) {
-
-                        // Upload photo to CDN Cloudinary
-                        $photo = \Cloudinary\Uploader::upload($_FILES['photo']['tmp_name'], $options);
-                        $members_profiles['photo'] = $new_fname.'.'.$ext;
-
-                        // Delete old photo
-                        if ($_SESSION['MembershipAuth']['photo'] != null) {
-                            $api = new \Cloudinary\Api;
-                            $public_id = str_replace('.'.$ext, '', $_SESSION['MembershipAuth']['photo']);
-
-                            $options = [
-                                'public_id' => $cdn_upload_path.$new_fname,
-                                'tags' => ['user-avatar'],
-                            ];
-
-                            $api->delete_resources($cdn_upload_path.$public_id, $options);
-                            $_SESSION['MembershipAuth']['photo'] = $members_profiles['photo'];
-                        }
-                    }
+                if ($file = $request->getUploadedFiles()) {
+                    $this->upload($file['photo'], $memberProfile);
                 }
 
                 // Update profile data record
-                $this->db->update('members_profiles', $members_profiles, array(
-                    'user_id' => $users->current('user_id')
-                ));
+                $profile->update($memberProfile, ['user_id' => $users->current('user_id')]);
 
-                $this->db->update('users', array(
-                    'email' => trim($post['email']),
-                    'province_id' => $post['province_id'],
-                    'city_id' => $post['city_id'],
-                    'area' => $post['area'],
-                    'modified' => date('Y-m-d H:i:s'),
-                    'modified_by' => $users->current('user_id')
-                ), array('user_id' => $users->current('user_id')));
+                $users->update([
+                    'email'       => $input['email'],
+                    'province_id' => $input['province_id'],
+                    'city_id'     => $input['city_id'],
+                    'area'        => $input['area'],
+                ], ['user_id' => $users->current('user_id')]);
 
                 // Handle social medias
-                if ($post['socmeds']) {
-                    foreach ($post['socmeds'] as $item) {
-                        $row = array(
-                            'user_id' => $users->current('user_id'),
-                            'socmed_type' => $item['socmed_type'],
+                if ($input['socmeds']) {
+                    foreach ($input['socmeds'] as $item) {
+                        $row = [
+                            'user_id'      => $users->current('user_id'),
+                            'socmed_type'  => $item['socmed_type'],
                             'account_name' => $item['account_name'],
-                            'account_url' => $item['account_url'],
-                            'created' => date('Y-m-d H:i:s')
-                        );
+                            'account_url'  => $item['account_url'],
+                        ];
 
                         if ($item['member_socmed_id'] == 0) {
-                            $this->db->insert('members_socmeds', $row);
+                            $socmeds->create($row);
                         } else {
-                            unset($row['created']);
-                            $row['modified'] = date('Y-m-d H:i:s');
-
-                            $this->db->update('members_socmeds', $row, array(
-                                'member_socmed_id' => $item['member_socmed_id']
-                            ));
+                            $socmeds->update($row, (int) $item['member_socmed_id']);
                         }
                     }
                 }
 
-                if (isset($post['socmeds_delete'])) {
-                    foreach ($post['socmeds_delete'] as $item) {
-                        $this->db->update('members_socmeds', array('deleted' => 'Y'), array(
+                if (isset($input['socmeds_delete'])) {
+                    foreach ($input['socmeds_delete'] as $item) {
+                        $socmeds->delete([
                             'user_id' => $users->current('user_id'),
                             'socmed_type' => $item
-                        ));
+                        ]);
                     }
                 }
 
@@ -358,9 +146,8 @@ class AccountController extends Controllers
 
     public function updatePasswordPage(Request $request, Response $response, array $args)
     {
-        $this->setPageTitle('Membership', 'Update Password');
-
         $this->enableCaptcha();
+        $this->setPageTitle('Membership', 'Update Password');
 
         return $this->view->render('account-update-password');
     }
@@ -368,7 +155,7 @@ class AccountController extends Controllers
     public function updatePassword(Request $request, Response $response, array $args)
     {
         $users     = $this->data(Users::class);
-        $saltPass  = $this->settings['salt_pwd'];
+        $saltPass  = $this->settings->get('salt_pwd');
         $password  = $request->getParsedBodyParam('password');
         $validator = $this->validator->rule('required', [
             'oldpassword',
@@ -403,7 +190,7 @@ class AccountController extends Controllers
 
             return $response->withRedirect(
                 $this->router->pathFor('membership-profile', [
-                    'username' => $_SESSION['MembershipAuth']['username']
+                    'username' => $users->current('username')
                 ])
             );
         } else {
@@ -447,126 +234,82 @@ class AccountController extends Controllers
 
     public function reactivate(Request $request, Response $response, array $args)
     {
-        $validator = $this->validator->createInput($_POST);
+        $users = $this->data(Users::class);
+        $validator = $this->validator->rule('required', 'email');
 
-        $validator->addNewRule('check_email_exist', function ($field, $value, array $params) use ($db) {
-            $qEmail_exist = $this->db
-                ->select('COUNT(*) AS total_data')
-                ->from('users')
-                ->where('email = :email')
-                ->where('deleted = :d')
-                ->setParameter(':email', trim($post['email']))
-                ->setParameter(':d', 'N')
-                ->execute();
+        $validator->addNewRule('assertEmailExists', function ($field, $value, array $params) use ($users) {
+            return !$users->assertEmailExists($value);
+        }, 'Email tersebut tidak terdaftar!');
 
-            $email_exist = (int) $qEmail_exist->fetch()['total_data'];
-            if ($email_exist > 0) {
-                return true;
-            }
-
-            return false;
-
-        }, 'Tidak terdaftar!');
-
-        $validator->rule('required', 'email');
-        $validator->rule('check_email_exist', 'email');
+        $validator->rule('assertEmailExists', 'email');
 
         if ($validator->validate()) {
             //
+            $this->flash->addMessage('error', 'Bad Request');
+        } else {
+            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
         }
+
+        return $response->withRedirect(
+            $this->router->pathFor('membership-account-reactivate')
+        );
     }
 
     public function javascript(Request $request, Response $response, array $args)
     {
+        $users = $this->data(Users::class);
+        $cookie = $request->getCookieParams();
         $open_portfolio = false;
         $open_skill = false;
-        $worker = array('KARYAWAN', 'FREELANCER', 'OWNER', 'MAHASISWA-KARYAWAN');
-        $student = array('PELAJAR', 'MAHASISWA');
+        $worker = ['KARYAWAN', 'FREELANCER', 'OWNER', 'MAHASISWA-KARYAWAN'];
+        $student = ['PELAJAR', 'MAHASISWA'];
 
-        if (in_array($_SESSION['MembershipAuth']['job_id'], $worker)) {
+        if (in_array($users->current('job_id'), $worker)) {
 
-            if (!isset($_COOKIE['portfolio-popup'])) {
-                $qCheck_portf = $this->db
-                    ->select('COUNT(*) AS total_data')
-                    ->from('members_portfolios')
-                    ->where('user_id = :uid')
-                    ->where('deleted = :d')
-                    ->setParameter(':uid', $users->current('user_id'))
-                    ->setParameter(':d', 'N')
-                    ->execute();
-
-                if ($qCheck_portf->fetch()['total_data'] > 0) {
-                    $open_portfolio = false;
-                } else {
-                    $open_portfolio = true;
-                }
+            if (!isset($cookie['portfolio-popup'])) {
+                $open_portfolio = $users->countPortfolios() === 0;
             }
 
-            if (!isset($_COOKIE['skill-popup'])) {
-                $qCheck_skills = $this->db
-                    ->select('COUNT(*) AS total_data')
-                    ->from('members_skills')
-                    ->where('user_id = :uid')
-                    ->where('deleted = :d')
-                    ->setParameter(':uid', $users->current('user_id'))
-                    ->setParameter(':d', 'N')
-                    ->execute();
-
-                if ($qCheck_skills->fetch()['total_data'] > 0) {
-                    $open_skill = false;
-                } else {
-                    $open_skill = true;
-                }
+            if (!isset($cookie['skill-popup'])) {
+                $open_skill = $users->countSkills() === 0;
             }
 
-        } else if (in_array($_SESSION['MembershipAuth']['job_id'], $student)) {
+        } else if (in_array($users->current('job_id'), $student)) {
 
-            if (!isset($_COOKIE['skill-popup'])) {
-                $qCheck_skills = $this->db
-                    ->select('COUNT(*) AS total_data')
-                    ->from('members_skills')
-                    ->where('user_id = :uid')
-                    ->where('deleted = :d')
-                    ->setParameter(':uid', $users->current('user_id'))
-                    ->setParameter(':d', 'N')
-                    ->execute();
-
-                if ($qCheck_skills->fetch()['total_data'] > 0) {
-                    $open_skill = false;
-                } else {
-                    $open_skill = true;
-                }
+            if (!isset($cookie['skill-popup'])) {
+                $open_skill = $users->countSkills() === 0;
             }
+
         }
 
-        return $this->view->render(
-            'account-javascript',
-            array(
-                'open_portfolio' => $open_portfolio,
-                'open_skill' => $open_skill
-            )
-        )->withHeader('Content-Type', 'application/javascript');
+        return $this->view->render('account-javascript', [
+            'open_portfolio' => $open_portfolio,
+            'open_skill'     => $open_skill
+        ])->withHeader('Content-Type', 'application/javascript');
     }
 
     public function portfolioCookie(Request $request, Response $response, array $args)
     {
-        if (!isset($_COOKIE['portfolio-popup'])) {
-            setcookie('portfolio-popup', 1, time()+86400);
+        $cookie = $request->getCookieParams();
+        if (!isset($cookie['portfolio-popup'])) {
+            setcookie('portfolio-popup', 1, $this->cookieTtl());
         }
 
-        return $response->withStatus(200)
-            ->withHeader('Content-Type', 'application/json')
-            ->write(json_encode(array('resp' => 'OK')));
+        return $response->withJson(['resp' => 'OK']);
     }
 
     public function skillsCookie(Request $request, Response $response, array $args)
     {
-        if (!isset($_COOKIE['skill-popup'])) {
-            setcookie('skill-popup', 1, time()+86400);
+        $cookie = $request->getCookieParams();
+        if (!isset($cookie['skill-popup'])) {
+            setcookie('skill-popup', 1, $this->cookieTtl());
         }
 
-        return $response->withStatus(200)
-            ->withHeader('Content-Type', 'application/json')
-            ->write(json_encode(array('resp' => 'OK')));
+        return $response->withJson(['resp' => 'OK']);
+    }
+
+    private function cookieTtl()
+    {
+        return time() + 86400;
     }
 }

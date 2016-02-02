@@ -10,23 +10,11 @@ date_default_timezone_set('Asia/Jakarta');
 require ROOT_DIR.'vendor/autoload.php';
 
 /**
- * Settings file
- */
-$settingsFile = APP_DIR.'settings.php';
-file_exists($settingsFile) || die ('Setting file not available');
-
-session_start();
-
-/**
  * Create new Slim\App instance
  *
  * @var Slim\App $app
  */
-$app = new Slim\App([
-    'settings' => require $settingsFile
-]);
-
-require APP_DIR.'dependencies.php';
+$app = new Slim\App(require APP_DIR.'container.php');
 
 $app->add(new Membership\Middlewares\Authentication(
     $app->getContainer()->get('settings')['publicRoutes'],

@@ -113,9 +113,7 @@ $this->appendJs([
                             </ul>
 
                             <div style="clear: both; margin-top: 30px;">
-                            <?php
-                            echo $this->formShowErrors('skill_self_assesment', $validation_errors);
-                            ?>
+                                <?php echo $this->formShowErrors('skill_self_assesment', $validation_errors); ?>
                             </div>
 
                         </td>

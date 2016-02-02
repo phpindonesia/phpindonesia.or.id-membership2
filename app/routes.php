@@ -65,7 +65,7 @@ $app->group('/account', function () {
     $this->group('/skills', function () {
         $this->get('[/]', SkillsController::class.':index')->setName('membership-skills');
 
-        $this->get('/{id:[0-9]+}', SkillsController::class.':editPage')->setName('membership-portfolio-edit');
+        $this->get('/{id:[0-9]+}', SkillsController::class.':editPage')->setName('membership-skills-edit');
         $this->post('/{id:[0-9]+}', SkillsController::class.':edit');
         $this->delete('/{id:[0-9]+}', SkillsController::class.':delete')->setName('membership-skills-delete');
 

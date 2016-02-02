@@ -216,9 +216,9 @@ $this->appendJs([
 
                         <tbody id="socmed-rows">
                             <?php
-                            if ($members_socmeds):
+                            if ($member_socmeds):
                                 $ii = 0;
-                                foreach ($members_socmeds as $socmed):
+                                foreach ($member_socmeds as $socmed):
                                 ?>
 
                                 <tr id="socmed-item<?php echo $ii; ?>">

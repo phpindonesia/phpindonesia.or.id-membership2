@@ -1,10 +1,30 @@
 <?php
+
+use Slim\Collection;
+use Slim\Container;
+use Slim\PDO\Database;
+use Slim\Handlers\Error as SlimError;
+use League\Plates\Extension\Asset as PlatesAsset;
+use Psr\Http\Message\UploadedFileInterface;
+use Valitron\Validator;
+use Membership\Models;
+
+/**
+ * Settings file
+ */
+$settingsFile = APP_DIR.'settings.php';
+file_exists($settingsFile) || die ('Setting file not available');
+
+session_start();
+
 /**
  * Slim Container
  *
  * @var \Slim\Container $container
  */
-$container = $app->getContainer();
+$container = new Container([
+    'settings' => require $settingsFile
+]);
 
 /**
  * Setup session
@@ -13,9 +33,8 @@ $container['session'] = function ($container) {
     if (!isset($_SESSION['MembershipAuth'])) {
         $_SESSION['MembershipAuth'] = [];
     }
-    $session =& $_SESSION['MembershipAuth'];
 
-    return new Slim\Collection($session);
+    return new Collection($_SESSION['MembershipAuth']);
 };
 
 /**
@@ -27,7 +46,7 @@ $container['db'] = function ($container) {
         $db['dsn'] = sprintf('%s:host=%s;dbname=%s', $db['driver'], $db['host'], $db['dbname']);
     }
 
-    return new Slim\PDO\Database($db['dsn'], $db['username'], $db['password']);
+    return new Database($db['dsn'], $db['username'], $db['password']);
 };
 
 /**
@@ -35,24 +54,23 @@ $container['db'] = function ($container) {
  */
 $container['data'] = function ($container) {
     $db = $container->get('db');
-    $session = $container->get('session');
 
-    return function ($class) use ($db, $session) {
+    return function ($class) use ($db) {
         if (!class_exists($class)) {
             throw new LogicException("Data model class {$class} not exists ");
         }
 
         $model = new ReflectionClass($class);
 
-        if (!$model->isSubclassOf(Membership\Models::class)) {
+        if (!$model->isSubclassOf(Models::class)) {
             throw new InvalidArgumentException(sprintf(
                 'Data model must be instance of %s, %s given',
-                Membership\Models::class,
+                Models::class,
                 $model->getName()
             ));
         }
 
-        return $model->newInstance($db, $session);
+        return $model->newInstance($db);
     };
 };
 
@@ -61,7 +79,7 @@ $container['data'] = function ($container) {
  */
 $container['validator'] = function ($container) {
     $request = $container->get('request');
-    $validator = new Valitron\Validator($request->getParams(), [], 'id');
+    $validator = new Validator($request->getParams(), [], 'id');
 
     return $validator;
 };
@@ -91,11 +109,49 @@ $container['view'] = function ($container) {
     $view->addFolder('sections', $settings['directory'].'/sections');
 
     // Load app view extensions
-    $view->loadExtension(new League\Plates\Extension\Asset(ROOT_DIR.'www'));
+    $view->loadExtension(new PlatesAsset(WWW_DIR));
     $view->loadExtension(new Membership\ViewExtension($request, $container->get('flash')));
     $view->loadExtension(new Projek\Slim\PlatesExtension($container->get('router'), $request->getUri()));
 
     return $view;
+};
+
+/**
+ * Setup upload handler container
+ */
+$container['upload'] = function ($container) {
+    $settings = $container->get('settings');
+    $session = $container->get('session');
+
+    return function (UploadedFileInterface $file, &$memberData) use ($settings, $session) {
+        $allowedTypes = ['image/jpeg', 'image/png'];
+        if (!in_array($file->getClientMediaType(), $allowedTypes)) {
+            throw new InvalidArgumentException('We only accept jpg and png image');
+        }
+
+        $ext = strtolower(pathinfo($file->getClientFilename(), PATHINFO_EXTENSION));
+        $cdnTargetPath = 'phpindonesia/' . $settings['mode'] . '/';
+        $newFileName = $session->get('user_id') . '-' . date('YmdHis');
+
+        Cloudinary\Uploader::upload((string) $file->getStream(), [
+            'public_id' => $cdnTargetPath . $newFileName,
+            'tags' => ['user-avatar'],
+        ]);
+
+        $memberData['photo'] = $newFileName . '.' . $ext;
+
+        if ($session->get('photo')) {
+            $api = new Cloudinary\Api;
+            $publicId = str_replace('.'.$ext, '', $session->get('photo'));
+
+            $api->delete_resources($cdnTargetPath . $publicId, [
+                'public_id' => $cdnTargetPath . $newFileName,
+                'tags' => ['user-avatar'],
+            ]);
+
+            $session->set('photo', $memberData['photo']);
+        }
+    };
 };
 
 /**
@@ -134,5 +190,7 @@ $container['errorHandler'] = function ($container) {
         };
     }
 
-    return new Slim\Handlers\Error(true);
+    return new SlimError(true);
 };
+
+return $container;

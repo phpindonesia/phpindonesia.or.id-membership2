@@ -4,6 +4,7 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
+use Membership\Models\Regionals;
 
 class RegionalsController extends Controllers
 {
@@ -11,11 +12,13 @@ class RegionalsController extends Controllers
     {
         $this->assertXhrRequest($request, $response);
 
-        $cities = $this->db->select(['id', 'regional_name'])
-            ->from('regionals')
-            ->where('parent_id', '=', $args['province_id'])
-            ->execute();
+        return $res->withJson($this->data(Regionals::class)->getCities(), 200);
+    }
 
-        return $res->withJson($cities, 200);
+    public function provinces(Request $request, Response $response, array $args)
+    {
+        $this->assertXhrRequest($request, $response);
+
+        return $res->withJson($this->data(Regionals::class)->getProvinces(), 200);
     }
 }

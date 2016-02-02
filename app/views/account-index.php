@@ -175,6 +175,7 @@ $this->appendJs([
                         <td>
                             <?php
                             $periode_str = '';
+                            $months = months();
 
                             if ($item_portfolio['start_date_d'] != null) {
                                 $periode_str .= $item_portfolio['start_date_d'].' ';
@@ -202,7 +203,6 @@ $this->appendJs([
                                 if ($item_portfolio['end_date_y'] != null) {
                                     $periode_str .= $item_portfolio['end_date_y'];
                                 }
-
                             } else {
                                 $periode_str .= ' s/d Sekarang';
                             }
@@ -219,7 +219,9 @@ $this->appendJs([
                             <?php echo $this->e($item_portfolio['job_desc']); ?>
                         </td>
 
-                        <td><a href="<?php echo $this->pathFor('membership-portfolio-edit', array('id' => $item_portfolio['member_portfolio_id'])); ?>" title="Edit item portfolio ini"><i class="fa fa-edit"></i> Edit</a></td>
+                        <td>
+                            <a href="<?php echo $this->pathFor('membership-portfolio-edit', array('id' => $item_portfolio['member_portfolio_id'])); ?>" title="Edit item portfolio ini"><i class="fa fa-edit"></i> Edit</a>
+                        </td>
                     </tr>
 
                     <?php $num++; endforeach; ?>

@@ -21,43 +21,79 @@ class Users extends Models
      */
     protected $authorize = true;
 
-    public function updateLogin($userId)
+    /**
+     * Create new user data
+     *
+     * @param string[] $pairs user data
+     * @return int|false
+     */
+    public function create(array $pairs)
     {
-        return $this->update(['last_login' => date('Y-m-d H:i:s')], (int) $userId);
+        $pairs['fullname'] = ucwords($pairs['fullname']);
+
+        $this->db->beginTransaction();
+
+        try {
+            $newDate = $this->freshDate();
+            $userId = parent::create([
+                'username'    => $pairs['username'],
+                'password'    => $pairs['password'],
+                'email'       => $pairs['email'],
+                'province_id' => $pairs['province_id'],
+                'city_id'     => $pairs['city_id'],
+                'area'        => $pairs['area'],
+            ]);
+
+            $values = [
+                'users_roles' => [
+                    'user_id'     => $userId,
+                    'role_id'     => 'member',
+                    'created_by'  => 0,
+                ],
+                'members_profiles' => [
+                    'user_id'     => $userId,
+                    'fullname'    => $pairs['fullname'],
+                    'gender'      => $pairs['gender_id'],
+                    'province_id' => $pairs['province_id'],
+                    'city_id'     => $pairs['city_id'],
+                    'area'        => $pairs['area'],
+                    'job_id'      => $pairs['job_id'],
+                    'created_by'  => 0
+                ],
+                'users_activations' => [
+                    'user_id'        => $userId,
+                    'activation_key' => $pairs['activation_key'],
+                    'expired_date'   => $pairs['activation_expired_date'],
+                    'deleted'        => 'N'
+                ]
+            ];
+
+            foreach ($values as $table => $pairs) {
+                $pairs['created'] = $newDate;
+
+                $this->db->insert(array_keys($pairs))
+                    ->into($table)
+                    ->values(array_values($pairs))
+                    ->execute();
+            }
+
+            $this->db->commit();
+
+            return $userId;
+        } catch (Exception $e) {
+            $this->db->rollback();
+
+            return false;
+        }
     }
 
-    public function assertUsernameExists($username)
-    {
-        $username = strtolower($username);
-        $count = $this->count(function ($query) use ($username) {
-            $query->where('username', '=', $username);
-        });
-
-        return $count > 0;
-    }
-
-    public function assertEmailExists($email)
-    {
-        $email = strtolower($email);
-        $count = $this->count(function ($query) use ($email) {
-            $query->where('email', '=', $email);
-        });
-
-        return $count > 0;
-    }
-
-    public function assertActivationExists($userId, $key)
-    {
-        $count = $this->count(function ($query) use ($userId, $key) {
-            $query->where('user_id', '=', $userId)
-                ->where('activation_key', '=', $key)
-                ->where('deleted', '=', 'N')
-                ->where('expired_date', '>', date('Y-m-d'));
-        });
-
-        return $count > 0;
-    }
-
+    /**
+     * Activate user
+     *
+     * @param int $userId
+     * @param string $activationKey
+     * @return bool
+     */
     public function activate($userId, $activationKey)
     {
         $this->db->beginTransaction();
@@ -81,6 +117,104 @@ class Users extends Models
 
             return false;
         }
+    }
+
+    public function updateLogin($userId)
+    {
+        return $this->update(['last_login' => date('Y-m-d H:i:s')], (int) $userId);
+    }
+
+    public function getProfile($userId = null)
+    {
+        $profile = new MemberProfile($this->db);
+        !is_null($userId) || $userId = $this->current('user_id');
+
+        return $profile->get([
+            'm.*',
+            'reg_prv.regional_name province',
+            'reg_cit.regional_name city'
+        ], function ($query) use ($userId) {
+            $query->from('members_profiles m')
+                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+                ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
+                ->where('m.user_id', '=', $userId)
+                ->where('m.deleted', '=', 'N');
+        })->fetch();
+    }
+
+    public function getSocmends($userId = null)
+    {
+        $socmeds = new MemberSocmeds($this->db);
+        !is_null($userId) || $userId = $this->current('user_id');
+
+        return $socmeds->get([
+            'socmed_type', 'account_name', 'account_url'
+        ], function ($query) use ($userId) {
+            $query->where('user_id', '=', $userId)
+                ->where('deleted', '=', 'N');
+        })->fetchAll();
+    }
+
+    public function getPortfolios($userId = null)
+    {
+        $portfolio = new MemberPortfolios($this->db);
+        !is_null($userId) || $userId = $this->current('user_id');
+
+        return $portfolio->get([
+            'mp.member_portfolio_id',
+            'mp.company_name', 'ids.industry_name',
+            'mp.start_date_y', 'mp.start_date_m', 'mp.start_date_d',
+            'mp.end_date_y', 'mp.end_date_m', 'mp.end_date_d',
+            'mp.work_status', 'mp.job_title', 'mp.job_desc',
+            'mp.created',
+        ], function ($query) use ($userId) {
+            $query->from('members_portfolios mp')
+                ->leftJoin('industries ids', 'mp.industry_id', '=', 'ids.industry_id')
+                ->where('mp.user_id', '=', $userId)
+                ->where('mp.deleted', '=', 'N');
+        })->fetchAll();
+    }
+
+    public function countPortfolios($userId = null)
+    {
+        $portfolio = new MemberPortfolios($this->db);
+        !is_null($userId) || $userId = $this->current('user_id');
+
+        return $portfolio->count(function ($query) use ($userId) {
+            $query->where('user_id', '=', $userId)
+                ->where('deleted', '=', 'N');
+        });
+    }
+
+    public function getSkills($userId = null)
+    {
+        $skills = new MemberSkills($this->db);
+        !is_null($userId) || $userId = $this->current('user_id');
+
+        return $skills->get([
+            'ms.member_skill_id',
+            'ms.skill_self_assesment',
+            'sp.skill_name skill_parent_name',
+            'ss.skill_name'
+        ], function ($query) use ($userId) {
+            $query->from('members_skills ms')
+                ->leftJoin('skills sp', 'ms.skill_parent_id', '=', 'sp.skill_id')
+                ->leftJoin('skills ss', 'ms.skill_id', '=', 'ss.skill_id')
+                ->where('ms.user_id', '=', $userId)
+                ->where('ms.deleted', '=', 'N')
+                ->orderBy('sp.skill_name', 'ASC');
+        })->fetchAll();
+    }
+
+    public function countSkills($userId = null)
+    {
+        $skills = new MemberSkills($this->db);
+        !is_null($userId) || $userId = $this->current('user_id');
+
+        return $skills->count(function ($query) use ($userId) {
+            $query->where('user_id', '=', $userId)
+                ->where('deleted', '=', 'N');
+        });
     }
 
     public function authenticate($login, $password)
@@ -148,5 +282,37 @@ class Users extends Models
         $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page'));
 
         return $query->execute()->fetchAll();
+    }
+
+    public function assertUsernameExists($username)
+    {
+        $username = strtolower($username);
+        $count = $this->count(function ($query) use ($username) {
+            $query->where('username', '=', $username);
+        });
+
+        return $count > 0;
+    }
+
+    public function assertEmailExists($email)
+    {
+        $email = strtolower($email);
+        $count = $this->count(function ($query) use ($email) {
+            $query->where('email', '=', $email);
+        });
+
+        return $count > 0;
+    }
+
+    public function assertActivationExists($userId, $key)
+    {
+        $count = $this->count(function ($query) use ($userId, $key) {
+            $query->where('user_id', '=', $userId)
+                ->where('activation_key', '=', $key)
+                ->where('deleted', '=', 'N')
+                ->where('expired_date', '>', date('Y-m-d'));
+        });
+
+        return $count > 0;
     }
 }

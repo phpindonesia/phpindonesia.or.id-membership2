@@ -124,7 +124,7 @@ abstract class Controllers
      */
     protected function enableCaptcha()
     {
-        $settings = $this->settings['gcaptcha'];
+        $settings = $this->settings->get('gcaptcha');
         $this->view->addData([
             'gcaptchaSitekey' => $settings['sitekey'],
             'gcaptchaSecret'  => $settings['secret'],

@@ -20,22 +20,35 @@ class Skills extends Models
      */
     protected $authorize = false;
 
+    /**
+     * Get main skill list
+     *
+     * @return array
+     */
     public function getParents()
     {
-        $result = $this->get(
-            [$this->primary, 'skill_name'],
-            ['parent_id' => null]
-        );
+        $result = $this->get(['skill_id', 'skill_name'], function ($query) {
+            $query->whereNull('parent_id');
+        });
 
         return $result->fetchAll();
     }
 
-    public function getChilds($parentId)
+    /**
+     * Get sub skill list
+     *
+     * @param int $parentId Parent ID
+     * @return array
+     */
+    public function getChilds($parentId = null)
     {
-        $result = $this->get(
-            [$this->primary, 'skill_name'],
-            ['parent_id' => (int) $parentId]
-        );
+        if (is_null($parentId)) {
+            return [];
+        }
+
+        $result = $this->get(['skill_id', 'skill_name'], function ($query) use ($parentId) {
+            $query->where('parent_id', '=', (int) $parentId);
+        });
 
         return $result->fetchAll();
     }

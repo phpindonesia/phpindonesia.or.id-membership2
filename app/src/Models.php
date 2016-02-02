@@ -62,6 +62,10 @@ abstract class Models implements \Countable
      */
     public function current($key = null, $default = null)
     {
+        if (is_null($this->current)) {
+            return $default;
+        }
+
         if (!is_null($key)) {
             return $this->current->get($key, $default);
         }
@@ -83,14 +87,18 @@ abstract class Models implements \Countable
 
         if (true === $this->timestamps) {
             if (!isset($pairs['created'])) {
-                $pairs['created'] = date('Y-m-d h:i:s');
+                $pairs['created'] = $this->freshDate();
             }
             $pairs['modified'] = null;
         }
 
         if (true === $this->authorize) {
-            $pairs['create_by']   = $this->current()['user_id'];
-            $pairs['modified_by'] = $this->current()['user_id'];
+            $pairs['create_by']   = $this->current('user_id') ?: 0;
+            $pairs['modified_by'] = $this->current('user_id') ?: 0;
+        }
+
+        if (false === $this->destructive) {
+            $pairs['deleted'] = 'N';
         }
 
         $query = $this->db->insert(array_keys($pairs))
@@ -117,6 +125,10 @@ abstract class Models implements \Countable
 
         if (null !== $callable) {
             $callable($query);
+        } else {
+            if (false === $this->destructive) {
+                $query->where('deleted', '=', 'N');
+            }
         }
 
         return $query->execute();
@@ -155,11 +167,11 @@ abstract class Models implements \Countable
         }
 
         if (!isset($pairs['modified']) && true === $this->timestamps) {
-            $pairs['modified'] = date('Y-m-d h:i:s');
+            $pairs['modified'] = $this->freshDate();
         }
 
         if (true === $this->authorize) {
-            $pairs['modified_by'] = $this->current()['user_id'];
+            $pairs['modified_by'] = $this->current('user_id') ?: 0;
         }
 
         $query = $this->db->update($pairs)->table($this->table);
@@ -242,8 +254,26 @@ abstract class Models implements \Countable
                     $query->whereNull($key);
                 }
             }
+
+            if (!isset($terms['deleted']) && false === $this->destructive) {
+                $query->where('deleted', '=', 'N');
+            }
         } elseif (is_numeric($terms) && !is_float($terms)) {
             $query->where($this->primary, '=', (int) $terms);
+
+            if (false === $this->destructive) {
+                $query->where('deleted', '=', 'N');
+            }
         }
+    }
+
+    /**
+     * Create new date
+     *
+     * @return string
+     */
+    protected function freshDate()
+    {
+        return date('Y-m-d h:i:s');
     }
 }
