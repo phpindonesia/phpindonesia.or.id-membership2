@@ -178,7 +178,6 @@ class HomeController extends Controllers
                 ->execute();
 
             $email_count = (int) $q_email_count->fetch()['total_data'];
-            $this->db->close();
 
             if ($email_count > 0) {
                 return false;
@@ -199,7 +198,6 @@ class HomeController extends Controllers
                 ->execute();
 
             $username_count = (int) $q_username_count->fetch()['total_data'];
-            $this->db->close();
 
             if ($username_count > 0) {
                 return false;
@@ -277,12 +275,10 @@ class HomeController extends Controllers
                 ]);
 
                 $this->db->commit();
-                $this->db->close();
                 $trx_success = true;
 
             } catch (Exception $e) {
                 $this->db->rollback();
-                $this->db->close();
                 $trx_success = false;
 
                 $this->flash->addMessage('error', 'System gagal!<br />'.$e->getMessage());
@@ -316,7 +312,6 @@ class HomeController extends Controllers
                         'activation_key' => $activation_key
                     ));
 
-                    $this->db->close();
 
                     $this->flash->addMessage('success', $register_success_msg);
                 } catch (Swift_TransportException $e) {

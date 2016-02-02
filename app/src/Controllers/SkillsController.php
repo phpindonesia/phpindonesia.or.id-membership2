@@ -41,8 +41,6 @@ class SkillsController extends Controllers
                 'modified' => null
             ]);
 
-            $this->db->close();
-
             $this->flash->addMessage('success', 'Item skill baru berhasil ditambahkan. Selamat!.  Silahkan tambahkan lagi item skill anda.');
         } else {
             $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
@@ -109,8 +107,6 @@ class SkillsController extends Controllers
             'deleted' => 'Y',
             'modified' => date('Y-m-d H:i:s')
         ), array('member_skill_id' => $args['id']));
-
-        $this->db->close();
 
         $this->flash->addMessage('success', 'Item Skill berhasil dihapus');
 

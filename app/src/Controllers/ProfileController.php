@@ -169,8 +169,6 @@ class ProfileController extends Controllers
                 'deleted' => 'N'
             ));
 
-            $this->db->close();
-
             try {
                 $replacements = array();
                 $replacements[$email_address] = array(
@@ -198,8 +196,6 @@ class ProfileController extends Controllers
                     'user_id' => $member['user_id'],
                     'reset_key' => $reset_key
                 ));
-
-                $this->db->close();
 
                 $this->flash->addMessage('success', $success_msg);
             } catch (Swift_TransportException $e) {
@@ -257,8 +253,6 @@ class ProfileController extends Controllers
                 'user_id' => $args['uid'],
                 'reset_key' => $args['reset_key']
             ));
-
-            $this->db->close();
 
             // Then send new temporary password to email
             try {
