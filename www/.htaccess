@@ -9,7 +9,7 @@
     RewriteRule ^ index.php [QSA,L]
 </IfModule>
 
-Header add Access-Control-Allow-Origin "your-domain.com"
+# Header add Access-Control-Allow-Origin "your-domain.com"
 
 <IfModule !mod_rewrite.c>
     ErrorDocument 404 index.php
