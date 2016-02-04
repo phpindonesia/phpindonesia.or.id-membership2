@@ -3,6 +3,7 @@ namespace Membership;
 
 use Slim\PDO\Database;
 use Slim\Collection;
+use InvalidArgumentException;
 
 abstract class Models implements \Countable
 {
@@ -37,40 +38,37 @@ abstract class Models implements \Countable
     protected $authorize = false;
 
     /**
-     * @var array|null|\Slim\Interfaces\CollectionInterface
+     * @var \Slim\Interfaces\CollectionInterface|null
      */
-    protected $current = null;
+    private $session = null;
 
     /**
      * @param \Slim\PDO\Database $db
      */
-    public function __construct(Database $db)
+    public function __construct(Database $db, $session = null)
     {
         $this->db = $db;
-        // Anyone have better idea? :sweat_smile:
-        if (isset($_SESSION['MembershipAuth']['user_id'])) {
-            $this->current = new Collection($_SESSION['MembershipAuth']);
-            $this->current->set('user_id', (int) $this->current->get('user_id'));
-        }
+        $this->session = $session;
     }
 
     /**
-     * Retrieve current user id
+     * Retrieve current user session
      *
-     * @param string $key Collection key
+     * @param string $key
+     * @param string $default
      * @return int
      */
-    public function current($key = null, $default = null)
+    protected function current($key = null, $default = null)
     {
-        if (is_null($this->current)) {
+        if (is_null($this->session)) {
             return $default;
         }
 
         if (!is_null($key)) {
-            return $this->current->get($key, $default);
+            return $this->session->get($key, $default);
         }
 
-        return $this->current;
+        return $this->session;
     }
 
     /**
@@ -85,17 +83,7 @@ abstract class Models implements \Countable
             return false;
         }
 
-        if (true === $this->timestamps) {
-            if (!isset($pairs['created'])) {
-                $pairs['created'] = $this->freshDate();
-            }
-            $pairs['modified'] = null;
-        }
-
-        if (true === $this->authorize) {
-            $pairs['create_by']   = $this->current('user_id') ?: 0;
-            $pairs['modified_by'] = $this->current('user_id') ?: 0;
-        }
+        $this->authorize('create', $pairs);
 
         if (false === $this->destructive) {
             $pairs['deleted'] = 'N';
@@ -111,11 +99,11 @@ abstract class Models implements \Countable
     /**
      * Get basic data
      *
-     * @param string[]      $columns  Array of column
-     * @param callable|null $callable [description]
+     * @param string[]               $columns Array of column
+     * @param callable|array|numeric $terms   column value pairs of term data you wanna find to
      * @return \PDOStatement|false
      */
-    public function get(array $columns = [], callable $callable = null)
+    public function get(array $columns = [], $terms = null)
     {
         if (!$this->table) {
             return false;
@@ -123,13 +111,7 @@ abstract class Models implements \Countable
 
         $query = $this->db->select($columns)->from($this->table);
 
-        if (null !== $callable) {
-            $callable($query);
-        } else {
-            if (false === $this->destructive) {
-                $query->where('deleted', '=', 'N');
-            }
-        }
+        $this->normalizeTerms($query, $terms);
 
         return $query->execute();
     }
@@ -142,15 +124,7 @@ abstract class Models implements \Countable
      */
     public function find($terms = null)
     {
-        if (!$this->table) {
-            return false;
-        }
-
-        $query = $this->db->select()->from($this->table);
-
-        $this->normalizeTerms($query, $terms);
-
-        return $query->execute();
+        return $this->get([], $terms);
     }
 
     /**
@@ -166,15 +140,9 @@ abstract class Models implements \Countable
             return false;
         }
 
-        if (!isset($pairs['modified']) && true === $this->timestamps) {
-            $pairs['modified'] = $this->freshDate();
-        }
+        $this->authorize('update', $pairs);
 
-        if (true === $this->authorize) {
-            $pairs['modified_by'] = $this->current('user_id') ?: 0;
-        }
-
-        $query = $this->db->update($pairs)->table($this->table);
+        $query = $this->db->update(array_filter($pairs))->table($this->table);
 
         $this->normalizeTerms($query, $terms);
 
@@ -207,22 +175,20 @@ abstract class Models implements \Countable
     /**
      * Count all data
      *
-     * @param callable|null $callable Use it if you want more terms
-     * @param string        $column   Column to count
-     * @param bool          $distinct Need a distinct count?
+     * @param callable|array|numeric $terms Use it if you want more terms
+     * @param string                 $column   Column to count
+     * @param bool                   $distinct Need a distinct count?
      * @return int
      */
-    public function count(callable $callable = null, $column = '', $distinct = false)
+    public function count($terms = null, $column = '', $distinct = false)
     {
         if (!$this->table) {
             return 0;
         }
 
-        $query = $this->db->count($column ?: '*', 'count', $distinct)->from($this->table);
+        $query = $this->db->select()->count(($column ?: '*'), 'count', $distinct)->from($this->table);
 
-        if (null !== $callable) {
-            $callable($query);
-        }
+        $this->normalizeTerms($query, $terms);
 
         return (int) $query->execute()->fetch()['count'];
     }
@@ -272,8 +238,34 @@ abstract class Models implements \Countable
      *
      * @return string
      */
-    protected function freshDate()
+    protected function authorize($type, &$pairs)
     {
-        return date('Y-m-d h:i:s');
+        if (!in_array($type, ['update', 'create'])) {
+            throw new InvalidArgumentException(
+                sprintf('Authorization type must be between create or update only, %s given', $type)
+            );
+        }
+
+        if (true === $this->authorize) {
+            if ($type === 'create' && !isset($pairs['created_by'])) {
+                $pairs['created_by'] = $this->current('user_id') ?: 0;
+                $pairs['modified_by'] = 0;
+            }
+
+            if ($type === 'update' && !isset($pairs['modified_by'])) {
+                $pairs['modified_by'] = $this->current('user_id') ?: 0;
+            }
+        }
+
+        if (true === $this->timestamps) {
+            $newDate = date('Y-m-d h:i:s');
+            if ($type === 'create' && !isset($pairs['created'])) {
+                $pairs['created'] = $newDate;
+            }
+
+            if ($type === 'update' && !isset($pairs['modified'])) {
+                $pairs['modified'] = $newDate;
+            }
+        }
     }
 }

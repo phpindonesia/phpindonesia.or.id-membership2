@@ -28,7 +28,7 @@ $this->appendJs([
                             </th>
                             <td>
                                 <input type="text" class="input_full" id="fullname" name="fullname" value="<?php echo $this->parsedBodyParam('fullname', $member['fullname']); ?>" />
-                                <?php echo $this->formShowErrors('fullname', $validation_errors); ?>
+                                <?php echo $this->formFieldError('fullname'); ?>
                             </td>
                         </tr>
 
@@ -37,8 +37,18 @@ $this->appendJs([
                                 <label for="email" style="font-weight: bold;">Email *</label>
                             </th>
                             <td>
-                                <input type="text" class="input_full" id="email" name="email" value="<?php echo $this->parsedBodyParam('email', $_SESSION['MembershipAuth']['email']); ?>" />
-                                <?php echo $this->formShowErrors('email', $validation_errors); ?>
+                                <input type="email" class="input_full" id="email" name="email" value="<?php echo $this->parsedBodyParam('email', $session['email']); ?>" />
+                                <?php echo $this->formFieldError('email'); ?>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                <label for="username" style="font-weight: bold;">Username *</label>
+                            </th>
+                            <td>
+                                <input type="text" class="input_full" id="username" name="username" value="<?php echo $this->parsedBodyParam('username', $session['username']); ?>" />
+                                <?php echo $this->formFieldError('username'); ?>
                             </td>
                         </tr>
 
@@ -48,7 +58,7 @@ $this->appendJs([
                             </th>
                             <td>
                                 <input type="text" class="input_full" id="contact_phone" name="contact_phone" value="<?php echo $this->parsedBodyParam('contact_phone', $member['contact_phone']); ?>" />
-                                <?php echo $this->formShowErrors('contact_phone', $validation_errors); ?>
+                                <?php echo $this->formFieldError('contact_phone'); ?>
                             </td>
                         </tr>
 
@@ -65,7 +75,7 @@ $this->appendJs([
                                 ));
                                 ?>
 
-                                <?php echo $this->formShowErrors('province_id', $validation_errors); ?>
+                                <?php echo $this->formFieldError('province_id'); ?>
                             </td>
                         </tr>
 
@@ -82,7 +92,7 @@ $this->appendJs([
                                 ));
                                 ?>
 
-                                <?php echo $this->formShowErrors('city_id', $validation_errors); ?>
+                                <?php echo $this->formFieldError('city_id'); ?>
                             </td>
                         </tr>
 
@@ -92,7 +102,7 @@ $this->appendJs([
                             </th>
                             <td>
                                 <input type="text" class="input_full" id="area" name="area" value="<?php echo $this->parsedBodyParam('area', $member['area']); ?>" />
-                                <?php echo $this->formShowErrors('area', $validation_errors); ?>
+                                <?php echo $this->formFieldError('area'); ?>
                             </td>
                         </tr>
 
@@ -109,7 +119,7 @@ $this->appendJs([
                                 ));
                                 ?>
 
-                                <?php echo $this->formShowErrors('job_id', $validation_errors); ?>
+                                <?php echo $this->formFieldError('job_id'); ?>
                             </td>
                         </tr>
 
@@ -126,7 +136,7 @@ $this->appendJs([
                                 'class'   => 'input_full'
                             ));
                             ?>
-                            <?php echo $this->formShowErrors('identity_type', $validation_errors); ?>
+                            <?php echo $this->formFieldError('identity_type'); ?>
                             </td>
                         </tr>
 
@@ -137,7 +147,7 @@ $this->appendJs([
 
                             <td>
                                 <input type="text" class="input_full" id="identity_number" name="identity_number" value="<?php echo $this->parsedBodyParam('identity_number', $member['identity_number']); ?>" />
-                                <?php echo $this->formShowErrors('identity_number', $validation_errors); ?>
+                                <?php echo $this->formFieldError('identity_number'); ?>
                             </td>
                         </tr>
 
@@ -148,7 +158,7 @@ $this->appendJs([
 
                             <td>
                                 <input type="text" class="input_full" id="birth_place" name="birth_place" value="<?php echo $this->parsedBodyParam('birth_place', $member['birth_place']); ?>" />
-                                <?php echo $this->formShowErrors('birth_place', $validation_errors); ?>
+                                <?php echo $this->formFieldError('birth_place'); ?>
                             </td>
                         </tr>
 
@@ -159,7 +169,7 @@ $this->appendJs([
 
                             <td>
                                 <input type="text" class="input_full" id="birth-date" name="birth_date" value="<?php echo $member['birth_date']; ?>" />
-                                <?php echo $this->formShowErrors('birth_date', $validation_errors); ?>
+                                <?php echo $this->formFieldError('birth_date'); ?>
                             </td>
                         </tr>
 
@@ -199,7 +209,7 @@ $this->appendJs([
 
                     </div>
                 </fieldset>
-                <?php echo $this->formShowErrors('photo', $validation_errors); ?>
+                <?php echo $this->formFieldError('photo'); ?>
 
                 <fieldset>
                     <legend>Social Medias</legend>
@@ -263,9 +273,9 @@ $this->appendJs([
                     <?php
                     if (isset($_POST['socmeds'])):
                         foreach ((array) $_POST['socmeds'] as $i => $item):
-                            echo $this->formShowErrors("socmeds.{$i}.socmed_type", $validation_errors);
-                            echo $this->formShowErrors("socmeds.{$i}.account_name", $validation_errors);
-                            echo $this->formShowErrors("socmeds.{$i}.account_url", $validation_errors);
+                            echo $this->formFieldError("socmeds.{$i}.socmed_type");
+                            echo $this->formFieldError("socmeds.{$i}.account_name");
+                            echo $this->formFieldError("socmeds.{$i}.account_url");
                         endforeach;
                     endif;
                     ?>

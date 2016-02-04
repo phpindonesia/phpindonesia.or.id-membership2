@@ -34,7 +34,7 @@ $this->appendJs([
                                 'class' => 'input_full'
                             ));
 
-                            echo $this->formShowErrors('skill_parent_id', $validation_errors);
+                            echo $this->formFieldError('skill_parent_id');
                             ?>
                         </td>
                     </tr>
@@ -55,7 +55,7 @@ $this->appendJs([
                             'class' => 'input_full'
                         ));
 
-                        echo $this->formShowErrors('skill_id', $validation_errors);
+                        echo $this->formFieldError('skill_id');
                         ?>
                         </td>
                     </tr>
@@ -113,7 +113,7 @@ $this->appendJs([
                             </ul>
 
                             <div style="clear: both; margin-top: 30px;">
-                                <?php echo $this->formShowErrors('skill_self_assesment', $validation_errors); ?>
+                                <?php echo $this->formFieldError('skill_self_assesment'); ?>
                             </div>
 
                         </td>

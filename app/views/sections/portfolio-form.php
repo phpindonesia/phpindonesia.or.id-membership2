@@ -6,7 +6,7 @@
             </th>
             <td>
                 <input type="text" id="company-name" class="input_full" name="company_name" value="<?php echo $this->parsedBodyParam('company_name', $portfolio ? $portfolio['company_name'] : null) ?>" />
-                <?php echo $this->formShowErrors('company_name', $validation_errors) ?>
+                <?php echo $this->formFieldError('company_name') ?>
             </td>
         </tr>
 
@@ -21,7 +21,7 @@
                     'default' => $portfolio ? $portfolio['industry_id'] : null
                 ]) ?>
 
-                <?php echo $this->formShowErrors('industry_id', $validation_errors) ?>
+                <?php echo $this->formFieldError('industry_id') ?>
             </td>
         </tr>
 
@@ -37,7 +37,7 @@
                             'id' => 'start-date-y',
                             'default' => $portfolio ? $portfolio['start_date_y'] : null
                         ]) ?>
-                        <?php echo $this->formShowErrors('start_date_y', $validation_errors) ?>
+                        <?php echo $this->formFieldError('start_date_y') ?>
                     </li>
 
                     <li>
@@ -72,7 +72,7 @@
                     ['id' => 'work-status', 'default' => $portfolio ? $portfolio['work_status'] : null]
                 ) ?>
 
-                <?php echo $this->formShowErrors('work_status', $validation_errors) ?>
+                <?php echo $this->formFieldError('work_status') ?>
             </td>
         </tr>
 
@@ -118,7 +118,7 @@
             </th>
             <td>
                 <input type="text" id="job-title" class="input_full" name="job_title" value="<?php echo $this->parsedBodyParam('job_title', $portfolio ? $portfolio['job_title'] : null) ?>" />
-                <?php echo $this->formShowErrors('job_title', $validation_errors) ?>
+                <?php echo $this->formFieldError('job_title') ?>
             </td>
         </tr>
 
@@ -128,7 +128,7 @@
             </th>
             <td>
                 <textarea id="job-desc" class="input_full" name="job_desc"><?php echo $this->parsedBodyParam('job_desc', $portfolio ? $portfolio['job_desc'] : null) ?></textarea>
-                <?php echo $this->formShowErrors('job_desc', $validation_errors) ?>
+                <?php echo $this->formFieldError('job_desc') ?>
             </td>
         </tr>
 
@@ -141,7 +141,7 @@
                     'default' => $portfolio ? $portfolio['career_level_id'] : null,
                     'id' => 'career-level-id',
                 ]) ?>
-                <?php echo $this->formShowErrors('career_level_id', $validation_errors) ?>
+                <?php echo $this->formFieldError('career_level_id') ?>
             </td>
         </tr>
 

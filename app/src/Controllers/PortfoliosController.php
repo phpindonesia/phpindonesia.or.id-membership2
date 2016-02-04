@@ -40,37 +40,31 @@ class PortfoliosController extends Controllers
             'career_level_id'
         ]);
 
+        $validator->rule('email', 'company_name');
         if ($input['work_status'] == 'R') {
             $validator->rule('required', 'end_date_y');
         }
 
         if ($validator->validate()) {
-            $portfolio->create([
-                'user_id'         => $users->current('user_id'),
-                'company_name'    => $input['company_name'],
-                'industry_id'     => $input['industry_id'],
-                'start_date_y'    => $input['start_date_y'],
-                'start_date_m'    => $input['start_date_m'],
-                'start_date_d'    => $input['start_date_d'],
-                'end_date_y'      => $input['end_date_y'],
-                'end_date_m'      => $input['end_date_m'],
-                'end_date_d'      => $input['end_date_d'],
-                'work_status'     => $input['work_status'],
-                'job_title'       => $input['job_title'],
-                'job_desc'        => $input['job_desc'],
-                'career_level_id' => $input['career_level_id'],
-            ]);
+            $input['user_id'] = $this->session->get('user_id');
 
-            $this->flash->addMessage('success', 'Item portfolio baru berhasil ditambahkan. Selamat! . Silahkan tambahkan lagi item portfolio anda.');
+            try {
+                $create = $portfolio->create($input);
+                $message = 'Item portfolio baru berhasil ditambahkan. Selamat! . Silahkan tambahkan lagi item portfolio anda.';
+            } catch (\PDOException $e) {
+                $create = false;
+                $message = 'System error!<br>'.$e->getMessage();
+            }
+
+            $this->flash->addMessage(($create !== false ? 'success' : 'error'), $message);
         } else {
-            $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
+            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
+            $this->flashValidationErrors($validator->errors());
+
+            return $response->withRedirect($this->router->pathFor('membership-portfolio-add'));
         }
 
-        return $response->withRedirect(
-            $this->router->pathFor('membership-profile', [
-                'username' => $users->current('username')
-            ])
-        );
+        return $response->withRedirect($this->router->pathFor('membership-account'));
     }
 
     public function editPage(Request $request, Response $response, array $args)
@@ -78,6 +72,7 @@ class PortfoliosController extends Controllers
         $career = $this->data(Careers::class);
         $portfolio = $this->data(MemberPortfolios::class)->find([
             'member_portfolio_id' => (int) $args['id'],
+            'user_id' => $this->session->get('user_id'),
             'deleted' => 'N',
         ]);
 
@@ -95,163 +90,43 @@ class PortfoliosController extends Controllers
 
     public function edit(Request $request, Response $response, array $args)
     {
-        $socmedias      = $this->settings->get('socmedias');
-        $identity_types = ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'];
-
-        // validation layer
-        $validator = $this->validator->rules([
-            'required'   => [
-                ['fullname'],
-                ['email'],
-                ['province_id'],
-                ['city_id'],
-                ['area'],
-                ['job_id']
-            ],
-            'regex'      => [
-                ['fullname', ':^[A-z\s]+$:'],
-                ['contact_phone', ':^[-\+\d]+$:'],
-                ['identity_number', ':^[-\+\d]+$:'],
-            ],
-            'lengthMax'  => [
-                ['fullname', 32],
-                ['contact_phone', 16],
-                ['area', 64],
-                ['identity_number', 32],
-                ['birth_place', 32],
-            ],
-            'email'      => 'email',
-            'dateFormat' => [
-                ['birth_date', 'Y-m-d']
-            ],
-            'in'         => [
-                ['identity_type', array_keys($identity_types)]
-            ],
+        $input = $request->getParsedBody();
+        $portfolio = $this->data(MemberPortfolios::class);
+        $validator = $this->validator->rule('required', [
+            'company_name',
+            'industry_id',
+            'start_date_y',
+            'work_status',
+            'job_title',
+            'job_desc'
         ]);
 
-        $validator->label([
-            'province_id'     => 'Provinsi',
-            'city_id'         => 'Kabupaten / Kota',
-            'job_id'          => 'Pekerjaan',
-            'birth_place'     => 'Tempat lahir',
-            'birth_date'      => 'Tanggal lahir',
-            'identity_type'   => 'Jenis Identitas',
-            'identity_number' => 'Nomer Identitas',
-        ]);
-
-        if ($validator->validate()) {
-            $input = $request->getParsedBody();
-            $users = $this->data(Users::class);
-            $profile = $this->data(MemberProfile::class);
-            $socmeds = $this->data(MemberSocmeds::class);
-
-            // input collection
-            $memberProfile = [
-                'fullname'        => strtoupper($input['fullname']),
-                'contact_phone'   => $input['contact_phone'],
-                'birth_place'     => strtoupper($input['birth_place']),
-                'birth_date'      => $input['birth_date'],
-                'identity_number' => $input['identity_number'],
-                'identity_type'   => $input['identity_type'],
-                'religion_id'     => $input['religion_id'],
-                'province_id'     => $member['province_id'],
-                'city_id'         => $member['city_id'],
-                'area'            => $member['area'],
-                'job_id'          => $input['job_id'],
-            ];
-
-            // Handle social medias
-            $data_socmed = [];
-
-            if (isset($input['socmeds']) && !empty($input['socmeds'])) {
-                $socmeds = array_keys($socmedias);
-
-                foreach ($input['socmeds'] as $i => $item) {
-                    if (empty($item['socmed_type']) ||
-                        (empty($item['account_name']) && empty($item['account_url']))
-                    ) {
-                        continue;
-                    }
-
-                    $socmed_type = $item['socmed_type'];
-                    $validator->rule('in', "socmeds.{$i}.socmed_type", $socmeds)->message("Unknown media name : {$socmed_type}");
-                    $validator->rule('slug', "socmeds.{$i}.account_name")->label("[{$socmed_type}]: account name");
-                    $validator->rule('url', "socmeds.{$i}.account_url")->label("[{$socmed_type}]: account url");
-
-                    $data_socmed[$i] = [
-                        'user_id'      => $users->current('user_id'),
-                        'socmed_type'  => $socmed_type,
-                        'account_name' => $item['account_name'],
-                        'account_url'  => $item['account_url'] ?: $socmedias[$socmed_type][2] . $item['account_name'],
-                    ];
-                }
-            }
-
-            $this->db->beginTransaction();
-
-            try {
-                // Handle Photo Profile Upload
-                if ($file = $request->getUploadedFiles()) {
-                    $this->upload($file['photo'], $memberProfile);
-                }
-
-                // Update profile data record
-                $profile->update($memberProfile, ['user_id' => $users->current('user_id')]);
-
-                $users->update([
-                    'email'       => $input['email'],
-                    'province_id' => $input['province_id'],
-                    'city_id'     => $input['city_id'],
-                    'area'        => $input['area'],
-                ], ['user_id' => $users->current('user_id')]);
-
-                // social media deletions
-                if (isset($input['socmeds_delete'])) {
-                    foreach ($input['socmeds_delete'] as $item) {
-                        $socmeds->delete([
-                            'user_id' => $users->current('user_id'),
-                            'socmed_type' => $item
-                        ]);
-                    }
-                }
-
-                // data social medias
-                foreach ($data_socmed as $item) {
-                    if ($item['member_socmed_id'] == 0) {
-                        $socmeds->create($item);
-                    } else {
-                        $socmeds->update($item, [
-                            'user_id'     => $item['user_id'],
-                            'socmed_type' => $item['socmed_type'],
-                        ]);
-                    }
-                }
-
-                $this->db->commit();
-
-                // also update session data
-                unset($member['modified'], $member['modified_by'], $member['area']);
-                isset($memberProfile['photo']) && $member['photo'] = $memberProfile['photo'];
-
-                $member['fullname'] = $memberProfile['fullname'];
-                $_SESSION['MembershipAuth'] = array_merge($_SESSION['MembershipAuth'], $member);
-                $this->session->replace($_SESSION['MembershipAuth']);
-
-                $this->flash->addMessage('success', 'Profile information successfuly updated! Congratulation!');
-            } catch (Exception $e) {
-                $this->db->rollback();
-
-                $this->flash->addMessage('error', 'System failed<br />' . $e->getMessage());
-            }
-        } else {
-            $this->flash->addMessage('warning', 'Some of fields are invalid!');
+        if ($input['work_status'] == 'R') {
+            $validator->rule('required', 'end_date_y');
         }
 
-        return $response->withRedirect(
-            $this->router->pathFor('membership-profile', [
-                'username' => $_SESSION['MembershipAuth']['username']
-            ])
-        );
+        if ($validator->validate()) {
+            if ($input['work_status'] == 'A') {
+                unset($input['end_date_y'], $input['end_date_m'], $input['end_date_d']);
+            }
+
+            try {
+                $update = $portfolio->update($input, (int) $args['id']);
+                $message = 'Item portfolio berhasil diperbaharui. Selamat!';
+            } catch (\PDOException $e) {
+                $update = false;
+                $message = 'System error!<br>'.$e->getMessage();
+            }
+
+            $this->flash->addMessage(($create !== false ? 'success' : 'error'), $message);
+        } else {
+            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
+            $this->flashValidationErrors($validator->errors());
+
+            return $response->withRedirect($this->router->pathFor('membership-portfolio-edit', $args));
+        }
+
+        return $response->withRedirect($this->router->pathFor('membership-account'));
     }
 
     public function deleted(Request $request, Response $response, array $args)
@@ -260,7 +135,7 @@ class PortfoliosController extends Controllers
 
         return $response->withRedirect(
             $this->router->pathFor('membership-profile', [
-                'username' => $_SESSION['MembershipAuth']['username']
+                'username' => $this->session->get('username')
             ])
         );
     }

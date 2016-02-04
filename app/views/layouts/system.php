@@ -81,8 +81,8 @@
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery-migrate.min.js"></script>
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/twitter/jquery.tweet.min.js"></script>
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/plugins.js"></script>
-    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/custom.js"></script>
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/okzoom.min.js"></script>
+    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/custom.js"></script>
 
     <script src="<?php echo $this->asset('/js/jquery.formalize.min.js') ?>"></script>
     <script src="<?php echo $this->asset('/js/membership.js') ?>"></script>

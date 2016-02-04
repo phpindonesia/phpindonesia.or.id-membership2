@@ -51,6 +51,7 @@ class ViewExtension implements ExtensionInterface
         $engine->registerFunction('formInputSelect', [$this, 'inputSelect']);
         $engine->registerFunction('formErrorClass', [$this, 'errorClass']);
         $engine->registerFunction('formShowErrors', [$this, 'showError']);
+        $engine->registerFunction('formFieldError', [$this, 'showFieldError']);
 
         $engine->registerFunction('userPhoto', [$this, 'userPhoto']);
         $engine->registerFunction('flashMessages', [$this->flash, 'getMessages']);
@@ -130,6 +131,13 @@ class ViewExtension implements ExtensionInterface
         }
 
         return '';
+    }
+
+    public function showFieldError($name)
+    {
+        if ($error = $this->flash->getMessage('validation.errors.'.$name)) {
+            return '<p class="error">'.implode(', ', $error).'</p>';
+        }
     }
 
     public function showError($name, array $errors)

@@ -21,10 +21,10 @@ class SkillsController extends Controllers
 
     public function addPage(Request $request, Response $response, array $args)
     {
+        $this->setPageTitle('Membership', 'Add new techno skill item');
+
         $skills = $this->data(Skills::class);
         $provinceId = $request->getParam('province_id');
-
-        $this->setPageTitle('Membership', 'Add new techno skill item');
 
         return $this->view->render('skills-add', [
             'skills_main' => array_pairs($skills->getParents(), 'skill_id', 'skill_name'),
@@ -50,7 +50,7 @@ class SkillsController extends Controllers
             $users = $this->data(Users::class);
             $skills = $this->data(MemberSkills::class);
             $skills->create([
-                'user_id'              => $users->current('user_id'),
+                'user_id'              => $this->session->get('user_id'),
                 'skill_id'             => $input['skill_id'] ?: $input['skill_parent_id'],
                 'skill_parent_id'      => $input['skill_parent_id'],
                 'skill_self_assesment' => $input['skill_self_assesment'],
@@ -58,43 +58,31 @@ class SkillsController extends Controllers
 
             $this->flash->addMessage('success', 'Item skill baru berhasil ditambahkan. Selamat!.  Silahkan tambahkan lagi item skill anda.');
         } else {
-            $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
+            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
+            $this->flashValidationErrors($validator->errors());
+
+            return $response->withRedirect($this->router->pathFor('membership-skills-add'));
         }
 
-        return $response->withRedirect(
-            $this->router->pathFor('membership-profile', [
-                'username' => $users->current('username')
-            ])
-        );
+        return $response->withRedirect($this->router->pathFor('membership-account'));
     }
 
     public function editPage(Request $request, Response $response, array $args)
     {
-        $users = $this->data(Users::class);
         $this->flash->addMessage('error', 'Page you just visited, not available at this time');
 
-        return $response->withRedirect(
-            $this->router->pathFor('membership-profile', [
-                'username' => $users->current('username')
-            ])
-        );
+        return $response->withRedirect($this->router->pathFor('membership-account'));
     }
 
     public function edit(Request $request, Response $response, array $args)
     {
-        $users = $this->data(Users::class);
         $this->flash->addMessage('error', 'Page you just visited, not available at this time');
 
-        return $response->withRedirect(
-            $this->router->pathFor('membership-profile', [
-                'username' => $users->current('username')
-            ])
-        );
+        return $response->withRedirect($this->router->pathFor('membership-account'));
     }
 
     public function delete(Request $request, Response $response, array $args)
     {
-        $users = $this->data(Users::class);
         $skills = $this->data(MemberSkills::class);
 
         if ($skills->delete((int) $args['id'])) {
@@ -103,10 +91,6 @@ class SkillsController extends Controllers
             $this->flash->addMessage('error', 'Sesuatu terjadi, skill gagal dihapus.');
         }
 
-        return $response->withRedirect(
-            $this->router->pathFor('membership-profile', [
-                'username' => $users->current('username')
-            ])
-        );
+        return $response->withRedirect($this->router->pathFor('membership-account'));
     }
 }

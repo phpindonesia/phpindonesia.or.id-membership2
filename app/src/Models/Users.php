@@ -29,12 +29,12 @@ class Users extends Models
      */
     public function create(array $pairs)
     {
-        $pairs['fullname'] = ucwords($pairs['fullname']);
-
         $this->db->beginTransaction();
+        $pairs['city_id'] = 0;
 
         try {
-            $newDate = $this->freshDate();
+            $newDate = date('Y-m-d h:i:s');
+
             $userId = parent::create([
                 'username'    => $pairs['username'],
                 'password'    => $pairs['password'],
@@ -63,7 +63,7 @@ class Users extends Models
                 'users_activations' => [
                     'user_id'        => $userId,
                     'activation_key' => $pairs['activation_key'],
-                    'expired_date'   => $pairs['activation_expired_date'],
+                    'expired_date'   => $pairs['expired_date'],
                     'deleted'        => 'N'
                 ]
             ];
@@ -80,10 +80,10 @@ class Users extends Models
             $this->db->commit();
 
             return $userId;
-        } catch (Exception $e) {
+        } catch (\PDOException $e) {
             $this->db->rollback();
 
-            return false;
+            throw $e;
         }
     }
 

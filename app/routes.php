@@ -1,6 +1,7 @@
 <?php
-use Membership\Controllers\AccountController;
 use Membership\Controllers\HomeController;
+use Membership\Controllers\AccountController;
+use Membership\Controllers\PasswordController;
 use Membership\Controllers\PortfoliosController;
 use Membership\Controllers\ProfileController;
 use Membership\Controllers\SkillsController;
@@ -23,21 +24,21 @@ $app->post('/register', HomeController::class.':register');
 
 $app->get('/logout', HomeController::class.':logout')->setName('membership-logout');
 
+$app->get('/forgot-password', PasswordController::class.':forgotPage')->setName('membership-forgot-password');
+$app->post('/forgot-password', PasswordController::class.':forgot');
+
+$app->get('/reset-password/{uid}/{reset_key}', PasswordController::class.':reset')->setName('membership-reset-password');
+
+$app->get('/activate/{uid}/{activation_key}', AccountController::class.':activate')->setName('membership-activation');
+
+$app->get('/reactivate', AccountController::class.':reactivatePage')->setName('membership-account-reactivate');
+$app->post('/reactivate', AccountController::class.':reactivate');
+
 /**
  * TODO: normalize username,
  * - Username should accept alphanumeric, dash and underscore only
  */
-$app->get('/profile/{username}', ProfileController::class.':index')->setName('membership-profile');
-
-$app->get('/forgot-password', ProfileController::class.':forgotPasswordPage')->setName('membership-forgot-password');
-$app->post('/forgot-password', ProfileController::class.':forgotPassword');
-
-$app->get('/reset-password/{uid}/{reset_key}', ProfileController::class.':resetPassword')->setName('membership-reset-password');
-
-$app->get('/activate/{uid}/{activation_key}', AccountController::class.':activate')->setName('membership-account-activate');
-
-$app->get('/reactivate', AccountController::class.':reactivatePage')->setName('membership-account-reactivate');
-$app->post('/reactivate', AccountController::class.':reactivate');
+$app->get('/profile/{username}', AccountController::class.':profile')->setName('membership-profile');
 
 $app->group('/account', function () {
 
@@ -46,8 +47,8 @@ $app->group('/account', function () {
     $this->get('/edit', AccountController::class.':editPage')->setName('membership-account-edit');
     $this->post('/edit', AccountController::class.':edit');
 
-    $this->get('/update-password', AccountController::class.':updatePasswordPage')->setName('membership-update-password');
-    $this->post('/update-password', AccountController::class.':updatePassword');
+    $this->get('/update-password', PasswordController::class.':updatePage')->setName('membership-update-password');
+    $this->post('/update-password', PasswordController::class.':update');
 
     $this->get('/javascript', AccountController::class.':javascriptPage')->setName('membership-account-javascript');
 

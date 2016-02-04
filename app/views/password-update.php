@@ -1,6 +1,6 @@
 <?php $this->layout('layouts::account') ?>
 
-<form action="<?php echo $this->pathFor('membership-forgot-password'); ?>" method="post" novalidate>
+<form action="<?php echo $this->pathFor('membership-update-password'); ?>" method="post" novalidate>
 
     <h3 class="aligncenter"> <i class="fa fa-key"></i> Update Password</h3>
 
@@ -8,7 +8,7 @@
         <label for="oldpassword" class="control-label">Old Password *</label>
         <input id="oldpassword" class="form-control" name="oldpassword" required="required" type="password" value="<?php echo $this->parsedBodyParam('oldpassword'); ?>" />
         <p class="help-block">
-            <?php echo $this->formShowErrors('oldpassword', $validation_errors); ?>
+            <?php echo $this->formFieldError('oldpassword'); ?>
         </p>
     </div>
 
@@ -16,7 +16,7 @@
         <label for="password" class="control-label">New Password *</label>
         <input id="password" class="form-control" name="password" required="required" type="password" value="<?php echo $this->parsedBodyParam('password'); ?>" />
         <p class="help-block">
-            <?php echo $this->formShowErrors('password', $validation_errors); ?>
+            <?php echo $this->formFieldError('password'); ?>
         </p>
     </div>
 
@@ -24,7 +24,7 @@
         <label for="repassword" class="control-label">Retype New Password *</label>
         <input id="repassword" class="form-control" name="repassword" required="required" type="password" value="<?php echo $this->parsedBodyParam('repassword'); ?>" />
         <p class="help-block">
-            <?php echo $this->formShowErrors('repassword', $validation_errors); ?>
+            <?php echo $this->formFieldError('repassword'); ?>
         </p>
     </div>
 

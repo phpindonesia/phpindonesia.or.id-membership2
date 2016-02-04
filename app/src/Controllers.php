@@ -23,6 +23,16 @@ abstract class Controllers
         $this->container = $container;
 
         $this->setPageTitle();
+
+        $this->view->addData([
+            'gcaptchaSitekey' => null,
+            'gcaptchaSecret'  => null,
+            'gcaptchaEnable'  => false,
+        ], 'sections::captcha');
+
+        $this->view->addData([
+            'session' => $container->get('session')->all(),
+        ]);
     }
 
     /**
@@ -57,20 +67,6 @@ abstract class Controllers
     }
 
     /**
-     * Set Page main and sub title
-     *
-     * @param string $mainTitle     Main Page Title
-     * @param string $subTitle      Sub Page Title
-     */
-    protected function setPageTitle($mainTitle = '', $subTitle = '')
-    {
-        $this->view->addData([
-            'page_title' => $mainTitle,
-            'sub_page_title' => $subTitle,
-        ], 'layouts::system');
-    }
-
-    /**
      * Assert is XHR request
      *
      * @param \Slim\Http\Request  $request
@@ -85,15 +81,41 @@ abstract class Controllers
     }
 
     /**
+     * Set Page main and sub title
+     *
+     * @param string $mainTitle     Main Page Title
+     * @param string $subTitle      Sub Page Title
+     */
+    protected function setPageTitle($mainTitle = '', $subTitle = '')
+    {
+        $this->view->addData([
+            'page_title' => $mainTitle,
+            'sub_page_title' => $subTitle,
+        ], 'layouts::system');
+    }
+
+    /**
      * Add validation error messages
      *
      * @param array $errors
      */
-    protected function validationErrors(array $errors)
+    protected function setValidationErrors(array $errors)
     {
         $this->view->addData([
-            'formAlerts' => $errors
-        ], 'sections::alert');
+            'formValidationErrors' => $errors
+        ]);
+    }
+
+    /**
+     * Flash validation error messages
+     *
+     * @param array $errors
+     */
+    protected function flashValidationErrors(array $errors)
+    {
+        foreach ($errors as $field => $message) {
+            $this->flash->addMessage('validation.errors.'.$field, implode(', ', $message));
+        }
     }
 
     /**
@@ -129,7 +151,7 @@ abstract class Controllers
             'gcaptchaSitekey' => $settings['sitekey'],
             'gcaptchaSecret'  => $settings['secret'],
             'gcaptchaEnable'  => $settings['enable'],
-        ]);
+        ], 'sections::captcha');
 
         return $settings;
     }

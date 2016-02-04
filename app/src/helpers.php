@@ -38,6 +38,20 @@ if (!function_exists('array_flatten')) {
     }
 }
 
+if (!function_exists('dd')) {
+    /**
+     * Doo-bee-doo-bee Dump
+     */
+    function dd()
+    {
+        array_map(function ($arg) {
+            var_dump($arg);
+        }, func_get_args());
+
+        die(1);
+    }
+}
+
 if (!function_exists('months')) {
     /**
      * Get month list

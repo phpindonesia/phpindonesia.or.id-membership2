@@ -8,7 +8,7 @@
         <label for="email" class="control-label">Email *</label>
         <input id="email" class="form-control" name="email" required="required" type="email" value="<?php echo $this->parsedBodyParam('email'); ?>" />
         <p class="help-block">
-            <?php echo $this->formShowErrors('email', $validation_errors); ?>
+            <?php echo $this->formFieldError('email'); ?>
             Account Reactivation adalah tool untuk mengajukan permintaan pengiriman ulang email aktivasi account.
             Berhubung kondisi resources server kami yang serba terbatas, maka pengiriman email konfirmasi aktivasi akan sering terlambat.
             Jika dalam waktu 2 hari anda belum juga mendapatkan email konfirmasi aktivasi, maka silahkan gunakan tool ini untuk meminta dikirim ulang

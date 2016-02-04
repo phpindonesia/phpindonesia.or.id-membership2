@@ -69,7 +69,7 @@
                             <a class="dt-menu-expand">+</a>
                         </li>
 
-                        <?php if (!isset($_SESSION['MembershipAuth'])): ?>
+                        <?php if (!isset($session['username'])): ?>
                         <li class="menu-item-simple-parent">
                             <a href="<?php echo $this->pathFor('membership-index') ?>">Anggota</a>
                             <ul class="sub-menu">
@@ -82,13 +82,13 @@
 
                         <li><a href="http://www.phpindonesia.or.id/contact">Kontak</a></li>
 
-                        <?php if (isset($_SESSION['MembershipAuth'])): ?>
+                        <?php if (isset($session['username'])): ?>
                         <li class="menu-item-simple-parent">
                             <a href="<?php echo $this->pathFor('membership-account'); ?>" style="text-decoration: underline; color:#478BCA;">
 
-                                <img src="<?php echo $this->userPhoto($_SESSION['MembershipAuth']['photo'], ['width' => '40', 'height' => '40']) ?>" alt="user avatar" style="display: block; position: absolute; right: -40px; bottom: 21px; width: 40px; height: 40px;" />
+                                <img src="<?php echo $this->userPhoto($session['photo'], ['width' => '40', 'height' => '40']) ?>" alt="user avatar" style="display: block; position: absolute; right: -40px; bottom: 21px; width: 40px; height: 40px;" />
 
-                                <?php echo '( '.$_SESSION['MembershipAuth']['username'].' )'; ?>
+                                <?php echo '( '.$session['username'].' )'; ?>
                             </a>
                             <ul class="sub-menu">
                                 <li><a href="<?php echo $this->pathFor('membership-account'); ?>">My Membership Area</a></li>

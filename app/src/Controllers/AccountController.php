@@ -11,14 +11,15 @@ use Membership\Models\Religions;
 use Membership\Models\Regionals;
 use Membership\Models\MemberProfile;
 use Membership\Models\MemberSocmeds;
+use Membership\Models\UsersResetPwd;
 
 class AccountController extends Controllers
 {
     public function index(Request $request, Response $response, array $args)
     {
-        $users = $this->data(Users::class);
-
         $this->setPageTitle('Membership', 'Profil Anggota');
+
+        $users = $this->data(Users::class);
 
         return $this->view->render('account-index', [
             'member'            => $users->getProfile(),
@@ -29,20 +30,47 @@ class AccountController extends Controllers
         ]);
     }
 
+    public function profile(Request $request, Response $response, array $args)
+    {
+        $this->setPageTitle('Membership', 'Detail Anggota');
+
+        $users = $this->data(Users::class);
+        $user = $users->get([
+            'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*',
+            'reg_prv.regional_name province',
+            'reg_cit.regional_name city'
+        ], function ($query) use ($args) {
+            $query->from('users u')
+                ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+                ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
+                ->where('u.username', '=', $args['username']);
+        })->fetch();
+
+        return $this->view->render('profile-index', [
+            'member'            => $user,
+            'member_portfolios' => $users->getPortfolios($user['user_id']),
+            'member_skills'     => $users->getSkills($user['user_id']),
+            'member_socmeds'    => $users->getSocmends($user['user_id']),
+            'socmedias'         => $this->settings->get('socmedias'),
+        ]);
+    }
+
     public function editPage(Request $request, Response $response, array $args)
     {
+        $this->setPageTitle('Membership', 'Update Profile Anggota');
+
         $users = $this->data(Users::class);
         $regionals = $this->data(Regionals::class);
         $religions = $this->data(Religions::class);
-
-        $this->setPageTitle('Membership', 'Update Profile Anggota');
+        $provinceId = $this->session->get('province_id');
 
         return $this->view->render('account-edit', [
             'member'         => $users->getProfile(),
             'member_socmeds' => $users->getSocmends(),
             'religions'      => array_pairs($religions->get()->fetchAll(), 'religion_id', 'religion_name'),
             'provinces'      => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
-            'cities'         => array_pairs($regionals->getCities($users->current('province_id')), 'id', 'regional_name'),
+            'cities'         => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
             'jobs'           => array_pairs($this->data(Careers::class)->getJobs(), 'job_id'),
             'genders'        => ['female' => 'Wanita', 'male' => 'Pria'],
             'identity_types' => ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'],
@@ -52,20 +80,62 @@ class AccountController extends Controllers
 
     public function edit(Request $request, Response $response, array $args)
     {
+        $users = $this->data(Users::class);
+        $user = $users->get(['email', 'username'], $this->session->get('user_id'))->fetch();
+        $identityTypes = ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'];
         $validator = $this->validator->rule('required', [
-            'fullname',
             'email',
+            'username',
+            'fullname',
             'province_id',
             'city_id',
             'area',
-            'job_id'
+            'job_id',
         ]);
 
-        $validator->rule('email', 'email');
+        $validator->addRule('assertEmailNotExists', function ($field, $value, array $params) use ($users, $user) {
+            return $user['email'] == $value || !$users->assertEmailExists($value);
+        }, 'tersebut sudah terdaftar!');
+
+        $validator->addRule('assertUsernameNotExists', function ($field, $value, array $params) use ($users, $user) {
+            return $user['username'] == $value || !$users->assertUsernameExists($value);
+        }, 'tersebut sudah terdaftar!');
+
+        $validator->rules([
+            'regex' => [
+                ['fullname', ':^[A-z\s]+$:'],
+                ['username', ':^[A-z\d\-\.\_]+$:'],
+                ['contact_phone', ':^[-\+\d]+$:'],
+                ['identity_number', ':^[-\+\d]+$:'],
+            ],
+            'email' => 'email',
+            'assertEmailNotExists' => 'email',
+            'assertUsernameNotExists' => 'username',
+            'dateFormat' => [
+                ['birth_date', 'Y-m-d']
+            ],
+            'equals' => [
+                ['repassword', 'password']
+            ],
+            'in' => [
+                ['identity_type', array_keys($identityTypes)]
+            ],
+            'lengthMax' => [
+                ['fullname', 32],
+                ['username', 64],
+                ['contact_phone', 16],
+                ['area', 64],
+                ['identity_number', 32],
+                ['birth_place', 32],
+            ],
+            'lengthMin' => [
+                ['username', 6],
+                ['password', 6],
+            ],
+        ]);
 
         if ($validator->validate()) {
             $input = $request->getParsedBody();
-            $users = $this->data(Users::class);
             $profile = $this->data(MemberProfile::class);
             $socmeds = $this->data(MemberSocmeds::class);
 
@@ -86,42 +156,54 @@ class AccountController extends Controllers
             $this->db->beginTransaction();
 
             try {
-                if ($file = $request->getUploadedFiles()) {
-                    $this->upload($file['photo'], $memberProfile);
+                $userId = $this->session->get('user_id');
+
+                if ($photo = $request->getUploadedFiles()['photo']) {
+                    $memberProfile = $this->upload($photo, $memberProfile);
                 }
 
                 // Update profile data record
-                $profile->update($memberProfile, ['user_id' => $users->current('user_id')]);
+                $profile->update($memberProfile, ['user_id' => $userId]);
 
                 $users->update([
                     'email'       => $input['email'],
                     'province_id' => $input['province_id'],
                     'city_id'     => $input['city_id'],
                     'area'        => $input['area'],
-                ], ['user_id' => $users->current('user_id')]);
+                ], ['user_id' => $userId]);
 
                 // Handle social medias
                 if ($input['socmeds']) {
+                    $terms = [
+                        'user_id' => $userId,
+                        'deleted' => 'N',
+                    ];
+
                     foreach ($input['socmeds'] as $item) {
-                        $row = [
-                            'user_id'      => $users->current('user_id'),
-                            'socmed_type'  => $item['socmed_type'],
-                            'account_name' => $item['account_name'],
-                            'account_url'  => $item['account_url'],
+                        $terms = [
+                            'user_id' => $userId,
+                            'deleted' => 'N',
+                            'socmed_type' => $item['socmed_type'],
                         ];
 
-                        if ($item['member_socmed_id'] == 0) {
-                            $socmeds->create($row);
-                        } else {
-                            $socmeds->update($row, (int) $item['member_socmed_id']);
+                        $socmedRow = $socmeds->get(['account_name', 'account_url'], $terms)->fetch();
+
+                        if ($socmedRow['account_name'] != $item['account_name']) {
+                            $socmedRow['account_name'] = $item['account_name'];
                         }
+
+                        if ($socmedRow['account_url'] != $item['account_url']) {
+                            $socmedRow['account_url'] = $item['account_url'];
+                        }
+
+                        $socmeds->update($socmedRow, $terms);
                     }
                 }
 
                 if (isset($input['socmeds_delete'])) {
                     foreach ($input['socmeds_delete'] as $item) {
                         $socmeds->delete([
-                            'user_id' => $users->current('user_id'),
+                            'user_id' => $userId,
                             'socmed_type' => $item
                         ]);
                     }
@@ -130,74 +212,23 @@ class AccountController extends Controllers
                 $this->db->commit();
 
                 $this->flash->addMessage('success', 'Profile information successfuly updated! Congratulation!');
-            } catch (Exception $e) {
+            } catch (\PDOException $e) {
+                $this->db->rollback();
+
+                $this->flash->addMessage('error', 'System failed<br>'.$e->getMessage());
+            } catch (\Exception $e) {
                 $this->db->rollback();
 
                 $this->flash->addMessage('error', 'System failed<br>'.$e->getMessage());
             }
         } else {
             $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
+            $this->flashValidationErrors($validator->errors());
+
+            return $response->withRedirect($this->router->pathFor('membership-account-edit', $args));
         }
 
-        return $response->withRedirect(
-            $this->router->pathFor('membership-account')
-        );
-    }
-
-    public function updatePasswordPage(Request $request, Response $response, array $args)
-    {
-        $this->enableCaptcha();
-        $this->setPageTitle('Membership', 'Update Password');
-
-        return $this->view->render('account-update-password');
-    }
-
-    public function updatePassword(Request $request, Response $response, array $args)
-    {
-        $users     = $this->data(Users::class);
-        $saltPass  = $this->settings->get('salt_pwd');
-        $password  = $request->getParsedBodyParam('password');
-        $validator = $this->validator->rule('required', [
-            'oldpassword',
-            'password',
-            'repassword'
-        ]);
-
-        $validator->addNewRule('check_oldpassword', function ($field, $value, array $params) use ($users, $saltPass) {
-            $password = md5($saltPass.$value);
-            $countPass = $users->count(function ($query) use ($password) {
-                $query->where('user_id', '=', $users->current())
-                    ->where('password', '=', $password);
-            });
-
-            return $countPass > 0;
-        }, 'Wrong! Please remember your old password');
-
-        $validator->addNewRule('check_repassword', function ($field, $value, array $params) use ($password) {
-            return $value == $password;
-        }, 'Not match with choosen new password');
-
-        $validator->rule('check_oldpassword', 'oldpassword');
-        $validator->rule('check_repassword', 'repassword');
-
-        if ($validator->validate()) {
-            $users->update(
-                ['password' => $this->salt($password)],
-                $users->current()
-            );
-
-            $this->flash->addMessage('success', 'Password anda berhasil diubah! Selamat!');
-
-            return $response->withRedirect(
-                $this->router->pathFor('membership-profile', [
-                    'username' => $users->current('username')
-                ])
-            );
-        } else {
-            $this->flash->addMessage('warning', 'Masih ada isian-isian wajib yang belum anda isi. Atau masih ada isian yang belum diisi dengan benar');
-        }
-
-        return $response->withRedirect($this->router->pathFor('membership-login'));
+        return $response->withRedirect($this->router->pathFor('membership-account'));
     }
 
     public function activate(Request $request, Response $response, array $args)
@@ -211,9 +242,7 @@ class AccountController extends Controllers
             $this->flash->addMessage('error', 'Bad Request');
         }
 
-        return $response->withRedirect(
-            $this->router->pathFor('membership-login')
-        );
+        return $response->withRedirect($this->router->pathFor('membership-login'));
     }
 
     public function reactivatePage(Request $request, Response $response, array $args)
@@ -237,22 +266,23 @@ class AccountController extends Controllers
         $users = $this->data(Users::class);
         $validator = $this->validator->rule('required', 'email');
 
-        $validator->addNewRule('assertEmailExists', function ($field, $value, array $params) use ($users) {
+        $validator->addRule('assertNotEmailExists', function ($field, $value, array $params) use ($users) {
             return !$users->assertEmailExists($value);
         }, 'Email tersebut tidak terdaftar!');
 
-        $validator->rule('assertEmailExists', 'email');
+        $validator->rule('assertNotEmailExists', 'email');
 
         if ($validator->validate()) {
             //
             $this->flash->addMessage('error', 'Bad Request');
         } else {
             $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
+            $this->flashValidationErrors($validator->errors());
+
+            return $response->withRedirect($this->router->pathFor('membership-login'));
         }
 
-        return $response->withRedirect(
-            $this->router->pathFor('membership-account-reactivate')
-        );
+        return $response->withRedirect($this->router->pathFor('membership-account-reactivate'));
     }
 
     public function javascript(Request $request, Response $response, array $args)
@@ -264,8 +294,7 @@ class AccountController extends Controllers
         $worker = ['KARYAWAN', 'FREELANCER', 'OWNER', 'MAHASISWA-KARYAWAN'];
         $student = ['PELAJAR', 'MAHASISWA'];
 
-        if (in_array($users->current('job_id'), $worker)) {
-
+        if (in_array($this->session->get('job_id'), $worker)) {
             if (!isset($cookie['portfolio-popup'])) {
                 $open_portfolio = $users->countPortfolios() === 0;
             }
@@ -273,13 +302,10 @@ class AccountController extends Controllers
             if (!isset($cookie['skill-popup'])) {
                 $open_skill = $users->countSkills() === 0;
             }
-
-        } else if (in_array($users->current('job_id'), $student)) {
-
+        } elseif (in_array($this->session->get('job_id'), $student)) {
             if (!isset($cookie['skill-popup'])) {
                 $open_skill = $users->countSkills() === 0;
             }
-
         }
 
         return $this->view->render('account-javascript', [

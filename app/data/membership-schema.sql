@@ -2,16 +2,11 @@
 -- Table structure for table `career_levels`
 --
 
-DROP TABLE IF EXISTS `career_levels`;
 CREATE TABLE IF NOT EXISTS `career_levels` (
   `career_level_id` varchar(16) NOT NULL,
   `order_by` int(11) NOT NULL,
   PRIMARY KEY (`career_level_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- RELATIONS FOR TABLE `career_levels`:
---
 
 -- --------------------------------------------------------
 
@@ -19,7 +14,6 @@ CREATE TABLE IF NOT EXISTS `career_levels` (
 -- Table structure for table `functionals`
 --
 
-DROP TABLE IF EXISTS `functionals`;
 CREATE TABLE IF NOT EXISTS `functionals` (
   `functional_id` int(11) NOT NULL AUTO_INCREMENT,
   `parent_id` int(11) DEFAULT NULL,
@@ -33,26 +27,17 @@ CREATE TABLE IF NOT EXISTS `functionals` (
   PRIMARY KEY (`functional_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `functionals`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `industries`
 --
 
-DROP TABLE IF EXISTS `industries`;
 CREATE TABLE IF NOT EXISTS `industries` (
   `industry_id` int(11) NOT NULL AUTO_INCREMENT,
   `industry_name` varchar(128) NOT NULL,
   PRIMARY KEY (`industry_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- RELATIONS FOR TABLE `industries`:
---
 
 -- --------------------------------------------------------
 
@@ -60,15 +45,10 @@ CREATE TABLE IF NOT EXISTS `industries` (
 -- Table structure for table `jobs`
 --
 
-DROP TABLE IF EXISTS `jobs`;
 CREATE TABLE IF NOT EXISTS `jobs` (
   `job_id` varchar(16) NOT NULL,
   PRIMARY KEY (`job_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- RELATIONS FOR TABLE `jobs`:
---
 
 -- --------------------------------------------------------
 
@@ -76,7 +56,6 @@ CREATE TABLE IF NOT EXISTS `jobs` (
 -- Table structure for table `members_portfolios`
 --
 
-DROP TABLE IF EXISTS `members_portfolios`;
 CREATE TABLE IF NOT EXISTS `members_portfolios` (
   `member_portfolio_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -100,17 +79,12 @@ CREATE TABLE IF NOT EXISTS `members_portfolios` (
   PRIMARY KEY (`member_portfolio_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `members_portfolios`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `members_profiles`
 --
 
-DROP TABLE IF EXISTS `members_profiles`;
 CREATE TABLE IF NOT EXISTS `members_profiles` (
   `member_profile_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -135,17 +109,12 @@ CREATE TABLE IF NOT EXISTS `members_profiles` (
   PRIMARY KEY (`member_profile_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `members_profiles`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `members_skills`
 --
 
-DROP TABLE IF EXISTS `members_skills`;
 CREATE TABLE IF NOT EXISTS `members_skills` (
   `member_skill_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -158,17 +127,12 @@ CREATE TABLE IF NOT EXISTS `members_skills` (
   PRIMARY KEY (`member_skill_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `members_skills`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `members_socmeds`
 --
 
-DROP TABLE IF EXISTS `members_socmeds`;
 CREATE TABLE IF NOT EXISTS `members_socmeds` (
   `member_socmed_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -182,17 +146,12 @@ CREATE TABLE IF NOT EXISTS `members_socmeds` (
   UNIQUE KEY `uid_socmedtype_unique` (`user_id`,`socmed_type`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `members_socmeds`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `regionals`
 --
 
-DROP TABLE IF EXISTS `regionals`;
 CREATE TABLE IF NOT EXISTS `regionals` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `regional_name` varchar(64) NOT NULL,
@@ -202,26 +161,17 @@ CREATE TABLE IF NOT EXISTS `regionals` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `regionals`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `religions`
 --
 
-DROP TABLE IF EXISTS `religions`;
 CREATE TABLE IF NOT EXISTS `religions` (
   `religion_id` int(11) NOT NULL AUTO_INCREMENT,
   `religion_name` varchar(32) NOT NULL,
   PRIMARY KEY (`religion_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- RELATIONS FOR TABLE `religions`:
---
 
 -- --------------------------------------------------------
 
@@ -229,7 +179,6 @@ CREATE TABLE IF NOT EXISTS `religions` (
 -- Table structure for table `roles`
 --
 
-DROP TABLE IF EXISTS `roles`;
 CREATE TABLE IF NOT EXISTS `roles` (
   `role_id` varchar(16) NOT NULL DEFAULT '',
   `title_alias` varchar(64) DEFAULT NULL,
@@ -237,17 +186,12 @@ CREATE TABLE IF NOT EXISTS `roles` (
   PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `roles`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `roles_access`
 --
 
-DROP TABLE IF EXISTS `roles_access`;
 CREATE TABLE IF NOT EXISTS `roles_access` (
   `role_access_id` int(11) NOT NULL AUTO_INCREMENT,
   `role_id` int(11) NOT NULL,
@@ -259,17 +203,12 @@ CREATE TABLE IF NOT EXISTS `roles_access` (
   UNIQUE KEY `rid_fid_unique` (`role_id`,`functional_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `roles_access`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `skills`
 --
 
-DROP TABLE IF EXISTS `skills`;
 CREATE TABLE IF NOT EXISTS `skills` (
   `skill_id` int(11) NOT NULL AUTO_INCREMENT,
   `parent_id` int(11) DEFAULT NULL,
@@ -280,17 +219,12 @@ CREATE TABLE IF NOT EXISTS `skills` (
   PRIMARY KEY (`skill_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `skills`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL,
@@ -310,17 +244,12 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `uname_email_unique` (`username`,`email`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `users`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `users_activations`
 --
 
-DROP TABLE IF EXISTS `users_activations`;
 CREATE TABLE IF NOT EXISTS `users_activations` (
   `user_activation_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -333,17 +262,12 @@ CREATE TABLE IF NOT EXISTS `users_activations` (
   UNIQUE KEY `uid_actkey_unique` (`user_id`,`activation_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `users_activations`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `users_reset_pwd`
 --
 
-DROP TABLE IF EXISTS `users_reset_pwd`;
 CREATE TABLE IF NOT EXISTS `users_reset_pwd` (
   `user_reset_pwd_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -355,17 +279,12 @@ CREATE TABLE IF NOT EXISTS `users_reset_pwd` (
   PRIMARY KEY (`user_reset_pwd_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONS FOR TABLE `users_reset_pwd`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `users_roles`
 --
 
-DROP TABLE IF EXISTS `users_roles`;
 CREATE TABLE IF NOT EXISTS `users_roles` (
   `user_role_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -376,7 +295,3 @@ CREATE TABLE IF NOT EXISTS `users_roles` (
   PRIMARY KEY (`user_role_id`),
   UNIQUE KEY `uid_rid_unique` (`user_id`,`role_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- RELATIONS FOR TABLE `users_roles`:
---

@@ -54,8 +54,9 @@ $container['db'] = function ($container) {
  */
 $container['data'] = function ($container) {
     $db = $container->get('db');
+    $session = $container->get('session');
 
-    return function ($class) use ($db) {
+    return function ($class) use ($db, $session) {
         if (!class_exists($class)) {
             throw new LogicException("Data model class {$class} not exists ");
         }
@@ -70,7 +71,7 @@ $container['data'] = function ($container) {
             ));
         }
 
-        return $model->newInstance($db);
+        return $model->newInstance($db, $session);
     };
 };
 
@@ -79,7 +80,23 @@ $container['data'] = function ($container) {
  */
 $container['validator'] = function ($container) {
     $request = $container->get('request');
+    $viewData = $container->get('view')->getPlates()->getData('sections::captcha');
     $validator = new Validator($request->getParams(), [], 'id');
+
+    if ($viewData['gcaptchaEnable'] == true) {
+        $remoteAddr = $container->get('environment')->get('REMOTE_ADDR');
+
+        $validator->addRule('verifyCaptcha', function ($field, $value, array $params) use ($viewData, $remoteAddr) {
+            if (isset($field['g-recaptcha-response'])) {
+                $recaptcha = new ReCaptcha\ReCaptcha($viewData['gcaptchaSecret']);
+
+                return $recaptcha->verify($field['g-recaptcha-response'], $remoteAddr)->isSuccess();
+            }
+            return false;
+        }, 'Verifikasi captcha salah!');
+
+        $validator->rule('verifyCaptcha', 'captcha');
+    }
 
     return $validator;
 };
@@ -123,17 +140,21 @@ $container['upload'] = function ($container) {
     $settings = $container->get('settings');
     $session = $container->get('session');
 
-    return function (UploadedFileInterface $file, &$memberData) use ($settings, $session) {
+    return function (UploadedFileInterface $photo, $memberData) use ($settings, $session) {
+        if ($photo->getError() !== UPLOAD_ERR_OK) {
+            return $memberData;
+        }
+
         $allowedTypes = ['image/jpeg', 'image/png'];
-        if (!in_array($file->getClientMediaType(), $allowedTypes)) {
+        if (!in_array($photo->getClientMediaType(), $allowedTypes)) {
             throw new InvalidArgumentException('We only accept jpg and png image');
         }
 
-        $ext = strtolower(pathinfo($file->getClientFilename(), PATHINFO_EXTENSION));
+        $ext = strtolower(pathinfo($photo->getClientFilename(), PATHINFO_EXTENSION));
         $cdnTargetPath = 'phpindonesia/' . $settings['mode'] . '/';
         $newFileName = $session->get('user_id') . '-' . date('YmdHis');
 
-        Cloudinary\Uploader::upload((string) $file->getStream(), [
+        Cloudinary\Uploader::upload($photo->file, [
             'public_id' => $cdnTargetPath . $newFileName,
             'tags' => ['user-avatar'],
         ]);
@@ -151,6 +172,8 @@ $container['upload'] = function ($container) {
 
             $session->set('photo', $memberData['photo']);
         }
+
+        return $memberData;
     };
 };
 

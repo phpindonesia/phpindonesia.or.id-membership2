@@ -8,16 +8,6 @@ class Careers extends Models
     /**
      * {@inheritdoc}
      */
-    protected $table = '';
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $primary = '';
-
-    /**
-     * {@inheritdoc}
-     */
     protected $destructive = true;
 
     /**

@@ -19,7 +19,7 @@
                             'class' => 'input_full'
                         ));
 
-                        echo $this->formShowErrors('skill_parent_id', $validation_errors);
+                        echo $this->formFieldError('skill_parent_id');
                         ?>
                     </td>
                 </tr>
@@ -40,7 +40,7 @@
                         'class' => 'input_full'
                     ));
 
-                    echo $this->formShowErrors('skill_id', $validation_errors);
+                    echo $this->formFieldError('skill_id');
                     ?>
                     </td>
                 </tr>
@@ -99,7 +99,7 @@
 
                         <div style="clear: both; margin-top: 30px;">
                         <?php
-                        echo $this->formShowErrors('skill_self_assesment', $validation_errors);
+                        echo $this->formFieldError('skill_self_assesment');
                         ?>
                         </div>
 

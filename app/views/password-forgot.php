@@ -8,7 +8,7 @@
         <label for="email" class="control-label">Email *</label>
         <input id="email" class="form-control" name="email" required="required" type="email" value="<?php echo $this->parsedBodyParam('email'); ?>" />
         <p class="help-block">
-            <?php echo $this->formShowErrors('email', $validation_errors); ?>
+            <?php echo $this->formFieldError('email'); ?>
             Informasi konfirmasi lupa password akan kami kirimkan ke email anda. Demi keamanan
             dan validitas data maka kami tidak langsung mengirimkan password ke email anda. Tetapi,
             mengkonfirmasi terlebih dahulu bahwa anda benar-benar secara sadar telah lupa password.
