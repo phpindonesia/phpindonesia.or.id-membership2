@@ -1,16 +1,16 @@
+# For production, put your rewrite rules directly into your VirtualHost
+# directive and turn off AllowOverride.
+
 <IfModule mod_rewrite.c>
-    Options +FollowSymLinks -Indexes
-
     RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
 
-    RewriteRule ^(.+)\.(\d+)\.(js|css|png|jpg|gif)$ $1.$3 [L]
-    RewriteRule ^ index.php [QSA,L]
-</IfModule>
+    RewriteCond %{REQUEST_FILENAME} -s [OR]
+    RewriteCond %{REQUEST_FILENAME} -l [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^.*$ - [NC,L]
 
-# Header add Access-Control-Allow-Origin "your-domain.com"
 
-<IfModule !mod_rewrite.c>
-    ErrorDocument 404 index.php
+    RewriteCond %{REQUEST_URI}::$1 ^(/.+)(.+)::\2$
+    RewriteRule ^(.*) - [E=BASE:%1]
+    RewriteRule ^(.*)$ %{ENV:BASE}index.php [NC,L]
 </IfModule>
