@@ -12,27 +12,17 @@
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic|Open+Sans:400,300,600,700,300italic,400italic,600italic,700italic">
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/style.css">
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/shortcodes.css">
-    <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/responsive.css"> -->
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/skins/blue/style.css">
     <link rel="stylesheet" href="<?php echo $this->asset('/css/bootstrap.css') ?>">
     <link rel="stylesheet" href="<?php echo $this->asset('/css/font-awesome.css') ?>">
-    <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/prettyPhoto.css"> -->
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/meanmenu.css">
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/animations.css">
-    <!-- <link rel="stylesheet" href="<?php echo $this->asset('/css/responsive.css') ?>"> -->
-    <!-- <link rel="stylesheet" href="<?php echo $this->asset('/css/formalize.css') ?>"> -->
-    <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/formalize.css"> -->
-    <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/responsive2.css"> -->
 
     <?php if (isset($base_css)): foreach ($base_css as $css): ?>
         <link rel="stylesheet" href="<?php echo $css ?>">
     <?php endforeach; endif; ?>
 
     <link rel="shortcut icon" href="http://www.phpindonesia.or.id/favicon.png" type="image/png">
-
-    <?php if (isset($gcaptchaEnable) && $gcaptchaEnable == true): ?>
-    <script src="https://www.google.com/recaptcha/api.js?hl=id" async defer></script>
-    <?php endif ?>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>

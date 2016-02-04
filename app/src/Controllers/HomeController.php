@@ -51,8 +51,7 @@ class HomeController extends Controllers
         }
 
         if (!$validator->validate()) {
-            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
-            $this->flashValidationErrors($validator->errors());
+            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
             return $response->withRedirect($this->router->pathFor('membership-login'));
         }
@@ -60,7 +59,7 @@ class HomeController extends Controllers
         try {
             $user = $users->authenticate($input['login'], $this->salt($input['password']));
         } catch (\InvalidArgumentException $e) {
-            $this->flash->addMessage('error', $e->getMessage());
+            $this->addFormAlert('error', $e->getMessage());
 
             return $response->withRedirect($this->router->pathFor('membership-login'));
         }
@@ -199,15 +198,14 @@ class HomeController extends Controllers
             } catch (\Swift_TransportException $e) {
                 $registerSuccessMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
             } catch (\PDOException $e) {
-                $this->flash->addMessage('error', 'System failed<br>'.$e->getMessage());
+                $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
 
                 return $response->withRedirect($this->router->pathFor('membership-register'));
             }
 
-            $this->flash->addMessage('success', $registerSuccessMsg);
+            $this->addFormAlert('success', $registerSuccessMsg);
         } else {
-            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
-            $this->flashValidationErrors($validator->errors());
+            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
             return $response->withRedirect($this->router->pathFor('membership-register'));
         }

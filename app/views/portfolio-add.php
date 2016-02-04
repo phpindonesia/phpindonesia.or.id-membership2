@@ -16,9 +16,7 @@ $this->appendJs([
         <?php echo $this->insert('sections::alert') ?>
 
         <form action="<?php echo $this->pathFor('membership-portfolio-add'); ?>" method="post" class="checkout" novalidate>
-
             <?php echo $this->insert('sections::portfolio-form', ['portfolio' => false]) ?>
-
         </form>
 
     </div>

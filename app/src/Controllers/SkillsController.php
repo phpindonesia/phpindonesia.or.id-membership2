@@ -56,10 +56,9 @@ class SkillsController extends Controllers
                 'skill_self_assesment' => $input['skill_self_assesment'],
             ]);
 
-            $this->flash->addMessage('success', 'Item skill baru berhasil ditambahkan. Selamat!.  Silahkan tambahkan lagi item skill anda.');
+            $this->addFormAlert('success', 'Item skill baru berhasil ditambahkan. Selamat!.  Silahkan tambahkan lagi item skill anda.');
         } else {
-            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
-            $this->flashValidationErrors($validator->errors());
+            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
             return $response->withRedirect($this->router->pathFor('membership-skills-add'));
         }
@@ -69,14 +68,14 @@ class SkillsController extends Controllers
 
     public function editPage(Request $request, Response $response, array $args)
     {
-        $this->flash->addMessage('error', 'Page you just visited, not available at this time');
+        $this->addFormAlert('error', 'Page you just visited, not available at this time');
 
         return $response->withRedirect($this->router->pathFor('membership-account'));
     }
 
     public function edit(Request $request, Response $response, array $args)
     {
-        $this->flash->addMessage('error', 'Page you just visited, not available at this time');
+        $this->addFormAlert('error', 'Page you just visited, not available at this time');
 
         return $response->withRedirect($this->router->pathFor('membership-account'));
     }
@@ -86,9 +85,9 @@ class SkillsController extends Controllers
         $skills = $this->data(MemberSkills::class);
 
         if ($skills->delete((int) $args['id'])) {
-            $this->flash->addMessage('success', 'Item Skill berhasil dihapus.');
+            $this->addFormAlert('success', 'Item Skill berhasil dihapus.');
         } else {
-            $this->flash->addMessage('error', 'Sesuatu terjadi, skill gagal dihapus.');
+            $this->addFormAlert('error', 'Sesuatu terjadi, skill gagal dihapus.');
         }
 
         return $response->withRedirect($this->router->pathFor('membership-account'));

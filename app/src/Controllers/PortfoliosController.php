@@ -56,10 +56,9 @@ class PortfoliosController extends Controllers
                 $message = 'System error!<br>'.$e->getMessage();
             }
 
-            $this->flash->addMessage(($create !== false ? 'success' : 'error'), $message);
+            $this->addFormAlert(($create !== false ? 'success' : 'error'), $message);
         } else {
-            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
-            $this->flashValidationErrors($validator->errors());
+            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
             return $response->withRedirect($this->router->pathFor('membership-portfolio-add'));
         }
@@ -118,10 +117,9 @@ class PortfoliosController extends Controllers
                 $message = 'System error!<br>'.$e->getMessage();
             }
 
-            $this->flash->addMessage(($create !== false ? 'success' : 'error'), $message);
+            $this->addFormAlert(($create !== false ? 'success' : 'error'), $message);
         } else {
-            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
-            $this->flashValidationErrors($validator->errors());
+            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
             return $response->withRedirect($this->router->pathFor('membership-portfolio-edit', $args));
         }
@@ -131,7 +129,7 @@ class PortfoliosController extends Controllers
 
     public function deleted(Request $request, Response $response, array $args)
     {
-        $this->flash->addMessage('warning', 'This feature is disabled');
+        $this->addFormAlert('warning', 'This feature is disabled');
 
         return $response->withRedirect(
             $this->router->pathFor('membership-profile', [

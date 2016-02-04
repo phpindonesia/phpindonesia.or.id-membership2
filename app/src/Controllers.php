@@ -96,18 +96,6 @@ abstract class Controllers
     }
 
     /**
-     * Add validation error messages
-     *
-     * @param array $errors
-     */
-    protected function setValidationErrors(array $errors)
-    {
-        $this->view->addData([
-            'formValidationErrors' => $errors
-        ]);
-    }
-
-    /**
      * Flash validation error messages
      *
      * @param array $errors
@@ -119,7 +107,7 @@ abstract class Controllers
         }
 
         if ($inputs = $this->request->getParsedBody()) {
-            $this->flash->addMessage('form.inputs', serialize($inputs));
+            $this->flash->addMessage('form.inputs', serialize(array_filter($inputs)));
         }
     }
 
@@ -128,9 +116,12 @@ abstract class Controllers
      *
      * @param string $type
      * @param array  $message
+     * @param array  $errors
      */
-    protected function addAlert($type, $message)
+    protected function addFormAlert($type, $message, array $errors = [])
     {
+        $this->flash->addMessage('form.alert.'.$type, $message);
+
         if (!is_array($message)) {
             $message = [$message];
         }
@@ -142,6 +133,14 @@ abstract class Controllers
         $this->view->addData([
             'formAlert' => ['type' => $type, 'message' => $message]
         ], 'sections::alert');
+
+        foreach ($errors as $field => $error) {
+            $this->flash->addMessage('validation.errors.'.$field, implode(', ', $error));
+        }
+
+        if ($inputs = $this->request->getParsedBody()) {
+            $this->flash->addMessage('form.inputs', serialize(array_filter($inputs)));
+        }
     }
 
     /**
@@ -153,9 +152,9 @@ abstract class Controllers
     {
         $settings = $this->settings->get('gcaptcha');
         $this->view->addData([
+            'gcaptchaEnable'  => $settings['enable'],
             'gcaptchaSitekey' => $settings['sitekey'],
             'gcaptchaSecret'  => $settings['secret'],
-            'gcaptchaEnable'  => $settings['enable'],
         ], 'sections::captcha');
 
         return $settings;

@@ -211,19 +211,18 @@ class AccountController extends Controllers
 
                 $this->db->commit();
 
-                $this->flash->addMessage('success', 'Profile information successfuly updated! Congratulation!');
+                $this->addFormAlert('success', 'Profile information successfuly updated! Congratulation!');
             } catch (\PDOException $e) {
                 $this->db->rollback();
 
-                $this->flash->addMessage('error', 'System failed<br>'.$e->getMessage());
+                $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
             } catch (\Exception $e) {
                 $this->db->rollback();
 
-                $this->flash->addMessage('error', 'System failed<br>'.$e->getMessage());
+                $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
             }
         } else {
-            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
-            $this->flashValidationErrors($validator->errors());
+            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
             return $response->withRedirect($this->router->pathFor('membership-account-edit', $args));
         }
@@ -237,9 +236,9 @@ class AccountController extends Controllers
         $actExistCount = $users->assertActivationExists($args['uid'], $args['activation_key']);
 
         if ($actExistCount === 1 && $users->activate($args['uid'], $args['activation_key'])) {
-            $this->flash->addMessage('success', 'Selamat! Account anda sudah aktif. Silahkan login...');
+            $this->addFormAlert('success', 'Selamat! Account anda sudah aktif. Silahkan login...');
         } else {
-            $this->flash->addMessage('error', 'Bad Request');
+            $this->addFormAlert('error', 'Bad Request');
         }
 
         return $response->withRedirect($this->router->pathFor('membership-login'));
@@ -274,10 +273,9 @@ class AccountController extends Controllers
 
         if ($validator->validate()) {
             //
-            $this->flash->addMessage('error', 'Bad Request');
+            $this->addFormAlert('error', 'Bad Request');
         } else {
-            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
-            $this->flashValidationErrors($validator->errors());
+            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
             return $response->withRedirect($this->router->pathFor('membership-login'));
         }

@@ -168,7 +168,7 @@ class ViewExtension implements ExtensionInterface
     public function fieldError($name)
     {
         if ($error = $this->flash->getMessage('validation.errors.'.$name)) {
-            return '<p class="error">'.implode(', ', $error).'</p>';
+            return '<p class="alert alert-error">'.implode(', ', $error).'</p>';
         }
     }
 }

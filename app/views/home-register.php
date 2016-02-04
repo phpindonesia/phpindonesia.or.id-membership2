@@ -12,8 +12,8 @@ $this->appendJs([
     <div class="form-group">
         <label for="email" class="control-label">Alamat Email</label>
         <input type="email" id="email" name="email" class="form-control" value="<?php echo $this->requestBody('email'); ?>" />
+        <?php echo $this->formFieldError('email'); ?>
         <p class="help-block">
-            <?php echo $this->formFieldError('email'); ?>
             Masukkan alamat email yang masih aktif.
         </p>
     </div>
@@ -21,8 +21,8 @@ $this->appendJs([
     <div class="form-group">
         <label for="username" class="control-label">Username</label>
         <input type="text" id="username" name="username" class="form-control" value="<?php echo $this->requestBody('username'); ?>" />
+        <?php echo $this->formFieldError('username'); ?>
         <p class="help-block">
-            <?php echo $this->formFieldError('username'); ?>
             Masukkan <em>username</em> yang anda inginkan.
         </p>
     </div>
@@ -30,8 +30,8 @@ $this->appendJs([
     <div class="form-group">
         <label for="password" class="control-label">Password</label>
         <input type="password" id="password" name="password" class="form-control" value="<?php echo $this->requestBody('password'); ?>" />
+        <?php echo $this->formFieldError('password'); ?>
         <p class="help-block">
-            <?php echo $this->formFieldError('password'); ?>
             Masukkan <em>password</em> yang anda inginkan.
         </p>
     </div>
@@ -39,8 +39,8 @@ $this->appendJs([
     <div class="form-group">
         <label for="repassword" class="control-label">Konfirmasi Password</label>
         <input type="password" id="repassword" name="repassword" class="form-control" value="<?php echo $this->requestBody('repassword'); ?>" />
+        <?php echo $this->formFieldError('repassword'); ?>
         <p class="help-block">
-            <?php echo $this->formFieldError('repassword'); ?>
             Konfirmasikan ulang <em>password</em> yang anda masukkan.
         </p>
     </div>
@@ -48,8 +48,8 @@ $this->appendJs([
     <div class="form-group">
         <label for="fullname" class="control-label">Nama Lengkap *</label>
         <input type="text" id="fullname" name="fullname" class="form-control" value="<?php echo $this->requestBody('fullname'); ?>" />
+        <?php echo $this->formFieldError('fullname'); ?>
         <p class="help-block">
-            <?php echo $this->formFieldError('fullname'); ?>
             Masukkan <em>nama lengkap</em> anda
         </p>
     </div>
@@ -60,8 +60,8 @@ $this->appendJs([
             'id' => 'gender-dd',
             'class' => 'form-control'
         ]); ?>
+        <?php echo $this->formFieldError('gender_id'); ?>
         <p class="help-block">
-            <?php echo $this->formFieldError('gender_id'); ?>
             Gender
         </p>
     </div>
@@ -72,8 +72,8 @@ $this->appendJs([
             'id' => 'provinces-dd',
             'class' => 'form-control'
         ]); ?>
+        <?php echo $this->formFieldError('province_id'); ?>
         <p class="help-block">
-            <?php echo $this->formFieldError('province_id'); ?>
             Masukkan <em>propinsi</em> wilayah anda bertempat tinggal.
         </p>
     </div>
@@ -84,8 +84,8 @@ $this->appendJs([
             'id' => 'cities-dd',
             'class' => 'form-control'
         ]); ?>
+        <?php echo $this->formFieldError('city_id'); ?>
         <p class="help-block">
-            <?php echo $this->formFieldError('city_id'); ?>
             Masukkan <em>kota</em> atau <em>kabupaten</em> wilayah anda bertempat tinggal.
         </p>
     </div>
@@ -93,8 +93,8 @@ $this->appendJs([
     <div class="form-group">
         <label for="area" class="control-label">Area Domisili *</label>
         <input type="text" id="area" name="area" class="form-control" value="<?php echo $this->requestBody('area'); ?>" />
+        <?php echo $this->formFieldError('area'); ?>
         <p class="help-block">
-            <?php echo $this->formFieldError('area'); ?>
             Masukkan wilayah <em>domisili, kecamatan, atau desa</em> tempat anda sekarang tinggal.
         </p>
     </div>
@@ -105,8 +105,8 @@ $this->appendJs([
             'id' => 'job-id',
             'class' => 'form-control'
         ]); ?>
+        <?php echo $this->formFieldError('job_id'); ?>
         <p class="help-block">
-            <?php echo $this->formFieldError('job_id'); ?>
             Aktifitas atau pekerjaan anda saat ini.
         </p>
     </div>

@@ -25,21 +25,22 @@ return [
         'fileExtension' => 'php',
     ],
     'gcaptcha' => [
-        'enable'   => true,
-        'site_key' => '6LfJzg4TAAAAANipQttg0q0TL6VJJCPgDdBcnAR7',
-        'secret'   => '6LfJzg4TAAAAAE2Vwoy39WAulllaK4wV_O_0H-kf'
+        'enable'  => true,
+        'sitekey' => '6LfJzg4TAAAAANipQttg0q0TL6VJJCPgDdBcnAR7',
+        'secret'  => '6LfJzg4TAAAAAE2Vwoy39WAulllaK4wV_O_0H-kf'
     ],
     'publicRoutes' => [
         // '/',
-        '/activation',
-        '/detail',
-        '/forgot-password',
         '/login',
         '/register',
+        '/logout',
+        '/profile',
+        '/forgot-password',
         '/reset-password',
-        '/update-password',
-        '/account-reactivation',
-        '/common-data/cities',
+        '/password-update',
+        '/activate',
+        '/reactivate',
+        '/regionals',
     ],
     'cloudinary' => [
         'cloud_name' => '',

@@ -90,15 +90,14 @@ class PasswordController extends Controllers
                     'reset_key' => $resetKey
                 ]);
 
-                $this->flash->addMessage('success', $success_msg);
+                $this->addFormAlert('success', $success_msg);
             } catch (\PDOException $e) {
-                $this->flash->addMessage('error', 'System error'.$e->getMessage());
+                $this->addFormAlert('error', 'System error'.$e->getMessage());
             } catch (\Swift_TransportException $e) {
-                $this->flash->addMessage('success', $success_msg_alt);
+                $this->addFormAlert('success', $success_msg_alt);
             }
         } else {
-            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
-            $this->flashValidationErrors($validator->errors());
+            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
             return $response->withRedirect($this->router->pathFor('membership-forgot-password'));
         }
@@ -151,12 +150,11 @@ class PasswordController extends Controllers
                 $this->session->get('user_id')
             );
 
-            $this->flash->addMessage('success', 'Password anda berhasil diubah! Selamat!');
+            $this->addFormAlert('success', 'Password anda berhasil diubah! Selamat!');
 
             return $response->withRedirect($this->router->pathFor('membership-account'));
         } else {
-            $this->flash->addMessage('warning', 'Some of mandatory fields is empty!');
-            $this->flashValidationErrors($validator->errors());
+            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
             return $response->withRedirect($this->router->pathFor('membership-update-password'));
         }
@@ -205,12 +203,12 @@ class PasswordController extends Controllers
                 ]));
                 $this->mailer->send($message);
 
-                $this->flash->addMessage('success', $success_msg);
+                $this->addFormAlert('success', $success_msg);
             } catch (\Swift_TransportException $e) {
-                $this->flash->addMessage('success', $success_msg_alt);
+                $this->addFormAlert('success', $success_msg_alt);
             }
         } else {
-            $this->flash->addMessage('error', 'Bad Request');
+            $this->addFormAlert('error', 'Bad Request');
         }
 
         return $response->withRedirect($this->router->pathFor('membership-login'));
