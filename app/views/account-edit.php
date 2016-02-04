@@ -27,7 +27,7 @@ $this->appendJs([
                                 <label for="fullname" style="font-weight: bold;">Nama Lengkap *</label>
                             </th>
                             <td>
-                                <input type="text" class="input_full" id="fullname" name="fullname" value="<?php echo $this->parsedBodyParam('fullname', $member['fullname']); ?>" />
+                                <input type="text" class="input_full" id="fullname" name="fullname" value="<?php echo $this->requestBody('fullname', $member['fullname']); ?>" />
                                 <?php echo $this->formFieldError('fullname'); ?>
                             </td>
                         </tr>
@@ -37,7 +37,7 @@ $this->appendJs([
                                 <label for="email" style="font-weight: bold;">Email *</label>
                             </th>
                             <td>
-                                <input type="email" class="input_full" id="email" name="email" value="<?php echo $this->parsedBodyParam('email', $session['email']); ?>" />
+                                <input type="email" class="input_full" id="email" name="email" value="<?php echo $this->requestBody('email', $session['email']); ?>" />
                                 <?php echo $this->formFieldError('email'); ?>
                             </td>
                         </tr>
@@ -47,7 +47,7 @@ $this->appendJs([
                                 <label for="username" style="font-weight: bold;">Username *</label>
                             </th>
                             <td>
-                                <input type="text" class="input_full" id="username" name="username" value="<?php echo $this->parsedBodyParam('username', $session['username']); ?>" />
+                                <input type="text" class="input_full" id="username" name="username" value="<?php echo $this->requestBody('username', $session['username']); ?>" />
                                 <?php echo $this->formFieldError('username'); ?>
                             </td>
                         </tr>
@@ -57,7 +57,7 @@ $this->appendJs([
                                 <label for="contact_phone" style="font-weight: bold;">Telepon</label>
                             </th>
                             <td>
-                                <input type="text" class="input_full" id="contact_phone" name="contact_phone" value="<?php echo $this->parsedBodyParam('contact_phone', $member['contact_phone']); ?>" />
+                                <input type="text" class="input_full" id="contact_phone" name="contact_phone" value="<?php echo $this->requestBody('contact_phone', $member['contact_phone']); ?>" />
                                 <?php echo $this->formFieldError('contact_phone'); ?>
                             </td>
                         </tr>
@@ -101,7 +101,7 @@ $this->appendJs([
                                 <label for="area" style="font-weight: bold;">Area *</label>
                             </th>
                             <td>
-                                <input type="text" class="input_full" id="area" name="area" value="<?php echo $this->parsedBodyParam('area', $member['area']); ?>" />
+                                <input type="text" class="input_full" id="area" name="area" value="<?php echo $this->requestBody('area', $member['area']); ?>" />
                                 <?php echo $this->formFieldError('area'); ?>
                             </td>
                         </tr>
@@ -146,7 +146,7 @@ $this->appendJs([
                             </th>
 
                             <td>
-                                <input type="text" class="input_full" id="identity_number" name="identity_number" value="<?php echo $this->parsedBodyParam('identity_number', $member['identity_number']); ?>" />
+                                <input type="text" class="input_full" id="identity_number" name="identity_number" value="<?php echo $this->requestBody('identity_number', $member['identity_number']); ?>" />
                                 <?php echo $this->formFieldError('identity_number'); ?>
                             </td>
                         </tr>
@@ -157,7 +157,7 @@ $this->appendJs([
                             </th>
 
                             <td>
-                                <input type="text" class="input_full" id="birth_place" name="birth_place" value="<?php echo $this->parsedBodyParam('birth_place', $member['birth_place']); ?>" />
+                                <input type="text" class="input_full" id="birth_place" name="birth_place" value="<?php echo $this->requestBody('birth_place', $member['birth_place']); ?>" />
                                 <?php echo $this->formFieldError('birth_place'); ?>
                             </td>
                         </tr>

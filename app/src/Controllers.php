@@ -2,6 +2,7 @@
 namespace Membership;
 
 use Slim\Container;
+use Slim\Http\Request;
 use Slim\Exception\NotFoundException;
 
 abstract class Controllers
@@ -115,6 +116,10 @@ abstract class Controllers
     {
         foreach ($errors as $field => $message) {
             $this->flash->addMessage('validation.errors.'.$field, implode(', ', $message));
+        }
+
+        if ($inputs = $this->request->getParsedBody()) {
+            $this->flash->addMessage('form.inputs', serialize($inputs));
         }
     }
 

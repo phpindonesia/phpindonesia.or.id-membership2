@@ -11,7 +11,7 @@ $this->appendJs([
 
     <div class="form-group">
         <label for="email" class="control-label">Alamat Email</label>
-        <input type="email" id="email" name="email" class="form-control" value="<?php echo $this->parsedBodyParam('email'); ?>" />
+        <input type="email" id="email" name="email" class="form-control" value="<?php echo $this->requestBody('email'); ?>" />
         <p class="help-block">
             <?php echo $this->formFieldError('email'); ?>
             Masukkan alamat email yang masih aktif.
@@ -20,7 +20,7 @@ $this->appendJs([
 
     <div class="form-group">
         <label for="username" class="control-label">Username</label>
-        <input type="text" id="username" name="username" class="form-control" value="<?php echo $this->parsedBodyParam('username'); ?>" />
+        <input type="text" id="username" name="username" class="form-control" value="<?php echo $this->requestBody('username'); ?>" />
         <p class="help-block">
             <?php echo $this->formFieldError('username'); ?>
             Masukkan <em>username</em> yang anda inginkan.
@@ -29,7 +29,7 @@ $this->appendJs([
 
     <div class="form-group">
         <label for="password" class="control-label">Password</label>
-        <input type="password" id="password" name="password" class="form-control" value="<?php echo $this->parsedBodyParam('password'); ?>" />
+        <input type="password" id="password" name="password" class="form-control" value="<?php echo $this->requestBody('password'); ?>" />
         <p class="help-block">
             <?php echo $this->formFieldError('password'); ?>
             Masukkan <em>password</em> yang anda inginkan.
@@ -38,7 +38,7 @@ $this->appendJs([
 
     <div class="form-group">
         <label for="repassword" class="control-label">Konfirmasi Password</label>
-        <input type="password" id="repassword" name="repassword" class="form-control" value="<?php echo $this->parsedBodyParam('repassword'); ?>" />
+        <input type="password" id="repassword" name="repassword" class="form-control" value="<?php echo $this->requestBody('repassword'); ?>" />
         <p class="help-block">
             <?php echo $this->formFieldError('repassword'); ?>
             Konfirmasikan ulang <em>password</em> yang anda masukkan.
@@ -47,7 +47,7 @@ $this->appendJs([
 
     <div class="form-group">
         <label for="fullname" class="control-label">Nama Lengkap *</label>
-        <input type="text" id="fullname" name="fullname" class="form-control" value="<?php echo $this->parsedBodyParam('fullname'); ?>" />
+        <input type="text" id="fullname" name="fullname" class="form-control" value="<?php echo $this->requestBody('fullname'); ?>" />
         <p class="help-block">
             <?php echo $this->formFieldError('fullname'); ?>
             Masukkan <em>nama lengkap</em> anda
@@ -92,7 +92,7 @@ $this->appendJs([
 
     <div class="form-group">
         <label for="area" class="control-label">Area Domisili *</label>
-        <input type="text" id="area" name="area" class="form-control" value="<?php echo $this->parsedBodyParam('area'); ?>" />
+        <input type="text" id="area" name="area" class="form-control" value="<?php echo $this->requestBody('area'); ?>" />
         <p class="help-block">
             <?php echo $this->formFieldError('area'); ?>
             Masukkan wilayah <em>domisili, kecamatan, atau desa</em> tempat anda sekarang tinggal.

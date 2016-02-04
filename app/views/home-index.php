@@ -36,7 +36,7 @@ $this->appendCss([
 
                 <div class="form-group">
                     <label class="control-label">Area</label>
-                    <input type="text" id="area" class="form-control" name="area" value="<?php echo $this->parsedBodyParam('area', null, true); ?>"/>
+                    <input type="text" id="area" class="form-control" name="area" value="<?php echo $this->requestBody('area', null, true); ?>"/>
                 </div>
 
                 <div class="form-group">

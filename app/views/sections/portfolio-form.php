@@ -5,7 +5,7 @@
                 <label for="company-name" style="font-weight: bold;">Nama Perusahaan *</label>
             </th>
             <td>
-                <input type="text" id="company-name" class="input_full" name="company_name" value="<?php echo $this->parsedBodyParam('company_name', $portfolio ? $portfolio['company_name'] : null) ?>" />
+                <input type="text" id="company-name" class="input_full" name="company_name" value="<?php echo $this->requestBody('company_name', $portfolio ? $portfolio['company_name'] : null) ?>" />
                 <?php echo $this->formFieldError('company_name') ?>
             </td>
         </tr>
@@ -117,7 +117,7 @@
                 <label for="job-title" style="font-weight: bold;">Posisi dalam pekerjaan (Job title) *</label>
             </th>
             <td>
-                <input type="text" id="job-title" class="input_full" name="job_title" value="<?php echo $this->parsedBodyParam('job_title', $portfolio ? $portfolio['job_title'] : null) ?>" />
+                <input type="text" id="job-title" class="input_full" name="job_title" value="<?php echo $this->requestBody('job_title', $portfolio ? $portfolio['job_title'] : null) ?>" />
                 <?php echo $this->formFieldError('job_title') ?>
             </td>
         </tr>
@@ -127,7 +127,7 @@
                 <label for="job-desc" style="font-weight: bold;">Deskripsi pekerjaan (Job description) *</label>
             </th>
             <td>
-                <textarea id="job-desc" class="input_full" name="job_desc"><?php echo $this->parsedBodyParam('job_desc', $portfolio ? $portfolio['job_desc'] : null) ?></textarea>
+                <textarea id="job-desc" class="input_full" name="job_desc"><?php echo $this->requestBody('job_desc', $portfolio ? $portfolio['job_desc'] : null) ?></textarea>
                 <?php echo $this->formFieldError('job_desc') ?>
             </td>
         </tr>

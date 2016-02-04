@@ -119,11 +119,23 @@ class Users extends Models
         }
     }
 
+    /**
+     * Update user login data
+     *
+     * @param int $userId User ID
+     * @return int
+     */
     public function updateLogin($userId)
     {
         return $this->update(['last_login' => date('Y-m-d H:i:s')], (int) $userId);
     }
 
+    /**
+     * Retrieve user profile
+     *
+     * @param int|null $userId User ID
+     * @return array
+     */
     public function getProfile($userId = null)
     {
         $profile = new MemberProfile($this->db);
@@ -142,6 +154,12 @@ class Users extends Models
         })->fetch();
     }
 
+    /**
+     * Retrieve user social media accounts
+     *
+     * @param int|null $userId User ID
+     * @return array
+     */
     public function getSocmends($userId = null)
     {
         $socmeds = new MemberSocmeds($this->db);
@@ -155,6 +173,12 @@ class Users extends Models
         })->fetchAll();
     }
 
+    /**
+     * Retrieve user portfolio
+     *
+     * @param int|null $userId User ID
+     * @return array
+     */
     public function getPortfolios($userId = null)
     {
         $portfolio = new MemberPortfolios($this->db);
@@ -175,6 +199,12 @@ class Users extends Models
         })->fetchAll();
     }
 
+    /**
+     * Count user portfolios
+     *
+     * @param int|null $userId User ID
+     * @return int
+     */
     public function countPortfolios($userId = null)
     {
         $portfolio = new MemberPortfolios($this->db);
@@ -186,6 +216,12 @@ class Users extends Models
         });
     }
 
+    /**
+     * Retrieve user skills
+     *
+     * @param int|null $userId User ID
+     * @return array
+     */
     public function getSkills($userId = null)
     {
         $skills = new MemberSkills($this->db);
@@ -206,6 +242,12 @@ class Users extends Models
         })->fetchAll();
     }
 
+    /**
+     * Count user portfolios
+     *
+     * @param int|null $userId User ID
+     * @return int
+     */
     public function countSkills($userId = null)
     {
         $skills = new MemberSkills($this->db);
@@ -217,6 +259,13 @@ class Users extends Models
         });
     }
 
+    /**
+     * Authenticate user Credentials
+     *
+     * @param string $login    Should be email or username
+     * @param string $password User password
+     * @return int
+     */
     public function authenticate($login, $password)
     {
         $query = $this->db->select([
@@ -245,6 +294,12 @@ class Users extends Models
         return $user;
     }
 
+    /**
+     * List all members
+     *
+     * @param \Slim\Http\Request $request Filter by request
+     * @return array
+     */
     public function getMembers($request)
     {
         $query = $this->db->select([
@@ -284,6 +339,12 @@ class Users extends Models
         return $query->execute()->fetchAll();
     }
 
+    /**
+     * Is $username already exists?
+     *
+     * @param string $username
+     * @return bool
+     */
     public function assertUsernameExists($username)
     {
         $username = strtolower($username);
@@ -294,6 +355,12 @@ class Users extends Models
         return $count > 0;
     }
 
+    /**
+     * Is $email already exists?
+     *
+     * @param string $email
+     * @return bool
+     */
     public function assertEmailExists($email)
     {
         $email = strtolower($email);
@@ -304,6 +371,13 @@ class Users extends Models
         return $count > 0;
     }
 
+    /**
+     * Is activation $key for $userId already exists?
+     *
+     * @param string $userId
+     * @param string $key
+     * @return bool
+     */
     public function assertActivationExists($userId, $key)
     {
         $count = $this->count(function ($query) use ($userId, $key) {

@@ -199,7 +199,7 @@ class HomeController extends Controllers
             } catch (\Swift_TransportException $e) {
                 $registerSuccessMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
             } catch (\PDOException $e) {
-                $this->flash->addMessage('error', 'System gagal!<br>'.$e->getMessage());
+                $this->flash->addMessage('error', 'System failed<br>'.$e->getMessage());
 
                 return $response->withRedirect($this->router->pathFor('membership-register'));
             }

@@ -20,6 +20,13 @@ class UsersResetPwd extends Models
      */
     protected $authorize = false;
 
+    /**
+     * Verify reset password $key for $userId
+     *
+     * @param int    $userId
+     * @param string $key
+     * @return bool
+     */
     public function verifyUserKey($userId, $key)
     {
         $count = $this->count(function ($query) use ($userId, $key) {

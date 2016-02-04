@@ -26,7 +26,7 @@ class ViewExtension implements ExtensionInterface
     /**
      * View Extention
      *
-     * @param Slim\Http\Request $request
+     * @param \Slim\Http\Request $request
      */
     public function __construct(Request $request, FlashMessage $flash, $mode = 'development')
     {
@@ -47,11 +47,13 @@ class ViewExtension implements ExtensionInterface
             'base_css' => [],
         ]);
 
-        $engine->registerFunction('parsedBodyParam', [$this->request, 'getParsedBodyParam']);
-        $engine->registerFunction('formInputSelect', [$this, 'inputSelect']);
-        $engine->registerFunction('formFieldError', [$this, 'showFieldError']);
-
+        // Form helpers
         $engine->registerFunction('userPhoto', [$this, 'userPhoto']);
+        $engine->registerFunction('requestBody', [$this, 'requestBody']);
+        $engine->registerFunction('formFieldError', [$this, 'fieldError']);
+        $engine->registerFunction('formInputSelect', [$this, 'inputSelect']);
+
+        // Flash Message helpers
         $engine->registerFunction('flashMessages', [$this->flash, 'getMessages']);
         $engine->registerFunction('flashMessage', [$this->flash, 'getMessage']);
 
@@ -71,6 +73,13 @@ class ViewExtension implements ExtensionInterface
         });
     }
 
+    /**
+     * Retrieve user photo from CDN
+     *
+     * @param string $publicId User photo public ID
+     * @param array  $options  CDN options
+     * @return string
+     */
     public function userPhoto($publicId = null, $options = [])
     {
         $default = $this->template->asset('/images/team.png');
@@ -91,10 +100,40 @@ class ViewExtension implements ExtensionInterface
         }
     }
 
+    /**
+     * Retrieve previous form input
+     *
+     * @param string $name    Input Name
+     * @param mixed  $default Default value if Input name not available
+     * @return mixed
+     */
+    public function requestBody($name, $default = null)
+    {
+        if ($formInputs = $this->flash->getMessage('form.inputs')) {
+            $formInputs = unserialize($formInputs[0]);
+
+            if (is_array($default) && isset($default[$name])) {
+                $default = $default[$name];
+            }
+
+            return isset($formInputs[$name]) ? $formInputs[$name] : $default;
+        }
+
+        return $default;
+    }
+
+    /**
+     * Generate form <select> based on $data array
+     *
+     * @param string $name       Name attribute
+     * @param array  $data       List of data
+     * @param array  $attributes Optiona html attributes
+     * @return string
+     */
     public function inputSelect($name, array $data, array $attributes = [])
     {
         $default = isset($attributes['default']) ? $attributes['default'] : null;
-        $reqParam = $this->request->getParsedBodyParam($name, $default);
+        $reqInput = $this->requestBody($name, $default);
         unset($attributes['default']);
 
         $attrs = [];
@@ -109,7 +148,7 @@ class ViewExtension implements ExtensionInterface
 
         foreach ($data as $key => $value) {
             $selected = '';
-            if ($key == $reqParam) {
+            if ($key == $reqInput) {
                 $selected = ' selected="selected"';
             }
 
@@ -120,7 +159,13 @@ class ViewExtension implements ExtensionInterface
         return implode('', $elements);
     }
 
-    public function showFieldError($name)
+    /**
+     * Retrieve error message each input $name
+     *
+     * @param string $name Input name
+     * @return string
+     */
+    public function fieldError($name)
     {
         if ($error = $this->flash->getMessage('validation.errors.'.$name)) {
             return '<p class="error">'.implode(', ', $error).'</p>';
