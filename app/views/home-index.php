@@ -2,10 +2,10 @@
 $this->layout('layouts::system');
 
 $this->appendJs([
-    $this->asset('/js/membership.js')
+    $this->asset('js/membership.js')
 ]);
 $this->appendCss([
-    $this->asset('/css/chabibnr.css')
+    $this->asset('css/chabibnr.css')
 ]);
 ?>
 
@@ -79,4 +79,3 @@ $this->appendCss([
     </div>
 
 </div>
-

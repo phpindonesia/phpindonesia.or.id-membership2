@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/shortcodes.css">
     <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/responsive.css"> -->
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/skins/blue/style.css">
-    <link rel="stylesheet" href="<?php echo $this->asset('/css/bootstrap.css') ?>">
-    <link rel="stylesheet" href="<?php echo $this->asset('/css/font-awesome.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl().$this->asset('css/bootstrap.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl().$this->asset('css/font-awesome.css') ?>">
     <!-- <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/prettyPhoto.css"> -->
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/meanmenu.css">
     <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/animations.css">
@@ -36,8 +36,8 @@
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-        <script src="/js/html5shiv.js"></script>
-        <script src="/js/respond.min.js"></script>
+        <script src="<?php echo $this->baseUrl() ?>js/html5shiv.js"></script>
+        <script src="<?php echo $this->baseUrl() ?>js/respond.min.js"></script>
     <![endif]-->
 </head>
 
@@ -84,11 +84,11 @@
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/okzoom.min.js"></script>
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/custom.js"></script>
 
-    <script src="<?php echo $this->asset('/js/jquery.formalize.min.js') ?>"></script>
-    <script src="<?php echo $this->asset('/js/membership.js') ?>"></script>
+    <script src="<?php echo $this->baseUrl().$this->asset('/js/jquery.formalize.min.js') ?>"></script>
+    <script src="<?php echo $this->baseUrl().$this->asset('/js/membership.js') ?>"></script>
 
     <?php if (isset($base_js)): foreach ($base_js as $js): ?>
-        <script src="<?php echo $js ?>"></script>
+        <script src="<?php echo $this->baseUrl().$js ?>"></script>
     <?php endforeach; endif; ?>
 
 </body>
