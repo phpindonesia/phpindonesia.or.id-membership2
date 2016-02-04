@@ -64,12 +64,6 @@ $app->get('/activate/{uid}/{activation_key}', AccountController::class.':activat
 $app->get('/reactivate', AccountController::class.':reactivatePage')->setName('membership-account-reactivate');
 $app->post('/reactivate', AccountController::class.':reactivate');
 
-/**
- * TODO: normalize username,
- * - Username should accept alphanumeric, dash and underscore only
- */
-$app->get('/profile/{username}', AccountController::class.':profile')->setName('membership-profile');
-
 $app->group('/account', function () {
 
     // Account home
@@ -186,4 +180,10 @@ $app->group('/regionals', function () {
     $this->get('/cities/{province_id:[0-9]+}', RegionalsController::class.':cities')->setName('regionals-cities');
 
 });
+
+/**
+ * TODO: normalize username,
+ * - Username should accept alphanumeric, dash and underscore only
+ */
+$app->get('/{username}', AccountController::class.':profile')->setName('membership-profile');
 
