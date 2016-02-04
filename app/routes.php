@@ -104,8 +104,13 @@ $app->group('/account', function () {
     })->add(function (Request $request, Response $response, callable $next) {
 
         // Authorize portfolio middleware
-        $data = $this->get('data');
         $args = $request->getAttribute('routeInfo')[2];
+
+        if (!$args) {
+            return $next($request, $response);
+        }
+
+        $data = $this->get('data');
         $count = $data(Models\MemberPortfolios::class)->count([
             'member_portfolio_id' => (int) $args['id'],
             'user_id' => $this->session->get('user_id'),
@@ -139,8 +144,13 @@ $app->group('/account', function () {
     })->add(function (Request $request, Response $response, callable $next) {
 
         // Authorize skills middleware
-        $data = $this->get('data');
         $args = $request->getAttribute('routeInfo')[2];
+
+        if (!$args) {
+            return $next($request, $response);
+        }
+
+        $data = $this->get('data');
         $count = $data(Models\MemberSkills::class)->count([
             'member_skill_id' => (int) $args['id'],
             'user_id' => $this->session->get('user_id'),
