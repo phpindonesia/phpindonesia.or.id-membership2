@@ -11,10 +11,10 @@
 1. Clone repo ini ke lokal, ambil langsung ke branch `refactory-dev`
 
    ```
-$ git clone https://github.com/phpindonesia/phpindonesia.or.id-membership2 --branch refactory-dev --depth 1 [folder-name]
+$ git clone https://github.com/phpindonesia/phpindonesia.or.id-membership2 [folder-name]
 ```
 
-   **NOTE**: Untuk kebutuhan testing, argumen `--branch` digunakan untuk clone branch ini saja & argumen `--depth` digunakan untuk ambil 1 history terakhir saja.
+   **NOTE**: Untuk kebutuhan testing, gunakan argumen `--branch [branch-name]` untuk clone branch tertentu saja & argumen `--depth 1` untuk ambil hanya 1 history terakhir saja.
 
 2. Masuk ke directory cloning tadi & install dependency
 
@@ -68,12 +68,12 @@ $ php -S  localhost:8088 -t www/
 
 ### Cara berkontribusi:
 
-1. Fork dulu repo ini ke akun anda & clone ke lokal selanjutnya ikuti tahap [installasi](#installasi) diatas,
+1. Fork dulu repo ini ke akun anda & clone ke lokal selanjutnya ikuti tahap [installasi](#instalasi) diatas,
 
    ```
 $ git clone git@github.com:[username]/phpindonesia.or.id-membership2
 ```
 
 2. Buat branch baru, usahakan beri nama sesuai dengan apa yang akan anda lakukan. Misal: `feature-keren` atau `fix-issue-123`,
-3. Setelah editing selesai, Push ke remote origin dan kirim Pull Request ke branch `development`,
+3. Setelah editing selesai, Push ke remote origin dan kirim Pull Request ke branch `develop`,
 4. Jelaskan kontribusi apa yang anda lakukan pada Pull Request tersebut.
