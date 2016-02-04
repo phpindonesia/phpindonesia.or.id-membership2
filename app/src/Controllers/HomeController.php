@@ -112,30 +112,29 @@ class HomeController extends Controllers
         $users = $this->data(Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', [
-            'email',
-            'username',
-            'password',
-            'repassword',
-            'fullname',
-            'gender_id',
-            'province_id',
-            // 'city_id',
-            'area',
-            'job_id',
+            'email', 'username', 'fullname', 'password', 'repassword',
+            'job_id', 'gender_id', 'province_id', 'area',
+            // 'city_id', // disable it for now
         ]);
 
         $validator->addRule('assertEmailNotExists', function ($field, $value, array $params) use ($users) {
             return !$users->assertEmailExists($value);
-        }, 'tersebut sudah terdaftar!');
+        }, 'tersebut sudah terdaftar! Silahkan gunakan email lain');
 
         $validator->addRule('assertUsernameNotExists', function ($field, $value, array $params) use ($users) {
-            return !$users->assertUsernameExists($value);
-        }, 'tersebut sudah terdaftar!');
+            $protected = [
+                'admin',
+                'account', 'login', 'register', 'logout',
+                'activate', 'reactivate', 'regionals',
+                'forgot-password', 'reset-password'
+            ];
+            return !in_array($value, $protected) && !$users->assertUsernameExists($value);
+        }, 'tersebut sudah terdaftar! Silahkan gunakan username lain');
 
         $validator->rules([
             'regex' => [
                 ['fullname', ':^[A-z\s]+$:'],
-                ['username', ':^[A-z\d\-\.\_]+$:'],
+                ['username', ':^[A-z\d\-\_]+$:'],
             ],
             'email' => 'email',
             'assertEmailNotExists' => 'email',
@@ -145,6 +144,9 @@ class HomeController extends Controllers
             ],
             'equals' => [
                 ['repassword', 'password']
+            ],
+            'notIn' => [
+                ['username', 'password']
             ],
             'lengthMax' => [
                 ['username', 32],
