@@ -1,0 +1,25 @@
+{
+    "name": "phpindonesia/membership-2",
+    "description": "PHP Indonesia Membership Application Reloaded",
+    "type": "project",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "google/recaptcha": "~1.1",
+        "slim/slim": "~3.1",
+        "slim/flash": "~0.1",
+        "slim/pdo": "~1.9",
+        "swiftmailer/swiftmailer": "~5.4",
+        "vlucas/valitron": "~1.0",
+        "cloudinary/cloudinary_php": "dev-master",
+        "projek-xyz/slim-plates": "~0.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Membership\\": "app/src/"
+        },
+        "files": [
+            "app/src/helpers.php"
+        ]
+    }
+}

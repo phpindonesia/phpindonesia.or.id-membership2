@@ -1,25 +1,79 @@
-# phpindonesia.or.id-membership2
-PHP Indonesia - Membership Application - Reloaded
+# PHP Indonesia - Membership App - Reloaded
 
-Platform:
+### Kebutuhan
 
-1. PHP
-2. MariaDB / MySQL
+- PHP 5.5 keatas.
+- HTTP Server, misal NginX or Apache.
+- MySQL Server 5.x keatas untuk database utama.
 
-Cara Install:
+### Instalasi
 
-1. Clone repository ini di direktori document root anda. Contoh: C:\xampp\htdocs atau /var/www
-2. Create database dengan nama bebas. Contoh: `dev-spirit`.
-3. Import file database struktur `dev-spirit.sql`
-4. Copy file `settings.php.disable` lalu rename hasil copy nya menjadi bernama `settings.php`. File `settings.php.disable` jangan dihapus atau di-rename.
-5. Edit nilai-nilai di settings.php sesuai kebutuhan.
-6. Buat direktori `files/photoprofile` di dalam direktori `public/` .
-7. Akses app dengan alamat berikut: `http://localhost/phpindonesia.or.id-membership2/apps/membership`
+1. Clone repo ini ke lokal, ambil langsung ke branch `refactory-dev`
 
-Jika app ini diinstall di virtual host, maka akses dengan alamat: `http://virtual.host.anda/apps/membership` 
+   ```
+$ git clone https://github.com/phpindonesia/phpindonesia.or.id-membership2 --branch refactory-dev --depth 1 [folder-name]
+```
 
-Cara berkontribusi:
+   **NOTE**: Untuk kebutuhan testing, argumen `--branch` digunakan untuk clone branch ini saja & argumen `--depth` digunakan untuk ambil 1 history terakhir saja.
 
-1. Forking repository ini
-2. Lakukan semua perubahan - perubahan di branch `development`
-3. Hanya menerima pull-request ke branch `development` saja.
+2. Masuk ke directory cloning tadi & install dependency
+
+   ```
+$ cd [folder-name] && composer install
+```
+
+3. Buat database baru, terserah namanya apa (Misal. `phpid-membership`). Bisa gunakan PHPMyAdmin atau cukup tuliskan di terminal.
+
+   ```bash
+$ mysql -u[db-user] -p -e "create database [db-name]"
+```
+
+   **NOTE**: sesuaikan `[db-user]` anda, umumnya adalah `root`
+
+4. Import kedua file `.sql` yang ada dalam folder `app/data` secara berurutan ke `[db-name]` yang telah anda buat:
+
+   1. `membership-schema.sql`
+   2. `membership-values.sql`
+
+   Dari terminal bisa dilakukan dengan cara
+
+   ```bash
+$ mysql -u[db-user] -p [db-name] < app/data/membership-schema.sql app/data/membership-values.sql
+```
+
+5. Copy-Paste file `settings.php.disable` didalam folder `app` dan rename menjadi `settings.php` lalu buka dengan editor favorit anda dan sesuaikan isi konfigurasi didalamnya, misal Sublime Text: `subl`.
+
+   ```
+$ cp app/settings.php.disable app/settings.php
+$ subl -a app/settings.php
+```
+
+6. Jika anda menggunakan web server seperti Apache atau NginX, silahkan sesuaikan vhost -nya atau gunakan PHP built in server dan arahkan ke folder `www` sebagai docroot.
+
+   ```
+$ php -S  localhost:8088 -t www/
+```
+
+7. Terakhir, buka url sesuai dengan konfigurasi lokal server anda. Misal [`http://localhost:8088/`](http://localhost:8088/).
+
+### Struktur Direktori
+
+| Path | Keterangan |
+| --- | --- |
+| `app/` | Direktori utama aplikasi |
+| `app/data/` | Direktori database |
+| `app/src/` | Direktori source code aplikasi |
+| `app/views/` | Direktori template |
+| `www/` | Direktori public |
+
+### Cara berkontribusi:
+
+1. Fork dulu repo ini ke akun anda & clone ke lokal selanjutnya ikuti tahap [installasi](#installasi) diatas,
+
+   ```
+$ git clone git@github.com:[username]/phpindonesia.or.id-membership2
+```
+
+2. Buat branch baru, usahakan beri nama sesuai dengan apa yang akan anda lakukan. Misal: `feature-keren` atau `fix-issue-123`,
+3. Setelah editing selesai, Push ke remote origin dan kirim Pull Request ke branch `development`,
+4. Jelaskan kontribusi apa yang anda lakukan pada Pull Request tersebut.
