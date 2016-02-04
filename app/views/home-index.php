@@ -47,7 +47,7 @@ $this->appendCss([
         </div>
 
         <div class="column dt-sc-three-fourth">
-            <?php echo $this->insert('sections::flash-message'); $i = 0; ?>
+            <?php echo $this->insert('sections::alert'); $i = 0; ?>
 
             <?php foreach ($members as $member): ?>
                 <div class="column dt-sc-one-third<?php echo ($i % 3 == 0) ? ' first' : '' ?>">

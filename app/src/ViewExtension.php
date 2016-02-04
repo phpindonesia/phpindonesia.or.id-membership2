@@ -49,8 +49,6 @@ class ViewExtension implements ExtensionInterface
 
         $engine->registerFunction('parsedBodyParam', [$this->request, 'getParsedBodyParam']);
         $engine->registerFunction('formInputSelect', [$this, 'inputSelect']);
-        $engine->registerFunction('formErrorClass', [$this, 'errorClass']);
-        $engine->registerFunction('formShowErrors', [$this, 'showError']);
         $engine->registerFunction('formFieldError', [$this, 'showFieldError']);
 
         $engine->registerFunction('userPhoto', [$this, 'userPhoto']);
@@ -73,10 +71,10 @@ class ViewExtension implements ExtensionInterface
         });
     }
 
-    public function userPhoto($public_id = null, $options = [])
+    public function userPhoto($publicId = null, $options = [])
     {
         $default = $this->template->asset('/images/team.png');
-        if (null === $public_id) {
+        if (null === $publicId) {
             return $default;
         }
 
@@ -86,8 +84,8 @@ class ViewExtension implements ExtensionInterface
                 'crop' => 'fill',
             ];
 
-            $cdn_upload_path = 'phpindonesia/'.$this->mode.'/';
-            return \Cloudinary::cloudinary_url($cdn_upload_path.$public_id, $options);
+            $cdnTargetPath = 'phpindonesia/'.$this->mode.'/';
+            return \Cloudinary::cloudinary_url($cdnTargetPath.$publicId, $options);
         } catch (\Exception $e) {
             return $default;
         }
@@ -122,33 +120,10 @@ class ViewExtension implements ExtensionInterface
         return implode('', $elements);
     }
 
-    public function errorClass($name, $error_css_class, array $errors)
-    {
-        if (is_array($errors)) {
-            if (isset($errors[$name])) {
-                return $error_css_class;
-            }
-        }
-
-        return '';
-    }
-
     public function showFieldError($name)
     {
         if ($error = $this->flash->getMessage('validation.errors.'.$name)) {
             return '<p class="error">'.implode(', ', $error).'</p>';
         }
-    }
-
-    public function showError($name, array $errors)
-    {
-        $errors_str = '';
-        if (isset($errors[$name])) {
-            foreach ($errors[$name] as $item) {
-                $errors_str .= '<label class="error">'.$item.'</label><br />';
-            }
-        }
-
-        return $errors_str;
     }
 }
