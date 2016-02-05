@@ -207,7 +207,7 @@ $container['mailer'] = function ($container) {
 $container['errorHandler'] = function ($container) {
     if ($container->get('settings')['mode'] !== 'development') {
         return function ($request, $response, $exception) use ($container) {
-            return $container->get('view')->render('error/error500', [
+            return $container->get('view')->render('errors/500', [
                 'message' => $exception->getMessage()
             ])->withStatus(500);
         };
