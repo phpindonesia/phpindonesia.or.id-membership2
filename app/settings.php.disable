@@ -18,7 +18,7 @@ return [
     ],
     'email' => [
         'sender_email' => '',
-        'sender_name'  => 'PHP Indonesia Membership'
+        'sender_name'  => 'PHP Indonesia - Membership App'
     ],
     'view' => [
         'directory'     => APP_DIR.'views',
