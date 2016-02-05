@@ -19,6 +19,7 @@ qnd-cli-utils/settings.php
 # Dependency folders
 # --------------------------
 /vendor
+/.htaccess
 
 # IDE Project Configurations
 # --------------------------
@@ -30,5 +31,5 @@ nbproject/
 
 # But Keep these
 # --------------------------
-!.htaccess
+!/www/.htaccess
 !.gitkeep

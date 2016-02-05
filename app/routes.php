@@ -64,6 +64,9 @@ $app->get('/activate/{uid:[0-9]}/{activation_key}', AccountController::class.':a
 $app->get('/reactivate', AccountController::class.':reactivatePage')->setName('membership-account-reactivate');
 $app->post('/reactivate', AccountController::class.':reactivate');
 
+// Javascript?
+$app->get('/javascript', AccountController::class.':javascriptPage')->setName('membership-account-javascript');
+
 $app->group('/account', function () {
 
     // Account home
@@ -76,9 +79,6 @@ $app->group('/account', function () {
     // Update account password
     $this->get('/update-password', PasswordController::class.':updatePage')->setName('membership-update-password');
     $this->post('/update-password', PasswordController::class.':update');
-
-    // Javascript?
-    $this->get('/javascript', AccountController::class.':javascriptPage')->setName('membership-account-javascript');
 
     // Delete account?
     $this->delete('/{id:[0-9]+}', AccountController::class.':delete')->setName('membership-account-delete');
