@@ -117,17 +117,17 @@ Cloudinary::config($container->get('settings')['cloudinary']);
  * Setup view container
  */
 $container['view'] = function ($container) {
-    $settings = $container->get('settings')['view'];
+    $settings = $container->get('settings');
     $request = $container->get('request');
-    $view = new Projek\Slim\Plates($settings, $container->get('response'));
+    $view = new Projek\Slim\Plates($settings['view'], $container->get('response'));
 
     // Add app view folders
-    $view->addFolder('layouts',  $settings['directory'].'/layouts');
-    $view->addFolder('sections', $settings['directory'].'/sections');
+    $view->addFolder('layouts',  $settings['view']['directory'].'/layouts');
+    $view->addFolder('sections', $settings['view']['directory'].'/sections');
 
     // Load app view extensions
     $view->loadExtension(new PlatesAsset(WWW_DIR));
-    $view->loadExtension(new Membership\ViewExtension($request, $container->get('flash')));
+    $view->loadExtension(new Membership\ViewExtension($request, $container->get('flash'), $settings['mode']));
     $view->loadExtension(new Projek\Slim\PlatesExtension($container->get('router'), $request->getUri()));
 
     return $view;
