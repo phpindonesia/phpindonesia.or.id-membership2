@@ -13,7 +13,6 @@ Icon?
 # Development files
 # --------------------------
 app/settings.php
-qnd-cli-utils/settings.php
 .env
 
 # Dependency folders
