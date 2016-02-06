@@ -30,6 +30,7 @@ class PasswordController extends Controllers
 
     public function forgot(Request $request, Response $response, array $args)
     {
+        /** @var Users $users */
         $users = $this->data(Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', 'email');
@@ -48,6 +49,7 @@ class PasswordController extends Controllers
             $resetKey = md5(uniqid(rand(), true));
             $emailAddress = $input['email'];
             $resetExpiredDate = date('Y-m-d H:i:s', time() + 7200); // 2 jam
+            /** @var UsersResetPwd $usersResetPass */
             $usersResetPass = $this->data(UsersResetPwd::class);
 
             $member = $users->get(
@@ -115,6 +117,7 @@ class PasswordController extends Controllers
 
     public function update(Request $request, Response $response, array $args)
     {
+        /** @var Users $users */
         $users     = $this->data(Users::class);
         $saltPass  = $this->settings->get('salt_pwd');
         $password  = $request->getParsedBodyParam('password');
@@ -144,27 +147,27 @@ class PasswordController extends Controllers
             ],
         ]);
 
-        if ($validator->validate()) {
-            $users->update(
-                ['password' => $this->salt($password)],
-                $this->session->get('user_id')
-            );
-
-            $this->addFormAlert('success', 'Password anda berhasil diubah! Selamat!');
-
-            return $response->withRedirect($this->router->pathFor('membership-account'));
-        } else {
+        if (!$validator->validate()) {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
             return $response->withRedirect($this->router->pathFor('membership-account-password-edit'));
         }
+
+        $users->update(
+            ['password' => $this->salt($password)],
+            $this->session->get('user_id')
+        );
+
+        $this->addFormAlert('success', 'Password anda berhasil diubah! Selamat!');
 
         return $response->withRedirect($this->router->pathFor('membership-account'));
     }
 
     public function reset(Request $request, Response $response, array $args)
     {
+        /** @var Users $users */
         $users = $this->data(Users::class);
+        /** @var UsersResetPwd $usersResetPass */
         $usersResetPass = $this->data(UsersResetPwd::class);
 
         if ($usersResetPass->verifyUserKey($args['uid'], $args['reset_key'])) {

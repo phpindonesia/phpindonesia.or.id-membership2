@@ -12,7 +12,7 @@ class RegionalsController extends Controllers
     public function cities(Request $request, Response $response, array $args)
     {
         $this->assertXhrRequest($request, $response);
-        $provinces = $this->data(Regionals::class)->getProvinces($args['province_id']);
+        $provinces = $this->data(Regionals::class)->getCities($args['province_id']);
 
         if (!$provinces) {
             throw new NotFoundException($request, $response);

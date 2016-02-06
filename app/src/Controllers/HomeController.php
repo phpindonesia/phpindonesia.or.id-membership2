@@ -15,6 +15,7 @@ class HomeController extends Controllers
     {
         $this->setPageTitle('Membership', 'Keanggotaan');
 
+        /** @var Regionals $regionals */
         $regionals  = $this->data(Regionals::class);
         $provinceId = $request->getQueryParam('province_id');
 
@@ -42,8 +43,9 @@ class HomeController extends Controllers
 
     public function login(Request $request, Response $response, array $args)
     {
-        $input = $request->getParsedBody();
+        /** @var Users $users */
         $users = $this->data(Users::class);
+        $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', ['login', 'password']);
 
         if (filter_var($input['login'], FILTER_VALIDATE_EMAIL)) {
@@ -97,6 +99,7 @@ class HomeController extends Controllers
             ],
         ], 'layouts::account');
 
+        /** @var Regionals $regionals */
         $regionals = $this->data(Regionals::class);
         $provinceId = $request->getParam('province_id');
 
@@ -109,6 +112,7 @@ class HomeController extends Controllers
 
     public function register(Request $request, Response $response, array $args)
     {
+        /** @var Users $users */
         $users = $this->data(Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', [
