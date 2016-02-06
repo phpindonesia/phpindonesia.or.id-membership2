@@ -12,6 +12,7 @@ use Membership\Models\Regionals;
 use Membership\Models\MemberProfile;
 use Membership\Models\MemberSocmeds;
 use Membership\Models\UsersResetPwd;
+use Slim\Exception\NotFoundException;
 
 class AccountController extends Controllers
 {
@@ -46,6 +47,21 @@ class AccountController extends Controllers
                 ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
                 ->where('u.username', '=', $args['username']);
         })->fetch();
+
+        if (!$user) {
+            throw new NotFoundException($request, $response);
+        }
+
+        if ($request->isXhr()) {
+            return $response->withJson([
+                'username' => $user['username'],
+                'fullname' => $user['fullname'],
+                'email'    => $user['email'],
+                'gender'   => $user['gender'],
+                'city'     => $user['city'],
+                'province' => $user['province'],
+            ]);
+        }
 
         return $this->view->render('profile-index', [
             'member'            => $user,
