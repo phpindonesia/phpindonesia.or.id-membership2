@@ -92,7 +92,7 @@
                             </a>
                             <ul class="sub-menu">
                                 <li><a href="<?php echo $this->pathFor('membership-account'); ?>">My Membership Area</a></li>
-                                <li><a href="<?php echo $this->pathFor('membership-update-password'); ?>">Update Password</a></li>
+                                <li><a href="<?php echo $this->pathFor('membership-account-password-edit'); ?>">Update Password</a></li>
                                 <li><a href="<?php echo $this->pathFor('membership-logout'); ?>">Logout</a></li>
                             </ul>
                         </li>

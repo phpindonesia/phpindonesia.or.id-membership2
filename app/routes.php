@@ -78,11 +78,11 @@ $app->group('/account', function () {
 
     // Edit account
     $this->get('/edit', AccountController::class.':editPage')->setName('membership-account-edit');
-    $this->post('/edit', AccountController::class.':edit');
+    $this->post('/edit', AccountController::class.':edit')->setName('membership-account-update');
 
     // Update account password
-    $this->get('/update-password', PasswordController::class.':updatePage')->setName('membership-update-password');
-    $this->post('/update-password', PasswordController::class.':update');
+    $this->get('/update-password', PasswordController::class.':updatePage')->setName('membership-account-password-edit');
+    $this->post('/update-password', PasswordController::class.':update')->setName('membership-account-password-update');
 
     // Delete account?
     $this->delete('/{id:[0-9]+}', AccountController::class.':delete')->setName('membership-account-delete');
