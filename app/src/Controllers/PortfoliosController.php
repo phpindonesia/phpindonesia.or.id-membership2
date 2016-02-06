@@ -40,7 +40,6 @@ class PortfoliosController extends Controllers
             'career_level_id'
         ]);
 
-        $validator->rule('email', 'company_name');
         if ($input['work_status'] == 'R') {
             $validator->rule('required', 'end_date_y');
         }
