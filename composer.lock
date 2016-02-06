@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b6ee37170c7cc0c21d614570ad3247e9",
+    "hash": "91b5e85c6a90d1454b510bdd3d779f30",
     "content-hash": "e05258b632615e4c1305dd6f2a134356",
     "packages": [
         {
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cloudinary/cloudinary_php.git",
-                "reference": "c9ddafd4c33d5f9980f2b21409c999009c91f17f"
+                "reference": "3d82f544d6fd8e4135ab9712093840d20cec5bac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/c9ddafd4c33d5f9980f2b21409c999009c91f17f",
-                "reference": "c9ddafd4c33d5f9980f2b21409c999009c91f17f",
+                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/3d82f544d6fd8e4135ab9712093840d20cec5bac",
+                "reference": "3d82f544d6fd8e4135ab9712093840d20cec5bac",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +57,7 @@
                 "image management",
                 "sdk"
             ],
-            "time": "2016-01-07 14:34:23"
+            "time": "2016-01-28 13:48:02"
         },
         {
             "name": "container-interop/container-interop",
@@ -423,16 +423,16 @@
         },
         {
             "name": "slim/pdo",
-            "version": "1.9.5",
+            "version": "1.9.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FaaPz/Slim-PDO.git",
-                "reference": "b1b4579a83e4a8b1dd762aa0c8803f55cf4f5593"
+                "reference": "8dc5d55a84b3824e508f611b23b329ac1ec5d0b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FaaPz/Slim-PDO/zipball/b1b4579a83e4a8b1dd762aa0c8803f55cf4f5593",
-                "reference": "b1b4579a83e4a8b1dd762aa0c8803f55cf4f5593",
+                "url": "https://api.github.com/repos/FaaPz/Slim-PDO/zipball/8dc5d55a84b3824e508f611b23b329ac1ec5d0b2",
+                "reference": "8dc5d55a84b3824e508f611b23b329ac1ec5d0b2",
                 "shasum": ""
             },
             "require": {
@@ -465,7 +465,7 @@
                 "pdo",
                 "slim"
             ],
-            "time": "2016-01-22 23:14:59"
+            "time": "2016-02-03 19:02:05"
         },
         {
             "name": "slim/slim",
