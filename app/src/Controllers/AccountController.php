@@ -21,6 +21,12 @@ class AccountController extends Controllers
         /** @var Users $users */
         $users = $this->data(Users::class);
 
+        if ($request->isXhr()) {
+            $outputJson = $this->normalizeUserJsonOutput($users);
+
+            return $response->withJson($outputJson);
+        }
+
         return $this->view->render('account-index', [
             'member'            => $users->getProfile(),
             'member_portfolios' => $users->getPortfolios(),
@@ -36,31 +42,23 @@ class AccountController extends Controllers
 
         /** @var Users $users */
         $users = $this->data(Users::class);
-        $user = $users->get([
-            'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*',
-            'reg_prv.regional_name province',
-            'reg_cit.regional_name city'
-        ], function ($query) use ($args) {
-            $query->from('users u')
-                ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
-                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
-                ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-                ->where('u.username', '=', $args['username']);
-        })->fetch();
+        $user = $users->getProfile($args['username']);
 
         if (!$user) {
             throw new NotFoundException($request, $response);
         }
 
         if ($request->isXhr()) {
-            return $response->withJson([
+            $outputJson = [
                 'username' => $user['username'],
                 'fullname' => $user['fullname'],
                 'email'    => $user['email'],
                 'gender'   => $user['gender'],
                 'city'     => $user['city'],
                 'province' => $user['province'],
-            ]);
+            ];
+
+            return $response->withJson($outputJson);
         }
 
         return $this->view->render('profile-index', [
@@ -360,5 +358,61 @@ class AccountController extends Controllers
     private function cookieTtl()
     {
         return time() + 86400;
+    }
+
+    private function normalizeUserJsonOutput(Users $users, $username = null)
+    {
+        $user = $users->getProfile($username);
+
+        $output = [
+            'id' => $user['user_id'],
+            'username' => $user['username'],
+            'email' => $user['email'],
+            'fullname' => $user['fullname'],
+            'phone' => $user['contact_phone'],
+            'photo' => $user['photo'],
+            'birthPlace' => $user['birth_place'],
+            'birthDate' => $user['birth_date'],
+            'identityType' => $user['identity_type'],
+            'identityNumber' => $user['identity_number'],
+            'gender' => $user['gender'],
+            'religion' => $user['religion_name'],
+            'area' => $user['area'],
+            'city' => $user['city'],
+            'province' => $user['province'],
+            'portfolios' => [],
+            'skills' => [],
+            'socmeds' => [],
+        ];
+
+        foreach ($users->getPortfolios($user['user_id']) as $i => $portfolio) {
+            $output['portfolios'][$i] = [
+                'id' => $portfolio['member_portfolio_id'],
+                'companyName' => $portfolio['company_name'],
+                'industryName' => $portfolio['industry_name'],
+                'workStatus' => $portfolio['work_status'],
+                'jobTitle' => $portfolio['job_title'],
+                'jobDesc' => $portfolio['job_desc'],
+            ];
+        }
+
+        foreach ($users->getSkills($user['user_id']) as $i => $skill) {
+            $output['skills'][$i] = [
+                'id' => $skill['member_skill_id'],
+                'name' => $skill['skill_name'],
+                'parent' => $skill['skill_parent_name'],
+                'assesment' => $skill['skill_self_assesment'],
+            ];
+        }
+
+        foreach ($users->getSocmends($user['user_id']) as $i => $socmend) {
+            $output['socmeds'][$i] = [
+                'type' => $socmend['socmed_type'],
+                'name' => $socmend['account_name'],
+                'url' => $socmend['account_url'],
+            ];
+        }
+
+        return $output;
     }
 }

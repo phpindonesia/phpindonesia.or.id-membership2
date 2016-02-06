@@ -112,7 +112,5 @@ $app->group('/regionals', function () {
  * TODO: normalize username,
  * - Username should accept alphanumeric, dash and underscore only [A-z\d\-\_]
  */
-$app->get('/{username}', AccountController::class.':profile')
-    ->add(Middleware::class.':normalizeProfile')
-    ->setName('membership-profile');
+$app->get('/{username}', AccountController::class.':profile')->setName('membership-profile');
 

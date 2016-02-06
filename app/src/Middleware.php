@@ -31,7 +31,7 @@ class Middleware
             $request = $request->withParsedBody($inputs);
         }
 
-        if ($request->getContentType() == 'application/json') {
+        if ($request->getHeaderLine('Accept') == 'application/json') {
             $request = $request->withHeader('X-Requested-With', 'XMLHttpRequest');
         }
 
@@ -50,7 +50,7 @@ class Middleware
 
         // Forward all XHR GET request
         if ($request->isXhr()) {
-            if ($request->isGet() || $this->getOwnerId($request) !== false) {
+            if ($this->getOwnerId($request) !== false) {
                 return $next($request, $response);
             }
 
@@ -81,10 +81,8 @@ class Middleware
         }
 
         // Validate request with existing model
-        if (!$this->assertOwnership($request, Models\MemberPortfolios::class)) {
-            $this->flash->addMessage('error', 'Permission denied, authorization required.');
-
-            return $response->withRedirect($this->router->pathFor('membership-account'));
+        if (!$this->authorizeOwnership($request, Models\MemberPortfolios::class)) {
+            return $this->responseWithDenial($request, $response);
         }
 
         return $next($request, $response);
@@ -104,10 +102,8 @@ class Middleware
         }
 
         // Validate request with existing model
-        if (!$this->assertOwnership($request, Models\MemberSkills::class)) {
-            $this->flash->addMessage('error', 'Permission denied, authorization required.');
-
-            return $response->withRedirect($this->router->pathFor('membership-account'));
+        if (!$this->authorizeOwnership($request, Models\MemberSkills::class)) {
+            return $this->responseWithDenial($request, $response);
         }
 
         return $next($request, $response);
@@ -116,23 +112,21 @@ class Middleware
     /**
      * @param \Slim\Http\Request  $request
      * @param \Slim\Http\Response $response
-     * @param callable            $next
-     * @return mixed
+     * @return \Slim\Http\Response
      */
-    public function normalizeProfile(Request $request, Response $response, callable $next)
+    private function responseWithDenial(Request $request, Response $response)
     {
-        $routeInfo = $request->getAttribute('routeInfo');
-        $args = $routeInfo[2];
+        $message = 'Permission denied, authorization required.';
 
-        if (substr($args['username'], -5) == '.json') {
-            $routeInfo[2]['username'] = substr($args['username'], 0, -5);
-
-            $request = $request
-                ->withAttribute('routeInfo', $routeInfo)
-                ->withHeader('X-Requested-With', 'XMLHttpRequest');
+        // Response with json if XHR request
+        if ($request->isXhr()) {
+            return $response->withJson(['message' => $message], 401);
         }
 
-        return $next($request, $response);
+        // Response with redirect if otherwise
+        $this->flash->addMessage('error', $message);
+
+        return $response->withRedirect($this->router->pathFor('membership-account'));
     }
 
     /**
@@ -151,7 +145,7 @@ class Middleware
      * @param string             $model
      * @return bool
      */
-    private function assertOwnership(Request $request, $model)
+    private function authorizeOwnership(Request $request, $model)
     {
         $data = $this->data($model);
         $args = $request->getAttribute('routeInfo')[2];
@@ -174,10 +168,10 @@ class Middleware
             return (int) $this->session->get('user_id');
         }
 
-        // Or use basic HTTP Auth.
+        // Or use HTTP Basic Auth.
         $serverParams = $request->getServerParams();
-        $username = isset($serverParams["PHP_AUTH_USER"]) ? $serverParams["PHP_AUTH_USER"] : '';
-        $password = isset($serverParams["PHP_AUTH_PW"])   ? $serverParams["PHP_AUTH_PW"]   : '';
+        $username = isset($serverParams['PHP_AUTH_USER']) ? $serverParams['PHP_AUTH_USER'] : '';
+        $password = isset($serverParams['PHP_AUTH_PW'])   ? $serverParams['PHP_AUTH_PW']   : '';
 
         if (isset($serverParams['HTTP_AUTHORIZATION'])) {
             if (preg_match("/Basic\s+(.*)$/i", $serverParams['HTTP_AUTHORIZATION'], $matches)) {
@@ -186,12 +180,17 @@ class Middleware
         }
 
         $users = $this->data(Models\Users::class);
-        $user  = $users->get([$users->primary(), 'password'], ['username' => $username])->fetch();
+        $user  = $users->get([$users->primary(), 'password', 'username'], ['username' => $username])->fetch();
         $salt  = $this->settings->get('salt_pwd');
 
         // TODO: We need better password hashing :sweat_smile:
         if ($user['password'] === md5($salt . $password)) {
-            return (int) $user[$users->primary()];
+            $userId = (int) $user[$users->primary()];
+
+            $this->session->set('user_id', $userId);
+            $this->session->set('username', $user['username']);
+
+            return $userId;
         }
 
         return false;

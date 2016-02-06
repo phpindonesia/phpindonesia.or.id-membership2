@@ -133,24 +133,26 @@ class Users extends Models
     /**
      * Retrieve user profile
      *
-     * @param int|null $userId User ID
+     * @param string|null $username User ID
      * @return array
      */
-    public function getProfile($userId = null)
+    public function getProfile($username = null)
     {
         $profile = new MemberProfile($this->db);
-        !is_null($userId) || $userId = $this->current('user_id');
+        !is_null($username) || $username = $this->current('username');
 
         return $profile->get([
-            'm.*',
+            'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*', 'r.religion_name',
             'reg_prv.regional_name province',
             'reg_cit.regional_name city'
-        ], function ($query) use ($userId) {
-            $query->from('members_profiles m')
-                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+        ], function ($query) use ($username) {
+            $query->from('users u')
+                ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
                 ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-                ->where('m.user_id', '=', $userId)
-                ->where('m.deleted', '=', 'N');
+                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+                ->leftJoin('religions r', 'r.religion_id', '=', 'm.religion_id')
+                ->where('u.username', '=', $username)
+                ->where('u.deleted', '=', 'N');
         })->fetch();
     }
 
