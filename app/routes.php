@@ -98,7 +98,7 @@ $app->group('/account', function () {
 
     })->add(Middleware::class.':authorizeSkillRoute');
 
-})->add(Middleware::class.':authorizeAccountRoute');
+})->add(Middleware::class.':authenticateRoute');
 
 // Regionals end-point
 $app->group('/regionals', function () {
