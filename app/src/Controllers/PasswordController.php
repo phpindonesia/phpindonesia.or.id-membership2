@@ -156,7 +156,7 @@ class PasswordController extends Controllers
         } else {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
-            return $response->withRedirect($this->router->pathFor('membership-update-password'));
+            return $response->withRedirect($this->router->pathFor('membership-account-password-edit'));
         }
 
         return $response->withRedirect($this->router->pathFor('membership-account'));

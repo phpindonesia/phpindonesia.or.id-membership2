@@ -73,8 +73,8 @@
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/plugins.js"></script>
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/okzoom.min.js"></script>
     <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/custom.js"></script>
-
     <script src="<?php echo $this->asset('/js/jquery.formalize.min.js') ?>"></script>
+
     <script src="<?php echo $this->asset('/js/membership.js') ?>"></script>
 
     <?php if (isset($base_js)): foreach ($base_js as $js): ?>

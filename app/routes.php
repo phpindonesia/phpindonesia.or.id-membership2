@@ -23,6 +23,10 @@ $app->add(function (Request $request, Response $response, callable $next) {
             return $value ?: null;
         });
 
+        if (isset($inputs['_METHOD']) && $request->getMethod() == $inputs['_METHOD']) {
+            unset($inputs['_METHOD']);
+        }
+
         $request = $request->withParsedBody($inputs);
     }
 
@@ -74,11 +78,11 @@ $app->group('/account', function () {
 
     // Edit account
     $this->get('/edit', AccountController::class.':editPage')->setName('membership-account-edit');
-    $this->post('/edit', AccountController::class.':edit');
+    $this->put('/edit', AccountController::class.':edit')->setName('membership-account-update');
 
     // Update account password
-    $this->get('/update-password', PasswordController::class.':updatePage')->setName('membership-update-password');
-    $this->post('/update-password', PasswordController::class.':update');
+    $this->get('/update-password', PasswordController::class.':updatePage')->setName('membership-account-password-edit');
+    $this->put('/update-password', PasswordController::class.':update')->setName('membership-account-password-update');
 
     // Delete account?
     $this->delete('/{id:[0-9]+}', AccountController::class.':delete')->setName('membership-account-delete');
@@ -86,21 +90,23 @@ $app->group('/account', function () {
     // Account portfolios
     $this->group('/portfolio', function () {
 
-        // Update & Delete Portfolio
-        $this->get('/{id:[0-9]+}', PortfoliosController::class.':editPage')->setName('membership-portfolio-edit');
-        $this->post('/{id:[0-9]+}', PortfoliosController::class.':edit');
-        $this->delete('/{id:[0-9]+}', PortfoliosController::class.':delete');
+        // View and Update Portfolio
+        $this->get('/{id:[0-9]+}', PortfoliosController::class.':index')->setName('membership-portfolios-edit');
+        $this->put('/{id:[0-9]+}', PortfoliosController::class.':edit')->setName('membership-portfolios-update');
+
+        // Delete Portfolio
+        $this->delete('/{id:[0-9]+}', PortfoliosController::class.':delete')->setName('membership-portfolios-delete');
 
         // Create new Portfolio
-        $this->get('/add', PortfoliosController::class.':addPage')->setName('membership-portfolio-add');
-        $this->post('/add', PortfoliosController::class.':add');
+        $this->get('/add', PortfoliosController::class.':addPage')->setName('membership-portfolios-add');
+        $this->post('/', PortfoliosController::class.':add')->setName('membership-portfolios-create');
 
     })->add(function (Request $request, Response $response, callable $next) {
 
         // Authorize portfolio middleware
         $args = $request->getAttribute('routeInfo')[2];
 
-        if (!$args) {
+        if (!$args || ($request->isXhr() && $request->isGet())) {
             return $next($request, $response);
         }
 
@@ -123,24 +129,23 @@ $app->group('/account', function () {
     // Account Skills
     $this->group('/skills', function () {
 
-        // Read all skills
-        $this->get('[/]', SkillsController::class.':index')->setName('membership-skills');
+        // View and Update skill
+        $this->get('/{id:[0-9]+}', SkillsController::class.':index')->setName('membership-skills-edit');
+        $this->put('/{id:[0-9]+}', SkillsController::class.':edit')->setName('membership-skills-update');
 
-        // Update & Delete skills
-        $this->get('/{id:[0-9]+}', SkillsController::class.':editPage')->setName('membership-skills-edit');
-        $this->post('/{id:[0-9]+}', SkillsController::class.':edit');
+        // Delete skill
         $this->delete('/{id:[0-9]+}', SkillsController::class.':delete')->setName('membership-skills-delete');
 
-        // Create new skills
+        // Create new skill
         $this->get('/add', SkillsController::class.':addPage')->setName('membership-skills-add');
-        $this->post('/add', SkillsController::class.':add');
+        $this->post('/', SkillsController::class.':add')->setName('membership-skills-create');
 
     })->add(function (Request $request, Response $response, callable $next) {
 
         // Authorize skills middleware
         $args = $request->getAttribute('routeInfo')[2];
 
-        if (!$args) {
+        if (!$args || ($request->isXhr() && $request->isGet())) {
             return $next($request, $response);
         }
 
@@ -161,6 +166,11 @@ $app->group('/account', function () {
     });
 
 })->add(function (Request $request, Response $response, callable $next) {
+
+    // Forward all XHR request
+    if ($request->isXhr() && $request->isGet()) {
+        return $next($request, $response);
+    }
 
     // Authorize account middleware
     if (!$this->session->has('user_id')) {
@@ -185,5 +195,20 @@ $app->group('/regionals', function () {
  * TODO: normalize username,
  * - Username should accept alphanumeric, dash and underscore only [A-z\d\-\_]
  */
-$app->get('/{username}', AccountController::class.':profile')->setName('membership-profile');
+$app->get('/{username}', AccountController::class.':profile')->add(function (Request $request, Response $response, callable $next) {
+
+    $routeInfo = $request->getAttribute('routeInfo');
+    $args = $routeInfo[2];
+
+    if (substr($args['username'], -5) == '.json') {
+        $routeInfo[2]['username'] = substr($args['username'], 0, -5);
+
+        $request = $request
+            ->withAttribute('routeInfo', $routeInfo)
+            ->withHeader('X-Requested-With', 'XMLHttpRequest');
+    }
+
+    return $next($request, $response);
+
+})->setName('membership-profile');
 

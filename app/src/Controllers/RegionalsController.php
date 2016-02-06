@@ -5,20 +5,27 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
 use Membership\Models\Regionals;
+use Slim\Exception\NotFoundException;
 
 class RegionalsController extends Controllers
 {
     public function cities(Request $request, Response $response, array $args)
     {
         $this->assertXhrRequest($request, $response);
+        $provinces = $this->data(Regionals::class)->getProvinces($args['province_id']);
 
-        return $res->withJson($this->data(Regionals::class)->getCities(), 200);
+        if (!$provinces) {
+            throw new NotFoundException($request, $response);
+        }
+
+        return $response->withJson($provinces);
     }
 
     public function provinces(Request $request, Response $response, array $args)
     {
         $this->assertXhrRequest($request, $response);
+        $provinces = $this->data(Regionals::class)->getProvinces();
 
-        return $res->withJson($this->data(Regionals::class)->getProvinces(), 200);
+        return $request->withJson($provinces);
     }
 }

@@ -7,16 +7,20 @@ use Membership\Controllers;
 use Membership\Models\Users;
 use Membership\Models\Skills;
 use Membership\Models\MemberSkills;
+use Slim\Exception\NotFoundException;
 
 class SkillsController extends Controllers
 {
     public function index(Request $request, Response $response, array $args)
     {
         $this->assertXhrRequest($request, $response);
+        $skills = $this->data(Skills::class)->getChilds($args['id']);
 
-        return $response->withJson(
-            $this->data(Skills::class)->getChilds($args['skill_id'])
-        );
+        if (!$skills) {
+            throw new NotFoundException($request, $response);
+        }
+
+        return $response->withJson($skills);
     }
 
     public function addPage(Request $request, Response $response, array $args)
@@ -62,13 +66,6 @@ class SkillsController extends Controllers
 
             return $response->withRedirect($this->router->pathFor('membership-skills-add'));
         }
-
-        return $response->withRedirect($this->router->pathFor('membership-account'));
-    }
-
-    public function editPage(Request $request, Response $response, array $args)
-    {
-        $this->addFormAlert('error', 'Page you just visited, not available at this time');
 
         return $response->withRedirect($this->router->pathFor('membership-account'));
     }

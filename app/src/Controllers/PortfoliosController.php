@@ -10,6 +10,31 @@ use Membership\Models\MemberPortfolios;
 
 class PortfoliosController extends Controllers
 {
+    public function index(Request $request, Response $response, array $args)
+    {
+        $career = $this->data(Careers::class);
+        $portfolio = $this->data(MemberPortfolios::class)->find([
+            'member_portfolio_id' => (int) $args['id'],
+            'user_id' => $this->session->get('user_id'),
+            'deleted' => 'N',
+        ]);
+
+        if ($request->isXhr()) {
+            return $response->withJson($portfolio->fetch());
+        }
+
+        $this->view->addData([
+            'career_levels' => array_pairs($career->getLevels(), 'career_level_id'),
+            'industries'    => array_pairs($career->getIndustries(), 'industry_id', 'industry_name')
+        ], 'sections::portfolio-form');
+
+        $this->setPageTitle('Membership', 'Update portfolio item');
+
+        return $this->view->render('portfolio-edit', [
+            'portfolio' => $portfolio->fetch(),
+        ]);
+    }
+
     public function addPage(Request $request, Response $response, array $args)
     {
         $this->setPageTitle('Membership', 'Add new portfolio');
@@ -40,7 +65,6 @@ class PortfoliosController extends Controllers
             'career_level_id'
         ]);
 
-        $validator->rule('email', 'company_name');
         if ($input['work_status'] == 'R') {
             $validator->rule('required', 'end_date_y');
         }
@@ -60,31 +84,10 @@ class PortfoliosController extends Controllers
         } else {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
-            return $response->withRedirect($this->router->pathFor('membership-portfolio-add'));
+            return $response->withRedirect($this->router->pathFor('membership-portfolios-add'));
         }
 
         return $response->withRedirect($this->router->pathFor('membership-account'));
-    }
-
-    public function editPage(Request $request, Response $response, array $args)
-    {
-        $career = $this->data(Careers::class);
-        $portfolio = $this->data(MemberPortfolios::class)->find([
-            'member_portfolio_id' => (int) $args['id'],
-            'user_id' => $this->session->get('user_id'),
-            'deleted' => 'N',
-        ]);
-
-        $this->view->addData([
-            'career_levels' => array_pairs($career->getLevels(), 'career_level_id'),
-            'industries'    => array_pairs($career->getIndustries(), 'industry_id', 'industry_name')
-        ], 'sections::portfolio-form');
-
-        $this->setPageTitle('Membership', 'Update portfolio item');
-
-        return $this->view->render('portfolio-edit', [
-            'portfolio' => $portfolio->fetch(),
-        ]);
     }
 
     public function edit(Request $request, Response $response, array $args)
@@ -121,7 +124,7 @@ class PortfoliosController extends Controllers
         } else {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
-            return $response->withRedirect($this->router->pathFor('membership-portfolio-edit', $args));
+            return $response->withRedirect($this->router->pathFor('membership-portfolios-edit', $args));
         }
 
         return $response->withRedirect($this->router->pathFor('membership-account'));
