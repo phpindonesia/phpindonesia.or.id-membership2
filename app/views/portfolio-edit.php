@@ -2,7 +2,7 @@
 $this->layout('layouts::system');
 
 $this->appendJs([
-    $this->asset('/js/portfolio-add.js')
+    $this->asset('/js/portfolio.js')
 ]);
 ?>
 
@@ -15,9 +15,10 @@ $this->appendJs([
 
         <?php echo $this->insert('sections::alert') ?>
 
-        <form action="<?php echo $this->pathFor('membership-portfolio-edit', ['id' => $portfolio['member_portfolio_id']]); ?>" method="post" class="checkout" novalidate>
+        <form action="<?php echo $this->pathFor('membership-portfolios-update', ['id' => $portfolio['member_portfolio_id']]); ?>" method="post" class="checkout" novalidate>
             <input type="hidden" name="member_portfolio_id" value="<?php echo $portfolio['member_portfolio_id']; ?>" />
 
+            <?php echo $this->formInputMethod('PUT') ?>
             <?php echo $this->insert('sections::portfolio-form', ['portfolio' => $portfolio]) ?>
         </form>
 

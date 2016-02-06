@@ -2,7 +2,7 @@
 $this->layout('layouts::account');
 
 $this->appendJs([
-    $this->asset('/js/membership.js')
+    $this->asset('/js/regional.js')
 ]);
 ?>
 

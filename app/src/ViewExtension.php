@@ -52,6 +52,7 @@ class ViewExtension implements ExtensionInterface
         $engine->registerFunction('requestBody', [$this, 'requestBody']);
         $engine->registerFunction('formFieldError', [$this, 'fieldError']);
         $engine->registerFunction('formInputSelect', [$this, 'inputSelect']);
+        $engine->registerFunction('formInputMethod', [$this, 'inputMethod']);
 
         // Flash Message helpers
         $engine->registerFunction('flashMessages', [$this->flash, 'getMessages']);
@@ -120,6 +121,17 @@ class ViewExtension implements ExtensionInterface
         }
 
         return $default;
+    }
+
+    /**
+     * Retrieve Request method override
+     *
+     * @param string $method Request methods [GET|POST|PUT|DELETE]
+     * @return mixed
+     */
+    public function inputMethod($method)
+    {
+        return '<input type="hidden" name="_METHOD" value="' . strtoupper($method) . '" />';
     }
 
     /**

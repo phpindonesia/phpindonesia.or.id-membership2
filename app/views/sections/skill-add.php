@@ -4,7 +4,7 @@
 
     <h4 style="border-bottom: 1px #000000 solid;">Tambahkan Informasi Skill</h4>
 
-    <form action="<?php echo $this->pathFor('membership-skills-add'); ?>" method="post" class="checkout" novalidate>
+    <form action="<?php echo $this->pathFor('membership-skills-create'); ?>" method="post" class="checkout" novalidate>
 
         <table class="form-oprek">
             <tbody>

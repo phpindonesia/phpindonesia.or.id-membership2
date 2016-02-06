@@ -13,10 +13,9 @@ class SkillsController extends Controllers
     public function index(Request $request, Response $response, array $args)
     {
         $this->assertXhrRequest($request, $response);
+        $skills = $this->data(Skills::class);
 
-        return $response->withJson(
-            $this->data(Skills::class)->getChilds($args['skill_id'])
-        );
+        return $response->withJson($skills->getChilds($args['id']));
     }
 
     public function addPage(Request $request, Response $response, array $args)
@@ -62,13 +61,6 @@ class SkillsController extends Controllers
 
             return $response->withRedirect($this->router->pathFor('membership-skills-add'));
         }
-
-        return $response->withRedirect($this->router->pathFor('membership-account'));
-    }
-
-    public function editPage(Request $request, Response $response, array $args)
-    {
-        $this->addFormAlert('error', 'Page you just visited, not available at this time');
 
         return $response->withRedirect($this->router->pathFor('membership-account'));
     }
