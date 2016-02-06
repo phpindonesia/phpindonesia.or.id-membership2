@@ -12,7 +12,7 @@ class RegionalsController extends Controllers
     {
         $this->assertXhrRequest($request, $response);
 
-        return $response->withJson($this->data(Regionals::class)->getCities(), 200);
+        return $response->withJson($this->data(Regionals::class)->getCities($args['province_id']), 200);
     }
 
     public function provinces(Request $request, Response $response, array $args)
