@@ -176,11 +176,11 @@ class Middleware
 
         // Or use basic HTTP Auth.
         $serverParams = $request->getServerParams();
-        $username = isset($server_params["PHP_AUTH_USER"]) ? $server_params["PHP_AUTH_USER"] : '';
-        $password = isset($server_params["PHP_AUTH_PW"]) ? $server_params["PHP_AUTH_PW"] : '';
+        $username = isset($serverParams["PHP_AUTH_USER"]) ? $serverParams["PHP_AUTH_USER"] : '';
+        $password = isset($serverParams["PHP_AUTH_PW"])   ? $serverParams["PHP_AUTH_PW"]   : '';
 
         if (isset($serverParams['HTTP_AUTHORIZATION'])) {
-            if (preg_match("/Basic\s+(.*)$/i", $server_params['HTTP_AUTHORIZATION'], $matches)) {
+            if (preg_match("/Basic\s+(.*)$/i", $serverParams['HTTP_AUTHORIZATION'], $matches)) {
                 list($username, $password) = explode(':', base64_decode($matches[1]));
             }
         }
