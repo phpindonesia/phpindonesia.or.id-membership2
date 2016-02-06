@@ -30,6 +30,10 @@ $app->add(function (Request $request, Response $response, callable $next) {
         $request = $request->withParsedBody($inputs);
     }
 
+    if ($request->getContentType() == 'application/json') {
+        $request = $request->withHeader('X-Requested-With', 'XMLHttpRequest');
+    }
+
     return $next($request, $response);
 
 });
