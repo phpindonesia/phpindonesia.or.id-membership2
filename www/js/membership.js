@@ -10,7 +10,6 @@ function input_select(settings, data) {
 	}
 
 	settings.dst.html(str_opts);
-        
 }
 
 function input_select_n(settings, data) {
@@ -26,3 +25,25 @@ function input_select_n(settings, data) {
 
 	return str_opts;
 }
+
+
+jQuery(function($){
+	// BaseURL
+	var baseUrl = $('body').data('baseurl');
+
+	// City dropdown triggered by #provinces-dd 
+	$('#provinces-dd').change(function(e){
+		if($(this).val() != ''){
+			$.ajax({
+				url: baseUrl + 'regionals/cities/' + $(this).val(),
+				type: 'GET',
+				dataType: 'json',
+				success: function(kota){
+					var dd = input_select_n({value: 'id', label: 'regional_name'}, kota);
+					$('#cities-dd').html(dd);
+				}
+			});
+		}
+	});
+
+});
