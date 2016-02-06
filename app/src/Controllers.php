@@ -7,12 +7,7 @@ use Slim\Exception\NotFoundException;
 
 abstract class Controllers
 {
-    /**
-     * Slim\Container instance
-     *
-     * @var \Slim\Container
-     */
-    private $container;
+    use ContainerAware;
 
     /**
      * Create Controller\Base instance
@@ -34,37 +29,6 @@ abstract class Controllers
         $this->view->addData([
             'session' => $container->get('session')->all(),
         ]);
-    }
-
-    /**
-     * Get \Slim\Container name
-     *
-     * @param  string $name Container Name
-     * @return mixed
-     * @throws \Slim\Exception\ContainerValueNotFoundException
-     */
-    public function __get($name)
-    {
-        return $this->container->get($name);
-    }
-
-    /**
-     * Call \Slim\Container callable name
-     *
-     * @param  string $method Container Name
-     * @return mixed
-     * @throws \BadMethodCallException
-     */
-    public function __call($method, $params)
-    {
-        if ($this->container->has($method)) {
-            $obj = $this->container->get($method);
-            if (is_callable($obj)) {
-                return call_user_func_array($obj, $params);
-            }
-        }
-
-        throw new \BadMethodCallException("Method $method is not a valid method");
     }
 
     /**

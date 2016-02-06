@@ -2,7 +2,7 @@
 namespace Membership;
 
 use Slim\PDO\Database;
-use Slim\Collection;
+use Slim\PDO\Statement\StatementContainer;
 use InvalidArgumentException;
 
 abstract class Models implements \Countable
@@ -99,8 +99,8 @@ abstract class Models implements \Countable
     /**
      * Get basic data
      *
-     * @param string[]               $columns Array of column
-     * @param callable|array|numeric $terms   column value pairs of term data you wanna find to
+     * @param string[]           $columns Array of column
+     * @param callable|array|int $terms   column value pairs of term data you wanna find to
      * @return \PDOStatement|false
      */
     public function get(array $columns = [], $terms = null)
@@ -119,7 +119,7 @@ abstract class Models implements \Countable
     /**
      * Find existing item(s) from table
      *
-     * @param callable|array|numeric $terms column value pairs of term data you wanna find to
+     * @param callable|array|int $terms column value pairs of term data you wanna find to
      * @return \PDOStatement|false
      */
     public function find($terms = null)
@@ -130,8 +130,8 @@ abstract class Models implements \Countable
     /**
      * Update existing item from table
      *
-     * @param array                  $pairs column value pairs of data
-     * @param callable|array|numeric $terms column value pairs of term data you wanna update to
+     * @param array              $pairs column value pairs of data
+     * @param callable|array|int $terms column value pairs of term data you wanna update to
      * @return int|false
      */
     public function update(array $pairs, $terms = null)
@@ -152,7 +152,7 @@ abstract class Models implements \Countable
     /**
      * Delete Item from table
      *
-     * @param callable|array|numeric $terms
+     * @param callable|array|int $terms
      * @return int
      */
     public function delete($terms)
@@ -175,9 +175,9 @@ abstract class Models implements \Countable
     /**
      * Count all data
      *
-     * @param callable|array|numeric $terms Use it if you want more terms
-     * @param string                 $column   Column to count
-     * @param bool                   $distinct Need a distinct count?
+     * @param callable|array|int $terms Use it if you want more terms
+     * @param string             $column   Column to count
+     * @param bool               $distinct Need a distinct count?
      * @return int
      */
     public function count($terms = null, $column = '', $distinct = false)
@@ -197,14 +197,11 @@ abstract class Models implements \Countable
      * Normalize query terms
      *
      * @param \Slim\PDO\Statement\StatementContainer $query
-     * @param callable|array|numeric                 $terms
+     * @param callable|array|int                     $terms
+     * @return void
      */
-    protected function normalizeTerms($query, &$terms)
+    protected function normalizeTerms(StatementContainer $query, &$terms)
     {
-        if (empty($query)) {
-            return false;
-        }
-
         if (is_callable($terms)) {
             $terms($query);
         } elseif (is_array($terms)) {
@@ -234,9 +231,10 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Create new date
+     * Authorize all input pairs
      *
-     * @return string
+     * @param string   $type
+     * @param string[] $pairs
      */
     protected function authorize($type, &$pairs)
     {

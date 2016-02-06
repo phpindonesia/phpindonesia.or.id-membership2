@@ -4,7 +4,6 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
-use Membership\Models\Users;
 use Membership\Models\Careers;
 use Membership\Models\MemberPortfolios;
 
@@ -12,7 +11,9 @@ class PortfoliosController extends Controllers
 {
     public function index(Request $request, Response $response, array $args)
     {
+        /** @var Careers $career */
         $career = $this->data(Careers::class);
+        /** @var \PDOStatement $portfolio */
         $portfolio = $this->data(MemberPortfolios::class)->find([
             'member_portfolio_id' => (int) $args['id'],
             'user_id' => $this->session->get('user_id'),
@@ -39,6 +40,7 @@ class PortfoliosController extends Controllers
     {
         $this->setPageTitle('Membership', 'Add new portfolio');
 
+        /** @var Careers $career */
         $career = $this->data(Careers::class);
 
         $this->view->addData([
@@ -52,7 +54,7 @@ class PortfoliosController extends Controllers
     public function add(Request $request, Response $response, array $args)
     {
         $input = $request->getParsedBody();
-        $users = $this->data(Users::class);
+        /** @var MemberPortfolios $portfolio */
         $portfolio = $this->data(MemberPortfolios::class);
 
         $validator = $this->validator->rule('required', [
@@ -93,6 +95,7 @@ class PortfoliosController extends Controllers
     public function edit(Request $request, Response $response, array $args)
     {
         $input = $request->getParsedBody();
+        /** @var MemberPortfolios $portfolio */
         $portfolio = $this->data(MemberPortfolios::class);
         $validator = $this->validator->rule('required', [
             'company_name',
@@ -120,7 +123,7 @@ class PortfoliosController extends Controllers
                 $message = 'System error!<br>'.$e->getMessage();
             }
 
-            $this->addFormAlert(($create !== false ? 'success' : 'error'), $message);
+            $this->addFormAlert(($update !== false ? 'success' : 'error'), $message);
         } else {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 

@@ -1,7 +1,5 @@
 <?php
-use Slim\Http\Request;
-use Slim\Http\Response;
-use Membership\Models;
+use Membership\Middleware;
 use Membership\Controllers\HomeController;
 use Membership\Controllers\AccountController;
 use Membership\Controllers\PasswordController;
@@ -13,30 +11,7 @@ use Membership\Controllers\RegionalsController;
 /**
  * Input string sanitizer middleware
  */
-$app->add(function (Request $request, Response $response, callable $next) {
-
-    if ($inputs = $request->getParsedBody()) {
-        $inputs = array_filter($inputs, function (&$value) {
-            if (is_string($value)) {
-                $value = filter_var(trim($value), FILTER_SANITIZE_STRING);
-            }
-            return $value ?: null;
-        });
-
-        if (isset($inputs['_METHOD']) && $request->getMethod() == $inputs['_METHOD']) {
-            unset($inputs['_METHOD']);
-        }
-
-        $request = $request->withParsedBody($inputs);
-    }
-
-    if ($request->getContentType() == 'application/json') {
-        $request = $request->withHeader('X-Requested-With', 'XMLHttpRequest');
-    }
-
-    return $next($request, $response);
-
-});
+$app->add(Middleware::class.':sanitizeRequestBody');
 
 /**
  * Route definitions
@@ -105,30 +80,7 @@ $app->group('/account', function () {
         $this->get('/add', PortfoliosController::class.':addPage')->setName('membership-portfolios-add');
         $this->post('/', PortfoliosController::class.':add')->setName('membership-portfolios-create');
 
-    })->add(function (Request $request, Response $response, callable $next) {
-
-        // Authorize portfolio middleware
-        $args = $request->getAttribute('routeInfo')[2];
-
-        if (!$args || ($request->isXhr() && $request->isGet())) {
-            return $next($request, $response);
-        }
-
-        $data = $this->get('data');
-        $count = $data(Models\MemberPortfolios::class)->count([
-            'member_portfolio_id' => (int) $args['id'],
-            'user_id' => $this->session->get('user_id'),
-        ]);
-
-        if ($count < 1) {
-            $this->flash->addMessage('warning', 'Permission denied.');
-
-            return $response->withRedirect($this->router->pathFor('membership-account'));
-        }
-
-        return $next($request, $response);
-
-    });
+    })->add(Middleware::class.':authorizePorfolioRoute');
 
     // Account Skills
     $this->group('/skills', function () {
@@ -144,48 +96,9 @@ $app->group('/account', function () {
         $this->get('/add', SkillsController::class.':addPage')->setName('membership-skills-add');
         $this->post('/', SkillsController::class.':add')->setName('membership-skills-create');
 
-    })->add(function (Request $request, Response $response, callable $next) {
+    })->add(Middleware::class.':authorizeSkillRoute');
 
-        // Authorize skills middleware
-        $args = $request->getAttribute('routeInfo')[2];
-
-        if (!$args || ($request->isXhr() && $request->isGet())) {
-            return $next($request, $response);
-        }
-
-        $data = $this->get('data');
-        $count = $data(Models\MemberSkills::class)->count([
-            'member_skill_id' => (int) $args['id'],
-            'user_id' => $this->session->get('user_id'),
-        ]);
-
-        if ($count < 1) {
-            $this->flash->addMessage('warning', 'Permission denied.');
-
-            return $response->withRedirect($this->router->pathFor('membership-account'));
-        }
-
-        return $next($request, $response);
-
-    });
-
-})->add(function (Request $request, Response $response, callable $next) {
-
-    // Forward all XHR request
-    if ($request->isXhr() && $request->isGet()) {
-        return $next($request, $response);
-    }
-
-    // Authorize account middleware
-    if (!$this->session->has('user_id')) {
-        $this->flash->addMessage('error', 'You are not authenticated');
-
-        return $response->withRedirect($this->router->pathFor('membership-login'));
-    }
-
-    return $next($request, $response);
-
-});
+})->add(Middleware::class.':authorizeAccountRoute');
 
 // Regionals end-point
 $app->group('/regionals', function () {
@@ -199,20 +112,7 @@ $app->group('/regionals', function () {
  * TODO: normalize username,
  * - Username should accept alphanumeric, dash and underscore only [A-z\d\-\_]
  */
-$app->get('/{username}', AccountController::class.':profile')->add(function (Request $request, Response $response, callable $next) {
-
-    $routeInfo = $request->getAttribute('routeInfo');
-    $args = $routeInfo[2];
-
-    if (substr($args['username'], -5) == '.json') {
-        $routeInfo[2]['username'] = substr($args['username'], 0, -5);
-
-        $request = $request
-            ->withAttribute('routeInfo', $routeInfo)
-            ->withHeader('X-Requested-With', 'XMLHttpRequest');
-    }
-
-    return $next($request, $response);
-
-})->setName('membership-profile');
+$app->get('/{username}', AccountController::class.':profile')
+    ->add(Middleware::class.':normalizeProfile')
+    ->setName('membership-profile');
 
