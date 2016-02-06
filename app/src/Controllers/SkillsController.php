@@ -7,15 +7,20 @@ use Membership\Controllers;
 use Membership\Models\Users;
 use Membership\Models\Skills;
 use Membership\Models\MemberSkills;
+use Slim\Exception\NotFoundException;
 
 class SkillsController extends Controllers
 {
     public function index(Request $request, Response $response, array $args)
     {
         $this->assertXhrRequest($request, $response);
-        $skills = $this->data(Skills::class);
+        $skills = $this->data(Skills::class)->getChilds($args['id']);
 
-        return $response->withJson($skills->getChilds($args['id']));
+        if (!$skills) {
+            throw new NotFoundException($request, $response);
+        }
+
+        return $response->withJson($skills);
     }
 
     public function addPage(Request $request, Response $response, array $args)

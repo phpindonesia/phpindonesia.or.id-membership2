@@ -195,5 +195,20 @@ $app->group('/regionals', function () {
  * TODO: normalize username,
  * - Username should accept alphanumeric, dash and underscore only [A-z\d\-\_]
  */
-$app->get('/{username}', AccountController::class.':profile')->setName('membership-profile');
+$app->get('/{username}', AccountController::class.':profile')->add(function (Request $request, Response $response, callable $next) {
+
+    $routeInfo = $request->getAttribute('routeInfo');
+    $args = $routeInfo[2];
+
+    if (substr($args['username'], -5) == '.json') {
+        $routeInfo[2]['username'] = substr($args['username'], 0, -5);
+
+        $request = $request
+            ->withAttribute('routeInfo', $routeInfo)
+            ->withHeader('X-Requested-With', 'XMLHttpRequest');
+    }
+
+    return $next($request, $response);
+
+})->setName('membership-profile');
 
