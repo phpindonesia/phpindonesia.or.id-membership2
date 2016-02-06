@@ -4,7 +4,6 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
-use Membership\Models\Users;
 use Membership\Models\Skills;
 use Membership\Models\MemberSkills;
 use Slim\Exception\NotFoundException;
@@ -14,6 +13,7 @@ class SkillsController extends Controllers
     public function index(Request $request, Response $response, array $args)
     {
         $this->assertXhrRequest($request, $response);
+        /** @var array|false $skills */
         $skills = $this->data(Skills::class)->getChilds($args['id']);
 
         if (!$skills) {
@@ -27,6 +27,7 @@ class SkillsController extends Controllers
     {
         $this->setPageTitle('Membership', 'Add new techno skill item');
 
+        /** @var Skills $skills */
         $skills = $this->data(Skills::class);
         $provinceId = $request->getParam('province_id');
 
@@ -51,7 +52,7 @@ class SkillsController extends Controllers
         $validator = $this->validator->rule('required', $requiredFields);
 
         if ($validator->validate()) {
-            $users = $this->data(Users::class);
+            /** @var Skills $skills */
             $skills = $this->data(MemberSkills::class);
             $skills->create([
                 'user_id'              => $this->session->get('user_id'),
@@ -79,6 +80,7 @@ class SkillsController extends Controllers
 
     public function delete(Request $request, Response $response, array $args)
     {
+        /** @var MemberSkills $skills */
         $skills = $this->data(MemberSkills::class);
 
         if ($skills->delete((int) $args['id'])) {

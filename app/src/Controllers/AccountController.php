@@ -5,13 +5,11 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
 use Membership\Models\Users;
-use Membership\Models\Skills;
 use Membership\Models\Careers;
 use Membership\Models\Religions;
 use Membership\Models\Regionals;
 use Membership\Models\MemberProfile;
 use Membership\Models\MemberSocmeds;
-use Membership\Models\UsersResetPwd;
 use Slim\Exception\NotFoundException;
 
 class AccountController extends Controllers
@@ -20,6 +18,7 @@ class AccountController extends Controllers
     {
         $this->setPageTitle('Membership', 'Profil Anggota');
 
+        /** @var Users $users */
         $users = $this->data(Users::class);
 
         return $this->view->render('account-index', [
@@ -35,6 +34,7 @@ class AccountController extends Controllers
     {
         $this->setPageTitle('Membership', 'Detail Anggota');
 
+        /** @var Users $users */
         $users = $this->data(Users::class);
         $user = $users->get([
             'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*',
@@ -76,8 +76,11 @@ class AccountController extends Controllers
     {
         $this->setPageTitle('Membership', 'Update Profile Anggota');
 
+        /** @var Users $users */
         $users = $this->data(Users::class);
+        /** @var Regionals $regionals */
         $regionals = $this->data(Regionals::class);
+        /** @var Religions $religion */
         $religions = $this->data(Religions::class);
         $provinceId = $this->session->get('province_id');
 
@@ -96,6 +99,7 @@ class AccountController extends Controllers
 
     public function edit(Request $request, Response $response, array $args)
     {
+        /** @var Users $users */
         $users = $this->data(Users::class);
         $user = $users->get(['email', 'username'], $this->session->get('user_id'))->fetch();
         $identityTypes = ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'];
@@ -152,7 +156,9 @@ class AccountController extends Controllers
 
         if ($validator->validate()) {
             $input = $request->getParsedBody();
+            /** @var MemberProfile $profile */
             $profile = $this->data(MemberProfile::class);
+            /** @var MemberSocmeds $socmeds */
             $socmeds = $this->data(MemberSocmeds::class);
 
             $memberProfile = [
@@ -248,6 +254,7 @@ class AccountController extends Controllers
 
     public function activate(Request $request, Response $response, array $args)
     {
+        /** @var Users $users */
         $users = $this->data(Users::class);
         $actExistCount = $users->assertActivationExists($args['uid'], $args['activation_key']);
 
@@ -278,6 +285,7 @@ class AccountController extends Controllers
 
     public function reactivate(Request $request, Response $response, array $args)
     {
+        /** @var Users $users */
         $users = $this->data(Users::class);
         $validator = $this->validator->rule('required', 'email');
 
@@ -301,6 +309,7 @@ class AccountController extends Controllers
 
     public function javascript(Request $request, Response $response, array $args)
     {
+        /** @var Users $users */
         $users = $this->data(Users::class);
         $cookie = $request->getCookieParams();
         $open_portfolio = false;

@@ -28,6 +28,8 @@ $container = new Container([
 
 /**
  * Setup session
+ *
+ * @return \SLim\Interfaces\CollectionInterface
  */
 $container['session'] = function ($container) {
     if (!isset($_SESSION['MembershipAuth'])) {
@@ -39,6 +41,8 @@ $container['session'] = function ($container) {
 
 /**
  * Setup database container
+ *
+ * @return \Slim\PDO\Database
  */
 $container['db'] = function ($container) {
     $db = $container->get('settings')['db'];
@@ -51,6 +55,8 @@ $container['db'] = function ($container) {
 
 /**
  * Setup data model container
+ *
+ * @return callable
  */
 $container['data'] = function ($container) {
     $db = $container->get('db');
@@ -77,6 +83,8 @@ $container['data'] = function ($container) {
 
 /**
  * Setup validator container
+ *
+ * @return \Valitron\Validator
  */
 $container['validator'] = function ($container) {
     $request = $container->get('request');
@@ -103,6 +111,8 @@ $container['validator'] = function ($container) {
 
 /**
  * Setup flash message container
+ *
+ * @return \Slim\Flash\Messages
  */
 $container['flash'] = function () {
     return new Slim\Flash\Messages;
@@ -115,6 +125,8 @@ Cloudinary::config($container->get('settings')['cloudinary']);
 
 /**
  * Setup view container
+ *
+ * @return \Projek\Slim\Plates
  */
 $container['view'] = function ($container) {
     $settings = $container->get('settings');
@@ -135,11 +147,20 @@ $container['view'] = function ($container) {
 
 /**
  * Setup upload handler container
+ *
+ * @return callable
  */
 $container['upload'] = function ($container) {
     $settings = $container->get('settings');
     $session = $container->get('session');
 
+    /**
+     * Upload callabel
+     *
+     * @param \Psr\Http\Message\UploadedFileInterface $photo
+     * @param string[]                                $memberData
+     * @return string[]
+     */
     return function (UploadedFileInterface $photo, $memberData) use ($settings, $session) {
         if ($photo->getError() !== UPLOAD_ERR_OK) {
             return $memberData;
@@ -203,6 +224,8 @@ $container['mailer'] = function ($container) {
  * Custom error handler
  *
  * TODO: need more!!!
+ *
+ * @return callable
  */
 $container['errorHandler'] = function ($container) {
     if ($container->get('settings')['mode'] !== 'development') {
