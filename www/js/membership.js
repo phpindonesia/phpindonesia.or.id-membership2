@@ -31,7 +31,7 @@ jQuery(function($){
 	// BaseURL
 	var baseUrl = $('body').data('baseurl');
 
-	// City dropdown triggered by #provinces-dd 
+	// City dropdown triggered by #provinces-dd
 	$('#provinces-dd').change(function(e){
 		if($(this).val() != ''){
 			$.ajax({
