@@ -37,8 +37,8 @@ class PasswordController extends Controllers
         $validator->rule('email', 'email');
 
         $validator->addRule('assertNotEmailExists', function ($field, $value, array $params) use ($users) {
-            return !$users->assertEmailExists($value);
-        }, 'Email tersebut tidak terdaftar!');
+            return $users->assertEmailExists($value);
+        }, 'tersebut tidak terdaftar!');
 
         $validator->rule('assertNotEmailExists', 'email');
 
