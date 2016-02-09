@@ -36,7 +36,7 @@ $this->appendJs([
                             <li style="margin-right: 5px; padding: 3px; border: 1px #DDDDDD solid;">
                                 <a style="border: none; font: inherit;" href="<?php echo $socmed_item['account_url'] ?>">
                                     <span class="fa <?php echo $socmedias[$socmed_item['socmed_type']][1]; ?>"></span>
-                                    <?php echo !empty($socmed_item['account_name']) ? $socmed_item['account_name'] : $session['username'] ?>
+                                    <?php echo !empty($socmed_item['account_name']) ? $socmed_item['account_name'] : $member['username'] ?>
                                 </a>
                             </li>
 
