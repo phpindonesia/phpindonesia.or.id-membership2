@@ -11,4 +11,3 @@ Jika anda tidak pernah merasa melakukan submission, maka anda dapat mengabaikan 
 Anda dapat melaporkannya kepada kami melalui email: report@phpindonesia.or.id
 
 Terimakasih ^_^
-

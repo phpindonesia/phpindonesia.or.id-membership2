@@ -15,4 +15,3 @@ Batas waktu 2 jam dari sekarang untuk melakukan konfirmasi, dan url konfirmasi d
 
 
 Terimakasih ^_^
-
