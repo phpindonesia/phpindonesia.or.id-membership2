@@ -71,17 +71,17 @@ $this->appendJs([
 
                                 <tr>
                                     <td style="width:200px; font-weight: bold;">Gender</td>
-                                    <td>: <?php echo $this->e(ucfirst($member['gender'])); ?></td>
+                                    <td>: <?php echo $this->e(ucfirst($member['gender'])) ?></td>
                                 </tr>
 
                                 <tr>
                                     <td style="width:200px; font-weight: bold;">Email</td>
-                                    <td>: <?php echo $session['email']; ?></td>
+                                    <td>: <?php echo $this->e($member['email']) ?></td>
                                 </tr>
 
                                 <tr>
                                     <td style="width:200px; font-weight: bold;">Phone</td>
-                                    <td>: <?php echo $this->e($member['contact_phone']); ?></td>
+                                    <td>: <?php echo $this->e($member['contact_phone']) ?></td>
                                 </tr>
 
                                 <tr>

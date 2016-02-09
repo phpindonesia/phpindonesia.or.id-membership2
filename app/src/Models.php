@@ -194,6 +194,16 @@ abstract class Models implements \Countable
     }
 
     /**
+     * Retrieve table primary key
+     *
+     * @return string
+     */
+    public function primary()
+    {
+        return $this->primary;
+    }
+
+    /**
      * Normalize query terms
      *
      * @param \Slim\PDO\Statement\StatementContainer $query

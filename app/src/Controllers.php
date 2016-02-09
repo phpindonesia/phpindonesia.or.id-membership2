@@ -3,6 +3,7 @@ namespace Membership;
 
 use Slim\Container;
 use Slim\Http\Request;
+use Slim\Http\Response;
 use Slim\Exception\NotFoundException;
 
 abstract class Controllers
@@ -38,9 +39,23 @@ abstract class Controllers
      * @param \Slim\Http\Response $response
      * @throws \Slim\Exception\NotFoundException
      */
-    protected function assertXhrRequest($request, $response)
+    protected function assertXhrRequest(Request $request, Response $response)
     {
         if (!$request->isXhr()) {
+            throw new NotFoundException($request, $response);
+        }
+    }
+
+    /**
+     * Assert is HTML request
+     *
+     * @param \Slim\Http\Request  $request
+     * @param \Slim\Http\Response $response
+     * @throws \Slim\Exception\NotFoundException
+     */
+    protected function assertHTMLRequest(Request $request, Response $response)
+    {
+        if ($request->isXhr()) {
             throw new NotFoundException($request, $response);
         }
     }
