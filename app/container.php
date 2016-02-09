@@ -199,28 +199,6 @@ $container['upload'] = function ($container) {
 };
 
 /**
- * Setup mailer container
- *
- * TODO: will replaced with PHPMailer
- */
-$container['mailer'] = function ($container) {
-    $smtp_account = $container->get('settings')['smtp'];
-    $transport = null;
-
-    if ($smtp_account['ssl']) {
-        $transport = Swift_SmtpTransport::newInstance($smtp_account['host'], $smtp_account['port'], 'ssl');
-    } else {
-        $transport = Swift_SmtpTransport::newInstance($smtp_account['host'], $smtp_account['port']);
-    }
-
-    $transport->setUsername($smtp_account['username']);
-    $transport->setPassword($smtp_account['password']);
-
-    $mailer = Swift_Mailer::newInstance($transport);
-    return $mailer;
-};
-
-/**
  * Setup mail sender container
  *
  * @param \Slim\Container $container
