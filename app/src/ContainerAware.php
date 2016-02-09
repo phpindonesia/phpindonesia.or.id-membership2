@@ -12,8 +12,10 @@ use BadMethodCallException;
  * @property-read \Projek\Slim\Plates view
  * @property-read callable data
  * @property-read callable upload
+ * @property-read callable mailTo
  * @method Models data(string $class)
  * @method string[] upload(\Psr\Http\Message\UploadedFileInterface $file, array $data)
+ * @method mixed mailTo(string $address, string $name, string $subject, string $body, array $data)
  */
 trait ContainerAware
 {

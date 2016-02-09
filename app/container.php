@@ -221,6 +221,61 @@ $container['mailer'] = function ($container) {
 };
 
 /**
+ * Setup mail sender container
+ *
+ * @param \Slim\Container $container
+ * @return callable
+ */
+$container['mailTo'] = function ($container) {
+
+    $settings = $container->get('settings');
+    /** @var \League\Plates\Engine $view */
+    $view     = $container->get('view')->getPlates();
+
+    $mail     = $settings['smpt'];
+    $email    = $settings['email'];
+
+    $mailer = new PHPMailer(true);
+
+    $mailer->isSMTP();
+    $mailer->Host = $mail['host'];
+    $mailer->Port = $mail['port'];
+    $mailer->Username = $mail['username'];
+    $mailer->Password = $mail['password'];
+    $mailer->SMTPAuth = true;
+    $mailer->SMTPSecure = $mail['port'] == 465 ? 'ssl' : 'tsl';
+    $mailer->SMTPDebug  = $settings['mode'] == 'development' ? 2 : 0;
+
+    $mailer->setFrom($email['sender_email'], $email['sender_name']);
+
+    /**
+     * Send mail callable container
+     *
+     * @param string $address
+     * @param string $name
+     * @param string $subject
+     * @param string $body
+     * @param array  $data
+     * @return mixed
+     */
+    return function ($address, $name, $subject, $body, array $data = []) use ($mailer, $view) {
+
+        $mailer->addAddress($address, $name);
+
+        if (strpos($body, '::') !== false) {
+            $body = $view->render($body, $data);
+        }
+
+        $mailer->Body = $body;
+        $mailer->Subject = $subject;
+
+        return $mailer->send();
+
+    };
+
+};
+
+/**
  * Custom error handler
  *
  * TODO: need more!!!
