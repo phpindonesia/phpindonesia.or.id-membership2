@@ -131,15 +131,40 @@ class Users extends Models
     }
 
     /**
-     * Retrieve user profile
+     * Retrieve user profile by User Id
      *
-     * @param string|null $username User ID
+     * @param string|null $userId User Id
      * @return array
      */
-    public function getProfile($username = null)
+    public function getProfile($userId = null)
     {
         $profile = new MemberProfile($this->db);
-        !is_null($username) || $username = $this->current('username');
+        !is_null($userId) || $userId = $this->current('user_id');
+
+        return $profile->get([
+            'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*', 'r.religion_name',
+            'reg_prv.regional_name province',
+            'reg_cit.regional_name city'
+        ], function ($query) use ($userId) {
+            $query->from('users u')
+                ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+                ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
+                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+                ->leftJoin('religions r', 'r.religion_id', '=', 'm.religion_id')
+                ->where('u.user_id', '=', $userId)
+                ->where('u.deleted', '=', 'N');
+        })->fetch();
+    }
+
+    /**
+     * Retrieve user profile by Username
+     *
+     * @param string|null $username Username
+     * @return array
+     */
+    public function getProfileUsername($username = null)
+    {
+        $profile = new MemberProfile($this->db);
 
         return $profile->get([
             'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*', 'r.religion_name',
