@@ -1,11 +1,11 @@
 Haayy ^_^,
 
-Anda adalah pemilik akun dengan email {email_address} dan anda telah melakukan permintaan 
+Anda adalah pemilik akun dengan email {email_address} dan anda telah melakukan permintaan
 perubahan password pada tanggal: {request_reset_date} karena anda lupa dengan password anda.
 
 Kami butuh konfirmasi anda untuk memastikan bahwa anda memang benar-benar telah melakukan permintaan perubahan password sesuai kehendak anda.
 
-Jika permintaan perubahan password ini memang sesuai dengan kehendak anda, maka silahkan 
+Jika permintaan perubahan password ini memang sesuai dengan kehendak anda, maka silahkan
 klik link {base_url}{reset_path} untuk melakukan konfirmasi.
 
 Jika permintaan perubahan password ini bukan kehendak anda, maka email ini bisa diabaikan.
@@ -15,4 +15,3 @@ Batas waktu 2 jam dari sekarang untuk melakukan konfirmasi, dan url konfirmasi d
 
 
 Terimakasih ^_^
-
