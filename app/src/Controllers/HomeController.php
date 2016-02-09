@@ -171,38 +171,43 @@ class HomeController extends Controllers
                 $input['fullname'] = ucwords($input['fullname']);
                 $input['password'] = $this->salt($input['password']);
 
-                if ($userId = $users->create($input)) {
-                    $emailSettings = $this->settings->get('email');
-                    $message = \Swift_Message::newInstance('PHP Indonesia - Aktivasi Membership')
-                        ->setFrom([$emailSettings['sender_email'] => $emailSettings['sender_name']])
-                        ->setTo([$emailAddress => $member['fullname']])
-                        ->setBody(file_get_contents(APP_DIR.'views'._DS_.'email'._DS_.'activation.txt'));
+                $userId = $users->create($input);
+            } catch (\PDOException $e) {
+                $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
 
-                    $this->mailer->registerPlugin(new \Swift_Plugins_DecoratorPlugin([
-                        $emailAddress  => [
-                            '{email_address}' => $emailAddress,
-                            '{fullname}' => $input['fullname'],
-                            '{registration_date}' => date('d-m-Y H:i:s'),
-                            '{activation_path}' => $this->router->pathFor('membership-activation', ['uid' => $userId, 'activation_key' => $activationKey]),
-                            '{activation_expired_date}' => $activationExpiredDate,
-                            '{base_url}' => $request->getUri()->getBaseUrl()
+                return $response->withRedirect($this->router->pathFor('membership-register'));
+            }
+
+            if ($userId) {
+
+                try {
+                    $mailSend = $this->mailTo(
+                        $emailAddress,
+                        $input['fullname'],
+                        'PHP Indonesia - Aktivasi Membership',
+                        'email::activation',
+                        [
+                            'email' => $emailAddress,
+                            'fullname' => $input['fullname'],
+                            'regDate' => date('d-m-Y H:i:s'),
+                            'activationExp' => $activationExpiredDate,
+                            'activationUrl' => $request->getUri()->getBaseUrl(
+                                $this->router->pathFor('membership-activation', ['uid' => $userId, 'activation_key' => $activationKey])
+                            ),
                         ]
-                    ]));
+                    );
+                } catch (\phpmailerException $e) {
+                    $mailSend = false;
+                    $registerSuccessMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
+                }
 
-                    $this->mailer->send($message);
-
+                if ($mailSend) {
                     // Update email sent status
                     $this->data(UsersActivations::class)->update(['email_sent' => 'Y'], [
                         'user_id' => $userId,
                         'activation_key' => $activationKey
                     ]);
                 }
-            } catch (\Swift_TransportException $e) {
-                $registerSuccessMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
-            } catch (\PDOException $e) {
-                $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
-
-                return $response->withRedirect($this->router->pathFor('membership-register'));
             }
 
             $this->addFormAlert('success', $registerSuccessMsg);
