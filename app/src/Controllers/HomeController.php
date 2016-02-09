@@ -23,8 +23,13 @@ class HomeController extends Controllers
         $users = $this->data(Users::class);
 
         return $this->view->render('home-index', [
+<<<<<<< bfe4d9f3cf455ad5db98ad1a12e9961f7810d35e
             'members'       => $users->getMembers($request),
             'totalMember'   => $users->getTotalMember($request),
+=======
+            'members'       => $this->data(Users::class)->getMembers($request),
+            'totalMember'   => $this->data(Users::class)->getTotalMember($request),
+>>>>>>> add feature paging
             'provinces'     => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
             'cities'        => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
         ]);
