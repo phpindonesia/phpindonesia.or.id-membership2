@@ -20,9 +20,10 @@ class HomeController extends Controllers
         $provinceId = $request->getQueryParam('province_id');
 
         return $this->view->render('home-index', [
-            'members'   => $this->data(Users::class)->getMembers($request),
-            'provinces' => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
-            'cities'    => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
+            'members'       => $this->data(Users::class)->getMembers($request),
+            'totalMember'   => $this->data(Users::class)->getTotalMember($request),
+            'provinces'     => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
+            'cities'        => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
         ]);
     }
 
