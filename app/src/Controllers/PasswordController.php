@@ -6,9 +6,6 @@ use Slim\Http\Response;
 use Membership\Controllers;
 use Membership\Models\Users;
 use Membership\Models\UsersResetPwd;
-use Swift_Message;
-use Swift_Plugins_DecoratorPlugin;
-use Swift_TransportException;
 
 class PasswordController extends Controllers
 {
