@@ -187,6 +187,7 @@ class AccountController extends Controllers
 
                 $users->update([
                     'email'       => $input['email'],
+                    'username'    => $input['username'],
                     'province_id' => $input['province_id'],
                     'city_id'     => $input['city_id'],
                     'area'        => $input['area'],
