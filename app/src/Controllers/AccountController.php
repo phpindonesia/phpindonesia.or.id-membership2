@@ -116,7 +116,13 @@ class AccountController extends Controllers
         }, 'tersebut sudah terdaftar!');
 
         $validator->addRule('assertUsernameNotExists', function ($field, $value, array $params) use ($users, $user) {
-            return $user['username'] == $value || !$users->assertUsernameExists($value);
+             $protected = [
+                'admin',
+                'account', 'login', 'register', 'logout',
+                'activate', 'reactivate', 'regionals',
+                'forgot-password', 'reset-password'
+            ];
+            return $user['username'] == $value || (!in_array($value, $protected) && !$users->assertUsernameExists($value));
         }, 'tersebut sudah terdaftar!');
 
         $validator->rules([
