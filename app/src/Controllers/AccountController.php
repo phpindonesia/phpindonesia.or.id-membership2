@@ -209,24 +209,59 @@ class AccountController extends Controllers
 
                         $socmedRow = $socmeds->get(['account_name', 'account_url'], $terms)->fetch();
 
-                        if ($socmedRow['account_name'] != $item['account_name']) {
-                            $socmedRow['account_name'] = $item['account_name'];
-                        }
+                        if ($socmedRow) {
+                            if ($socmedRow['account_name'] != $item['account_name']) {
+                                $socmedRow['account_name'] = $item['account_name'];
+                            }
 
-                        if ($socmedRow['account_url'] != $item['account_url']) {
-                            $socmedRow['account_url'] = $item['account_url'];
-                        }
+                            if ($socmedRow['account_url'] != $item['account_url']) {
+                                $socmedRow['account_url'] = $item['account_url'];
+                            }
 
-                        $socmeds->update($socmedRow, $terms);
+                            $socmeds->update($socmedRow, $terms);
+                        } else {
+
+                            $termsStatus = [
+                                'user_id' => $userId,
+                                'socmed_type' => $item['socmed_type'],
+                                'deleted' => 'Y',
+                            ];
+
+                            $socmedAdd = [
+                                'user_id'      => $userId,
+                                'socmed_type'  => $item['socmed_type'],
+                                'account_name' => $item['account_name'],
+                                'account_url'  => $item['account_url'],
+                            ];
+
+                            $socmedId = $socmeds->get(['member_socmed_id'], $termsStatus)->fetch();
+
+                            if ($socmedId) {
+                                $socmedAdd['deleted'] = 'N';
+                                $socmeds->update($socmedAdd, $termsStatus);
+                            } else {
+                                $socmeds->create($socmedAdd);
+                            }
+                        }
                     }
                 }
 
                 if (isset($input['socmeds_delete'])) {
                     foreach ($input['socmeds_delete'] as $item) {
-                        $socmeds->delete([
+                        $terms = [
                             'user_id' => $userId,
-                            'socmed_type' => $item
-                        ]);
+                            'deleted' => 'N',
+                            'socmed_type' => $item,
+                        ];
+
+                        $socmedRow = $socmeds->get(['user_id'], $terms)->fetch();
+
+                        if ($socmedRow) {
+                            $socmeds->delete([
+                                'user_id' => $userId,
+                                'socmed_type' => $item
+                            ]);
+                        }
                     }
                 }
 
