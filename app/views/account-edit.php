@@ -39,7 +39,7 @@ $this->appendJs([
                                 <label for="email" style="font-weight: bold;">Email *</label>
                             </th>
                             <td>
-                                <input type="email" class="input_full" id="email" name="email" value="<?php echo $this->requestBody('email', $session['email']); ?>" />
+                                <input type="email" class="input_full" id="email" name="email" value="<?php echo $this->requestBody('email', $member['email']); ?>" />
                                 <?php echo $this->formFieldError('email'); ?>
                             </td>
                         </tr>
@@ -49,7 +49,7 @@ $this->appendJs([
                                 <label for="username" style="font-weight: bold;">Username *</label>
                             </th>
                             <td>
-                                <input type="text" class="input_full" id="username" name="username" value="<?php echo $this->requestBody('username', $session['username']); ?>" />
+                                <input type="text" class="input_full" id="username" name="username" value="<?php echo $this->requestBody('username', $member['username']); ?>" />
                                 <?php echo $this->formFieldError('username'); ?>
                             </td>
                         </tr>

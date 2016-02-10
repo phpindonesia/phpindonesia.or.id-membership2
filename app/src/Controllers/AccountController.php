@@ -42,7 +42,7 @@ class AccountController extends Controllers
 
         /** @var Users $users */
         $users = $this->data(Users::class);
-        $user = $users->getProfile($args['username']);
+        $user = $users->getProfileUsername($args['username']);
 
         if (!$user) {
             throw new NotFoundException($request, $response);
@@ -80,7 +80,7 @@ class AccountController extends Controllers
         $regionals = $this->data(Regionals::class);
         /** @var Religions $religion */
         $religions = $this->data(Religions::class);
-        $provinceId = $this->session->get('province_id');
+        $provinceId = $users->getProfile()['province_id'];
 
         return $this->view->render('account-edit', [
             'member'         => $users->getProfile(),
@@ -187,6 +187,7 @@ class AccountController extends Controllers
 
                 $users->update([
                     'email'       => $input['email'],
+                    'username'    => $input['username'],
                     'province_id' => $input['province_id'],
                     'city_id'     => $input['city_id'],
                     'area'        => $input['area'],
@@ -360,9 +361,9 @@ class AccountController extends Controllers
         return time() + 86400;
     }
 
-    private function normalizeUserJsonOutput(Users $users, $username = null)
+    private function normalizeUserJsonOutput(Users $users, $userId = null)
     {
-        $user = $users->getProfile($username);
+        $user = $users->getProfile($userId);
 
         $output = [
             'id' => $user['user_id'],

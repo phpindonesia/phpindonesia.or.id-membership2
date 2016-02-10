@@ -5,6 +5,7 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Exception\NotFoundException;
+use Membership\Models\Users;
 
 abstract class Controllers
 {
@@ -19,7 +20,13 @@ abstract class Controllers
     {
         $this->container = $container;
 
+        $session = $container->get('session');
+
         $this->setPageTitle();
+
+        if ($session->get('user_id')) {
+            $this->setHeaderLogin();
+        }
 
         $this->view->addData([
             'gcaptchaSitekey' => null,
@@ -28,7 +35,7 @@ abstract class Controllers
         ], 'sections::captcha');
 
         $this->view->addData([
-            'session' => $container->get('session')->all(),
+            'session' => $session->all(),
         ]);
     }
 
@@ -150,5 +157,22 @@ abstract class Controllers
         $salt = $this->settings->get('salt_pwd');
 
         return md5($salt . $password);
+    }
+
+    /**
+     * Set Username and Photo to header template
+     *
+     */
+    protected function setHeaderLogin()
+    {
+        /** @var Users $users */
+        $users = $this->data(Users::class);
+
+        $profile = $users->getProfile();
+
+        $this->view->addData([
+            'header_photo' => $profile['photo'],
+            'header_username' => $profile['username'],
+        ], 'sections::header');
     }
 }
