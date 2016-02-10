@@ -3,7 +3,8 @@ $this->layout('layouts::system');
 
 $this->appendJs([
     $this->asset('/js/jquery.inputmask.bundle.js'),
-    $this->asset('/js/profile-edit.js')
+    $this->asset('/js/regional.js'),
+    $this->asset('/js/profile.js'),
 ]);
 ?>
 
@@ -16,7 +17,8 @@ $this->appendJs([
 
         <?php echo $this->insert('sections::alert') ?>
 
-        <form action="<?php echo $this->pathFor('membership-account-edit'); ?>" method="post" enctype="multipart/form-data" class="checkout" novalidate>
+        <form action="<?php echo $this->pathFor('membership-account-update'); ?>" method="post" enctype="multipart/form-data" class="checkout" novalidate>
+            <?php echo $this->formInputMethod('PUT') ?>
 
             <div class="left-col-oprek">
 
@@ -37,7 +39,7 @@ $this->appendJs([
                                 <label for="email" style="font-weight: bold;">Email *</label>
                             </th>
                             <td>
-                                <input type="email" class="input_full" id="email" name="email" value="<?php echo $this->requestBody('email', $session['email']); ?>" />
+                                <input type="email" class="input_full" id="email" name="email" value="<?php echo $this->requestBody('email', $member['email']); ?>" />
                                 <?php echo $this->formFieldError('email'); ?>
                             </td>
                         </tr>
@@ -47,7 +49,7 @@ $this->appendJs([
                                 <label for="username" style="font-weight: bold;">Username *</label>
                             </th>
                             <td>
-                                <input type="text" class="input_full" id="username" name="username" value="<?php echo $this->requestBody('username', $session['username']); ?>" />
+                                <input type="text" class="input_full" id="username" name="username" value="<?php echo $this->requestBody('username', $member['username']); ?>" />
                                 <?php echo $this->formFieldError('username'); ?>
                             </td>
                         </tr>

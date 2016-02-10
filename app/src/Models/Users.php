@@ -131,9 +131,9 @@ class Users extends Models
     }
 
     /**
-     * Retrieve user profile
+     * Retrieve user profile by User Id
      *
-     * @param int|null $userId User ID
+     * @param string|null $userId User Id
      * @return array
      */
     public function getProfile($userId = null)
@@ -142,15 +142,42 @@ class Users extends Models
         !is_null($userId) || $userId = $this->current('user_id');
 
         return $profile->get([
-            'm.*',
+            'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*', 'r.religion_name',
             'reg_prv.regional_name province',
             'reg_cit.regional_name city'
         ], function ($query) use ($userId) {
-            $query->from('members_profiles m')
-                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+            $query->from('users u')
+                ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
                 ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-                ->where('m.user_id', '=', $userId)
-                ->where('m.deleted', '=', 'N');
+                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+                ->leftJoin('religions r', 'r.religion_id', '=', 'm.religion_id')
+                ->where('u.user_id', '=', $userId)
+                ->where('u.deleted', '=', 'N');
+        })->fetch();
+    }
+
+    /**
+     * Retrieve user profile by Username
+     *
+     * @param string|null $username Username
+     * @return array
+     */
+    public function getProfileUsername($username = null)
+    {
+        $profile = new MemberProfile($this->db);
+
+        return $profile->get([
+            'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*', 'r.religion_name',
+            'reg_prv.regional_name province',
+            'reg_cit.regional_name city'
+        ], function ($query) use ($username) {
+            $query->from('users u')
+                ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+                ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
+                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+                ->leftJoin('religions r', 'r.religion_id', '=', 'm.religion_id')
+                ->where('u.username', '=', $username)
+                ->where('u.deleted', '=', 'N');
         })->fetch();
     }
 
@@ -334,9 +361,43 @@ class Users extends Models
             $query->whereLike('m.area', $request->getQueryParam('area'));
         }
 
-        $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page'));
+        $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page')-1 * 18);
 
         return $query->execute()->fetchAll();
+    }
+
+    /**
+     * Get Total Member
+     *
+     * @param \Slim\Http\Request $request Filter by request
+     * @return integer
+     */
+    public function getTotalMember($request)
+    {
+        $query = $this->db->select([
+                'u.user_id'
+            ])
+            ->from('users u')
+            ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+            ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
+            ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+            ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
+            ->where('ur.role_id', '=', 'member')
+            ->where('u.activated', '=', 'Y');
+
+        if ($request->getQueryParam('province_id')) {
+            $query->where('m.province_id', '=', (int) $request->getQueryParam('province_id'));
+        }
+
+        if ($request->getQueryParam('city_id')) {
+            $query->where('m.city_id', '=', (int) $request->getQueryParam('city_id'));
+        }
+
+        if ($request->getQueryParam('area')) {
+            $query->whereLike('m.area', $request->getQueryParam('area'));
+        }
+
+        return $query->execute()->rowCount();
     }
 
     /**

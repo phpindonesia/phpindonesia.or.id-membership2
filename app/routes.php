@@ -1,7 +1,5 @@
 <?php
-use Slim\Http\Request;
-use Slim\Http\Response;
-use Membership\Models;
+use Membership\Middleware;
 use Membership\Controllers\HomeController;
 use Membership\Controllers\AccountController;
 use Membership\Controllers\PasswordController;
@@ -13,22 +11,7 @@ use Membership\Controllers\RegionalsController;
 /**
  * Input string sanitizer middleware
  */
-$app->add(function (Request $request, Response $response, callable $next) {
-
-    if ($inputs = $request->getParsedBody()) {
-        $inputs = array_filter($inputs, function (&$value) {
-            if (is_string($value)) {
-                $value = filter_var(trim($value), FILTER_SANITIZE_STRING);
-            }
-            return $value ?: null;
-        });
-
-        $request = $request->withParsedBody($inputs);
-    }
-
-    return $next($request, $response);
-
-});
+$app->add(Middleware::class.':sanitizeRequestBody');
 
 /**
  * Route definitions
@@ -74,11 +57,11 @@ $app->group('/account', function () {
 
     // Edit account
     $this->get('/edit', AccountController::class.':editPage')->setName('membership-account-edit');
-    $this->post('/edit', AccountController::class.':edit');
+    $this->put('/edit', AccountController::class.':edit')->setName('membership-account-update');
 
     // Update account password
-    $this->get('/update-password', PasswordController::class.':updatePage')->setName('membership-update-password');
-    $this->post('/update-password', PasswordController::class.':update');
+    $this->get('/update-password', PasswordController::class.':updatePage')->setName('membership-account-password-edit');
+    $this->put('/update-password', PasswordController::class.':update')->setName('membership-account-password-update');
 
     // Delete account?
     $this->delete('/{id:[0-9]+}', AccountController::class.':delete')->setName('membership-account-delete');
@@ -86,92 +69,36 @@ $app->group('/account', function () {
     // Account portfolios
     $this->group('/portfolio', function () {
 
-        // Update & Delete Portfolio
-        $this->get('/{id:[0-9]+}', PortfoliosController::class.':editPage')->setName('membership-portfolio-edit');
-        $this->post('/{id:[0-9]+}', PortfoliosController::class.':edit');
-        $this->delete('/{id:[0-9]+}', PortfoliosController::class.':delete');
+        // View and Update Portfolio
+        $this->get('/{id:[0-9]+}', PortfoliosController::class.':index')->setName('membership-portfolios-edit');
+        $this->put('/{id:[0-9]+}', PortfoliosController::class.':edit')->setName('membership-portfolios-update');
+
+        // Delete Portfolio
+        $this->delete('/{id:[0-9]+}', PortfoliosController::class.':delete')->setName('membership-portfolios-delete');
 
         // Create new Portfolio
-        $this->get('/add', PortfoliosController::class.':addPage')->setName('membership-portfolio-add');
-        $this->post('/add', PortfoliosController::class.':add');
+        $this->get('/add', PortfoliosController::class.':addPage')->setName('membership-portfolios-add');
+        $this->post('/', PortfoliosController::class.':add')->setName('membership-portfolios-create');
 
-    })->add(function (Request $request, Response $response, callable $next) {
-
-        // Authorize portfolio middleware
-        $args = $request->getAttribute('routeInfo')[2];
-
-        if (!$args) {
-            return $next($request, $response);
-        }
-
-        $data = $this->get('data');
-        $count = $data(Models\MemberPortfolios::class)->count([
-            'member_portfolio_id' => (int) $args['id'],
-            'user_id' => $this->session->get('user_id'),
-        ]);
-
-        if ($count < 1) {
-            $this->flash->addMessage('warning', 'Permission denied.');
-
-            return $response->withRedirect($this->router->pathFor('membership-account'));
-        }
-
-        return $next($request, $response);
-
-    });
+    })->add(Middleware::class.':authorizePorfolioRoute');
 
     // Account Skills
     $this->group('/skills', function () {
 
-        // Read all skills
-        $this->get('[/]', SkillsController::class.':index')->setName('membership-skills');
+        // View and Update skill
+        $this->get('/{id:[0-9]+}', SkillsController::class.':index')->setName('membership-skills-edit');
+        $this->put('/{id:[0-9]+}', SkillsController::class.':edit')->setName('membership-skills-update');
 
-        // Update & Delete skills
-        $this->get('/{id:[0-9]+}', SkillsController::class.':editPage')->setName('membership-skills-edit');
-        $this->post('/{id:[0-9]+}', SkillsController::class.':edit');
+        // Delete skill
         $this->delete('/{id:[0-9]+}', SkillsController::class.':delete')->setName('membership-skills-delete');
 
-        // Create new skills
+        // Create new skill
         $this->get('/add', SkillsController::class.':addPage')->setName('membership-skills-add');
-        $this->post('/add', SkillsController::class.':add');
+        $this->post('/', SkillsController::class.':add')->setName('membership-skills-create');
 
-    })->add(function (Request $request, Response $response, callable $next) {
+    })->add(Middleware::class.':authorizeSkillRoute');
 
-        // Authorize skills middleware
-        $args = $request->getAttribute('routeInfo')[2];
-
-        if (!$args) {
-            return $next($request, $response);
-        }
-
-        $data = $this->get('data');
-        $count = $data(Models\MemberSkills::class)->count([
-            'member_skill_id' => (int) $args['id'],
-            'user_id' => $this->session->get('user_id'),
-        ]);
-
-        if ($count < 1) {
-            $this->flash->addMessage('warning', 'Permission denied.');
-
-            return $response->withRedirect($this->router->pathFor('membership-account'));
-        }
-
-        return $next($request, $response);
-
-    });
-
-})->add(function (Request $request, Response $response, callable $next) {
-
-    // Authorize account middleware
-    if (!$this->session->has('user_id')) {
-        $this->flash->addMessage('error', 'You are not authenticated');
-
-        return $response->withRedirect($this->router->pathFor('membership-login'));
-    }
-
-    return $next($request, $response);
-
-});
+})->add(Middleware::class.':authenticateRoute');
 
 // Regionals end-point
 $app->group('/regionals', function () {

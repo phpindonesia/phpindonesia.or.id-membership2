@@ -52,6 +52,7 @@ class ViewExtension implements ExtensionInterface
         $engine->registerFunction('requestBody', [$this, 'requestBody']);
         $engine->registerFunction('formFieldError', [$this, 'fieldError']);
         $engine->registerFunction('formInputSelect', [$this, 'inputSelect']);
+        $engine->registerFunction('formInputMethod', [$this, 'inputMethod']);
 
         // Flash Message helpers
         $engine->registerFunction('flashMessages', [$this->flash, 'getMessages']);
@@ -71,6 +72,9 @@ class ViewExtension implements ExtensionInterface
         $engine->registerFunction('appendCss', function (array $cssFiles = []) use ($engine) {
             $engine->addData(['base_css' => $cssFiles]);
         });
+
+        // Pagination Helper
+        $engine->registerFunction('viewPages', [$this, 'viewPages']);
     }
 
     /**
@@ -123,6 +127,17 @@ class ViewExtension implements ExtensionInterface
     }
 
     /**
+     * Retrieve Request method override
+     *
+     * @param string $method Request methods [GET|POST|PUT|DELETE]
+     * @return mixed
+     */
+    public function inputMethod($method)
+    {
+        return '<input type="hidden" name="_METHOD" value="' . strtoupper($method) . '" />';
+    }
+
+    /**
      * Generate form <select> based on $data array
      *
      * @param string $name       Name attribute
@@ -170,5 +185,73 @@ class ViewExtension implements ExtensionInterface
         if ($error = $this->flash->getMessage('validation.errors.'.$name)) {
             return '<p class="alert alert-error">'.implode(', ', $error).'</p>';
         }
+    }
+
+    /**
+     * Generate pagination
+     *
+     * @return string
+     */
+    public function viewPages($totalData, $limit)
+    {
+        $parameter = '';
+        $query_params = $this->request->getQueryParams();
+
+        if ($query_params) {
+            foreach ($query_params as $key => $param) {
+                if ($key != 'page') {
+                    if ($parameter == '') {
+                        $parameter .= '?'.$key.'='.$param;
+                    } else {
+                        $parameter .= '&'.$key.'='.$param;
+                    }
+                }
+            }
+        }
+
+        if ($parameter == '') {
+            $parameter .= '?page=';
+        } else {
+            $parameter .= $parameter.'&page=';
+        }
+
+        if (empty($query_params['page'])) {
+            $page = 1;
+        } else {
+            $page = $query_params['page'];
+        }
+
+        $count_page = ceil($totalData/$limit);
+
+        $elements[] = '<ul class="pagination">';
+
+        if ($page > 1) {
+            $elements[] = '<li>';
+            $elements[] = '<a href="'.$parameter.($page-1).'" aria-label="Previous">';
+            $elements[] = '<span aria-hidden="true">&laquo;</span>';
+            $elements[] = '</a>';
+            $elements[] = '</li>';
+        }
+
+
+        for ($i=1; $i<=$count_page; $i++) {
+            if ($i == $page) {
+                $elements[] = ' <li><a href="#">'.$i.'</a></li>';
+            } else {
+                $elements[] = '<li><a href="'.$parameter.$i.'">'.$i.'</a></li>';
+            }
+        }
+
+        if ($page < $count_page) {
+            $elements[] = '<li>';
+            $elements[] = '<a href="'.$parameter.($page+1).'" aria-label="Previous">';
+            $elements[] = '<span aria-hidden="true">&raquo;</span>';
+            $elements[] = '</a>';
+            $elements[] = '</li>';
+        }
+
+        $elements[] = '</ul>';
+
+        return implode('', $elements);
     }
 }

@@ -3,16 +3,13 @@ namespace Membership;
 
 use Slim\Container;
 use Slim\Http\Request;
+use Slim\Http\Response;
 use Slim\Exception\NotFoundException;
+use Membership\Models\Users;
 
 abstract class Controllers
 {
-    /**
-     * Slim\Container instance
-     *
-     * @var \Slim\Container
-     */
-    private $container;
+    use ContainerAware;
 
     /**
      * Create Controller\Base instance
@@ -23,7 +20,13 @@ abstract class Controllers
     {
         $this->container = $container;
 
+        $session = $container->get('session');
+
         $this->setPageTitle();
+
+        if ($session->get('user_id')) {
+            $this->setHeaderLogin();
+        }
 
         $this->view->addData([
             'gcaptchaSitekey' => null,
@@ -32,39 +35,8 @@ abstract class Controllers
         ], 'sections::captcha');
 
         $this->view->addData([
-            'session' => $container->get('session')->all(),
+            'session' => $session->all(),
         ]);
-    }
-
-    /**
-     * Get \Slim\Container name
-     *
-     * @param  string $name Container Name
-     * @return mixed
-     * @throws \Slim\Exception\ContainerValueNotFoundException
-     */
-    public function __get($name)
-    {
-        return $this->container->get($name);
-    }
-
-    /**
-     * Call \Slim\Container callable name
-     *
-     * @param  string $method Container Name
-     * @return mixed
-     * @throws \BadMethodCallException
-     */
-    public function __call($method, $params)
-    {
-        if ($this->container->has($method)) {
-            $obj = $this->container->get($method);
-            if (is_callable($obj)) {
-                return call_user_func_array($obj, $params);
-            }
-        }
-
-        throw new \BadMethodCallException("Method $method is not a valid method");
     }
 
     /**
@@ -74,9 +46,23 @@ abstract class Controllers
      * @param \Slim\Http\Response $response
      * @throws \Slim\Exception\NotFoundException
      */
-    protected function assertXhrRequest($request, $response)
+    protected function assertXhrRequest(Request $request, Response $response)
     {
         if (!$request->isXhr()) {
+            throw new NotFoundException($request, $response);
+        }
+    }
+
+    /**
+     * Assert is HTML request
+     *
+     * @param \Slim\Http\Request  $request
+     * @param \Slim\Http\Response $response
+     * @throws \Slim\Exception\NotFoundException
+     */
+    protected function assertHTMLRequest(Request $request, Response $response)
+    {
+        if ($request->isXhr()) {
             throw new NotFoundException($request, $response);
         }
     }
@@ -171,5 +157,22 @@ abstract class Controllers
         $salt = $this->settings->get('salt_pwd');
 
         return md5($salt . $password);
+    }
+
+    /**
+     * Set Username and Photo to header template
+     *
+     */
+    protected function setHeaderLogin()
+    {
+        /** @var Users $users */
+        $users = $this->data(Users::class);
+
+        $profile = $users->getProfile();
+
+        $this->view->addData([
+            'header_photo' => $profile['photo'],
+            'header_username' => $profile['username'],
+        ], 'sections::header');
     }
 }

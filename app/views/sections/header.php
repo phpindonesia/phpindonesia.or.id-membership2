@@ -69,7 +69,7 @@
                             <a class="dt-menu-expand">+</a>
                         </li>
 
-                        <?php if (!isset($session['username'])): ?>
+                        <?php if (!isset($session['user_id'])): ?>
                         <li class="menu-item-simple-parent">
                             <a href="<?php echo $this->pathFor('membership-index') ?>">Anggota</a>
                             <ul class="sub-menu">
@@ -82,17 +82,17 @@
 
                         <li><a href="http://www.phpindonesia.or.id/contact">Kontak</a></li>
 
-                        <?php if (isset($session['username'])): ?>
+                        <?php if (isset($session['user_id'])): ?>
                         <li class="menu-item-simple-parent">
                             <a href="<?php echo $this->pathFor('membership-account'); ?>" style="text-decoration: underline; color:#478BCA;">
 
-                                <img src="<?php echo $this->userPhoto($session['photo'], ['width' => '40', 'height' => '40']) ?>" alt="user avatar" style="display: block; position: absolute; right: -40px; bottom: 21px; width: 40px; height: 40px;" />
+                                <img src="<?php echo $this->userPhoto($header_photo, ['width' => '40', 'height' => '40']) ?>" alt="user avatar" style="display: block; position: absolute; right: -40px; bottom: 21px; width: 40px; height: 40px;" />
 
-                                <?php echo '( '.$session['username'].' )'; ?>
+                                <?php echo '( '.$header_username.' )'; ?>
                             </a>
                             <ul class="sub-menu">
                                 <li><a href="<?php echo $this->pathFor('membership-account'); ?>">My Membership Area</a></li>
-                                <li><a href="<?php echo $this->pathFor('membership-update-password'); ?>">Update Password</a></li>
+                                <li><a href="<?php echo $this->pathFor('membership-account-password-edit'); ?>">Update Password</a></li>
                                 <li><a href="<?php echo $this->pathFor('membership-logout'); ?>">Logout</a></li>
                             </ul>
                         </li>

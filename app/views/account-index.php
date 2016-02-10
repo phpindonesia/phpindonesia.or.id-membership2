@@ -4,8 +4,8 @@ $this->layout('layouts::system');
 $this->appendJs([
     $this->asset('/js/jquery.popupoverlay.js'),
     $this->pathFor('membership-account-javascript'),
-    $this->asset('/js/portfolio-add.js'),
-    $this->asset('/js/skill-add.js')
+    $this->asset('/js/portfolio.js'),
+    $this->asset('/js/skill.js')
 ]);
 ?>
 
@@ -36,7 +36,7 @@ $this->appendJs([
                             <li style="margin-right: 5px; padding: 3px; border: 1px #DDDDDD solid;">
                                 <a style="border: none; font: inherit;" href="<?php echo $socmed_item['account_url'] ?>">
                                     <span class="fa <?php echo $socmedias[$socmed_item['socmed_type']][1]; ?>"></span>
-                                    <?php echo !empty($socmed_item['account_name']) ? $socmed_item['account_name'] : $session['username'] ?>
+                                    <?php echo !empty($socmed_item['account_name']) ? $socmed_item['account_name'] : $member['username'] ?>
                                 </a>
                             </li>
 
@@ -52,7 +52,7 @@ $this->appendJs([
 
             <div class="entry-body" style="margin-top: -25px; margin-bottom: 25px;">
                 <a href="<?php echo $this->pathFor('membership-account-edit'); ?>" class="button" style="color: blue;">Update Basic Profile</a>
-                <a href="<?php echo $this->pathFor('membership-portfolio-add'); ?>" class="button" style="color: blue;">Add Portfolios</a>
+                <a href="<?php echo $this->pathFor('membership-portfolios-add'); ?>" class="button" style="color: blue;">Add Portfolios</a>
                 <a href="<?php echo $this->pathFor('membership-skills-add'); ?>" class="button" style="color: blue;">Add Skills</a>
             </div>
 
@@ -71,17 +71,17 @@ $this->appendJs([
 
                                 <tr>
                                     <td style="width:200px; font-weight: bold;">Gender</td>
-                                    <td>: <?php echo $this->e(ucfirst($member['gender'])); ?></td>
+                                    <td>: <?php echo $this->e(ucfirst($member['gender'])) ?></td>
                                 </tr>
 
                                 <tr>
                                     <td style="width:200px; font-weight: bold;">Email</td>
-                                    <td>: <?php echo $session['email']; ?></td>
+                                    <td>: <?php echo $this->e($member['email']) ?></td>
                                 </tr>
 
                                 <tr>
                                     <td style="width:200px; font-weight: bold;">Phone</td>
-                                    <td>: <?php echo $this->e($member['contact_phone']); ?></td>
+                                    <td>: <?php echo $this->e($member['contact_phone']) ?></td>
                                 </tr>
 
                                 <tr>
@@ -220,7 +220,7 @@ $this->appendJs([
                         </td>
 
                         <td>
-                            <a href="<?php echo $this->pathFor('membership-portfolio-edit', array('id' => $item_portfolio['member_portfolio_id'])); ?>" title="Edit item portfolio ini"><i class="fa fa-edit"></i> Edit</a>
+                            <a href="<?php echo $this->pathFor('membership-portfolios-edit', array('id' => $item_portfolio['member_portfolio_id'])); ?>" title="Edit item portfolio ini"><i class="fa fa-edit"></i> Edit</a>
                         </td>
                     </tr>
 
@@ -266,8 +266,8 @@ $this->appendJs([
 
                         <td>
                             <?php $unique = md5($num_skill.$item_skill['member_skill_id']); ?>
-                            <form action="<?php echo $this->pathFor('membership-skills-edit', array('id' => $item_skill['member_skill_id'])); ?>" name="post_<?php echo $unique; ?>" id="post_<?php echo $unique; ?>" style="display:none;" method="post">
-                                <input name="_METHOD" value="DELETE" type="hidden">
+                            <form action="<?php echo $this->pathFor('membership-skills-delete', array('id' => $item_skill['member_skill_id'])); ?>" name="post_<?php echo $unique; ?>" id="post_<?php echo $unique; ?>" style="display:none;" method="post">
+                                <?php echo $this->formInputMethod('DELETE') ?>
                             </form>
                             <a href="#" onclick="if (confirm('Delete this skill item?')) { document.post_<?php echo $unique; ?>.submit(); } event.returnValue = false; return false;"><i class="fa fa-trash"></i> Delete</a>
                         </td>
