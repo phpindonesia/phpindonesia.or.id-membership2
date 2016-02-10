@@ -361,9 +361,43 @@ class Users extends Models
             $query->whereLike('m.area', $request->getQueryParam('area'));
         }
 
-        $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page'));
+        $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page')-1 * 18);
 
         return $query->execute()->fetchAll();
+    }
+
+    /**
+     * Get Total Member
+     *
+     * @param \Slim\Http\Request $request Filter by request
+     * @return integer
+     */
+    public function getTotalMember($request)
+    {
+        $query = $this->db->select([
+                'u.user_id'
+            ])
+            ->from('users u')
+            ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+            ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
+            ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+            ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
+            ->where('ur.role_id', '=', 'member')
+            ->where('u.activated', '=', 'Y');
+
+        if ($request->getQueryParam('province_id')) {
+            $query->where('m.province_id', '=', (int) $request->getQueryParam('province_id'));
+        }
+
+        if ($request->getQueryParam('city_id')) {
+            $query->where('m.city_id', '=', (int) $request->getQueryParam('city_id'));
+        }
+
+        if ($request->getQueryParam('area')) {
+            $query->whereLike('m.area', $request->getQueryParam('area'));
+        }
+
+        return $query->execute()->rowCount();
     }
 
     /**
