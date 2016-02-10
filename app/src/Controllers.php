@@ -70,8 +70,8 @@ abstract class Controllers
     /**
      * Set Page main and sub title
      *
-     * @param string $mainTitle     Main Page Title
-     * @param string $subTitle      Sub Page Title
+     * @param string $mainTitle Main Page Title
+     * @param string $subTitle  Sub Page Title
      */
     protected function setPageTitle($mainTitle = '', $subTitle = '')
     {
