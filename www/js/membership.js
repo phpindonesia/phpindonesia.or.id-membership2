@@ -44,11 +44,8 @@ function delete_socmed(item_id) {
     var deletes = $('#delete-collections input');
     var first_td = $(this).children(':first');
     var socmed_type = first_td.children('.socmed-type').val();
-    var db_row_id = parseInt(first_td.children('.db-row-id').val());
 
-    if (db_row_id > 0) {
-      $('#delete-collections').append('<input type="hidden" name="socmeds_delete[]" value="'+socmed_type+'" />');
-    }
+    $('#delete-collections').append('<input type="hidden" name="socmeds_delete[]" value="'+socmed_type+'" />');
 
     $(this).remove();
   });
