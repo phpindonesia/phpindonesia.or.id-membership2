@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cloudinary/cloudinary_php.git",
-                "reference": "3d82f544d6fd8e4135ab9712093840d20cec5bac"
+                "reference": "94582b6bc7d6c5b97f9aae441d7d25e6fd93ef76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/3d82f544d6fd8e4135ab9712093840d20cec5bac",
-                "reference": "3d82f544d6fd8e4135ab9712093840d20cec5bac",
+                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/94582b6bc7d6c5b97f9aae441d7d25e6fd93ef76",
+                "reference": "94582b6bc7d6c5b97f9aae441d7d25e6fd93ef76",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +57,7 @@
                 "image management",
                 "sdk"
             ],
-            "time": "2016-01-28 13:48:02"
+            "time": "2016-03-22 14:54:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -484,16 +484,16 @@
         },
         {
             "name": "slim/pdo",
-            "version": "1.9.6",
+            "version": "1.9.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FaaPz/Slim-PDO.git",
-                "reference": "8dc5d55a84b3824e508f611b23b329ac1ec5d0b2"
+                "reference": "5f766ca63b8a8e45e7a27acaa3edadb1cf5e55a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FaaPz/Slim-PDO/zipball/8dc5d55a84b3824e508f611b23b329ac1ec5d0b2",
-                "reference": "8dc5d55a84b3824e508f611b23b329ac1ec5d0b2",
+                "url": "https://api.github.com/repos/FaaPz/Slim-PDO/zipball/5f766ca63b8a8e45e7a27acaa3edadb1cf5e55a8",
+                "reference": "5f766ca63b8a8e45e7a27acaa3edadb1cf5e55a8",
                 "shasum": ""
             },
             "require": {
@@ -526,20 +526,20 @@
                 "pdo",
                 "slim"
             ],
-            "time": "2016-02-03 19:02:05"
+            "time": "2016-02-27 16:38:28"
         },
         {
             "name": "slim/slim",
-            "version": "3.1.0",
+            "version": "3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slimphp/Slim.git",
-                "reference": "03b44a4b41896ba42c78bbd5fa172cd79e650496"
+                "reference": "939f2e85d57508de9cff241d10091cd972f221c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slimphp/Slim/zipball/03b44a4b41896ba42c78bbd5fa172cd79e650496",
-                "reference": "03b44a4b41896ba42c78bbd5fa172cd79e650496",
+                "url": "https://api.github.com/repos/slimphp/Slim/zipball/939f2e85d57508de9cff241d10091cd972f221c3",
+                "reference": "939f2e85d57508de9cff241d10091cd972f221c3",
                 "shasum": ""
             },
             "require": {
@@ -593,20 +593,20 @@
                 "micro",
                 "router"
             ],
-            "time": "2016-01-08 15:37:50"
+            "time": "2016-03-10 21:37:40"
         },
         {
             "name": "vlucas/valitron",
-            "version": "v1.2.4",
+            "version": "v1.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/valitron.git",
-                "reference": "d2b63c611980bb804d17468bf0b3c8d4e28afbf5"
+                "reference": "bb181072f427c1ba2ec8b433a0c35b60e99e207e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/valitron/zipball/d2b63c611980bb804d17468bf0b3c8d4e28afbf5",
-                "reference": "d2b63c611980bb804d17468bf0b3c8d4e28afbf5",
+                "url": "https://api.github.com/repos/vlucas/valitron/zipball/bb181072f427c1ba2ec8b433a0c35b60e99e207e",
+                "reference": "bb181072f427c1ba2ec8b433a0c35b60e99e207e",
                 "shasum": ""
             },
             "require": {
@@ -639,7 +639,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2015-12-15 20:10:29"
+            "time": "2016-03-15 21:14:19"
         }
     ],
     "packages-dev": [],
