@@ -205,7 +205,7 @@ $container['upload'] = function ($container) {
  * Setup smtp mailer container
  *
  * @param \Slim\Container $container
- * @return \Membership\Utils\Mailer
+ * @return \Membership\Libraries\Mailer
  */
 $container['mailer'] = function ($container) {
 
