@@ -99,7 +99,10 @@ class Mailer
     }
 
     /**
-     * {@inheritdoc}
+     * Add recipient email address.
+     *
+     * @param string $address
+     * @return $this
      */
     public function to($address, $name = '')
     {
@@ -109,7 +112,10 @@ class Mailer
     }
 
     /**
-     * {@inheritdoc}
+     * Add email subject.
+     *
+     * @param string $subject
+     * @return $this
      */
     public function withSubject($subject)
     {
@@ -119,7 +125,11 @@ class Mailer
     }
 
     /**
-     * {@inheritdoc}
+     * Write email body.
+     *
+     * @param string $body
+     * @param array  $data
+     * @return $this
      */
     public function withBody($body, array $data = [])
     {
@@ -139,7 +149,10 @@ class Mailer
     }
 
     /**
-     * {@inheritdoc}
+     * Add attachments.
+     *
+     * @param array $attachments
+     * @return $this
      */
     public function addAttachments(array $files)
     {
@@ -152,7 +165,9 @@ class Mailer
     }
 
     /**
-     * {@inheritdoc}
+     * Send the thing.
+     *
+     * @return mixed
      */
     public function send()
     {
