@@ -75,9 +75,9 @@ $this->appendJs([
                                     'id'      => 'provinces-dd',
                                     'class'   => 'input_full'
                                 ));
-                                ?>
 
-                                <?php echo $this->formFieldError('province_id'); ?>
+                                echo $this->formFieldError('province_id');
+                                ?>
                             </td>
                         </tr>
 
@@ -92,9 +92,9 @@ $this->appendJs([
                                     'id'      => 'cities-dd',
                                     'class'   => 'input_full'
                                 ));
-                                ?>
 
-                                <?php echo $this->formFieldError('city_id'); ?>
+                                echo $this->formFieldError('city_id');
+                                ?>
                             </td>
                         </tr>
 
@@ -119,9 +119,9 @@ $this->appendJs([
                                     'id'      => 'job-id',
                                     'class'   => 'input_full'
                                 ));
-                                ?>
 
-                                <?php echo $this->formFieldError('job_id'); ?>
+                                echo $this->formFieldError('job_id');
+                                ?>
                             </td>
                         </tr>
 
@@ -131,14 +131,15 @@ $this->appendJs([
                             </th>
 
                             <td>
-                            <?php
-                            echo $this->formInputSelect('identity_type', $identity_types, array(
-                                'default' => $member['identity_type'],
-                                'id'      => 'identity_type',
-                                'class'   => 'input_full'
-                            ));
-                            ?>
-                            <?php echo $this->formFieldError('identity_type'); ?>
+                                <?php
+                                echo $this->formInputSelect('identity_type', $identity_types, array(
+                                    'default' => $member['identity_type'],
+                                    'id'      => 'identity_type',
+                                    'class'   => 'input_full'
+                                ));
+
+                                echo $this->formFieldError('identity_type');
+                                ?>
                             </td>
                         </tr>
 
@@ -181,13 +182,13 @@ $this->appendJs([
                             </th>
 
                             <td>
-                            <?php
-                            echo $this->formInputSelect('religion_id', $religions, array(
-                                'default' => $member['religion_id'],
-                                'id'      => 'religion-dd',
-                                'class'   => 'input_full'
-                            ));
-                            ?>
+                                <?php
+                                echo $this->formInputSelect('religion_id', $religions, array(
+                                    'default' => $member['religion_id'],
+                                    'id'      => 'religion-dd',
+                                    'class'   => 'input_full'
+                                ));
+                                ?>
                             </td>
                         </tr>
 

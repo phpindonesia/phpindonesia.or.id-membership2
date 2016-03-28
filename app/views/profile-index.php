@@ -18,7 +18,7 @@
                 <div class="team-details">
                     <h6><?php echo $this->e($member['fullname']) ?></h6>
 
-                    <br />
+                    <br>
 
                     <ul class="dt-sc-social-icons">
                         <?php foreach ($member_socmeds as $socmed_item): ?>
