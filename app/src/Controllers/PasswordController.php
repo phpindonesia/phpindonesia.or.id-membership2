@@ -45,8 +45,13 @@ class PasswordController extends Controllers
             $resetExpiredDate = date('Y-m-d H:i:s', time() + 7200); // 2 jam
 
             $member = $users->get(
-                ['user_id', 'username', 'fullname'],
-                ['email' => $emailAddress]
+                ['u.user_id', 'u.username', 'u.email', 'm.fullname'],
+                function ($query) use ($emailAddress) {
+                    $query->from('users u')
+                        ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+                        ->where('u.email', '=', $emailAddress)
+                        ->where('u.deleted', '=', 'N');
+                }
             )->fetch();
 
             $doReset = $this->data(UsersResetPwd::class)->create([
@@ -60,22 +65,22 @@ class PasswordController extends Controllers
                 $successMsg = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda';
 
                 try {
-                    $this->mailTo(
-                        $emailAddress,
-                        $member['fullname'],
-                        'PHP Indonesia - Konfirmasi lupa password',
-                        'email::forgot-password',
-                        [
+                    $mail = $this->mailer->to($emailAddress, $member['fullname'])
+                        ->withSubject('PHP Indonesia - Konfirmasi lupa password')
+                        ->withBody('emails::forgot-password', [
                             'email' => $emailAddress,
                             'fullname' => $member['fullname'],
                             'reqDate' => date('d-m-Y H:i:s'),
                             'resetExp' => $resetExpiredDate,
-                            'resetUrl' => $request->getUri()->getBaseUrl(
-                                $this->router->pathFor('membership-activation', ['uid' => $userId, 'reset_key' => $resetKey])
-                            ),
-                        ]
-                    );
+                            'resetUrl' => $request->getUri()->getBaseUrl().$this->router->pathFor('membership-reset-password', ['uid' => $member['user_id'], 'reset_key' => $resetKey]),
+                        ]);
+
+                    $mail->send();
                 } catch (\phpmailerException $e) {
+                    if ($this->settings['mode'] = 'development') {
+                        throw $e;
+                    }
+
                     $successMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
                 }
             }
@@ -155,9 +160,15 @@ class PasswordController extends Controllers
 
         if ($usersResetPass->verifyUserKey($args['uid'], $args['reset_key'])) {
             // Fetch member basic info
-            $member = $users->get(['username', 'fullname', 'email'], function ($query) use ($args) {
-                $query->where('user_id', '=', (int) $args['uid']);
-            })->fetch();
+            $member = $users->get(
+                ['u.user_id', 'u.username', 'u.email', 'm.fullname'],
+                function ($query) use ($emailAddress) {
+                    $query->from('users u')
+                        ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+                        ->where('u.user_id', '=', (int) $args['uid'])
+                        ->where('u.deleted', '=', 'N');
+                }
+            )->fetch();
             $emailAddress = $member['email'];
 
             // Create temporary password
@@ -174,19 +185,21 @@ class PasswordController extends Controllers
             ]);
 
             try {
-                $this->mailTo(
-                    $emailAddress,
-                    $member['fullname'],
-                    'PHP Indonesia - Password baru sementara',
-                    'email::reset-password',
-                    [
+                $mail = $this->mailer->to($emailAddress, $member['fullname'])
+                    ->withSubject('PHP Indonesia - Password baru sementara')
+                    ->withBody('emails::reset-password', [
                         'tempPwd' => $tmpPass,
                         'fullname' => $member['fullname'],
-                    ]
-                );
+                    ]);
+
+                $mail->send();
 
                 $successMsg = 'Password baru sementara anda sudah dikirim ke email, Segera check email anda.';
             } catch (\phpmailerException $e) {
+                if ($this->settings['mode'] = 'development') {
+                    throw $e;
+                }
+
                 $successMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
             }
 

@@ -181,22 +181,22 @@ class HomeController extends Controllers
             if ($userId) {
 
                 try {
-                    $mailSend = $this->mailTo(
-                        $emailAddress,
-                        $input['fullname'],
-                        'PHP Indonesia - Aktivasi Membership',
-                        'email::activation',
-                        [
+                    $mail = $this->mailer->to($emailAddress, $input['fullname'])
+                        ->withSubject('PHP Indonesia - Aktivasi Membership')
+                        ->withBody('emails::activation', [
                             'email' => $emailAddress,
                             'fullname' => $input['fullname'],
                             'regDate' => date('d-m-Y H:i:s'),
                             'activationExp' => $activationExpiredDate,
-                            'activationUrl' => $request->getUri()->getBaseUrl(
-                                $this->router->pathFor('membership-activation', ['uid' => $userId, 'activation_key' => $activationKey])
-                            ),
-                        ]
-                    );
+                            'activationUrl' => $request->getUri()->getBaseUrl().$this->router->pathFor('membership-activation', ['uid' => $userId, 'activation_key' => $activationKey]),
+                        ]);
+
+                    $mail->send();
                 } catch (\phpmailerException $e) {
+                    if ($this->settings['mode'] = 'development') {
+                        throw $e;
+                    }
+
                     $mailSend = false;
                     $registerSuccessMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
                 }
