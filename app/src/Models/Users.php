@@ -88,38 +88,6 @@ class Users extends Models
     }
 
     /**
-     * Activate user
-     *
-     * @param int $userId
-     * @param string $activationKey
-     * @return bool
-     */
-    public function activate($userId, $activationKey)
-    {
-        $this->db->beginTransaction();
-
-        try {
-            $userId = (int) $userId;
-
-            $this->update(['activated' => 'Y'], $userId);
-
-            $this->db->update(['deleted' => 'Y'])
-                ->table('users_activations')
-                ->where($this->primary, '=', $userId)
-                ->where('activation_key'. '=', $activationKey)
-                ->execute();
-
-            $this->db->commit();
-
-            return true;
-        } catch (Exception $e) {
-            $this->db->rollback();
-
-            return false;
-        }
-    }
-
-    /**
      * Update user login data
      *
      * @param int $userId User ID
@@ -427,25 +395,6 @@ class Users extends Models
         $email = strtolower($email);
         $count = $this->count(function ($query) use ($email) {
             $query->where('email', '=', $email);
-        });
-
-        return $count > 0;
-    }
-
-    /**
-     * Is activation $key for $userId already exists?
-     *
-     * @param string $userId
-     * @param string $key
-     * @return bool
-     */
-    public function assertActivationExists($userId, $key)
-    {
-        $count = $this->count(function ($query) use ($userId, $key) {
-            $query->where('user_id', '=', $userId)
-                ->where('activation_key', '=', $key)
-                ->where('deleted', '=', 'N')
-                ->where('expired_date', '>', date('Y-m-d'));
         });
 
         return $count > 0;

@@ -10,6 +10,7 @@ use Membership\Models\Religions;
 use Membership\Models\Regionals;
 use Membership\Models\MemberProfile;
 use Membership\Models\MemberSocmeds;
+use Membership\Models\UsersActivations;
 use Slim\Exception\NotFoundException;
 
 class AccountController extends Controllers
@@ -295,10 +296,11 @@ class AccountController extends Controllers
     public function activate(Request $request, Response $response, array $args)
     {
         /** @var Users $users */
-        $users = $this->data(Users::class);
-        $actExistCount = $users->assertActivationExists($args['uid'], $args['activation_key']);
+        $activation = $this->data(UsersActivations::class);
 
-        if ($actExistCount === 1 && $users->activate($args['uid'], $args['activation_key'])) {
+        if ($activation->isExists($args['uid'], $args['activation_key']) &&
+            $activation->activate($args['uid'], $args['activation_key'])
+        ) {
             $this->addFormAlert('success', 'Selamat! Account anda sudah aktif. Silahkan login...');
         } else {
             $this->addFormAlert('error', 'Bad Request');
