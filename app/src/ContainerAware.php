@@ -10,7 +10,7 @@ use BadMethodCallException;
  * @property-read \Slim\PDO\Database db
  * @property-read \Valitron\Validator validator
  * @property-read \Projek\Slim\Plates view
- * @property-read \Membership\Utils\Mailer mailer
+ * @property-read \Membership\Libraries\Mailer mailer
  * @property-read callable data
  * @property-read callable upload
  * @method Models data(string $class)
