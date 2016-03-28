@@ -4,10 +4,7 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
-use Membership\Models\Users;
-use Membership\Models\Careers;
-use Membership\Models\Regionals;
-use Membership\Models\UsersActivations;
+use Membership\Models;
 
 class HomeController extends Controllers
 {
@@ -15,18 +12,18 @@ class HomeController extends Controllers
     {
         $this->setPageTitle('Membership', 'Keanggotaan');
 
-        /** @var Regionals $regionals */
-        $regionals  = $this->data(Regionals::class);
+        /** @var \Membership\Models\Regionals $regionals */
+        $regionals  = $this->data(Models\Regionals::class);
         $provinceId = $request->getQueryParam('province_id');
 
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
 
         return $this->view->render('home-index', [
-            'members'       => $users->getMembers($request),
-            'totalMember'   => $users->getTotalMember($request),
-            'provinces'     => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
-            'cities'        => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
+            'members'     => $users->getMembers($request),
+            'totalMember' => $users->getTotalMember($request),
+            'provinces'   => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
+            'cities'      => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
         ]);
     }
 
@@ -47,8 +44,8 @@ class HomeController extends Controllers
 
     public function login(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', ['login', 'password']);
 
@@ -72,7 +69,7 @@ class HomeController extends Controllers
 
         if ($user) {
             $_SESSION['MembershipAuth'] = [
-                'user_id'     => $user['user_id'],
+                'user_id' => $user['user_id']
             ];
             $this->session->replace($_SESSION['MembershipAuth']);
 
@@ -95,21 +92,21 @@ class HomeController extends Controllers
             ],
         ], 'layouts::account');
 
-        /** @var Regionals $regionals */
-        $regionals = $this->data(Regionals::class);
+        /** @var \Membership\Models\Regionals $regionals */
+        $regionals = $this->data(Models\Regionals::class);
         $provinceId = $request->getParam('province_id');
 
         return $this->view->render('home-register', [
             'provinces' => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
             'cities'    => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
-            'jobs'      => array_pairs($this->data(Careers::class)->getJobs(), 'job_id'),
+            'jobs'      => array_pairs($this->data(Models\Careers::class)->getJobs(), 'job_id'),
         ]);
     }
 
     public function register(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', [
             'email', 'username', 'fullname', 'password', 'repassword',
@@ -179,7 +176,6 @@ class HomeController extends Controllers
             }
 
             if ($userId) {
-
                 try {
                     $mail = $this->mailer->to($emailAddress, $input['fullname'])
                         ->withSubject('PHP Indonesia - Aktivasi Membership')
@@ -203,7 +199,7 @@ class HomeController extends Controllers
 
                 if ($mailSend) {
                     // Update email sent status
-                    $this->data(UsersActivations::class)->update(['email_sent' => 'Y'], [
+                    $this->data(Models\UsersActivations::class)->update(['email_sent' => 'Y'], [
                         'user_id' => $userId,
                         'activation_key' => $activationKey
                     ]);

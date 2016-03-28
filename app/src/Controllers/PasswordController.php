@@ -4,8 +4,7 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
-use Membership\Models\Users;
-use Membership\Models\UsersResetPwd;
+use Membership\Models;
 
 class PasswordController extends Controllers
 {
@@ -27,8 +26,8 @@ class PasswordController extends Controllers
 
     public function forgot(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', 'email');
         $validator->rule('email', 'email');
@@ -54,7 +53,7 @@ class PasswordController extends Controllers
                 }
             )->fetch();
 
-            $doReset = $this->data(UsersResetPwd::class)->create([
+            $doReset = $this->data(Models\UsersResetPwd::class)->create([
                 'user_id' => $member['user_id'],
                 'reset_key' => $resetKey,
                 'expired_date' => $resetExpiredDate,
@@ -105,8 +104,8 @@ class PasswordController extends Controllers
 
     public function update(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users     = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users     = $this->data(Models\Users::class);
         $saltPass  = $this->settings->get('salt_pwd');
         $password  = $request->getParsedBodyParam('password');
         $validator = $this->validator->rule('required', [
@@ -153,10 +152,10 @@ class PasswordController extends Controllers
 
     public function reset(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
-        /** @var UsersResetPwd $usersResetPass */
-        $usersResetPass = $this->data(UsersResetPwd::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
+        /** @var \Membership\Models\UsersResetPwd $usersResetPass */
+        $usersResetPass = $this->data(Models\UsersResetPwd::class);
 
         if ($usersResetPass->verifyUserKey($args['uid'], $args['reset_key'])) {
             // Create temporary password
