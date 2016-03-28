@@ -8,8 +8,7 @@ use League\Plates\Extension\Asset as PlatesAsset;
 use Psr\Http\Message\UploadedFileInterface;
 use Valitron\Validator;
 use Membership\Models;
-use Membership\Libraries\Mailer;
-use Membership\Libraries\ViewExtension;
+use Membership\Libraries;
 
 /**
  * Settings file
@@ -132,17 +131,23 @@ Cloudinary::config($container->get('settings')['cloudinary']);
  */
 $container['view'] = function ($container) {
     $settings = $container->get('settings');
-    $request = $container->get('request');
-    $view = new Projek\Slim\Plates($settings['view'], $container->get('response'));
+    $view = new Projek\Slim\Plates(
+        $viewSettings = $settings->get('view'),
+        $container->get('response')
+    );
 
     // Add app view folders
-    $view->addFolder('emails',   $settings['view']['directory'].'/emails');
-    $view->addFolder('layouts',  $settings['view']['directory'].'/layouts');
-    $view->addFolder('sections', $settings['view']['directory'].'/sections');
+    $view->addFolder('emails',   $viewSettings['directory'].'/emails');
+    $view->addFolder('layouts',  $viewSettings['directory'].'/layouts');
+    $view->addFolder('sections', $viewSettings['directory'].'/sections');
 
     // Load app view extensions
     $view->loadExtension(new PlatesAsset(WWW_DIR));
-    $view->loadExtension(new ViewExtension($request, $container->get('flash'), $settings['mode']));
+    $view->loadExtension(new Libraries\ViewExtension(
+        $request = $container->get('request'),
+        $container->get('flash'),
+        $settings->get('mode')
+    ));
     $view->loadExtension(new Projek\Slim\PlatesExtension($container->get('router'), $request->getUri()));
 
     return $view;
@@ -213,7 +218,7 @@ $container['mailer'] = function ($container) {
     $settings = $container->get('settings');
     $appSetting = $settings->get('app');
 
-    $mailer = new Mailer($settings->get('mailer'), $view);
+    $mailer = new Libraries\Mailer($settings->get('mailer'), $view);
 
     $mailer->debugMode($settings->get('mode'));
     $mailer->setSender($appSetting['email'], $appSetting['name']);
