@@ -10,12 +10,11 @@ use BadMethodCallException;
  * @property-read \Slim\PDO\Database db
  * @property-read \Valitron\Validator validator
  * @property-read \Projek\Slim\Plates view
+ * @property-read \Membership\Utils\Mailer mailer
  * @property-read callable data
  * @property-read callable upload
- * @property-read callable mailTo
  * @method Models data(string $class)
  * @method string[] upload(\Psr\Http\Message\UploadedFileInterface $file, array $data)
- * @method mixed mailTo(string $address, string $name, string $subject, string $body, array $data)
  */
 trait ContainerAware
 {

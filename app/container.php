@@ -8,6 +8,8 @@ use League\Plates\Extension\Asset as PlatesAsset;
 use Psr\Http\Message\UploadedFileInterface;
 use Valitron\Validator;
 use Membership\Models;
+use Membership\Libraries\Mailer;
+use Membership\Libraries\ViewExtension;
 
 /**
  * Settings file
@@ -134,12 +136,13 @@ $container['view'] = function ($container) {
     $view = new Projek\Slim\Plates($settings['view'], $container->get('response'));
 
     // Add app view folders
+    $view->addFolder('emails',   $settings['view']['directory'].'/emails');
     $view->addFolder('layouts',  $settings['view']['directory'].'/layouts');
     $view->addFolder('sections', $settings['view']['directory'].'/sections');
 
     // Load app view extensions
     $view->loadExtension(new PlatesAsset(WWW_DIR));
-    $view->loadExtension(new Membership\ViewExtension($request, $container->get('flash'), $settings['mode']));
+    $view->loadExtension(new ViewExtension($request, $container->get('flash'), $settings['mode']));
     $view->loadExtension(new Projek\Slim\PlatesExtension($container->get('router'), $request->getUri()));
 
     return $view;
@@ -199,58 +202,23 @@ $container['upload'] = function ($container) {
 };
 
 /**
- * Setup mail sender container
+ * Setup smtp mailer container
  *
  * @param \Slim\Container $container
- * @return callable
+ * @return \Membership\Utils\Mailer
  */
-$container['mailTo'] = function ($container) {
+$container['mailer'] = function ($container) {
 
+    $view = $container->get('view')->getPlates();
     $settings = $container->get('settings');
-    /** @var \League\Plates\Engine $view */
-    $view     = $container->get('view')->getPlates();
+    $appSetting = $settings->get('app');
 
-    $mail     = $settings['smpt'];
-    $email    = $settings['email'];
+    $mailer = new Mailer($settings->get('mailer'), $view);
 
-    $mailer = new PHPMailer(true);
+    $mailer->debugMode($settings->get('mode'));
+    $mailer->setSender($appSetting['email'], $appSetting['name']);
 
-    $mailer->isSMTP();
-    $mailer->Host = $mail['host'];
-    $mailer->Port = $mail['port'];
-    $mailer->Username = $mail['username'];
-    $mailer->Password = $mail['password'];
-    $mailer->SMTPAuth = true;
-    $mailer->SMTPSecure = $mail['port'] == 465 ? 'ssl' : 'tsl';
-    $mailer->SMTPDebug  = $settings['mode'] == 'development' ? 2 : 0;
-
-    $mailer->setFrom($email['sender_email'], $email['sender_name']);
-
-    /**
-     * Send mail callable container
-     *
-     * @param string $address
-     * @param string $name
-     * @param string $subject
-     * @param string $body
-     * @param array  $data
-     * @return mixed
-     */
-    return function ($address, $name, $subject, $body, array $data = []) use ($mailer, $view) {
-
-        $mailer->addAddress($address, $name);
-
-        if (strpos($body, '::') !== false) {
-            $body = $view->render($body, $data);
-        }
-
-        $mailer->Body = $body;
-        $mailer->Subject = $subject;
-
-        return $mailer->send();
-
-    };
-
+    return $mailer;
 };
 
 /**
