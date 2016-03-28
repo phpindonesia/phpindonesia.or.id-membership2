@@ -1,11 +1,10 @@
-Haayy <?php echo $this->e($fullname) ?> ^_^,
+<p>Haayy <?php echo $this->e($fullname) ?> ^_^,</p>
 
-Anda telah mengkonfirmasi permintaan reset password karena anda lupa dengan password anda.
+<p>Anda telah mengkonfirmasi permintaan reset password karena anda lupa dengan password anda.</p>
 
-Berikut ini adalah password baru anda untuk sementara.
-password baru sementara: <?php echo $this->e($tmpPass) ?>
+<p>Berikut ini adalah password baru anda untuk sementara.<br>
+password baru sementara: <?php echo $this->e($tmpPass) ?></p>
 
-Mohon segera ganti password baru sementara ini dengan password baru pilihan anda. Pastikan
-mudah diingat dan aman!
+<p>Mohon segera ganti password baru sementara ini dengan password baru pilihan anda. Pastikan mudah diingat dan aman!</p>
 
-Terimakasih ^_^
+<p>Terima kasih ^_^</p>
