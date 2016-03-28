@@ -159,18 +159,6 @@ class PasswordController extends Controllers
         $usersResetPass = $this->data(UsersResetPwd::class);
 
         if ($usersResetPass->verifyUserKey($args['uid'], $args['reset_key'])) {
-            // Fetch member basic info
-            $member = $users->get(
-                ['u.user_id', 'u.username', 'u.email', 'm.fullname'],
-                function ($query) use ($emailAddress) {
-                    $query->from('users u')
-                        ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
-                        ->where('u.user_id', '=', (int) $args['uid'])
-                        ->where('u.deleted', '=', 'N');
-                }
-            )->fetch();
-            $emailAddress = $member['email'];
-
             // Create temporary password
             $tmpPass = substr(str_shuffle(md5(microtime())), 0, 10);
 
@@ -184,11 +172,22 @@ class PasswordController extends Controllers
                 'reset_key' => $args['reset_key']
             ]);
 
+            // Fetch member basic info
+            $member = $users->get(
+                ['u.user_id', 'u.username', 'u.email', 'm.fullname'],
+                function ($query) use ($args) {
+                    $query->from('users u')
+                        ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+                        ->where('u.user_id', '=', (int) $args['uid'])
+                        ->where('u.deleted', '=', 'N');
+                }
+            )->fetch();
+
             try {
-                $mail = $this->mailer->to($emailAddress, $member['fullname'])
+                $mail = $this->mailer->to($member['email'], $member['fullname'])
                     ->withSubject('PHP Indonesia - Password baru sementara')
                     ->withBody('emails::reset-password', [
-                        'tempPwd' => $tmpPass,
+                        'tmpPass' => $tmpPass,
                         'fullname' => $member['fullname'],
                     ]);
 
