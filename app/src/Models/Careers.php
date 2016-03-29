@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Models;
 
 use Membership\Models;
@@ -21,7 +22,7 @@ class Careers extends Models
     protected $authorize = false;
 
     /**
-     * Retrieve career levels
+     * Retrieve career levels.
      *
      * @return array
      */
@@ -33,7 +34,7 @@ class Careers extends Models
     }
 
     /**
-     * Retrieve career industries
+     * Retrieve career industries.
      *
      * @return array
      */
@@ -45,7 +46,7 @@ class Careers extends Models
     }
 
     /**
-     * Retrieve career jobs
+     * Retrieve career jobs.
      *
      * @return array
      */

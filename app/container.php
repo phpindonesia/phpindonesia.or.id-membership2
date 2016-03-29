@@ -11,24 +11,24 @@ use Membership\Models;
 use Membership\Libraries\Mailer;
 use Membership\Libraries\ViewExtension;
 
-/**
+/*
  * Settings file
  */
 $settingsFile = APP_DIR.'settings.php';
-file_exists($settingsFile) || die ('Setting file not available');
+file_exists($settingsFile) || die('Setting file not available');
 
 session_start();
 
 /**
- * Slim Container
+ * Slim Container.
  *
- * @var \Slim\Container $container
+ * @var \Slim\Container
  */
 $container = new Container([
-    'settings' => require $settingsFile
+    'settings' => require $settingsFile,
 ]);
 
-/**
+/*
  * Setup session
  *
  * @return \SLim\Interfaces\CollectionInterface
@@ -41,7 +41,7 @@ $container['session'] = function ($container) {
     return new Collection($_SESSION['MembershipAuth']);
 };
 
-/**
+/*
  * Setup database container
  *
  * @return \Slim\PDO\Database
@@ -55,7 +55,7 @@ $container['db'] = function ($container) {
     return new Database($db['dsn'], $db['username'], $db['password']);
 };
 
-/**
+/*
  * Setup data model container
  *
  * @return callable
@@ -83,7 +83,7 @@ $container['data'] = function ($container) {
     };
 };
 
-/**
+/*
  * Setup validator container
  *
  * @return \Valitron\Validator
@@ -102,6 +102,7 @@ $container['validator'] = function ($container) {
 
                 return $recaptcha->verify($field['g-recaptcha-response'], $remoteAddr)->isSuccess();
             }
+
             return false;
         }, 'Verifikasi captcha salah!');
 
@@ -111,21 +112,21 @@ $container['validator'] = function ($container) {
     return $validator;
 };
 
-/**
+/*
  * Setup flash message container
  *
  * @return \Slim\Flash\Messages
  */
 $container['flash'] = function () {
-    return new Slim\Flash\Messages;
+    return new Slim\Flash\Messages();
 };
 
-/**
+/*
  * Setup cloudinary config before view
  */
 Cloudinary::config($container->get('settings')['cloudinary']);
 
-/**
+/*
  * Setup view container
  *
  * @return \Projek\Slim\Plates
@@ -148,7 +149,7 @@ $container['view'] = function ($container) {
     return $view;
 };
 
-/**
+/*
  * Setup upload handler container
  *
  * @return callable
@@ -157,7 +158,7 @@ $container['upload'] = function ($container) {
     $settings = $container->get('settings');
     $session = $container->get('session');
 
-    /**
+    /*
      * Upload callabel
      *
      * @param \Psr\Http\Message\UploadedFileInterface $photo
@@ -175,22 +176,22 @@ $container['upload'] = function ($container) {
         }
 
         $ext = strtolower(pathinfo($photo->getClientFilename(), PATHINFO_EXTENSION));
-        $cdnTargetPath = 'phpindonesia/' . $settings['mode'] . '/';
-        $newFileName = $session->get('user_id') . '-' . date('YmdHis');
+        $cdnTargetPath = 'phpindonesia/'.$settings['mode'].'/';
+        $newFileName = $session->get('user_id').'-'.date('YmdHis');
 
         Cloudinary\Uploader::upload($photo->file, [
-            'public_id' => $cdnTargetPath . $newFileName,
+            'public_id' => $cdnTargetPath.$newFileName,
             'tags' => ['user-avatar'],
         ]);
 
-        $memberData['photo'] = $newFileName . '.' . $ext;
+        $memberData['photo'] = $newFileName.'.'.$ext;
 
         if ($session->get('photo')) {
-            $api = new Cloudinary\Api;
+            $api = new Cloudinary\Api();
             $publicId = str_replace('.'.$ext, '', $session->get('photo'));
 
-            $api->delete_resources($cdnTargetPath . $publicId, [
-                'public_id' => $cdnTargetPath . $newFileName,
+            $api->delete_resources($cdnTargetPath.$publicId, [
+                'public_id' => $cdnTargetPath.$newFileName,
                 'tags' => ['user-avatar'],
             ]);
 
@@ -201,7 +202,7 @@ $container['upload'] = function ($container) {
     };
 };
 
-/**
+/*
  * Setup smtp mailer container
  *
  * @param \Slim\Container $container
@@ -221,7 +222,7 @@ $container['mailer'] = function ($container) {
     return $mailer;
 };
 
-/**
+/*
  * Custom error handler
  *
  * TODO: need more!!!
@@ -232,7 +233,7 @@ $container['errorHandler'] = function ($container) {
     if ($container->get('settings')['mode'] !== 'development') {
         return function ($request, $response, $exception) use ($container) {
             return $container->get('view')->render('errors/500', [
-                'message' => $exception->getMessage()
+                'message' => $exception->getMessage(),
             ])->withStatus(500);
         };
     }

@@ -18,7 +18,7 @@
                 <?php echo $this->formInputSelect('industry_id', $industries, [
                     'id' => 'industry-id',
                     'class' => 'input_full',
-                    'default' => $portfolio ? $portfolio['industry_id'] : null
+                    'default' => $portfolio ? $portfolio['industry_id'] : null,
                 ]) ?>
 
                 <?php echo $this->formFieldError('industry_id') ?>
@@ -35,7 +35,7 @@
                         <label style="display: block;">Tahun</label>
                         <?php echo $this->formInputSelect('start_date_y', years_range(), [
                             'id' => 'start-date-y',
-                            'default' => $portfolio ? $portfolio['start_date_y'] : null
+                            'default' => $portfolio ? $portfolio['start_date_y'] : null,
                         ]) ?>
                         <?php echo $this->formFieldError('start_date_y') ?>
                     </li>
@@ -44,7 +44,7 @@
                         <label style="display: block;">Bulan (opsional)</label>
                         <?php echo $this->formInputSelect('start_date_m', months_range(), [
                             'id' => 'start-date-m',
-                            'default' => $portfolio ? $portfolio['start_date_m'] : null
+                            'default' => $portfolio ? $portfolio['start_date_m'] : null,
                         ]) ?>
                     </li>
 
@@ -52,7 +52,7 @@
                         <label style="display: block;">Tanggal (opsional)</label>
                         <?php echo $this->formInputSelect('start_date_d', days_range(), [
                             'id' => 'start-date-d',
-                            'default' => $portfolio ? $portfolio['start_date_d'] : null
+                            'default' => $portfolio ? $portfolio['start_date_d'] : null,
                         ]) ?>
                     </li>
 
@@ -88,7 +88,7 @@
                         <label style="display: block;">Tahun</label>
                         <?php echo $this->formInputSelect('end_date_y', years_range(), [
                             'id' => 'end-date-y',
-                            'default' => $portfolio ? $portfolio['end_date_y'] : null
+                            'default' => $portfolio ? $portfolio['end_date_y'] : null,
                         ]) ?>
                     </li>
 
@@ -96,7 +96,7 @@
                         <label style="display: block;">Bulan (opsional)</label>
                         <?php echo $this->formInputSelect('end_date_m', months_range(), [
                             'id' => 'end-date-m',
-                            'default' => $portfolio ? $portfolio['end_date_m'] : null
+                            'default' => $portfolio ? $portfolio['end_date_m'] : null,
                         ]) ?>
                     </li>
 
@@ -104,7 +104,7 @@
                         <label style="display: block;">Tanggal (opsional)</label>
                         <?php echo $this->formInputSelect('end_date_d', days_range(), [
                             'id' => 'end-date-d',
-                            'default' => $portfolio ? $portfolio['end_date_d'] : null
+                            'default' => $portfolio ? $portfolio['end_date_d'] : null,
                         ]) ?>
                     </li>
                 </ul>

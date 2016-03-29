@@ -2,7 +2,7 @@
 $this->layout('layouts::system');
 
 $this->appendJs([
-    $this->asset('/js/portfolio.js')
+    $this->asset('/js/portfolio.js'),
 ]);
 ?>
 

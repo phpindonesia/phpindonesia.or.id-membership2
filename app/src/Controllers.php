@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership;
 
 use Slim\Container;
@@ -12,7 +13,7 @@ abstract class Controllers
     use ContainerAware;
 
     /**
-     * Create Controller\Base instance
+     * Create Controller\Base instance.
      *
      * @param Container $container
      */
@@ -30,8 +31,8 @@ abstract class Controllers
 
         $this->view->addData([
             'gcaptchaSitekey' => null,
-            'gcaptchaSecret'  => null,
-            'gcaptchaEnable'  => false,
+            'gcaptchaSecret' => null,
+            'gcaptchaEnable' => false,
         ], 'sections::captcha');
 
         $this->view->addData([
@@ -40,10 +41,11 @@ abstract class Controllers
     }
 
     /**
-     * Assert is XHR request
+     * Assert is XHR request.
      *
      * @param \Slim\Http\Request  $request
      * @param \Slim\Http\Response $response
+     *
      * @throws \Slim\Exception\NotFoundException
      */
     protected function assertXhrRequest(Request $request, Response $response)
@@ -54,10 +56,11 @@ abstract class Controllers
     }
 
     /**
-     * Assert is HTML request
+     * Assert is HTML request.
      *
      * @param \Slim\Http\Request  $request
      * @param \Slim\Http\Response $response
+     *
      * @throws \Slim\Exception\NotFoundException
      */
     protected function assertHTMLRequest(Request $request, Response $response)
@@ -68,7 +71,7 @@ abstract class Controllers
     }
 
     /**
-     * Set Page main and sub title
+     * Set Page main and sub title.
      *
      * @param string $mainTitle Main Page Title
      * @param string $subTitle  Sub Page Title
@@ -82,7 +85,7 @@ abstract class Controllers
     }
 
     /**
-     * Flash validation error messages
+     * Flash validation error messages.
      *
      * @param array $errors
      */
@@ -98,7 +101,7 @@ abstract class Controllers
     }
 
     /**
-     * Add Form alert
+     * Add Form alert.
      *
      * @param string $type
      * @param array  $message
@@ -117,7 +120,7 @@ abstract class Controllers
         }
 
         $this->view->addData([
-            'formAlert' => ['type' => $type, 'message' => $message]
+            'formAlert' => ['type' => $type, 'message' => $message],
         ], 'sections::alert');
 
         foreach ($errors as $field => $error) {
@@ -130,7 +133,7 @@ abstract class Controllers
     }
 
     /**
-     * Enable Captcha
+     * Enable Captcha.
      *
      * return array
      */
@@ -138,30 +141,30 @@ abstract class Controllers
     {
         $settings = $this->settings->get('gcaptcha');
         $this->view->addData([
-            'gcaptchaEnable'  => $settings['enable'],
+            'gcaptchaEnable' => $settings['enable'],
             'gcaptchaSitekey' => $settings['sitekey'],
-            'gcaptchaSecret'  => $settings['secret'],
+            'gcaptchaSecret' => $settings['secret'],
         ], 'sections::captcha');
 
         return $settings;
     }
 
     /**
-     * Simple helper to salt the password
+     * Simple helper to salt the password.
      *
      * @param string $password
+     *
      * @return string
      */
     protected function salt($password)
     {
         $salt = $this->settings->get('salt_pwd');
 
-        return md5($salt . $password);
+        return md5($salt.$password);
     }
 
     /**
-     * Set Username and Photo to header template
-     *
+     * Set Username and Photo to header template.
      */
     protected function setHeaderLogin()
     {

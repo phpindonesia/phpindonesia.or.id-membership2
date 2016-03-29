@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Controllers;
 
 use Slim\Http\Request;
@@ -29,11 +30,11 @@ class AccountController extends Controllers
         }
 
         return $this->view->render('account-index', [
-            'member'            => $users->getProfile(),
+            'member' => $users->getProfile(),
             'member_portfolios' => $users->getPortfolios(),
-            'member_skills'     => $users->getSkills(),
-            'member_socmeds'    => $users->getSocmends(),
-            'socmedias'         => $this->settings->get('socmedias'),
+            'member_skills' => $users->getSkills(),
+            'member_socmeds' => $users->getSocmends(),
+            'socmedias' => $this->settings->get('socmedias'),
         ]);
     }
 
@@ -53,9 +54,9 @@ class AccountController extends Controllers
             $outputJson = [
                 'username' => $user['username'],
                 'fullname' => $user['fullname'],
-                'email'    => $user['email'],
-                'gender'   => $user['gender'],
-                'city'     => $user['city'],
+                'email' => $user['email'],
+                'gender' => $user['gender'],
+                'city' => $user['city'],
                 'province' => $user['province'],
             ];
 
@@ -63,11 +64,11 @@ class AccountController extends Controllers
         }
 
         return $this->view->render('profile-index', [
-            'member'            => $user,
+            'member' => $user,
             'member_portfolios' => $users->getPortfolios($user['user_id']),
-            'member_skills'     => $users->getSkills($user['user_id']),
-            'member_socmeds'    => $users->getSocmends($user['user_id']),
-            'socmedias'         => $this->settings->get('socmedias'),
+            'member_skills' => $users->getSkills($user['user_id']),
+            'member_socmeds' => $users->getSocmends($user['user_id']),
+            'socmedias' => $this->settings->get('socmedias'),
         ]);
     }
 
@@ -79,20 +80,20 @@ class AccountController extends Controllers
         $users = $this->data(Users::class);
         /** @var Regionals $regionals */
         $regionals = $this->data(Regionals::class);
-        /** @var Religions $religion */
+        /* @var Religions $religion */
         $religions = $this->data(Religions::class);
         $provinceId = $users->getProfile()['province_id'];
 
         return $this->view->render('account-edit', [
-            'member'         => $users->getProfile(),
+            'member' => $users->getProfile(),
             'member_socmeds' => $users->getSocmends(),
-            'religions'      => array_pairs($religions->get()->fetchAll(), 'religion_id', 'religion_name'),
-            'provinces'      => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
-            'cities'         => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
-            'jobs'           => array_pairs($this->data(Careers::class)->getJobs(), 'job_id'),
-            'genders'        => ['female' => 'Wanita', 'male' => 'Pria'],
+            'religions' => array_pairs($religions->get()->fetchAll(), 'religion_id', 'religion_name'),
+            'provinces' => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
+            'cities' => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
+            'jobs' => array_pairs($this->data(Careers::class)->getJobs(), 'job_id'),
+            'genders' => ['female' => 'Wanita', 'male' => 'Pria'],
             'identity_types' => ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'],
-            'socmedias'      => $this->settings->get('socmedias'),
+            'socmedias' => $this->settings->get('socmedias'),
         ]);
     }
 
@@ -121,8 +122,9 @@ class AccountController extends Controllers
                 'admin',
                 'account', 'login', 'register', 'logout',
                 'activate', 'reactivate', 'regionals',
-                'forgot-password', 'reset-password'
+                'forgot-password', 'reset-password',
             ];
+
             return $user['username'] == $value || (!in_array($value, $protected) && !$users->assertUsernameExists($value));
         }, 'tersebut sudah terdaftar!');
 
@@ -137,13 +139,13 @@ class AccountController extends Controllers
             'assertEmailNotExists' => 'email',
             'assertUsernameNotExists' => 'username',
             'dateFormat' => [
-                ['birth_date', 'Y-m-d']
+                ['birth_date', 'Y-m-d'],
             ],
             'equals' => [
-                ['repassword', 'password']
+                ['repassword', 'password'],
             ],
             'in' => [
-                ['identity_type', array_keys($identityTypes)]
+                ['identity_type', array_keys($identityTypes)],
             ],
             'lengthMax' => [
                 ['fullname', 32],
@@ -167,17 +169,17 @@ class AccountController extends Controllers
             $socmeds = $this->data(MemberSocmeds::class);
 
             $memberProfile = [
-                'fullname'        => $input['fullname'],
-                'contact_phone'   => $input['contact_phone'],
-                'birth_place'     => strtoupper($input['birth_place']),
-                'birth_date'      => $input['birth_date'],
+                'fullname' => $input['fullname'],
+                'contact_phone' => $input['contact_phone'],
+                'birth_place' => strtoupper($input['birth_place']),
+                'birth_date' => $input['birth_date'],
                 'identity_number' => $input['identity_number'],
-                'identity_type'   => $input['identity_type'],
-                'religion_id'     => $input['religion_id'],
-                'province_id'     => $input['province_id'],
-                'city_id'         => $input['city_id'],
-                'area'            => $input['area'],
-                'job_id'          => $input['job_id']
+                'identity_type' => $input['identity_type'],
+                'religion_id' => $input['religion_id'],
+                'province_id' => $input['province_id'],
+                'city_id' => $input['city_id'],
+                'area' => $input['area'],
+                'job_id' => $input['job_id'],
             ];
 
             $this->db->beginTransaction();
@@ -193,11 +195,11 @@ class AccountController extends Controllers
                 $profile->update($memberProfile, ['user_id' => $userId]);
 
                 $users->update([
-                    'email'       => $input['email'],
-                    'username'    => $input['username'],
+                    'email' => $input['email'],
+                    'username' => $input['username'],
                     'province_id' => $input['province_id'],
-                    'city_id'     => $input['city_id'],
-                    'area'        => $input['area'],
+                    'city_id' => $input['city_id'],
+                    'area' => $input['area'],
                 ], ['user_id' => $userId]);
 
                 // Handle social medias
@@ -227,7 +229,6 @@ class AccountController extends Controllers
 
                             $socmeds->update($socmedRow, $terms);
                         } else {
-
                             $termsStatus = [
                                 'user_id' => $userId,
                                 'socmed_type' => $item['socmed_type'],
@@ -235,10 +236,10 @@ class AccountController extends Controllers
                             ];
 
                             $socmedAdd = [
-                                'user_id'      => $userId,
-                                'socmed_type'  => $item['socmed_type'],
+                                'user_id' => $userId,
+                                'socmed_type' => $item['socmed_type'],
                                 'account_name' => $item['account_name'],
-                                'account_url'  => $item['account_url'],
+                                'account_url' => $item['account_url'],
                             ];
 
                             $socmedId = $socmeds->get(['member_socmed_id'], $termsStatus)->fetch();
@@ -266,7 +267,7 @@ class AccountController extends Controllers
                         if ($socmedRow) {
                             $socmeds->delete([
                                 'user_id' => $userId,
-                                'socmed_type' => $item
+                                'socmed_type' => $item,
                             ]);
                         }
                     }
@@ -295,7 +296,7 @@ class AccountController extends Controllers
 
     public function activate(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
+        /* @var Users $users */
         $activation = $this->data(UsersActivations::class);
 
         if ($activation->isExists($args['uid'], $args['activation_key']) &&
@@ -318,7 +319,7 @@ class AccountController extends Controllers
             'helpTitle' => 'Bantuan Login?',
             'helpContent' => [
                 'Jika belum terdaftar sebagai anggota, <a href="'.$this->router->pathFor('membership-register').'" title="">Daftar Disini</a> menjadi anggota PHP Indonesia.',
-                'Sudah pernah terdaftar menjadi anggota PHP Indonesia, silahkan <a href="'.$this->router->pathFor('membership-login').'" title="">Login Disini.'
+                'Sudah pernah terdaftar menjadi anggota PHP Indonesia, silahkan <a href="'.$this->router->pathFor('membership-login').'" title="">Login Disini.',
             ],
         ], 'layouts::account');
 
@@ -375,7 +376,7 @@ class AccountController extends Controllers
 
         return $this->view->render('account-javascript', [
             'open_portfolio' => $open_portfolio,
-            'open_skill'     => $open_skill
+            'open_skill' => $open_skill,
         ])->withHeader('Content-Type', 'application/javascript');
     }
 

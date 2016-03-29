@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Controllers;
 
 use Slim\Http\Request;
@@ -16,17 +17,17 @@ class HomeController extends Controllers
         $this->setPageTitle('Membership', 'Keanggotaan');
 
         /** @var Regionals $regionals */
-        $regionals  = $this->data(Regionals::class);
+        $regionals = $this->data(Regionals::class);
         $provinceId = $request->getQueryParam('province_id');
 
         /** @var Users $users */
         $users = $this->data(Users::class);
 
         return $this->view->render('home-index', [
-            'members'       => $users->getMembers($request),
-            'totalMember'   => $users->getTotalMember($request),
-            'provinces'     => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
-            'cities'        => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
+            'members' => $users->getMembers($request),
+            'totalMember' => $users->getTotalMember($request),
+            'provinces' => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
+            'cities' => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
         ]);
     }
 
@@ -38,7 +39,7 @@ class HomeController extends Controllers
             'helpTitle' => 'Bantuan Login?',
             'helpContent' => [
                 'Jika belum terdaftar sebagai anggota, <a href="'.$this->router->pathFor('membership-register').'" title="">Daftar Disini</a> menjadi anggota PHP Indonesia.',
-                'Hilang atau lupa password login, silahkan <a href="'.$this->router->pathFor('membership-forgot-password').'" title="">Reset Password</a> Anda.'
+                'Hilang atau lupa password login, silahkan <a href="'.$this->router->pathFor('membership-forgot-password').'" title="">Reset Password</a> Anda.',
             ],
         ], 'layouts::account');
 
@@ -72,7 +73,7 @@ class HomeController extends Controllers
 
         if ($user) {
             $_SESSION['MembershipAuth'] = [
-                'user_id'     => $user['user_id'],
+                'user_id' => $user['user_id'],
             ];
             $this->session->replace($_SESSION['MembershipAuth']);
 
@@ -91,7 +92,7 @@ class HomeController extends Controllers
             'helpTitle' => 'Bantuan Register?',
             'helpContent' => [
                 'Sudah pernah terdaftar menjadi anggota PHP Indonesia, silahkan <a href="'.$this->router->pathFor('membership-login').'" title="">Login Disini',
-                'Hilang atau lupa password login, silahkan <a href="'.$this->router->pathFor('membership-forgot-password').'" title="">Reset Password</a> Anda.'
+                'Hilang atau lupa password login, silahkan <a href="'.$this->router->pathFor('membership-forgot-password').'" title="">Reset Password</a> Anda.',
             ],
         ], 'layouts::account');
 
@@ -101,8 +102,8 @@ class HomeController extends Controllers
 
         return $this->view->render('home-register', [
             'provinces' => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
-            'cities'    => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
-            'jobs'      => array_pairs($this->data(Careers::class)->getJobs(), 'job_id'),
+            'cities' => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
+            'jobs' => array_pairs($this->data(Careers::class)->getJobs(), 'job_id'),
         ]);
     }
 
@@ -126,8 +127,9 @@ class HomeController extends Controllers
                 'admin',
                 'account', 'login', 'register', 'logout',
                 'activate', 'reactivate', 'regionals',
-                'forgot-password', 'reset-password'
+                'forgot-password', 'reset-password',
             ];
+
             return !in_array($value, $protected) && !$users->assertUsernameExists($value);
         }, 'tersebut sudah terdaftar! Silahkan gunakan username lain');
 
@@ -140,13 +142,13 @@ class HomeController extends Controllers
             'assertEmailNotExists' => 'email',
             'assertUsernameNotExists' => 'username',
             'dateFormat' => [
-                ['birth_date', 'Y-m-d']
+                ['birth_date', 'Y-m-d'],
             ],
             'equals' => [
-                ['repassword', 'password']
+                ['repassword', 'password'],
             ],
             'notIn' => [
-                ['username', 'password']
+                ['username', 'password'],
             ],
             'lengthMax' => [
                 ['username', 32],
@@ -179,7 +181,6 @@ class HomeController extends Controllers
             }
 
             if ($userId) {
-
                 try {
                     $mail = $this->mailer->to($emailAddress, $input['fullname'])
                         ->withSubject('PHP Indonesia - Aktivasi Membership')
@@ -205,7 +206,7 @@ class HomeController extends Controllers
                     // Update email sent status
                     $this->data(UsersActivations::class)->update(['email_sent' => 'Y'], [
                         'user_id' => $userId,
-                        'activation_key' => $activationKey
+                        'activation_key' => $activationKey,
                     ]);
                 }
             }
@@ -230,10 +231,10 @@ class HomeController extends Controllers
                 session_name(),
                 '',
                 time() - 42000,
-                $params["path"],
-                $params["domain"],
-                $params["secure"],
-                $params["httponly"]
+                $params['path'],
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
             );
         }
 

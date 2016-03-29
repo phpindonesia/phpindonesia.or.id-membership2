@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Models;
 
 use Membership\Models;
@@ -32,10 +33,11 @@ class UsersResetPwd extends Models
     }
 
     /**
-     * Verify reset password $key for $userId
+     * Verify reset password $key for $userId.
      *
      * @param int    $userId
      * @param string $key
+     *
      * @return bool
      */
     public function verifyUserKey($userId, $key)

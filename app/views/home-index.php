@@ -2,10 +2,10 @@
 $this->layout('layouts::system');
 
 $this->appendJs([
-    $this->asset('/js/regional.js')
+    $this->asset('/js/regional.js'),
 ]);
 $this->appendCss([
-    $this->asset('/css/chabibnr.css')
+    $this->asset('/css/chabibnr.css'),
 ]);
 ?>
 
@@ -22,7 +22,7 @@ $this->appendCss([
                     <label class="control-label">Provinsi</label>
                     <?php echo $this->formInputSelect('province_id', $provinces, [
                         'id' => 'provinces-dd',
-                        'class' => 'form-control'
+                        'class' => 'form-control',
                     ]); ?>
                 </div>
 
@@ -30,7 +30,7 @@ $this->appendCss([
                     <label class="control-label">Kota</label>
                     <?php echo $this->formInputSelect('city_id', $cities, [
                         'id' => 'cities-dd',
-                        'class' => 'form-control'
+                        'class' => 'form-control',
                     ]) ?>
                 </div>
 
@@ -69,7 +69,7 @@ $this->appendCss([
                         </div>
                     </div>
                 </div>
-            <?php $i++; echo ($i % 3 == 0) ? '<hr>' : ''; endforeach; ?>
+            <?php ++$i; echo ($i % 3 == 0) ? '<hr>' : ''; endforeach; ?>
 
             <div class="pagination" style="text-align:center;">
                 <?php  echo $this->viewPages($totalMember, 18); ?>

@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Models;
 
 use Membership\Models;
@@ -22,9 +23,10 @@ class Users extends Models
     protected $authorize = true;
 
     /**
-     * Create new user data
+     * Create new user data.
      *
      * @param string[] $pairs user data
+     *
      * @return int|false
      */
     public function create(array $pairs)
@@ -36,36 +38,36 @@ class Users extends Models
             $newDate = date('Y-m-d h:i:s');
 
             $userId = parent::create([
-                'username'    => $pairs['username'],
-                'password'    => $pairs['password'],
-                'email'       => $pairs['email'],
+                'username' => $pairs['username'],
+                'password' => $pairs['password'],
+                'email' => $pairs['email'],
                 'province_id' => $pairs['province_id'],
-                'city_id'     => $pairs['city_id'],
-                'area'        => $pairs['area'],
+                'city_id' => $pairs['city_id'],
+                'area' => $pairs['area'],
             ]);
 
             $values = [
                 'users_roles' => [
-                    'user_id'     => $userId,
-                    'role_id'     => 'member',
-                    'created_by'  => 0,
+                    'user_id' => $userId,
+                    'role_id' => 'member',
+                    'created_by' => 0,
                 ],
                 'members_profiles' => [
-                    'user_id'     => $userId,
-                    'fullname'    => $pairs['fullname'],
-                    'gender'      => $pairs['gender_id'],
+                    'user_id' => $userId,
+                    'fullname' => $pairs['fullname'],
+                    'gender' => $pairs['gender_id'],
                     'province_id' => $pairs['province_id'],
-                    'city_id'     => $pairs['city_id'],
-                    'area'        => $pairs['area'],
-                    'job_id'      => $pairs['job_id'],
-                    'created_by'  => 0
+                    'city_id' => $pairs['city_id'],
+                    'area' => $pairs['area'],
+                    'job_id' => $pairs['job_id'],
+                    'created_by' => 0,
                 ],
                 'users_activations' => [
-                    'user_id'        => $userId,
+                    'user_id' => $userId,
                     'activation_key' => $pairs['activation_key'],
-                    'expired_date'   => $pairs['expired_date'],
-                    'deleted'        => 'N'
-                ]
+                    'expired_date' => $pairs['expired_date'],
+                    'deleted' => 'N',
+                ],
             ];
 
             foreach ($values as $table => $pairs) {
@@ -88,9 +90,10 @@ class Users extends Models
     }
 
     /**
-     * Update user login data
+     * Update user login data.
      *
      * @param int $userId User ID
+     *
      * @return int
      */
     public function updateLogin($userId)
@@ -99,9 +102,10 @@ class Users extends Models
     }
 
     /**
-     * Retrieve user profile by User Id
+     * Retrieve user profile by User Id.
      *
      * @param string|null $userId User Id
+     *
      * @return array
      */
     public function getProfile($userId = null)
@@ -112,7 +116,7 @@ class Users extends Models
         return $profile->get([
             'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*', 'r.religion_name',
             'reg_prv.regional_name province',
-            'reg_cit.regional_name city'
+            'reg_cit.regional_name city',
         ], function ($query) use ($userId) {
             $query->from('users u')
                 ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
@@ -125,9 +129,10 @@ class Users extends Models
     }
 
     /**
-     * Retrieve user profile by Username
+     * Retrieve user profile by Username.
      *
      * @param string|null $username Username
+     *
      * @return array
      */
     public function getProfileUsername($username = null)
@@ -137,7 +142,7 @@ class Users extends Models
         return $profile->get([
             'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*', 'r.religion_name',
             'reg_prv.regional_name province',
-            'reg_cit.regional_name city'
+            'reg_cit.regional_name city',
         ], function ($query) use ($username) {
             $query->from('users u')
                 ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
@@ -150,9 +155,10 @@ class Users extends Models
     }
 
     /**
-     * Retrieve user social media accounts
+     * Retrieve user social media accounts.
      *
      * @param int|null $userId User ID
+     *
      * @return array
      */
     public function getSocmends($userId = null)
@@ -161,7 +167,7 @@ class Users extends Models
         !is_null($userId) || $userId = $this->current('user_id');
 
         return $socmeds->get([
-            'socmed_type', 'account_name', 'account_url'
+            'socmed_type', 'account_name', 'account_url',
         ], function ($query) use ($userId) {
             $query->where('user_id', '=', $userId)
                 ->where('deleted', '=', 'N');
@@ -169,9 +175,10 @@ class Users extends Models
     }
 
     /**
-     * Retrieve user portfolio
+     * Retrieve user portfolio.
      *
      * @param int|null $userId User ID
+     *
      * @return array
      */
     public function getPortfolios($userId = null)
@@ -195,9 +202,10 @@ class Users extends Models
     }
 
     /**
-     * Count user portfolios
+     * Count user portfolios.
      *
      * @param int|null $userId User ID
+     *
      * @return int
      */
     public function countPortfolios($userId = null)
@@ -212,9 +220,10 @@ class Users extends Models
     }
 
     /**
-     * Retrieve user skills
+     * Retrieve user skills.
      *
      * @param int|null $userId User ID
+     *
      * @return array
      */
     public function getSkills($userId = null)
@@ -226,7 +235,7 @@ class Users extends Models
             'ms.member_skill_id',
             'ms.skill_self_assesment',
             'sp.skill_name skill_parent_name',
-            'ss.skill_name'
+            'ss.skill_name',
         ], function ($query) use ($userId) {
             $query->from('members_skills ms')
                 ->leftJoin('skills sp', 'ms.skill_parent_id', '=', 'sp.skill_id')
@@ -238,9 +247,10 @@ class Users extends Models
     }
 
     /**
-     * Count user portfolios
+     * Count user portfolios.
      *
      * @param int|null $userId User ID
+     *
      * @return int
      */
     public function countSkills($userId = null)
@@ -255,17 +265,18 @@ class Users extends Models
     }
 
     /**
-     * Authenticate user Credentials
+     * Authenticate user Credentials.
      *
      * @param string $login    Should be email or username
      * @param string $password User password
+     *
      * @return int
      */
     public function authenticate($login, $password)
     {
         $query = $this->db->select([
                 'u.user_id', 'u.username', 'u.password', 'u.email', 'u.province_id', 'u.city_id',
-                'u.deleted', 'u.activated', 'ur.role_id', 'up.fullname', 'up.photo', 'up.job_id'
+                'u.deleted', 'u.activated', 'ur.role_id', 'up.fullname', 'up.photo', 'up.job_id',
             ])
             ->from('users u')
             ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
@@ -290,9 +301,10 @@ class Users extends Models
     }
 
     /**
-     * List all members
+     * List all members.
      *
      * @param \Slim\Http\Request $request Filter by request
+     *
      * @return array
      */
     public function getMembers($request)
@@ -329,21 +341,22 @@ class Users extends Models
             $query->whereLike('m.area', $request->getQueryParam('area'));
         }
 
-        $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page')-1 * 18);
+        $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page') - 1 * 18);
 
         return $query->execute()->fetchAll();
     }
 
     /**
-     * Get Total Member
+     * Get Total Member.
      *
      * @param \Slim\Http\Request $request Filter by request
-     * @return integer
+     *
+     * @return int
      */
     public function getTotalMember($request)
     {
         $query = $this->db->select([
-                'u.user_id'
+                'u.user_id',
             ])
             ->from('users u')
             ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
@@ -372,6 +385,7 @@ class Users extends Models
      * Is $username already exists?
      *
      * @param string $username
+     *
      * @return bool
      */
     public function assertUsernameExists($username)
@@ -388,6 +402,7 @@ class Users extends Models
      * Is $email already exists?
      *
      * @param string $email
+     *
      * @return bool
      */
     public function assertEmailExists($email)

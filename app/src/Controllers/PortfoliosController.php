@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Controllers;
 
 use Slim\Http\Request;
@@ -26,7 +27,7 @@ class PortfoliosController extends Controllers
 
         $this->view->addData([
             'career_levels' => array_pairs($career->getLevels(), 'career_level_id'),
-            'industries'    => array_pairs($career->getIndustries(), 'industry_id', 'industry_name')
+            'industries' => array_pairs($career->getIndustries(), 'industry_id', 'industry_name'),
         ], 'sections::portfolio-form');
 
         $this->setPageTitle('Membership', 'Update portfolio item');
@@ -45,7 +46,7 @@ class PortfoliosController extends Controllers
 
         $this->view->addData([
             'career_levels' => array_pairs($career->getLevels(), 'career_level_id'),
-            'industries'    => array_pairs($career->getIndustries(), 'industry_id', 'industry_name')
+            'industries' => array_pairs($career->getIndustries(), 'industry_id', 'industry_name'),
         ], 'sections::portfolio-form');
 
         return $this->view->render('portfolio-add');
@@ -64,7 +65,7 @@ class PortfoliosController extends Controllers
             'work_status',
             'job_title',
             'job_desc',
-            'career_level_id'
+            'career_level_id',
         ]);
 
         if ($input['work_status'] == 'R') {
@@ -103,7 +104,7 @@ class PortfoliosController extends Controllers
             'start_date_y',
             'work_status',
             'job_title',
-            'job_desc'
+            'job_desc',
         ]);
 
         if ($input['work_status'] == 'R') {
@@ -139,7 +140,7 @@ class PortfoliosController extends Controllers
 
         return $response->withRedirect(
             $this->router->pathFor('membership-profile', [
-                'username' => $this->session->get('username')
+                'username' => $this->session->get('username'),
             ])
         );
     }

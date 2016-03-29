@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership;
 
 use Slim\Container;
@@ -13,20 +14,21 @@ use BadMethodCallException;
  * @property-read \Membership\Libraries\Mailer mailer
  * @property-read callable data
  * @property-read callable upload
+ *
  * @method Models data(string $class)
  * @method string[] upload(\Psr\Http\Message\UploadedFileInterface $file, array $data)
  */
 trait ContainerAware
 {
     /**
-     * Slim\Container instance
+     * Slim\Container instance.
      *
      * @var \Slim\Container
      */
     private $container;
 
     /**
-     * Create Controller\Base instance
+     * Create Controller\Base instance.
      *
      * @param Container $container
      */
@@ -36,10 +38,12 @@ trait ContainerAware
     }
 
     /**
-     * Get \Slim\Container name
+     * Get \Slim\Container name.
      *
-     * @param  string $name Container Name
+     * @param string $name Container Name
+     *
      * @return mixed
+     *
      * @throws \Slim\Exception\ContainerValueNotFoundException
      */
     public function __get($name)
@@ -48,10 +52,12 @@ trait ContainerAware
     }
 
     /**
-     * Call \Slim\Container callable name
+     * Call \Slim\Container callable name.
      *
-     * @param  string $method Container Name
+     * @param string $method Container Name
+     *
      * @return mixed
+     *
      * @throws \BadMethodCallException
      */
     public function __call($method, $params)
@@ -65,5 +71,4 @@ trait ContainerAware
 
         throw new BadMethodCallException("Method $method is not a valid method");
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Models;
 
 use Membership\Models;
@@ -21,7 +22,7 @@ class Skills extends Models
     protected $authorize = false;
 
     /**
-     * Get main skill list
+     * Get main skill list.
      *
      * @return array
      */
@@ -35,9 +36,10 @@ class Skills extends Models
     }
 
     /**
-     * Get sub skill list
+     * Get sub skill list.
      *
      * @param int $parentId Parent ID
+     *
      * @return array
      */
     public function getChilds($parentId = null)

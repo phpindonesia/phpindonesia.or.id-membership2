@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Models;
 
 use Membership\Models;
@@ -32,10 +33,11 @@ class UsersActivations extends Models
     }
 
     /**
-     * Activate user
+     * Activate user.
      *
-     * @param int $userId
+     * @param int    $userId
      * @param string $activationKey
+     *
      * @return bool
      */
     public function activate($userId, $activationKey)
@@ -68,6 +70,7 @@ class UsersActivations extends Models
      *
      * @param string $userId
      * @param string $key
+     *
      * @return bool
      */
     public function isExists($userId, $key)

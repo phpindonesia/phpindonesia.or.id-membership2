@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Libraries;
 
 use League\Plates\Engine;
@@ -24,7 +25,7 @@ class ViewExtension implements ExtensionInterface
     protected $mode;
 
     /**
-     * View Extention
+     * View Extention.
      *
      * @param \Slim\Http\Request $request
      */
@@ -43,7 +44,7 @@ class ViewExtension implements ExtensionInterface
         // Add app view data
         $engine->addData([
             'validation_errors' => [],
-            'base_js'  => [],
+            'base_js' => [],
             'base_css' => [],
         ]);
 
@@ -78,10 +79,11 @@ class ViewExtension implements ExtensionInterface
     }
 
     /**
-     * Retrieve user photo from CDN
+     * Retrieve user photo from CDN.
      *
      * @param string $publicId User photo public ID
      * @param array  $options  CDN options
+     *
      * @return string
      */
     public function userPhoto($publicId = null, $options = [])
@@ -98,6 +100,7 @@ class ViewExtension implements ExtensionInterface
             ];
 
             $cdnTargetPath = 'phpindonesia/'.$this->mode.'/';
+
             return \Cloudinary::cloudinary_url($cdnTargetPath.$publicId, $options);
         } catch (\Exception $e) {
             return $default;
@@ -105,10 +108,11 @@ class ViewExtension implements ExtensionInterface
     }
 
     /**
-     * Retrieve previous form input
+     * Retrieve previous form input.
      *
      * @param string $name    Input Name
      * @param mixed  $default Default value if Input name not available
+     *
      * @return mixed
      */
     public function requestBody($name, $default = null)
@@ -127,22 +131,24 @@ class ViewExtension implements ExtensionInterface
     }
 
     /**
-     * Retrieve Request method override
+     * Retrieve Request method override.
      *
      * @param string $method Request methods [GET|POST|PUT|DELETE]
+     *
      * @return mixed
      */
     public function inputMethod($method)
     {
-        return '<input type="hidden" name="_METHOD" value="' . strtoupper($method) . '" />';
+        return '<input type="hidden" name="_METHOD" value="'.strtoupper($method).'" />';
     }
 
     /**
-     * Generate form <select> based on $data array
+     * Generate form <select> based on $data array.
      *
      * @param string $name       Name attribute
      * @param array  $data       List of data
      * @param array  $attributes Optiona html attributes
+     *
      * @return string
      */
     public function inputSelect($name, array $data, array $attributes = [])
@@ -158,7 +164,7 @@ class ViewExtension implements ExtensionInterface
 
         $elements = [
             '<select name="'.$name.'"'.($attrs ? implode(' ', $attrs) : '').'>',
-            '<option value="" >-- Pilih --</option>'
+            '<option value="" >-- Pilih --</option>',
         ];
 
         foreach ($data as $key => $value) {
@@ -171,13 +177,15 @@ class ViewExtension implements ExtensionInterface
         }
 
         $elements[] = '</select>';
+
         return implode('', $elements);
     }
 
     /**
-     * Retrieve error message each input $name
+     * Retrieve error message each input $name.
      *
      * @param string $name Input name
+     *
      * @return string
      */
     public function fieldError($name)
@@ -188,7 +196,7 @@ class ViewExtension implements ExtensionInterface
     }
 
     /**
-     * Generate pagination
+     * Generate pagination.
      *
      * @return string
      */
@@ -221,20 +229,19 @@ class ViewExtension implements ExtensionInterface
             $page = $query_params['page'];
         }
 
-        $count_page = ceil($totalData/$limit);
+        $count_page = ceil($totalData / $limit);
 
         $elements[] = '<ul class="pagination">';
 
         if ($page > 1) {
             $elements[] = '<li>';
-            $elements[] = '<a href="'.$parameter.($page-1).'" aria-label="Previous">';
+            $elements[] = '<a href="'.$parameter.($page - 1).'" aria-label="Previous">';
             $elements[] = '<span aria-hidden="true">&laquo;</span>';
             $elements[] = '</a>';
             $elements[] = '</li>';
         }
 
-
-        for ($i=1; $i<=$count_page; $i++) {
+        for ($i = 1; $i <= $count_page; ++$i) {
             if ($i == $page) {
                 $elements[] = ' <li><a href="#">'.$i.'</a></li>';
             } else {
@@ -244,7 +251,7 @@ class ViewExtension implements ExtensionInterface
 
         if ($page < $count_page) {
             $elements[] = '<li>';
-            $elements[] = '<a href="'.$parameter.($page+1).'" aria-label="Previous">';
+            $elements[] = '<a href="'.$parameter.($page + 1).'" aria-label="Previous">';
             $elements[] = '<span aria-hidden="true">&raquo;</span>';
             $elements[] = '</a>';
             $elements[] = '</li>';

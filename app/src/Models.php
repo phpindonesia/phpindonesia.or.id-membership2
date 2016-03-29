@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership;
 
 use Slim\PDO\Database;
@@ -52,10 +53,11 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Retrieve current user session
+     * Retrieve current user session.
      *
      * @param string $key
      * @param string $default
+     *
      * @return int
      */
     protected function current($key = null, $default = null)
@@ -72,9 +74,10 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Create new data
+     * Create new data.
      *
      * @param array $pairs column value pairs of data
+     *
      * @return int|false
      */
     public function create(array $pairs)
@@ -97,10 +100,11 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Get basic data
+     * Get basic data.
      *
      * @param string[]           $columns Array of column
      * @param callable|array|int $terms   column value pairs of term data you wanna find to
+     *
      * @return \PDOStatement|false
      */
     public function get(array $columns = [], $terms = null)
@@ -117,9 +121,10 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Find existing item(s) from table
+     * Find existing item(s) from table.
      *
      * @param callable|array|int $terms column value pairs of term data you wanna find to
+     *
      * @return \PDOStatement|false
      */
     public function find($terms = null)
@@ -128,10 +133,11 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Update existing item from table
+     * Update existing item from table.
      *
      * @param array              $pairs column value pairs of data
      * @param callable|array|int $terms column value pairs of term data you wanna update to
+     *
      * @return int|false
      */
     public function update(array $pairs, $terms = null)
@@ -150,9 +156,10 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Delete Item from table
+     * Delete Item from table.
      *
      * @param callable|array|int $terms
+     *
      * @return int
      */
     public function delete($terms)
@@ -173,11 +180,12 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Count all data
+     * Count all data.
      *
-     * @param callable|array|int $terms Use it if you want more terms
+     * @param callable|array|int $terms    Use it if you want more terms
      * @param string             $column   Column to count
      * @param bool               $distinct Need a distinct count?
+     *
      * @return int
      */
     public function count($terms = null, $column = '', $distinct = false)
@@ -194,7 +202,7 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Retrieve table primary key
+     * Retrieve table primary key.
      *
      * @return string
      */
@@ -204,11 +212,10 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Normalize query terms
+     * Normalize query terms.
      *
      * @param \Slim\PDO\Statement\StatementContainer $query
      * @param callable|array|int                     $terms
-     * @return void
      */
     protected function normalizeTerms(StatementContainer $query, &$terms)
     {
@@ -241,7 +248,7 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Authorize all input pairs
+     * Authorize all input pairs.
      *
      * @param string   $type
      * @param string[] $pairs

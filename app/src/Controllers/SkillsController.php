@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Controllers;
 
 use Slim\Http\Request;
@@ -33,7 +34,7 @@ class SkillsController extends Controllers
 
         return $this->view->render('skills-add', [
             'skills_main' => array_pairs($skills->getParents(), 'skill_id', 'skill_name'),
-            'skills'      => array_pairs($skills->getChilds($provinceId), 'skill_id', 'skill_name'),
+            'skills' => array_pairs($skills->getChilds($provinceId), 'skill_id', 'skill_name'),
         ]);
     }
 
@@ -42,7 +43,7 @@ class SkillsController extends Controllers
         $input = $request->getParsedBody();
         $requiredFields = [
             'skill_parent_id',
-            'skill_self_assesment'
+            'skill_self_assesment',
         ];
 
         if (isset($input['skill_id'])) {
@@ -55,9 +56,9 @@ class SkillsController extends Controllers
             /** @var Skills $skills */
             $skills = $this->data(MemberSkills::class);
             $skills->create([
-                'user_id'              => $this->session->get('user_id'),
-                'skill_id'             => $input['skill_id'] ?: $input['skill_parent_id'],
-                'skill_parent_id'      => $input['skill_parent_id'],
+                'user_id' => $this->session->get('user_id'),
+                'skill_id' => $input['skill_id'] ?: $input['skill_parent_id'],
+                'skill_parent_id' => $input['skill_parent_id'],
                 'skill_self_assesment' => $input['skill_self_assesment'],
             ]);
 

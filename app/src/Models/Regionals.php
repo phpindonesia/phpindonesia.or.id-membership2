@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Models;
 
 use Membership\Models;
@@ -31,7 +32,7 @@ class Regionals extends Models
     protected $authorize = false;
 
     /**
-     * Retrieve province list
+     * Retrieve province list.
      *
      * @return array
      */
@@ -45,9 +46,10 @@ class Regionals extends Models
     }
 
     /**
-     * Retrieve city list by $provinceId
+     * Retrieve city list by $provinceId.
      *
      * @param int $provinceId
+     *
      * @return array
      */
     public function getCities($provinceId)

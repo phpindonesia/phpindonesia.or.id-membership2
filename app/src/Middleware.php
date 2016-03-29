@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership;
 
 use Slim\Http\Request;
@@ -12,6 +13,7 @@ class Middleware
      * @param \Slim\Http\Request  $request
      * @param \Slim\Http\Response $response
      * @param callable            $next
+     *
      * @return mixed
      */
     public function sanitizeRequestBody(Request $request, Response $response, callable $next)
@@ -21,6 +23,7 @@ class Middleware
                 if (is_string($value)) {
                     $value = filter_var(trim($value), FILTER_SANITIZE_STRING);
                 }
+
                 return $value ?: null;
             });
 
@@ -42,6 +45,7 @@ class Middleware
      * @param \Slim\Http\Request  $request
      * @param \Slim\Http\Response $response
      * @param callable            $next
+     *
      * @return \Slim\Http\Response
      */
     public function authenticateRoute(Request $request, Response $response, callable $next)
@@ -71,6 +75,7 @@ class Middleware
      * @param \Slim\Http\Request  $request
      * @param \Slim\Http\Response $response
      * @param callable            $next
+     *
      * @return \Slim\Http\Response
      */
     public function authorizePorfolioRoute(Request $request, Response $response, callable $next)
@@ -92,6 +97,7 @@ class Middleware
      * @param \Slim\Http\Request  $request
      * @param \Slim\Http\Response $response
      * @param callable            $next
+     *
      * @return \Slim\Http\Response
      */
     public function authorizeSkillRoute(Request $request, Response $response, callable $next)
@@ -112,6 +118,7 @@ class Middleware
     /**
      * @param \Slim\Http\Request  $request
      * @param \Slim\Http\Response $response
+     *
      * @return \Slim\Http\Response
      */
     private function responseWithDenial(Request $request, Response $response)
@@ -131,6 +138,7 @@ class Middleware
 
     /**
      * @param \Slim\Http\Request $request
+     *
      * @return bool
      */
     private function isAcceptable(Request $request)
@@ -143,6 +151,7 @@ class Middleware
     /**
      * @param \Slim\Http\Request $request
      * @param string             $model
+     *
      * @return bool
      */
     private function authorizeOwnership(Request $request, $model)
@@ -159,6 +168,7 @@ class Middleware
 
     /**
      * @param \Slim\Http\Request $request
+     *
      * @return bool|int
      */
     private function getOwnerId(Request $request)
@@ -180,11 +190,11 @@ class Middleware
         }
 
         $users = $this->data(Models\Users::class);
-        $user  = $users->get([$users->primary(), 'password', 'username'], ['username' => $username])->fetch();
-        $salt  = $this->settings->get('salt_pwd');
+        $user = $users->get([$users->primary(), 'password', 'username'], ['username' => $username])->fetch();
+        $salt = $this->settings->get('salt_pwd');
 
         // TODO: We need better password hashing :sweat_smile:
-        if ($user['password'] === md5($salt . $password)) {
+        if ($user['password'] === md5($salt.$password)) {
             $userId = (int) $user[$users->primary()];
 
             $this->session->set('user_id', $userId);

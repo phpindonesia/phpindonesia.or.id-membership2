@@ -12,7 +12,7 @@ class Mailer
     protected $mail;
 
     /**
-     * View instance
+     * View instance.
      *
      * @var \League\Plates\Engine
      */
@@ -29,11 +29,11 @@ class Mailer
         'auth' => true,
         'secure' => 'tsl',
         'senderEmail' => '',
-        'senderName'  => '',
+        'senderName' => '',
     ];
 
     /**
-     * Debug mode
+     * Debug mode.
      *
      * @var array
      */
@@ -48,6 +48,7 @@ class Mailer
      * Mailer constructor.
      *
      * @param array $settings
+     *
      * @throws \InvalidArgumentException
      */
     public function __construct(array $settings = [], Engine $view)
@@ -69,7 +70,7 @@ class Mailer
     }
 
     /**
-     * Setup Sender
+     * Setup Sender.
      *
      * @param string $senderEmail
      * @param string $senderName
@@ -82,9 +83,10 @@ class Mailer
     }
 
     /**
-     * Set mailer debug mode
+     * Set mailer debug mode.
      *
      * @param string $mode
+     *
      * @return $this
      */
     public function debugMode($mode)
@@ -102,6 +104,7 @@ class Mailer
      * Add recipient email address.
      *
      * @param string $address
+     *
      * @return $this
      */
     public function to($address, $name = '')
@@ -115,6 +118,7 @@ class Mailer
      * Add email subject.
      *
      * @param string $subject
+     *
      * @return $this
      */
     public function withSubject($subject)
@@ -129,13 +133,14 @@ class Mailer
      *
      * @param string $body
      * @param array  $data
+     *
      * @return $this
      */
     public function withBody($body, array $data = [])
     {
         if (strpos($body, '::') !== false) {
             if (!$this->view instanceof Engine) {
-                throw new \LogicException('View must be instance of ' . Engine::class);
+                throw new \LogicException('View must be instance of '.Engine::class);
             }
 
             $this->mail->isHTML(true);
@@ -152,6 +157,7 @@ class Mailer
      * Add attachments.
      *
      * @param array $attachments
+     *
      * @return $this
      */
     public function addAttachments(array $files)

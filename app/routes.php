@@ -1,19 +1,19 @@
 <?php
+
 use Membership\Middleware;
 use Membership\Controllers\HomeController;
 use Membership\Controllers\AccountController;
 use Membership\Controllers\PasswordController;
 use Membership\Controllers\PortfoliosController;
-use Membership\Controllers\ProfileController;
 use Membership\Controllers\SkillsController;
 use Membership\Controllers\RegionalsController;
 
-/**
+/*
  * Input string sanitizer middleware
  */
 $app->add(Middleware::class.':sanitizeRequestBody');
 
-/**
+/*
  * Route definitions
  *
  * - All GET Routes should be named
@@ -108,9 +108,8 @@ $app->group('/regionals', function () {
 
 });
 
-/**
+/*
  * TODO: normalize username,
  * - Username should accept alphanumeric, dash and underscore only [A-z\d\-\_]
  */
 $app->get('/{username}', AccountController::class.':profile')->setName('membership-profile');
-

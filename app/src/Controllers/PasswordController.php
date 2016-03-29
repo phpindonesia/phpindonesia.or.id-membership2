@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Controllers;
 
 use Slim\Http\Request;
@@ -18,7 +19,7 @@ class PasswordController extends Controllers
             'helpTitle' => 'Bantuan Login?',
             'helpContent' => [
                 'Jika belum terdaftar sebagai anggota, <a href="'.$this->router->pathFor('membership-register').'" title="">Daftar Disini</a> menjadi anggota PHP Indonesia.',
-                'Sudah pernah terdaftar menjadi anggota PHP Indonesia, silahkan <a href="'.$this->router->pathFor('membership-login').'" title="">Login Disini.'
+                'Sudah pernah terdaftar menjadi anggota PHP Indonesia, silahkan <a href="'.$this->router->pathFor('membership-login').'" title="">Login Disini.',
             ],
         ], 'layouts::account');
 
@@ -85,7 +86,7 @@ class PasswordController extends Controllers
                 }
             }
 
-            $this->addFormAlert('success', $successMsg . '. Terima kasih ^_^.');
+            $this->addFormAlert('success', $successMsg.'. Terima kasih ^_^.');
         } else {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
@@ -106,13 +107,13 @@ class PasswordController extends Controllers
     public function update(Request $request, Response $response, array $args)
     {
         /** @var Users $users */
-        $users     = $this->data(Users::class);
-        $saltPass  = $this->settings->get('salt_pwd');
-        $password  = $request->getParsedBodyParam('password');
+        $users = $this->data(Users::class);
+        $saltPass = $this->settings->get('salt_pwd');
+        $password = $request->getParsedBodyParam('password');
         $validator = $this->validator->rule('required', [
             'oldpassword',
             'password',
-            'repassword'
+            'repassword',
         ]);
 
         $validator->addRule('check_oldpassword', function ($field, $value, array $params) use ($users, $saltPass) {
@@ -128,7 +129,7 @@ class PasswordController extends Controllers
         $validator->rules([
             'check_oldpassword' => 'oldpassword',
             'equals' => [
-                ['repassword', 'password']
+                ['repassword', 'password'],
             ],
             'lengthMin' => [
                 ['password', 6],
@@ -164,12 +165,12 @@ class PasswordController extends Controllers
 
             $users->update([
                 'password' => $this->salt($tmpPass),
-                'modified_by' => 0
+                'modified_by' => 0,
             ], (int) $args['uid']);
 
             $usersResetPass->delete([
                 'user_id' => (int) $args['uid'],
-                'reset_key' => $args['reset_key']
+                'reset_key' => $args['reset_key'],
             ]);
 
             // Fetch member basic info
@@ -202,7 +203,7 @@ class PasswordController extends Controllers
                 $successMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
             }
 
-            $this->addFormAlert('success', $successMsg . '. Terima kasih ^_^.');
+            $this->addFormAlert('success', $successMsg.'. Terima kasih ^_^.');
         } else {
             $this->addFormAlert('error', 'Bad Request');
         }

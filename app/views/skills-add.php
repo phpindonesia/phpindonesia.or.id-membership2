@@ -2,7 +2,7 @@
 $this->layout('layouts::system');
 
 $this->appendJs([
-    $this->asset('/js/skill.js')
+    $this->asset('/js/skill.js'),
 ]);
 ?>
 
@@ -31,7 +31,7 @@ $this->appendJs([
                             <?php
                             echo $this->formInputSelect('skill_parent_id', $skills_main, array(
                                 'id' => 'skill-parent-id',
-                                'class' => 'input_full'
+                                'class' => 'input_full',
                             ));
 
                             echo $this->formFieldError('skill_parent_id');
@@ -52,7 +52,7 @@ $this->appendJs([
                         <?php
                         echo $this->formInputSelect('skill_id', $skills, array(
                             'id' => 'skill-id-dd',
-                            'class' => 'input_full'
+                            'class' => 'input_full',
                         ));
 
                         echo $this->formFieldError('skill_id');

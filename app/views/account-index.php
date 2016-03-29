@@ -5,7 +5,7 @@ $this->appendJs([
     $this->asset('/js/jquery.popupoverlay.js'),
     $this->pathFor('membership-account-javascript'),
     $this->asset('/js/portfolio.js'),
-    $this->asset('/js/skill.js')
+    $this->asset('/js/skill.js'),
 ]);
 ?>
 
@@ -224,7 +224,7 @@ $this->appendJs([
                         </td>
                     </tr>
 
-                    <?php $num++; endforeach; ?>
+                    <?php ++$num; endforeach; ?>
                 </tbody>
 
             </table>
@@ -272,7 +272,7 @@ $this->appendJs([
                             <a href="#" onclick="if (confirm('Delete this skill item?')) { document.post_<?php echo $unique; ?>.submit(); } event.returnValue = false; return false;"><i class="fa fa-trash"></i> Delete</a>
                         </td>
                     </tr>
-                    <?php $num_skill++; endforeach; ?>
+                    <?php ++$num_skill; endforeach; ?>
 
                 </tbody>
             </table>

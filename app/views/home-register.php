@@ -2,7 +2,7 @@
 $this->layout('layouts::account');
 
 $this->appendJs([
-    $this->asset('/js/regional.js')
+    $this->asset('/js/regional.js'),
 ]);
 ?>
 
@@ -58,7 +58,7 @@ $this->appendJs([
         <label for="gender-dd" class="control-label">Gender *</label>
         <?php echo $this->formInputSelect('gender_id', ['female' => 'Wanita', 'male' => 'Pria'], [
             'id' => 'gender-dd',
-            'class' => 'form-control'
+            'class' => 'form-control',
         ]); ?>
         <?php echo $this->formFieldError('gender_id'); ?>
         <p class="help-block">
@@ -70,7 +70,7 @@ $this->appendJs([
         <label for="provinces-dd" class="control-label">Provinsi *</label>
         <?php echo $this->formInputSelect('province_id', $provinces, [
             'id' => 'provinces-dd',
-            'class' => 'form-control'
+            'class' => 'form-control',
         ]); ?>
         <?php echo $this->formFieldError('province_id'); ?>
         <p class="help-block">
@@ -82,7 +82,7 @@ $this->appendJs([
         <label for="cities-dd" class="control-label">Kabupaten / Kota *</label>
         <?php echo $this->formInputSelect('city_id', $cities, [
             'id' => 'cities-dd',
-            'class' => 'form-control'
+            'class' => 'form-control',
         ]); ?>
         <?php echo $this->formFieldError('city_id'); ?>
         <p class="help-block">
@@ -103,7 +103,7 @@ $this->appendJs([
         <label for="job-id" class="control-label">Pekerjaan *</label>
         <?php echo $this->formInputSelect('job_id', $jobs, [
             'id' => 'job-id',
-            'class' => 'form-control'
+            'class' => 'form-control',
         ]); ?>
         <?php echo $this->formFieldError('job_id'); ?>
         <p class="help-block">

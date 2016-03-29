@@ -2,11 +2,12 @@
 
 if (!function_exists('array_pairs')) {
     /**
-     * Combine array into single key value pairs
+     * Combine array into single key value pairs.
      *
      * @param array       $values
      * @param string      $key
      * @param string|null $val
+     *
      * @return array
      */
     function array_pairs(array $values, $key, $val = null)
@@ -26,21 +27,23 @@ if (!function_exists('array_pairs')) {
 
 if (!function_exists('array_flatten')) {
     /**
-     * Flatten all array values
+     * Flatten all array values.
      *
      * @param array $array Array to be flatten
+     *
      * @return array
      */
     function array_flatten(array $array)
     {
         $array = array_values($array);
+
         return call_user_func_array('array_merge', $array);
     }
 }
 
 if (!function_exists('dd')) {
     /**
-     * Doo-bee-doo-bee Dump
+     * Doo-bee-doo-bee Dump.
      */
     function dd()
     {
@@ -54,7 +57,7 @@ if (!function_exists('dd')) {
 
 if (!function_exists('months')) {
     /**
-     * Get month list
+     * Get month list.
      *
      * @return array
      */
@@ -79,7 +82,7 @@ if (!function_exists('months')) {
 
 if (!function_exists('years_range')) {
     /**
-     * Get years range
+     * Get years range.
      *
      * @return array
      */
@@ -100,7 +103,7 @@ if (!function_exists('years_range')) {
 
 if (!function_exists('months_range')) {
     /**
-     * Get month range
+     * Get month range.
      *
      * @return array
      */
@@ -121,7 +124,7 @@ if (!function_exists('months_range')) {
 
 if (!function_exists('days_range')) {
     /**
-     * Get days range
+     * Get days range.
      *
      * @return array
      */

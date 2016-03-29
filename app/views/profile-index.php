@@ -139,7 +139,6 @@
                                 if ($item_portfolio['end_date_y'] != null) {
                                     $periode_str .= $item_portfolio['end_date_y'];
                                 }
-
                             } else {
                                 $periode_str .= ' s/d Sekarang';
                             }
@@ -157,7 +156,7 @@
                         </td>
                     </tr>
 
-                    <?php $num++; endforeach; ?>
+                    <?php ++$num; endforeach; ?>
                 </tbody>
 
             </table>
