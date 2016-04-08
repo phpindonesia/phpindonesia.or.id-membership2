@@ -316,17 +316,23 @@ class Users extends Models
             ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
             ->where('ur.role_id', '=', 'member')
             ->where('u.activated', '=', 'Y');
-
-        if ($request->getQueryParam('province_id')) {
-            $query->where('m.province_id', '=', (int) $request->getQueryParam('province_id'));
+        
+        $nama   = $request->getQueryParam('nama');
+        $daerah = $request->getQueryParam('daerah');
+        
+        if (!empty($nama)) {
+            $combined = $query->combine()
+                ->whereLike('u.username', "%$nama%")
+                ->orWhereLike('m.fullname', "%$nama%");
+            $query->where($combined);
         }
-
-        if ($request->getQueryParam('city_id')) {
-            $query->where('m.city_id', '=', (int) $request->getQueryParam('city_id'));
-        }
-
-        if ($request->getQueryParam('area')) {
-            $query->whereLike('m.area', $request->getQueryParam('area'));
+        
+        if (!empty($daerah)) {
+            $combined = $query->combine()
+                ->whereLike('m.area', "%$daerah%")
+                ->orWhereLike('reg_prv.regional_name',  "%$daerah%")
+                ->orWhereLike('reg_cit.regional_name', "%$daerah%");
+            $query->where($combined);
         }
 
         $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page')-1 * 18);
