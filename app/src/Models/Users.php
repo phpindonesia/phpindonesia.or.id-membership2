@@ -329,7 +329,7 @@ class Users extends Models
             $query->whereLike('m.area', $request->getQueryParam('area'));
         }
 
-        $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page')-1 * 18);
+        $query->orderBy('u.created', 'DESC')->limit(18, ($request->getQueryParam('page')-1) * 18);
 
         return $query->execute()->fetchAll();
     }

@@ -72,11 +72,10 @@ $this->appendCss([
             <?php $i++; echo ($i % 3 == 0) ? '<hr>' : ''; endforeach; ?>
 
             <div class="pagination" style="text-align:center;">
-                <?php  echo $this->viewPages($totalMember, 18); ?>
+                <?php echo $this->dataPagerLinks($totalMember, 18); ?>
             </div>
 
         </div>
     </div>
 
 </div>
-

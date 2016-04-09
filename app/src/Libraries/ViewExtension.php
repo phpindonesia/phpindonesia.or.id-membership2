@@ -74,7 +74,7 @@ class ViewExtension implements ExtensionInterface
         });
 
         // Pagination Helper
-        $engine->registerFunction('viewPages', [$this, 'viewPages']);
+        $engine->registerFunction('dataPagerLinks', [$this, 'dataPagerLinks']);
     }
 
     /**
@@ -188,67 +188,71 @@ class ViewExtension implements ExtensionInterface
     }
 
     /**
-     * Generate pagination
+     * Generate pagination links
      *
      * @return string
      */
-    public function viewPages($totalData, $limit)
+    public function dataPagerLinks($dataTotal, $perPage)
     {
-        $parameter = '';
-        $query_params = $this->request->getQueryParams();
-
-        if ($query_params) {
-            foreach ($query_params as $key => $param) {
-                if ($key != 'page') {
-                    if ($parameter == '') {
-                        $parameter .= '?'.$key.'='.$param;
-                    } else {
-                        $parameter .= '&'.$key.'='.$param;
-                    }
-                }
-            }
-        }
-
-        if ($parameter == '') {
-            $parameter .= '?page=';
-        } else {
-            $parameter .= $parameter.'&page=';
-        }
-
-        if (empty($query_params['page'])) {
-            $page = 1;
-        } else {
-            $page = $query_params['page'];
-        }
-
-        $count_page = ceil($totalData/$limit);
-
+        $queryParams = $this->request->getQueryParams();
+        $pageNum     = (int) $this->request->getQueryParam('page') ?: 1;
+        $pageTotal   = (int) ceil($dataTotal / ($perPage ?: 1));
+        
+        // Page number lookbehind / lookahead range
+        $range = 3;
+        $start = max(1, min($pageNum - $range, $pageTotal - 2 * $range));
+        $end   = min($pageTotal, $start + 2 * $range);
+        
         $elements[] = '<ul class="pagination">';
+        
+        // Link to first
+        $queryParams['page'] = 1;
+        $url        = $pageNum === 1 ? '#' : '?'.http_build_query($queryParams);
+        $elements[] = '<li>';
+        $elements[] = '<a href="'.$url.'" aria-label="First">';
+        $elements[] = '<span class="fa fa-fast-backward" aria-hidden="true"></span>';
+        $elements[] = '</a>';
+        $elements[] = '</li>';
 
-        if ($page > 1) {
-            $elements[] = '<li>';
-            $elements[] = '<a href="'.$parameter.($page-1).'" aria-label="Previous">';
-            $elements[] = '<span aria-hidden="true">&laquo;</span>';
-            $elements[] = '</a>';
-            $elements[] = '</li>';
-        }
+        // To previous
+        $queryParams['page'] = $pageNum - 1;
+        $url        = $pageNum === 1 ? '#' : '?'.http_build_query($queryParams);
+        $elements[] = '<li>';
+        $elements[] = '<a class="icon-backward" href="'.$url.'" aria-label="Previous">';
+        $elements[] = '<span class="fa fa-backward" aria-hidden="true"></span>';
+        $elements[] = '</a>';
+        $elements[] = '</li>';
 
+        for ($i = $start; $i <= $end; $i++) {
+            $queryParams['page'] = $i;
+            $url    = '?'.http_build_query($queryParams);
+            $active = '';
 
-        for ($i=1; $i<=$count_page; $i++) {
-            if ($i == $page) {
-                $elements[] = ' <li><a href="#">'.$i.'</a></li>';
-            } else {
-                $elements[] = '<li><a href="'.$parameter.$i.'">'.$i.'</a></li>';
+            if ($i === $pageNum) {
+                $url    = '#';
+                $active = ' class="active"';
             }
+
+            $elements[] = '<li><a href="'.$url.'"'.$active.'>'.$i.'</a></li>';
         }
 
-        if ($page < $count_page) {
-            $elements[] = '<li>';
-            $elements[] = '<a href="'.$parameter.($page+1).'" aria-label="Previous">';
-            $elements[] = '<span aria-hidden="true">&raquo;</span>';
-            $elements[] = '</a>';
-            $elements[] = '</li>';
-        }
+        // To next
+        $queryParams['page'] = $pageNum + 1;
+        $url        = $pageNum === $pageTotal ? '#' : '?'.http_build_query($queryParams);
+        $elements[] = '<li>';
+        $elements[] = '<a href="'.$url.'" aria-label="Next">';
+        $elements[] = '<span class="fa fa-forward" aria-hidden="true"></span>';
+        $elements[] = '</a>';
+        $elements[] = '</li>';
+
+        // To last
+        $queryParams['page'] = $pageTotal;
+        $url        = $pageNum === $pageTotal ? '#' : '?'.http_build_query($queryParams);
+        $elements[] = '<li>';
+        $elements[] = '<a href="'.$url.'" aria-label="Next">';
+        $elements[] = '<span class="fa fa-fast-forward" aria-hidden="true"></span>';
+        $elements[] = '</a>';
+        $elements[] = '</li>';
 
         $elements[] = '</ul>';
 
