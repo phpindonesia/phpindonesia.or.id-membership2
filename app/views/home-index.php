@@ -2,8 +2,10 @@
 $this->layout('layouts::system');
 
 $this->appendJs([
-    $this->asset('/js/regional.js')
+    $this->asset('/js/regional.js'),
+    $this->asset('/js/pencarian.js'),
 ]);
+
 $this->appendCss([
     $this->asset('/css/chabibnr.css')
 ]);
@@ -15,34 +17,23 @@ $this->appendCss([
     <div class="container">
 
         <div class="column dt-sc-one-fourth first">
-            <form class="aside-search clearfix" action="<?php echo $this->pathFor('membership-index'); ?>" method="get">
+            <form id="member-search-form" class="aside-search clearfix" action="<?php echo $this->pathFor('membership-index'); ?>" method="get">
                 <h3 class="aside-header">CARI MEMBER</h3>
 
                 <div class="form-group">
-                    <label class="control-label">Provinsi</label>
-                    <?php echo $this->formInputSelect('province_id', $provinces, [
-                        'id' => 'provinces-dd',
-                        'class' => 'form-control'
-                    ]); ?>
+                    <label class="control-label">Nama</label>
+                    <input name="nama" type="text" class="form-control" placeholder="Cari nama siapa saja">
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label">Kota</label>
-                    <?php echo $this->formInputSelect('city_id', $cities, [
-                        'id' => 'cities-dd',
-                        'class' => 'form-control'
-                    ]) ?>
+                    <label class="control-label">Daerah</label>
+                    <input name="daerah" type="text" class="form-control" placeholder="Cari berdasarkan alamat, provinsi, atau kota">
                 </div>
-
-                <div class="form-group">
-                    <label class="control-label">Area</label>
-                    <input type="text" id="area" class="form-control" name="area" value="<?php echo $this->requestBody('area', null, true); ?>"/>
-                </div>
-
+                
                 <div class="form-group">
                     <input value="Search" type="submit" class="btn btn-primary" />
                 </div>
-
+                
             </form>
         </div>
 
@@ -72,11 +63,10 @@ $this->appendCss([
             <?php $i++; echo ($i % 3 == 0) ? '<hr>' : ''; endforeach; ?>
 
             <div class="pagination" style="text-align:center;">
-                <?php  echo $this->viewPages($totalMember, 18); ?>
+                <?php echo $this->dataPagerLinks($totalMember, 18); ?>
             </div>
 
         </div>
     </div>
 
 </div>
-

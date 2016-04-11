@@ -290,14 +290,53 @@ class Users extends Models
     }
 
     /**
+     * Get query statement to list all members
+     *
+     * @param \Slim\Http\Request $request  Filter by request
+     * @param array $selector
+     * @return \Slim\PDO\Statement\StatementContainer
+     */
+    private function createQueryMembers($request, array $selector)
+    {
+        $query = $this->db->select($selector)
+            ->from('users u')
+            ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+            ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
+            ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+            ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
+            ->where('ur.role_id', '=', 'member')
+            ->where('u.activated', '=', 'Y');
+        
+        $nama   = $request->getQueryParam('nama');
+        $daerah = $request->getQueryParam('daerah');
+        
+        if (!empty($nama)) {
+            $combined = $query->combine()
+                ->whereLike('u.username', "%$nama%")
+                ->orWhereLike('m.fullname', "%$nama%");
+            $query->where($combined);
+        }
+        
+        if (!empty($daerah)) {
+            $combined = $query->combine()
+                ->whereLike('m.area', "%$daerah%")
+                ->orWhereLike('reg_prv.regional_name',  "%$daerah%")
+                ->orWhereLike('reg_cit.regional_name', "%$daerah%");
+            $query->where($combined);
+        }
+
+        return $query;
+    }
+
+    /**
      * List all members
      *
      * @param \Slim\Http\Request $request Filter by request
      * @return array
      */
-    public function getMembers($request)
+    function getMembers($request)
     {
-        $query = $this->db->select([
+        $selector = [
                 'u.user_id',
                 'u.username',
                 'u.email',
@@ -308,29 +347,13 @@ class Users extends Models
                 'm.photo',
                 'reg_prv.regional_name province',
                 'reg_cit.regional_name city',
-            ])
-            ->from('users u')
-            ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
-            ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
-            ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
-            ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-            ->where('ur.role_id', '=', 'member')
-            ->where('u.activated', '=', 'Y');
+        ];
 
-        if ($request->getQueryParam('province_id')) {
-            $query->where('m.province_id', '=', (int) $request->getQueryParam('province_id'));
-        }
-
-        if ($request->getQueryParam('city_id')) {
-            $query->where('m.city_id', '=', (int) $request->getQueryParam('city_id'));
-        }
-
-        if ($request->getQueryParam('area')) {
-            $query->whereLike('m.area', $request->getQueryParam('area'));
-        }
-
-        $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page')-1 * 18);
-
+        $limit = 18;
+        $page  = $request->getQueryParam('page') > 0 ? $request->getQueryParam('page') : 1;
+        $query = $this->createQueryMembers($request, $selector);
+        $query->orderBy('u.created', 'DESC')->limit(($page - 1) * $limit, $limit);
+        
         return $query->execute()->fetchAll();
     }
 
@@ -342,28 +365,7 @@ class Users extends Models
      */
     public function getTotalMember($request)
     {
-        $query = $this->db->select([
-                'u.user_id'
-            ])
-            ->from('users u')
-            ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
-            ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
-            ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
-            ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-            ->where('ur.role_id', '=', 'member')
-            ->where('u.activated', '=', 'Y');
-
-        if ($request->getQueryParam('province_id')) {
-            $query->where('m.province_id', '=', (int) $request->getQueryParam('province_id'));
-        }
-
-        if ($request->getQueryParam('city_id')) {
-            $query->where('m.city_id', '=', (int) $request->getQueryParam('city_id'));
-        }
-
-        if ($request->getQueryParam('area')) {
-            $query->whereLike('m.area', $request->getQueryParam('area'));
-        }
+        $query = $this->createQueryMembers($request, ['u.user_id']);
 
         return $query->execute()->rowCount();
     }

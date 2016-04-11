@@ -2,13 +2,13 @@
 
 use Slim\Collection;
 use Slim\Container;
-use Slim\PDO\Database;
 use Slim\Handlers\Error as SlimError;
 use League\Plates\Extension\Asset as PlatesAsset;
 use Psr\Http\Message\UploadedFileInterface;
 use Valitron\Validator;
 use Membership\Models;
 use Membership\Libraries;
+use Membership\Libraries\PDO\Database;
 
 /**
  * Settings file
