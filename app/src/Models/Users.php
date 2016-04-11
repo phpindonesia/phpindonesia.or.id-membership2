@@ -307,17 +307,14 @@ class Users extends Models
             ->where('ur.role_id', '=', 'member')
             ->where('u.activated', '=', 'Y');
 
-        $nama   = $request->getQueryParam('nama');
-        $daerah = $request->getQueryParam('daerah');
-
-        if (!empty($nama)) {
+        if ($nama = $request->getQueryParam('nama')) {
             $combined = $query->combine()
                 ->whereLike('u.username', "%$nama%")
                 ->orWhereLike('m.fullname', "%$nama%");
             $query->where($combined);
         }
 
-        if (!empty($daerah)) {
+        if ($daerah = $request->getQueryParam('daerah')) {
             $combined = $query->combine()
                 ->whereLike('m.area', "%$daerah%")
                 ->orWhereLike('reg_prv.regional_name',  "%$daerah%")
@@ -337,24 +334,26 @@ class Users extends Models
     function getMembers($request)
     {
         $selector = [
-                'u.user_id',
-                'u.username',
-                'u.email',
-                'u.created',
-                'ur.role_id',
-                'm.fullname',
-                'm.gender',
-                'm.photo',
-                'reg_prv.regional_name province',
-                'reg_cit.regional_name city',
+            'u.user_id',
+            'u.username',
+            'u.email',
+            'u.created',
+            'ur.role_id',
+            'm.fullname',
+            'm.gender',
+            'm.photo',
+            'reg_prv.regional_name province',
+            'reg_cit.regional_name city',
         ];
 
-        $limit = 18;
-        $page  = $request->getQueryParam('page') > 0 ? $request->getQueryParam('page') : 1;
-        $query = $this->createQueryMembers($request, $selector);
-        $query->orderBy('u.created', 'DESC')->limit(($page - 1) * $limit, $limit);
+        $limit = 1;
+        $page  = (int) $request->getQueryParam('page') ?: 1;
+        $query = $this->createQueryMembers($request, $selector)
+            ->orderBy('u.created', 'DESC')
+            ->limit($limit, ($page - 1) * $limit)
+            ->execute();
 
-        return $query->execute()->fetchAll();
+        return $query->fetchAll();
     }
 
     /**

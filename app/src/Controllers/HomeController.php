@@ -12,11 +12,11 @@ class HomeController extends Controllers
     {
         $this->setPageTitle('Membership', 'Keanggotaan');
 
-        /** @var \Membership\Models\Regionals $regionals */
+        /** @var Models\Regionals $regionals */
         $regionals  = $this->data(Models\Regionals::class);
         $provinceId = $request->getQueryParam('province_id');
 
-        /** @var \Membership\Models\Users $users */
+        /** @var Models\Users $users */
         $users = $this->data(Models\Users::class);
 
         return $this->view->render('home-index', [
@@ -44,7 +44,7 @@ class HomeController extends Controllers
 
     public function login(Request $request, Response $response, array $args)
     {
-        /** @var \Membership\Models\Users $users */
+        /** @var Models\Users $users */
         $users = $this->data(Models\Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', ['login', 'password']);
@@ -92,7 +92,7 @@ class HomeController extends Controllers
             ],
         ], 'layouts::account');
 
-        /** @var \Membership\Models\Regionals $regionals */
+        /** @var Models\Regionals $regionals */
         $regionals = $this->data(Models\Regionals::class);
         $provinceId = $request->getParam('province_id');
 
@@ -105,7 +105,7 @@ class HomeController extends Controllers
 
     public function register(Request $request, Response $response, array $args)
     {
-        /** @var \Membership\Models\Users $users */
+        /** @var Models\Users $users */
         $users = $this->data(Models\Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', [
