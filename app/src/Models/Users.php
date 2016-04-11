@@ -346,7 +346,7 @@ class Users extends Models
             'reg_cit.regional_name city',
         ];
 
-        $limit = 1;
+        $limit = 18;
         $page  = (int) $request->getQueryParam('page') ?: 1;
         $query = $this->createQueryMembers($request, $selector)
             ->orderBy('u.created', 'DESC')
