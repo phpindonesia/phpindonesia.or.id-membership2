@@ -197,14 +197,14 @@ class ViewExtension implements ExtensionInterface
         $queryParams = $this->request->getQueryParams();
         $pageNum     = (int) $this->request->getQueryParam('page') ?: 1;
         $pageTotal   = (int) ceil($dataTotal / ($perPage ?: 1));
-        
+
         // Page number lookbehind / lookahead range
         $range = 3;
         $start = max(1, min($pageNum - $range, $pageTotal - 2 * $range));
         $end   = min($pageTotal, $start + 2 * $range);
-        
+
         $elements[] = '<ul class="pagination">';
-        
+
         // Link to first
         $queryParams['page'] = 1;
         $url        = $pageNum === 1 ? '#' : '?'.http_build_query($queryParams);

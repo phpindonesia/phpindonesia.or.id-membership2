@@ -306,17 +306,17 @@ class Users extends Models
             ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
             ->where('ur.role_id', '=', 'member')
             ->where('u.activated', '=', 'Y');
-        
+
         $nama   = $request->getQueryParam('nama');
         $daerah = $request->getQueryParam('daerah');
-        
+
         if (!empty($nama)) {
             $combined = $query->combine()
                 ->whereLike('u.username', "%$nama%")
                 ->orWhereLike('m.fullname', "%$nama%");
             $query->where($combined);
         }
-        
+
         if (!empty($daerah)) {
             $combined = $query->combine()
                 ->whereLike('m.area', "%$daerah%")
@@ -353,7 +353,7 @@ class Users extends Models
         $page  = $request->getQueryParam('page') > 0 ? $request->getQueryParam('page') : 1;
         $query = $this->createQueryMembers($request, $selector);
         $query->orderBy('u.created', 'DESC')->limit(($page - 1) * $limit, $limit);
-        
+
         return $query->execute()->fetchAll();
     }
 

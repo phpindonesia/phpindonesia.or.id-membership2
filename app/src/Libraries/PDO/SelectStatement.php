@@ -18,7 +18,7 @@ class SelectStatement extends \Slim\PDO\Statement\SelectStatement
 
         $this->whereClause = new WhereClause();
     }
-    
+
     /**
      * @param $column
      * @param null   $operator
@@ -49,7 +49,7 @@ class SelectStatement extends \Slim\PDO\Statement\SelectStatement
     public function combine()
     {
         $stmt = new StatementCombination($this->dbh);
-        
+
         return $stmt;
     }
 }

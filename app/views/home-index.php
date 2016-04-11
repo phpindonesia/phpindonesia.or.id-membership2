@@ -29,11 +29,11 @@ $this->appendCss([
                     <label class="control-label">Daerah</label>
                     <input name="daerah" type="text" class="form-control" placeholder="Cari berdasarkan alamat, provinsi, atau kota">
                 </div>
-                
+
                 <div class="form-group">
                     <input value="Search" type="submit" class="btn btn-primary" />
                 </div>
-                
+
             </form>
         </div>
 
