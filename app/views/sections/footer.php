@@ -4,7 +4,7 @@
             <aside class="widget widget_contact">
                 <h3 class="widget-title" style="padding:0px;">PHP Indonesia</h3>
                 <div class="textwidget">
-                    <p>PHP Indonesia is a community for everyone that loves PHP. Our focus is in the PHP world but our topics encompass the entire LAMP stack. Topics include PHP coding, to memcached handling, db optimizations, server stack, web server tuning, code deploying, hosting options and much much more.</p>
+                    <p>PHP Indonesia is a community for everyone that loves PHP. Our focus is in the PHP world but our topics encompass the entire LAMP stack. Topics include PHP coding, to memcached handling, db optimizations, server stack, web server tuning, code deploying, hosting options and much more.</p>
                 </div>
             </aside>
         </div>
