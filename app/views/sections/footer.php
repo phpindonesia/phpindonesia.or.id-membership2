@@ -42,7 +42,7 @@
                     <li><a href="http://www.phpindonesia.or.id/valbum">Video</a></li>
                     <li><a href="https://www.facebook.com/groups/35688476100" target="_blank">Facebook</a></li>
                     <li><a href="https://twitter.com/php_indonesia" target="_blank">Twitter</a></li>
-                    <li><a href="https://www.youtube.com/user/OurPHPIndonesia" target="_blank">Youtube</a></li>
+                    <li><a href="https://www.youtube.com/user/OurPHPIndonesia" target="_blank">YouTube</a></li>
                 </ul>
             </aside>
         </div>

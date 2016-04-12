@@ -8,9 +8,9 @@
         <div class="top-right">
             <span>Social Media PHP Indonesia</span>
             <ul class="dt-sc-social-icons">
-                <li><a href="https://www.facebook.com/groups/35688476100" title="facebook" target="_blank"><i class="fa fa-facebook"></i></a></li>
-                <li><a href="https://twitter.com/php_indonesia" title="twitter" target="_blank"><i class="fa fa-twitter"></i></a></li>
-                <li><a href="https://www.youtube.com/user/OurPHPIndonesia" title="youtube" target="_blank"><i class="fa fa-youtube"></i></a></li>
+                <li><a href="https://www.facebook.com/groups/35688476100" title="Facebook" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                <li><a href="https://twitter.com/php_indonesia" title="Twitter" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                <li><a href="https://www.youtube.com/user/OurPHPIndonesia" title="YouTube" target="_blank"><i class="fa fa-youtube"></i></a></li>
             </ul>
         </div>
     </div>
