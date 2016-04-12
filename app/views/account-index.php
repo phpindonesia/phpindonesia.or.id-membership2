@@ -34,7 +34,7 @@ $this->appendJs([
                         <?php foreach ($member_socmeds as $socmed_item): ?>
 
                             <li style="margin-right: 5px; padding: 3px; border: 1px #DDDDDD solid;">
-                                <a style="border: none; font: inherit;" href="<?php echo $socmed_item['account_url'] ?>">
+                                <a style="border: none; color: #2c3e50; padding: 5px; font: inherit;" href="<?php echo $socmed_item['account_url'] ?>">
                                     <span class="fa <?php echo $socmedias[$socmed_item['socmed_type']][1]; ?>"></span>
                                     <?php echo !empty($socmed_item['account_name']) ? $socmed_item['account_name'] : $member['username'] ?>
                                 </a>
@@ -51,9 +51,9 @@ $this->appendJs([
         <div class="column dt-sc-three-fifth">
 
             <div class="entry-body" style="margin-top: -25px; margin-bottom: 25px;">
-                <a href="<?php echo $this->pathFor('membership-account-edit'); ?>" class="button" style="color: blue;">Update Basic Profile</a>
-                <a href="<?php echo $this->pathFor('membership-portfolios-add'); ?>" class="button" style="color: blue;">Add Portfolios</a>
-                <a href="<?php echo $this->pathFor('membership-skills-add'); ?>" class="button" style="color: blue;">Add Skills</a>
+                <a href="<?php echo $this->pathFor('membership-account-edit'); ?>" class="button" style="color: white;">Update Basic Profile</a>
+                <a href="<?php echo $this->pathFor('membership-portfolios-add'); ?>" class="button" style="color: white;">Add Portfolios</a>
+                <a href="<?php echo $this->pathFor('membership-skills-add'); ?>" class="button" style="color: white;">Add Skills</a>
             </div>
 
             <article class="blog-post">
