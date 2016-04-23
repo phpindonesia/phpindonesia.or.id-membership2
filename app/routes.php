@@ -37,10 +37,10 @@ $app->get('/forgot-password', PasswordController::class.':forgotPage')->setName(
 $app->post('/forgot-password', PasswordController::class.':forgot');
 
 // Reset password end-point
-$app->get('/reset-password/{uid:[0-9]}/{reset_key}', PasswordController::class.':reset')->setName('membership-reset-password');
+$app->get('/reset-password/{uid:[0-9]+}/{reset_key}', PasswordController::class.':reset')->setName('membership-reset-password');
 
 // Account activation end-point
-$app->get('/activate/{uid:[0-9]}/{activation_key}', AccountController::class.':activate')->setName('membership-activation');
+$app->get('/activate/{uid:[0-9]+}/{activation_key}', AccountController::class.':activate')->setName('membership-activation');
 
 // Account reactivation end-point
 // TODO: need tobe done
