@@ -4,7 +4,7 @@
             <aside class="widget widget_contact">
                 <h3 class="widget-title" style="padding:0px;">PHP Indonesia</h3>
                 <div class="textwidget">
-                    <p>PHP Indonesia is a community for everyone that loves PHP. Our focus is in the PHP world but our topics encompass the entire LAMP stack. Topics include PHP coding, to memcached handling, db optimizations, server stack, web server tuning, code deploying, hosting options and much much more.</p>
+                    <p>PHP Indonesia is a community for everyone that loves PHP. Our focus is in the PHP world but our topics encompass the entire LAMP stack. Topics include PHP coding, to memcached handling, db optimizations, server stack, web server tuning, code deploying, hosting options and much more.</p>
                 </div>
             </aside>
         </div>
@@ -41,8 +41,8 @@
                     <li><a href="http://www.phpindonesia.or.id/album">Photo</a></li>
                     <li><a href="http://www.phpindonesia.or.id/valbum">Video</a></li>
                     <li><a href="https://www.facebook.com/groups/35688476100" target="_blank">Facebook</a></li>
-                    <li><a href="https://www.twitter.com/php_indonesia" target="_blank">Twitter</a></li>
-                    <li><a href="http://www.youtube.com/user/OurPHPIndonesia" target="_blank">Youtube</a></li>
+                    <li><a href="https://twitter.com/php_indonesia" target="_blank">Twitter</a></li>
+                    <li><a href="https://www.youtube.com/user/OurPHPIndonesia" target="_blank">YouTube</a></li>
                 </ul>
             </aside>
         </div>
