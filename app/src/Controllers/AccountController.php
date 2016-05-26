@@ -125,7 +125,7 @@ class AccountController extends Controllers
                 ['fullname', ':^[A-z\s]+$:'],
                 ['username', ':^[A-z\d\-\.\_]+$:'],
                 ['contact_phone', ':^[-\+\d]+$:'],
-                ['identity_number', ':^[-\+\d]+$:'],
+                ['identity_number', ':^[^\W_]+$:'],
             ],
             'email' => 'email',
             'assertEmailNotExists' => 'email',
