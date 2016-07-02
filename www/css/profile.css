@@ -55,28 +55,6 @@
   -webkit-animation-name: rubberBand;
   animation-name: rubberBand;
 }
-.border-top-blue{
-  border-top: 5px solid #0074D9;
-}
-.border-top-red{
-  border-top: 5px solid #550000;
-}
-.border-top-green{
-  border-top: 5px solid #009926;
-}
-.border-top-black{
-  border-top: 5px solid #000;
-}
-.border-top-blue-light{
-  border-top: 5px solid #2aabd2;
-}
-.border-top-purple{
-  border-top: 5px solid #330033;
-}
-.title-panel{
-  font-size: 1.5em;
-  font-weight: bold;
-}
 .skill-name{  
   display: block;
   font-size: 1em;
@@ -91,8 +69,6 @@
   font-size: 2em;
   font-weight: bold;
 }
-
-
 
 @-webkit-keyframes rubberBand {
   from {
