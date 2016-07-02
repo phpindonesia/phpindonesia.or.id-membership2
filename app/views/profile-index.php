@@ -171,7 +171,7 @@ $this->appendCss([
 
         <!-- SKILL BLOCK START -->
         <h3>Skills</h3>
-        <div class="row box-list width-85">
+        <div class="row box-list">
             <ul>
                 <?php $num_skill = 1; foreach ($member_skills as $item_skill): ?>
                 <li class="">
