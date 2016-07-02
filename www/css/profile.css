@@ -1,0 +1,126 @@
+/*
+ *  @author : Irfan Maualana <mazipanneh@gmail.com>
+ */
+.block{         display: block;}
+.inline-block{  display: inline-block;}
+
+.full{  width: 100%;}
+.width-85{  width: 85%;}
+
+.font-11{  font-size: 11px;}
+.font-18{  font-size: 18px;}
+
+.bold{  font-weight: bold;}
+
+.va-middle{  vertical-align: middle;}
+
+.left{    text-align: left;}
+.right{   text-align: right;}
+.center{  text-align: center;}
+
+.text-grey{ color: #999;}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.box-list ul{
+  margin: 0;
+  width: 100%;
+}
+.box-list ul li{
+  background-color: #EEE;
+  color: #0074D9;
+  border: 2px solid #0074D9;
+  margin: 0 10px 13px 0;    
+  list-style: none;  
+  width: 15%;
+  display: inline-block;
+  vertical-align: top;
+  border-radius: 50%;
+  padding: 21px 0px;
+  text-align: center;
+}
+.box-list ul li:hover{
+  /*
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: shake;
+  animation-name: shake;
+  */
+}
+.border-top-blue{
+  border-top: 5px solid #0074D9;
+}
+.border-top-red{
+  border-top: 5px solid #550000;
+}
+.border-top-green{
+  border-top: 5px solid #009926;
+}
+.border-top-black{
+  border-top: 5px solid #000;
+}
+.border-top-blue-light{
+  border-top: 5px solid #2aabd2;
+}
+.border-top-purple{
+  border-top: 5px solid #330033;
+}
+.title-panel{
+  font-size: 1.5em;
+  font-weight: bold;
+}
+.skill-name{  
+  display: block;
+  font-size: 1em;
+  font-weight: bold;    
+  margin: 40px 0 20px;
+  padding: 0 5px; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.skill-level{
+  font-size: 2em;
+  font-weight: bold;
+}
+
+/* from animate.css */
+@-webkit-keyframes shake {
+  from, to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  10%, 30%, 50%, 70%, 90% {
+    -webkit-transform: translate3d(-10px, 0, 0);
+    transform: translate3d(-10px, 0, 0);
+  }
+
+  20%, 40%, 60%, 80% {
+    -webkit-transform: translate3d(10px, 0, 0);
+    transform: translate3d(10px, 0, 0);
+  }
+}
+
+@keyframes shake {
+  from, to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  10%, 30%, 50%, 70%, 90% {
+    -webkit-transform: translate3d(-10px, 0, 0);
+    transform: translate3d(-10px, 0, 0);
+  }
+
+  20%, 40%, 60%, 80% {
+    -webkit-transform: translate3d(10px, 0, 0);
+    transform: translate3d(10px, 0, 0);
+  }
+}
