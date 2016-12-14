@@ -51,9 +51,9 @@ $this->appendJs([
         <div class="column dt-sc-three-fifth">
 
             <div class="entry-body" style="margin-top: -25px; margin-bottom: 25px;">
-                <a href="<?php echo $this->pathFor('membership-account-edit'); ?>" class="button" style="color: white;">Update Basic Profile</a>
-                <a href="<?php echo $this->pathFor('membership-portfolios-add'); ?>" class="button" style="color: white;">Add Portfolios</a>
-                <a href="<?php echo $this->pathFor('membership-skills-add'); ?>" class="button" style="color: white;">Add Skills</a>
+                <a href="<?php echo $this->pathFor('membership-account-edit'); ?>" class="btn btn-primary">Update Basic Profile</a>
+                <a href="<?php echo $this->pathFor('membership-portfolios-add'); ?>" class="btn btn-primary">Add Portfolios</a>
+                <a href="<?php echo $this->pathFor('membership-skills-add'); ?>" class="btn btn-primary">Add Skills</a>
             </div>
 
             <article class="blog-post">
