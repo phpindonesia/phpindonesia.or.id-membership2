@@ -21,6 +21,12 @@ class AccountController extends Controllers
         /** @var Users $users */
         $users = $this->data(Users::class);
 
+        if ($request->isXhr()) {
+            $outputJson = $this->normalizeUserJsonOutput($users);
+
+            return $response->withJson($outputJson);
+        }
+
         return $this->view->render('account-index', [
             'member'            => $users->getProfile(),
             'member_portfolios' => $users->getPortfolios(),
@@ -36,31 +42,23 @@ class AccountController extends Controllers
 
         /** @var Users $users */
         $users = $this->data(Users::class);
-        $user = $users->get([
-            'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*',
-            'reg_prv.regional_name province',
-            'reg_cit.regional_name city'
-        ], function ($query) use ($args) {
-            $query->from('users u')
-                ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
-                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
-                ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-                ->where('u.username', '=', $args['username']);
-        })->fetch();
+        $user = $users->getProfileUsername($args['username']);
 
         if (!$user) {
             throw new NotFoundException($request, $response);
         }
 
         if ($request->isXhr()) {
-            return $response->withJson([
+            $outputJson = [
                 'username' => $user['username'],
                 'fullname' => $user['fullname'],
                 'email'    => $user['email'],
                 'gender'   => $user['gender'],
                 'city'     => $user['city'],
                 'province' => $user['province'],
-            ]);
+            ];
+
+            return $response->withJson($outputJson);
         }
 
         return $this->view->render('profile-index', [
@@ -82,7 +80,7 @@ class AccountController extends Controllers
         $regionals = $this->data(Regionals::class);
         /** @var Religions $religion */
         $religions = $this->data(Religions::class);
-        $provinceId = $this->session->get('province_id');
+        $provinceId = $users->getProfile()['province_id'];
 
         return $this->view->render('account-edit', [
             'member'         => $users->getProfile(),
@@ -118,7 +116,13 @@ class AccountController extends Controllers
         }, 'tersebut sudah terdaftar!');
 
         $validator->addRule('assertUsernameNotExists', function ($field, $value, array $params) use ($users, $user) {
-            return $user['username'] == $value || !$users->assertUsernameExists($value);
+             $protected = [
+                'admin',
+                'account', 'login', 'register', 'logout',
+                'activate', 'reactivate', 'regionals',
+                'forgot-password', 'reset-password'
+            ];
+            return $user['username'] == $value || (!in_array($value, $protected) && !$users->assertUsernameExists($value));
         }, 'tersebut sudah terdaftar!');
 
         $validator->rules([
@@ -189,6 +193,7 @@ class AccountController extends Controllers
 
                 $users->update([
                     'email'       => $input['email'],
+                    'username'    => $input['username'],
                     'province_id' => $input['province_id'],
                     'city_id'     => $input['city_id'],
                     'area'        => $input['area'],
@@ -210,24 +215,59 @@ class AccountController extends Controllers
 
                         $socmedRow = $socmeds->get(['account_name', 'account_url'], $terms)->fetch();
 
-                        if ($socmedRow['account_name'] != $item['account_name']) {
-                            $socmedRow['account_name'] = $item['account_name'];
-                        }
+                        if ($socmedRow) {
+                            if ($socmedRow['account_name'] != $item['account_name']) {
+                                $socmedRow['account_name'] = $item['account_name'];
+                            }
 
-                        if ($socmedRow['account_url'] != $item['account_url']) {
-                            $socmedRow['account_url'] = $item['account_url'];
-                        }
+                            if ($socmedRow['account_url'] != $item['account_url']) {
+                                $socmedRow['account_url'] = $item['account_url'];
+                            }
 
-                        $socmeds->update($socmedRow, $terms);
+                            $socmeds->update($socmedRow, $terms);
+                        } else {
+
+                            $termsStatus = [
+                                'user_id' => $userId,
+                                'socmed_type' => $item['socmed_type'],
+                                'deleted' => 'Y',
+                            ];
+
+                            $socmedAdd = [
+                                'user_id'      => $userId,
+                                'socmed_type'  => $item['socmed_type'],
+                                'account_name' => $item['account_name'],
+                                'account_url'  => $item['account_url'],
+                            ];
+
+                            $socmedId = $socmeds->get(['member_socmed_id'], $termsStatus)->fetch();
+
+                            if ($socmedId) {
+                                $socmedAdd['deleted'] = 'N';
+                                $socmeds->update($socmedAdd, $termsStatus);
+                            } else {
+                                $socmeds->create($socmedAdd);
+                            }
+                        }
                     }
                 }
 
                 if (isset($input['socmeds_delete'])) {
                     foreach ($input['socmeds_delete'] as $item) {
-                        $socmeds->delete([
+                        $terms = [
                             'user_id' => $userId,
-                            'socmed_type' => $item
-                        ]);
+                            'deleted' => 'N',
+                            'socmed_type' => $item,
+                        ];
+
+                        $socmedRow = $socmeds->get(['user_id'], $terms)->fetch();
+
+                        if ($socmedRow) {
+                            $socmeds->delete([
+                                'user_id' => $userId,
+                                'socmed_type' => $item
+                            ]);
+                        }
                     }
                 }
 
@@ -360,5 +400,61 @@ class AccountController extends Controllers
     private function cookieTtl()
     {
         return time() + 86400;
+    }
+
+    private function normalizeUserJsonOutput(Users $users, $userId = null)
+    {
+        $user = $users->getProfile($userId);
+
+        $output = [
+            'id' => $user['user_id'],
+            'username' => $user['username'],
+            'email' => $user['email'],
+            'fullname' => $user['fullname'],
+            'phone' => $user['contact_phone'],
+            'photo' => $user['photo'],
+            'birthPlace' => $user['birth_place'],
+            'birthDate' => $user['birth_date'],
+            'identityType' => $user['identity_type'],
+            'identityNumber' => $user['identity_number'],
+            'gender' => $user['gender'],
+            'religion' => $user['religion_name'],
+            'area' => $user['area'],
+            'city' => $user['city'],
+            'province' => $user['province'],
+            'portfolios' => [],
+            'skills' => [],
+            'socmeds' => [],
+        ];
+
+        foreach ($users->getPortfolios($user['user_id']) as $i => $portfolio) {
+            $output['portfolios'][$i] = [
+                'id' => $portfolio['member_portfolio_id'],
+                'companyName' => $portfolio['company_name'],
+                'industryName' => $portfolio['industry_name'],
+                'workStatus' => $portfolio['work_status'],
+                'jobTitle' => $portfolio['job_title'],
+                'jobDesc' => $portfolio['job_desc'],
+            ];
+        }
+
+        foreach ($users->getSkills($user['user_id']) as $i => $skill) {
+            $output['skills'][$i] = [
+                'id' => $skill['member_skill_id'],
+                'name' => $skill['skill_name'],
+                'parent' => $skill['skill_parent_name'],
+                'assesment' => $skill['skill_self_assesment'],
+            ];
+        }
+
+        foreach ($users->getSocmends($user['user_id']) as $i => $socmend) {
+            $output['socmeds'][$i] = [
+                'type' => $socmend['socmed_type'],
+                'name' => $socmend['account_name'],
+                'url' => $socmend['account_url'],
+            ];
+        }
+
+        return $output;
     }
 }

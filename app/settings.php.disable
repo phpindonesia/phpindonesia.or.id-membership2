@@ -2,6 +2,10 @@
 return [
     'mode' => 'development',
     'salt_pwd' => 'dev-spirit',
+    'app' => [
+        'name'  => 'PHP Indonesia - Membership App',
+        'email' => '',
+    ],
     'db' => [
         'host'     => 'localhost',
         'driver'   => 'mysql',
@@ -9,16 +13,11 @@ return [
         'password' => '',
         'dbname'   => '',
     ],
-    'smtp' => [
+    'mailer' => [
         'host'     => 'smtp.gmail.com',
-        'port'     => 465,
-        'ssl'      => true,
+        'port'     => 586,
         'username' => '',
-        'password' => ''
-    ],
-    'email' => [
-        'sender_email' => '',
-        'sender_name'  => 'PHP Indonesia - Membership App'
+        'password' => '',
     ],
     'view' => [
         'directory'     => APP_DIR.'views',
