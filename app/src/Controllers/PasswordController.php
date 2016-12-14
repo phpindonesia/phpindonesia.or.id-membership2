@@ -4,8 +4,7 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
-use Membership\Models\Users;
-use Membership\Models\UsersResetPwd;
+use Membership\Models;
 
 class PasswordController extends Controllers
 {
@@ -27,8 +26,8 @@ class PasswordController extends Controllers
 
     public function forgot(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', 'email');
         $validator->rule('email', 'email');
@@ -54,7 +53,7 @@ class PasswordController extends Controllers
                 }
             )->fetch();
 
-            $doReset = $this->data(UsersResetPwd::class)->create([
+            $doReset = $this->data(Models\UsersResetPwd::class)->create([
                 'user_id' => $member['user_id'],
                 'reset_key' => $resetKey,
                 'expired_date' => $resetExpiredDate,
@@ -105,8 +104,8 @@ class PasswordController extends Controllers
 
     public function update(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users     = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users     = $this->data(Models\Users::class);
         $saltPass  = $this->settings->get('salt_pwd');
         $password  = $request->getParsedBodyParam('password');
         $validator = $this->validator->rule('required', [
@@ -153,24 +152,12 @@ class PasswordController extends Controllers
 
     public function reset(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
-        /** @var UsersResetPwd $usersResetPass */
-        $usersResetPass = $this->data(UsersResetPwd::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
+        /** @var \Membership\Models\UsersResetPwd $usersResetPass */
+        $usersResetPass = $this->data(Models\UsersResetPwd::class);
 
         if ($usersResetPass->verifyUserKey($args['uid'], $args['reset_key'])) {
-            // Fetch member basic info
-            $member = $users->get(
-                ['u.user_id', 'u.username', 'u.email', 'm.fullname'],
-                function ($query) use ($emailAddress) {
-                    $query->from('users u')
-                        ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
-                        ->where('u.user_id', '=', (int) $args['uid'])
-                        ->where('u.deleted', '=', 'N');
-                }
-            )->fetch();
-            $emailAddress = $member['email'];
-
             // Create temporary password
             $tmpPass = substr(str_shuffle(md5(microtime())), 0, 10);
 
@@ -184,11 +171,22 @@ class PasswordController extends Controllers
                 'reset_key' => $args['reset_key']
             ]);
 
+            // Fetch member basic info
+            $member = $users->get(
+                ['u.user_id', 'u.username', 'u.email', 'm.fullname'],
+                function ($query) use ($args) {
+                    $query->from('users u')
+                        ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+                        ->where('u.user_id', '=', (int) $args['uid'])
+                        ->where('u.deleted', '=', 'N');
+                }
+            )->fetch();
+
             try {
-                $mail = $this->mailer->to($emailAddress, $member['fullname'])
+                $mail = $this->mailer->to($member['email'], $member['fullname'])
                     ->withSubject('PHP Indonesia - Password baru sementara')
                     ->withBody('emails::reset-password', [
-                        'tempPwd' => $tmpPass,
+                        'tmpPass' => $tmpPass,
                         'fullname' => $member['fullname'],
                     ]);
 

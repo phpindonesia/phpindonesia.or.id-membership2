@@ -34,11 +34,11 @@ return [
         'api_secret' => '',
     ],
     'socmedias' => [
-        'facebook'  => ['Facebook',  'fa-facebook',    'http://facebook.com/'],
-        'twitter'   => ['Twitter',   'fa-twitter',     'http://twitter.com/'],
-        'linkedin'  => ['LinkedIn',  'fa-linkedin',    'http://linkedin.com/in/'],
-        'instagram' => ['Instagram', 'fa-instagram',   'http://instagram.com/'],
-        'path'      => ['Path',      'fa-pinterest-p', 'http://path.com/'],
-        'github'    => ['GitHub',    'fa-github',      'http://github.com/'],
+        'facebook'  => ['Facebook',  'fa-facebook',    'https://www.facebook.com/'],
+        'twitter'   => ['Twitter',   'fa-twitter',     'https://twitter.com/'],
+        'linkedin'  => ['LinkedIn',  'fa-linkedin',    'https://www.linkedin.com/in/'],
+        'instagram' => ['Instagram', 'fa-instagram',   'https://www.instagram.com/'],
+        'path'      => ['Path',      'fa-pinterest-p', 'https://path.com/'],
+        'github'    => ['GitHub',    'fa-github',      'https://github.com/'],
     ],
 ];

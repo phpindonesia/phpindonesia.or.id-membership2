@@ -88,38 +88,6 @@ class Users extends Models
     }
 
     /**
-     * Activate user
-     *
-     * @param int $userId
-     * @param string $activationKey
-     * @return bool
-     */
-    public function activate($userId, $activationKey)
-    {
-        $this->db->beginTransaction();
-
-        try {
-            $userId = (int) $userId;
-
-            $this->update(['activated' => 'Y'], $userId);
-
-            $this->db->update(['deleted' => 'Y'])
-                ->table('users_activations')
-                ->where($this->primary, '=', $userId)
-                ->where('activation_key'. '=', $activationKey)
-                ->execute();
-
-            $this->db->commit();
-
-            return true;
-        } catch (Exception $e) {
-            $this->db->rollback();
-
-            return false;
-        }
-    }
-
-    /**
      * Update user login data
      *
      * @param int $userId User ID
@@ -322,25 +290,15 @@ class Users extends Models
     }
 
     /**
-     * List all members
+     * Get query statement to list all members
      *
-     * @param \Slim\Http\Request $request Filter by request
-     * @return array
+     * @param \Slim\Http\Request $request  Filter by request
+     * @param array $selector
+     * @return \Slim\PDO\Statement\StatementContainer
      */
-    public function getMembers($request)
+    private function createQueryMembers($request, array $selector)
     {
-        $query = $this->db->select([
-                'u.user_id',
-                'u.username',
-                'u.email',
-                'u.created',
-                'ur.role_id',
-                'm.fullname',
-                'm.gender',
-                'm.photo',
-                'reg_prv.regional_name province',
-                'reg_cit.regional_name city',
-            ])
+        $query = $this->db->select($selector)
             ->from('users u')
             ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
             ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
@@ -349,21 +307,53 @@ class Users extends Models
             ->where('ur.role_id', '=', 'member')
             ->where('u.activated', '=', 'Y');
 
-        if ($request->getQueryParam('province_id')) {
-            $query->where('m.province_id', '=', (int) $request->getQueryParam('province_id'));
+        if ($nama = $request->getQueryParam('nama')) {
+            $combined = $query->combine()
+                ->whereLike('u.username', "%$nama%")
+                ->orWhereLike('m.fullname', "%$nama%");
+            $query->where($combined);
         }
 
-        if ($request->getQueryParam('city_id')) {
-            $query->where('m.city_id', '=', (int) $request->getQueryParam('city_id'));
+        if ($daerah = $request->getQueryParam('daerah')) {
+            $combined = $query->combine()
+                ->whereLike('m.area', "%$daerah%")
+                ->orWhereLike('reg_prv.regional_name',  "%$daerah%")
+                ->orWhereLike('reg_cit.regional_name', "%$daerah%");
+            $query->where($combined);
         }
 
-        if ($request->getQueryParam('area')) {
-            $query->whereLike('m.area', $request->getQueryParam('area'));
-        }
+        return $query;
+    }
 
-        $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page')-1 * 18);
+    /**
+     * List all members
+     *
+     * @param \Slim\Http\Request $request Filter by request
+     * @return array
+     */
+    function getMembers($request)
+    {
+        $selector = [
+            'u.user_id',
+            'u.username',
+            'u.email',
+            'u.created',
+            'ur.role_id',
+            'm.fullname',
+            'm.gender',
+            'm.photo',
+            'reg_prv.regional_name province',
+            'reg_cit.regional_name city',
+        ];
 
-        return $query->execute()->fetchAll();
+        $limit = 18;
+        $page  = (int) $request->getQueryParam('page') ?: 1;
+        $query = $this->createQueryMembers($request, $selector)
+            ->orderBy('u.created', 'DESC')
+            ->limit($limit, ($page - 1) * $limit)
+            ->execute();
+
+        return $query->fetchAll();
     }
 
     /**
@@ -374,28 +364,7 @@ class Users extends Models
      */
     public function getTotalMember($request)
     {
-        $query = $this->db->select([
-                'u.user_id'
-            ])
-            ->from('users u')
-            ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
-            ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
-            ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
-            ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-            ->where('ur.role_id', '=', 'member')
-            ->where('u.activated', '=', 'Y');
-
-        if ($request->getQueryParam('province_id')) {
-            $query->where('m.province_id', '=', (int) $request->getQueryParam('province_id'));
-        }
-
-        if ($request->getQueryParam('city_id')) {
-            $query->where('m.city_id', '=', (int) $request->getQueryParam('city_id'));
-        }
-
-        if ($request->getQueryParam('area')) {
-            $query->whereLike('m.area', $request->getQueryParam('area'));
-        }
+        $query = $this->createQueryMembers($request, ['u.user_id']);
 
         return $query->execute()->rowCount();
     }
@@ -427,25 +396,6 @@ class Users extends Models
         $email = strtolower($email);
         $count = $this->count(function ($query) use ($email) {
             $query->where('email', '=', $email);
-        });
-
-        return $count > 0;
-    }
-
-    /**
-     * Is activation $key for $userId already exists?
-     *
-     * @param string $userId
-     * @param string $key
-     * @return bool
-     */
-    public function assertActivationExists($userId, $key)
-    {
-        $count = $this->count(function ($query) use ($userId, $key) {
-            $query->where('user_id', '=', $userId)
-                ->where('activation_key', '=', $key)
-                ->where('deleted', '=', 'N')
-                ->where('expired_date', '>', date('Y-m-d'));
         });
 
         return $count > 0;

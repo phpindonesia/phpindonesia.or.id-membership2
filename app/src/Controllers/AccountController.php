@@ -3,14 +3,9 @@ namespace Membership\Controllers;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Membership\Controllers;
-use Membership\Models\Users;
-use Membership\Models\Careers;
-use Membership\Models\Religions;
-use Membership\Models\Regionals;
-use Membership\Models\MemberProfile;
-use Membership\Models\MemberSocmeds;
 use Slim\Exception\NotFoundException;
+use Membership\Controllers;
+use Membership\Models;
 
 class AccountController extends Controllers
 {
@@ -18,8 +13,8 @@ class AccountController extends Controllers
     {
         $this->setPageTitle('Membership', 'Profil Anggota');
 
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
 
         if ($request->isXhr()) {
             $outputJson = $this->normalizeUserJsonOutput($users);
@@ -40,8 +35,8 @@ class AccountController extends Controllers
     {
         $this->setPageTitle('Membership', 'Detail Anggota');
 
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
         $user = $users->getProfileUsername($args['username']);
 
         if (!$user) {
@@ -74,12 +69,12 @@ class AccountController extends Controllers
     {
         $this->setPageTitle('Membership', 'Update Profile Anggota');
 
-        /** @var Users $users */
-        $users = $this->data(Users::class);
-        /** @var Regionals $regionals */
-        $regionals = $this->data(Regionals::class);
-        /** @var Religions $religion */
-        $religions = $this->data(Religions::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
+        /** @var \Membership\Models\Regionals $regionals */
+        $regionals = $this->data(Models\Regionals::class);
+        /** @var \Membership\Models\Religions $religion */
+        $religions = $this->data(Models\Religions::class);
         $provinceId = $users->getProfile()['province_id'];
 
         return $this->view->render('account-edit', [
@@ -88,7 +83,7 @@ class AccountController extends Controllers
             'religions'      => array_pairs($religions->get()->fetchAll(), 'religion_id', 'religion_name'),
             'provinces'      => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
             'cities'         => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
-            'jobs'           => array_pairs($this->data(Careers::class)->getJobs(), 'job_id'),
+            'jobs'           => array_pairs($this->data(Models\Careers::class)->getJobs(), 'job_id'),
             'genders'        => ['female' => 'Wanita', 'male' => 'Pria'],
             'identity_types' => ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'],
             'socmedias'      => $this->settings->get('socmedias'),
@@ -97,8 +92,8 @@ class AccountController extends Controllers
 
     public function edit(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
         $user = $users->get(['email', 'username'], $this->session->get('user_id'))->fetch();
         $identityTypes = ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'];
         $validator = $this->validator->rule('required', [
@@ -130,7 +125,7 @@ class AccountController extends Controllers
                 ['fullname', ':^[A-z\s]+$:'],
                 ['username', ':^[A-z\d\-\.\_]+$:'],
                 ['contact_phone', ':^[-\+\d]+$:'],
-                ['identity_number', ':^[-\+\d]+$:'],
+                ['identity_number', ':^[^\W_]+$:'],
             ],
             'email' => 'email',
             'assertEmailNotExists' => 'email',
@@ -160,10 +155,10 @@ class AccountController extends Controllers
 
         if ($validator->validate()) {
             $input = $request->getParsedBody();
-            /** @var MemberProfile $profile */
-            $profile = $this->data(MemberProfile::class);
-            /** @var MemberSocmeds $socmeds */
-            $socmeds = $this->data(MemberSocmeds::class);
+            /** @var \Membership\Models\MemberProfile $profile */
+            $profile = $this->data(Models\MemberProfile::class);
+            /** @var \Membership\Models\MemberSocmeds $socmeds */
+            $socmeds = $this->data(Models\MemberSocmeds::class);
 
             $memberProfile = [
                 'fullname'        => $input['fullname'],
@@ -294,11 +289,12 @@ class AccountController extends Controllers
 
     public function activate(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
-        $actExistCount = $users->assertActivationExists($args['uid'], $args['activation_key']);
+        /** @var \Membership\Models\Users $users */
+        $activation = $this->data(Models\UsersActivations::class);
 
-        if ($actExistCount === 1 && $users->activate($args['uid'], $args['activation_key'])) {
+        if ($activation->isExists($args['uid'], $args['activation_key']) &&
+            $activation->activate($args['uid'], $args['activation_key'])
+        ) {
             $this->addFormAlert('success', 'Selamat! Account anda sudah aktif. Silahkan login...');
         } else {
             $this->addFormAlert('error', 'Bad Request');
@@ -325,8 +321,8 @@ class AccountController extends Controllers
 
     public function reactivate(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
         $validator = $this->validator->rule('required', 'email');
 
         $validator->addRule('assertNotEmailExists', function ($field, $value, array $params) use ($users) {
@@ -349,8 +345,8 @@ class AccountController extends Controllers
 
     public function javascript(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
         $cookie = $request->getCookieParams();
         $open_portfolio = false;
         $open_skill = false;

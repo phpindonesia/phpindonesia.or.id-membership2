@@ -270,7 +270,6 @@ abstract class Models implements \Countable
             if ($type === 'create' && !isset($pairs['created'])) {
                 $pairs['created'] = $newDate;
             }
-
             if ($type === 'update' && !isset($pairs['modified'])) {
                 $pairs['modified'] = $newDate;
             }
