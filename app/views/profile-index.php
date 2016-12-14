@@ -1,4 +1,10 @@
-<?php $this->layout('layouts::system') ?>
+<?php 
+$this->layout('layouts::system'); 
+
+$this->appendCss([
+    $this->asset('/css/profile.css')
+]);
+?>
 
 <div class="dt-sc-margin70"></div>
 
@@ -162,6 +168,28 @@
 
             </table>
         </div>
+
+        <!-- SKILL BLOCK START -->
+        <h3>Skills</h3>
+        <div class="row box-list">
+            <ul>
+                <?php $num_skill = 1; foreach ($member_skills as $item_skill): ?>
+                <li class="">
+                    <div class="skill-name">
+                        <?php echo $item_skill['skill_name']; ?>
+                    </div>
+                     <div class="block va-middle">
+                        <span class="block font-11 text-grey">Skill Level</span>
+                        <span class="block skill-level center">
+                            <?php echo $item_skill['skill_self_assesment']; ?>
+                        </span>
+                    </div>
+                </li>
+                <?php $num_skill++; endforeach; ?>
+            </ul>
+        </div>
+        <!-- SKILL BLOCK END -->
+
     </div>
 
     <div class="dt-sc-margin50"></div>
