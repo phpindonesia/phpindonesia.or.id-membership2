@@ -8,7 +8,7 @@
 
 ### Instalasi
 
-1.  Clone repo ini ke lokal, ambil langsung ke branch `refactory-dev`
+1.  Clone repo ini ke lokal, ambil langsung ke branch `develop`
 
     ```bash
     $ git clone https://github.com/phpindonesia/phpindonesia.or.id-membership2 [folder-name]
