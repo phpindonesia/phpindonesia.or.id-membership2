@@ -20,7 +20,7 @@ session_start();
 /**
  * Slim Container
  *
- * @var \Slim\Container $container
+ * @var Container $container
  */
 $container = new Container([
     'settings' => require $settingsFile
@@ -56,6 +56,7 @@ $container['db'] = function ($container) {
 /**
  * Setup data model container
  *
+ * @param Container $container
  * @return callable
  */
 $container['data'] = function ($container) {
@@ -84,6 +85,7 @@ $container['data'] = function ($container) {
 /**
  * Setup validator container
  *
+ * @param Container $container
  * @return \Valitron\Validator
  */
 $container['validator'] = function ($container) {
@@ -126,6 +128,7 @@ Cloudinary::config($container->get('settings')['cloudinary']);
 /**
  * Setup view container
  *
+ * @param Container $container
  * @return \Projek\Slim\Plates
  */
 $container['view'] = function ($container) {
@@ -148,6 +151,7 @@ $container['view'] = function ($container) {
 /**
  * Setup upload handler container
  *
+ * @param Container $container
  * @return callable
  */
 $container['upload'] = function ($container) {
@@ -202,6 +206,9 @@ $container['upload'] = function ($container) {
  * Setup mailer container
  *
  * TODO: will replaced with PHPMailer
+ *
+ * @param Container $container
+ * @return Swift_Mailer
  */
 $container['mailer'] = function ($container) {
     $smtp_account = $container->get('settings')['smtp'];
@@ -225,6 +232,7 @@ $container['mailer'] = function ($container) {
  *
  * TODO: need more!!!
  *
+ * @param Container $container
  * @return callable
  */
 $container['errorHandler'] = function ($container) {
