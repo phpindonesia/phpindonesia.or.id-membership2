@@ -8,13 +8,11 @@ use Psr\Http\Message\UploadedFileInterface;
 use Valitron\Validator;
 use Membership\Models;
 use Membership\Libraries;
-use Membership\Libraries\PDO\Database;
 
 /**
  * Settings file
  */
-$settingsFile = APP_DIR.'settings.php';
-file_exists($settingsFile) || die ('Setting file not available');
+file_exists($settingsFile = RES_DIR.'settings.php') || die ('Setting file not available');
 
 session_start();
 
@@ -44,15 +42,15 @@ $container['session'] = function () {
  * Setup database container
  *
  * @param Container $container
- * @return Database
+ * @return Libraries\Database
  */
-$container['db'] = function ($container) {
+$container['database'] = function ($container) {
     $db = $container->get('settings')['db'];
     if (!isset($db['dsn'])) {
         $db['dsn'] = sprintf('%s:host=%s;dbname=%s', $db['driver'], $db['host'], $db['dbname']);
     }
 
-    return new Database($db['dsn'], $db['username'], $db['password']);
+    return new Libraries\Database($db['dsn'], $db['username'], $db['password']);
 };
 
 /**
@@ -61,11 +59,11 @@ $container['db'] = function ($container) {
  * @param Container $container
  * @return callable
  */
-$container['database'] = function ($container) {
-    $db = $container->get('db');
+$container['data'] = function ($container) {
+    $database = $container->get('database');
     $session = $container->get('session');
 
-    return function ($class) use ($db, $session) {
+    return function ($class) use ($database, $session) {
         if (!class_exists($class)) {
             throw new LogicException("Data model class {$class} not exists ");
         }
@@ -80,7 +78,7 @@ $container['database'] = function ($container) {
             ));
         }
 
-        return $model->newInstance($db, $session);
+        return $model->newInstance($database, $session);
     };
 };
 

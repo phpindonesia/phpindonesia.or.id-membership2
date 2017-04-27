@@ -20,7 +20,7 @@ return [
         'password' => '',
     ],
     'view' => [
-        'directory'     => APP_DIR.'views',
+        'directory'     => RES_DIR.'views',
         'fileExtension' => 'php',
     ],
     'gcaptcha' => [
