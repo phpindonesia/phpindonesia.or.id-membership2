@@ -30,9 +30,9 @@ $container = new Container([
 /**
  * Setup session
  *
- * @return \SLim\Interfaces\CollectionInterface
+ * @return Collection
  */
-$container['session'] = function ($container) {
+$container['session'] = function () {
     if (!isset($_SESSION['MembershipAuth'])) {
         $_SESSION['MembershipAuth'] = [];
     }
@@ -43,7 +43,8 @@ $container['session'] = function ($container) {
 /**
  * Setup database container
  *
- * @return \Slim\PDO\Database
+ * @param Container $container
+ * @return Database
  */
 $container['db'] = function ($container) {
     $db = $container->get('settings')['db'];
@@ -57,6 +58,7 @@ $container['db'] = function ($container) {
 /**
  * Setup data model container
  *
+ * @param Container $container
  * @return callable
  */
 $container['data'] = function ($container) {
@@ -85,6 +87,7 @@ $container['data'] = function ($container) {
 /**
  * Setup validator container
  *
+ * @param Container $container
  * @return \Valitron\Validator
  */
 $container['validator'] = function ($container) {
@@ -127,6 +130,7 @@ Cloudinary::config($container->get('settings')['cloudinary']);
 /**
  * Setup view container
  *
+ * @param Container $container
  * @return \Projek\Slim\Plates
  */
 $container['view'] = function ($container) {
@@ -156,6 +160,7 @@ $container['view'] = function ($container) {
 /**
  * Setup upload handler container
  *
+ * @param Container $container
  * @return callable
  */
 $container['upload'] = function ($container) {
@@ -165,8 +170,8 @@ $container['upload'] = function ($container) {
     /**
      * Upload callabel
      *
-     * @param \Psr\Http\Message\UploadedFileInterface $photo
-     * @param string[]                                $memberData
+     * @param UploadedFileInterface $photo
+     * @param string[] $memberData
      * @return string[]
      */
     return function (UploadedFileInterface $photo, $memberData) use ($settings, $session) {
@@ -209,8 +214,8 @@ $container['upload'] = function ($container) {
 /**
  * Setup smtp mailer container
  *
- * @param \Slim\Container $container
- * @return \Membership\Libraries\Mailer
+ * @param Container $container
+ * @return Libraries\Mailer
  */
 $container['mailer'] = function ($container) {
 
@@ -231,10 +236,16 @@ $container['mailer'] = function ($container) {
  *
  * TODO: need more!!!
  *
+ * @param Container $container
  * @return callable
  */
 $container['errorHandler'] = function ($container) {
     if ($container->get('settings')['mode'] !== 'development') {
+        /**
+         * @param \Slim\Http\Request $request
+         * @param \Slim\Http\Response $response
+         * @param \Exception $exception
+         */
         return function ($request, $response, $exception) use ($container) {
             return $container->get('view')->render('errors/500', [
                 'message' => $exception->getMessage()
