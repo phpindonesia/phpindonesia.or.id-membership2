@@ -20,8 +20,8 @@
     <header class="header">
         <div class="container">
             <div id="logo">
-                <a href="http://www.phpindonesia.or.id" title="PHP Indonesia">
-                    <img src="http://www.phpindonesia.or.id/po-content/phpindo/images/logo.png" alt="PHP Indonesia" height="57" />
+                <a href="http://www.phpindonesia.id" title="PHP Indonesia">
+                    <img src="http://www.phpindonesia.id/po-content/phpindo/images/logo.png" alt="PHP Indonesia" height="57" />
                 </a>
             </div>
 
@@ -32,39 +32,39 @@
                     </div>
 
                     <ul class="menu">
-                        <li><a href="http://www.phpindonesia.or.id/./">Home</a></li>
-                        <li class="menu-item-simple-parent"><a href="http://www.phpindonesia.or.id/pages/tentang-kami">Tentang Kami</a>
+                        <li><a href="http://www.phpindonesia.id/./">Home</a></li>
+                        <li class="menu-item-simple-parent"><a href="http://www.phpindonesia.id/pages/tentang-kami">Tentang Kami</a>
                             <ul class="sub-menu">
-                                <li><a href="http://www.phpindonesia.or.id/pages/sejarah">Sejarah</a></li>
-                                <li><a href="http://www.phpindonesia.or.id/pages/struktur-organisasi">Struktur Organisasi</a></li>
-                                <li><a href="http://www.phpindonesia.or.id/pages/kepengurusan">Kepengurusan</a></li>
+                                <li><a href="http://www.phpindonesia.id/pages/sejarah">Sejarah</a></li>
+                                <li><a href="http://www.phpindonesia.id/pages/struktur-organisasi">Struktur Organisasi</a></li>
+                                <li><a href="http://www.phpindonesia.id/pages/kepengurusan">Kepengurusan</a></li>
                             </ul><a class="dt-menu-expand">+</a>
                         </li>
 
                         <li class="menu-item-simple-parent">
-                            <a href="http://www.phpindonesia.or.id/pages/program-kerja">Program Kerja</a>
+                            <a href="http://www.phpindonesia.id/pages/program-kerja">Program Kerja</a>
                             <ul class="sub-menu">
-                                <li><a href="http://www.phpindonesia.or.id/pages/program-kerja-nasional">Nasional</a></li>
-                                <li><a href="http://www.phpindonesia.or.id/pages/program-kerja-daerah">Daerah</a></li>
+                                <li><a href="http://www.phpindonesia.id/pages/program-kerja-nasional">Nasional</a></li>
+                                <li><a href="http://www.phpindonesia.id/pages/program-kerja-daerah">Daerah</a></li>
                             </ul>
                             <a class="dt-menu-expand">+</a>
                         </li>
 
                         <li class="menu-item-simple-parent">
-                            <a href="http://www.phpindonesia.or.id/pages/ad-art">Dokumen</a>
+                            <a href="http://www.phpindonesia.id/pages/ad-art">Dokumen</a>
                             <ul class="sub-menu">
-                                <li><a href="http://www.phpindonesia.or.id/pages/ad-art">AD/ART</a></li>
-                                <li><a href="http://www.phpindonesia.or.id/pages/surat-keputusan">Surat Keputusan</a></li>
-                                <li><a href="http://www.phpindonesia.or.id/listevent">Event</a></li>
+                                <li><a href="http://www.phpindonesia.id/pages/ad-art">AD/ART</a></li>
+                                <li><a href="http://www.phpindonesia.id/pages/surat-keputusan">Surat Keputusan</a></li>
+                                <li><a href="http://www.phpindonesia.id/listevent">Event</a></li>
                             </ul>
                             <a class="dt-menu-expand">+</a>
                         </li>
 
                         <li class="menu-item-simple-parent">
-                            <a href="http://www.phpindonesia.or.id/album">Galeri</a>
+                            <a href="http://www.phpindonesia.id/album">Galeri</a>
                             <ul class="sub-menu">
-                                <li><a href="http://www.phpindonesia.or.id/album">Photo</a></li>
-                                <li><a href="http://www.phpindonesia.or.id/valbum">Video</a></li>
+                                <li><a href="http://www.phpindonesia.id/album">Photo</a></li>
+                                <li><a href="http://www.phpindonesia.id/valbum">Video</a></li>
                             </ul>
                             <a class="dt-menu-expand">+</a>
                         </li>
@@ -80,7 +80,7 @@
                         </li>
                         <?php endif ?>
 
-                        <li><a href="http://www.phpindonesia.or.id/contact">Kontak</a></li>
+                        <li><a href="http://www.phpindonesia.id/contact">Kontak</a></li>
 
                         <?php if (isset($session['user_id'])): ?>
                         <li class="menu-item-simple-parent">
