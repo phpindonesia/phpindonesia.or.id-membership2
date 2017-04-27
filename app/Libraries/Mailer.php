@@ -7,7 +7,7 @@ use League\Plates\Engine;
 class Mailer
 {
     /**
-     * @var PHPMailer
+     * @var \PHPMailer
      */
     protected $mail;
 
@@ -73,6 +73,7 @@ class Mailer
      *
      * @param string $senderEmail
      * @param string $senderName
+     * @return $this
      */
     public function setSender($senderEmail, $senderName)
     {
@@ -151,7 +152,7 @@ class Mailer
     /**
      * Add attachments.
      *
-     * @param array $attachments
+     * @param array $files
      * @return $this
      */
     public function addAttachments(array $files)
