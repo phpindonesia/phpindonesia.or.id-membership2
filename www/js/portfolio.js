@@ -19,7 +19,7 @@ $(document).ready(function () {
     }).done(function (data) {
       console.log(data);
     }).fail(function (data) {
-      alert('Failed to request data');
+      alert('Failed to request database');
     }).always(function (data) {
       $('#portfolio-popup').popup('hide');
     });
@@ -33,7 +33,7 @@ $(document).ready(function () {
     }).done(function (data) {
       console.log(data);
     }).fail(function (data) {
-      alert('Failed to request data');
+      alert('Failed to request database');
     }).always(function (data) {
       $('#skill-popup').popup('hide');
     });

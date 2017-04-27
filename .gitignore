@@ -12,7 +12,7 @@ Icon?
 
 # Development files
 # --------------------------
-app/settings.php
+resources/settings.php
 .env
 
 # Dependency folders

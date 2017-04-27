@@ -1,5 +1,5 @@
 --
--- Dumping data for table `career_levels`
+-- Dumping database for table `career_levels`
 --
 
 INSERT INTO `career_levels` (`career_level_id`, `order_by`) VALUES
@@ -13,7 +13,7 @@ INSERT INTO `career_levels` (`career_level_id`, `order_by`) VALUES
 ('VOLUNTEER', 1);
 
 --
--- Dumping data for table `industries`
+-- Dumping database for table `industries`
 --
 
 INSERT INTO `industries` (`industry_id`, `industry_name`) VALUES
@@ -84,7 +84,7 @@ INSERT INTO `industries` (`industry_id`, `industry_name`) VALUES
 (65, 'General & Wholesale Trading');
 
 --
--- Dumping data for table `jobs`
+-- Dumping database for table `jobs`
 --
 
 INSERT INTO `jobs` (`job_id`) VALUES
@@ -95,7 +95,7 @@ INSERT INTO `jobs` (`job_id`) VALUES
 ('PELAJAR');
 
 --
--- Dumping data for table `regionals`
+-- Dumping database for table `regionals`
 --
 
 INSERT INTO `regionals` (`id`, `regional_name`, `parent_id`, `province_code`, `city_code`) VALUES
@@ -649,7 +649,7 @@ INSERT INTO `regionals` (`id`, `regional_name`, `parent_id`, `province_code`, `c
 (553, 'KAB. DEIYAI', 467, '94', '36');
 
 --
--- Dumping data for table `religions`
+-- Dumping database for table `religions`
 --
 
 INSERT INTO `religions` (`religion_id`, `religion_name`) VALUES
@@ -661,7 +661,7 @@ INSERT INTO `religions` (`religion_id`, `religion_name`) VALUES
 (6, 'Others');
 
 --
--- Dumping data for table `roles`
+-- Dumping database for table `roles`
 --
 
 INSERT INTO `roles` (`role_id`, `title_alias`, `deleted`) VALUES
@@ -671,7 +671,7 @@ INSERT INTO `roles` (`role_id`, `title_alias`, `deleted`) VALUES
 ('volunteer', 'Author Voluntary', 'N');
 
 --
--- Dumping data for table `skills`
+-- Dumping database for table `skills`
 --
 
 INSERT INTO `skills` (`skill_id`, `parent_id`, `skill_name`, `created`, `modified`, `deleted`) VALUES

@@ -16,10 +16,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Membership\\": "app/src/"
+            "Membership\\": "app/"
         },
         "files": [
-            "app/src/helpers.php"
+            "app/helpers.php"
         ]
     }
 }

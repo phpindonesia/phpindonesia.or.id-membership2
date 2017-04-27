@@ -22,9 +22,9 @@ class Users extends Models
     protected $authorize = true;
 
     /**
-     * Create new user data
+     * Create new user database
      *
-     * @param string[] $pairs user data
+     * @param string[] $pairs user database
      * @return int|false
      */
     public function create(array $pairs)
@@ -88,7 +88,7 @@ class Users extends Models
     }
 
     /**
-     * Update user login data
+     * Update user login database
      *
      * @param int $userId User ID
      * @return int

@@ -72,9 +72,9 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Create new data
+     * Create new database
      *
-     * @param array $pairs column value pairs of data
+     * @param array $pairs column value pairs of database
      * @return int|false
      */
     public function create(array $pairs)
@@ -97,10 +97,10 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Get basic data
+     * Get basic database
      *
      * @param string[]           $columns Array of column
-     * @param callable|array|int $terms   column value pairs of term data you wanna find to
+     * @param callable|array|int $terms   column value pairs of term database you wanna find to
      * @return \PDOStatement|false
      */
     public function get(array $columns = [], $terms = null)
@@ -119,7 +119,7 @@ abstract class Models implements \Countable
     /**
      * Find existing item(s) from table
      *
-     * @param callable|array|int $terms column value pairs of term data you wanna find to
+     * @param callable|array|int $terms column value pairs of term database you wanna find to
      * @return \PDOStatement|false
      */
     public function find($terms = null)
@@ -130,8 +130,8 @@ abstract class Models implements \Countable
     /**
      * Update existing item from table
      *
-     * @param array              $pairs column value pairs of data
-     * @param callable|array|int $terms column value pairs of term data you wanna update to
+     * @param array              $pairs column value pairs of database
+     * @param callable|array|int $terms column value pairs of term database you wanna update to
      * @return int|false
      */
     public function update(array $pairs, $terms = null)
@@ -173,7 +173,7 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Count all data
+     * Count all database
      *
      * @param callable|array|int $terms Use it if you want more terms
      * @param string             $column   Column to count

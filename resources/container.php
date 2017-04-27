@@ -56,12 +56,12 @@ $container['db'] = function ($container) {
 };
 
 /**
- * Setup data model container
+ * Setup database model container
  *
  * @param Container $container
  * @return callable
  */
-$container['data'] = function ($container) {
+$container['database'] = function ($container) {
     $db = $container->get('db');
     $session = $container->get('session');
 

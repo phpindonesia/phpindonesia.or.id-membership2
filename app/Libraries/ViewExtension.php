@@ -40,7 +40,7 @@ class ViewExtension implements ExtensionInterface
      */
     public function register(Engine $engine)
     {
-        // Add app view data
+        // Add app view database
         $engine->addData([
             'validation_errors' => [],
             'base_js'  => [],
@@ -138,10 +138,10 @@ class ViewExtension implements ExtensionInterface
     }
 
     /**
-     * Generate form <select> based on $data array
+     * Generate form <select> based on $database array
      *
      * @param string $name       Name attribute
-     * @param array  $data       List of data
+     * @param array  $data       List of database
      * @param array  $attributes Optiona html attributes
      * @return string
      */

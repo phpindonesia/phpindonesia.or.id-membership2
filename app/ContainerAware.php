@@ -11,10 +11,10 @@ use BadMethodCallException;
  * @property-read \Valitron\Validator validator
  * @property-read \Projek\Slim\Plates view
  * @property-read \Membership\Libraries\Mailer mailer
- * @property-read callable data
+ * @property-read callable database
  * @property-read callable upload
- * @method Models data(string $class)
- * @method string[] upload(\Psr\Http\Message\UploadedFileInterface $file, array $data)
+ * @method Models database(string $class)
+ * @method string[] upload(\Psr\Http\Message\UploadedFileInterface $file, array $database)
  */
 trait ContainerAware
 {

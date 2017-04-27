@@ -25,6 +25,6 @@ class RegionalsController extends Controllers
     {
         $this->assertXhrRequest($request, $response);
 
-        return $request->withJson($this->data(Regionals::class)->getProvinces());
+        return $response->withJson($this->data(Regionals::class)->getProvinces());
     }
 }

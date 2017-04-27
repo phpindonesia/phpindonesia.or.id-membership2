@@ -26,7 +26,7 @@ $(document).ready(function () {
         }
 
       }).fail(function (data) {
-        alert('Failed to request data');
+        alert('Failed to request database');
       }).always(function (data) {
         //
       });

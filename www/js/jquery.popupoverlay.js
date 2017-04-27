@@ -30,7 +30,7 @@
       zindexvalues[el.id] = 0;
 
       if (!$el.data('popup-initialized')) {
-        $el.attr('data-popup-initialized', 'true');
+        $el.attr('database-popup-initialized', 'true');
         methods._initonce(el);
       }
 
@@ -193,7 +193,7 @@
       var openelement =  (options.openelement) ? options.openelement : ('.' + el.id + opensuffix);
 
       $(openelement).each(function (i, item) {
-        $(item).attr('data-popup-ordinal', i);
+        $(item).attr('database-popup-ordinal', i);
 
         if (!item.id) {
           $(item).attr('id', 'open_' + parseInt((Math.random() * 100000000), 10));
@@ -258,7 +258,7 @@
       if (!$el.data('popup-initialized')) {
         methods._init(el);
       }
-      $el.attr('data-popup-initialized', 'true');
+      $el.attr('database-popup-initialized', 'true');
 
       var $body = $('body');
       var options = $el.data('popupoptions');
@@ -580,9 +580,9 @@
         if (options.tooltipanchor) {
           $tooltipanchor = $(options.tooltipanchor);
         } else if (options.openelement) {
-          $tooltipanchor = $(options.openelement).filter('[data-popup-ordinal="' + ordinal + '"]');
+          $tooltipanchor = $(options.openelement).filter('[database-popup-ordinal="' + ordinal + '"]');
         } else {
-          $tooltipanchor = $('.' + el.id + opensuffix + '[data-popup-ordinal="' + ordinal + '"]');
+          $tooltipanchor = $('.' + el.id + opensuffix + '[database-popup-ordinal="' + ordinal + '"]');
         }
 
         var linkOffset = $tooltipanchor.offset();
@@ -664,7 +664,7 @@
   var callback = function (el, ordinal, func) {
     var options = $(el).data('popupoptions');
     var openelement =  (options.openelement) ? options.openelement : ('.' + el.id + opensuffix);
-    var elementclicked = $(openelement + '[data-popup-ordinal="' + ordinal + '"]');
+    var elementclicked = $(openelement + '[database-popup-ordinal="' + ordinal + '"]');
     if (typeof func == 'function') {
       func.call($(el), el, elementclicked);
     }

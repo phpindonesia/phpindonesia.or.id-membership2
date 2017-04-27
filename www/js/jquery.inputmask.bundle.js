@@ -33,13 +33,13 @@
   }
   function importAttributeOptions(npt, opts, userOptions) {
     function importOption(option) {
-      var optionData = npt.getAttribute("data-inputmask-" + option.toLowerCase());
+      var optionData = npt.getAttribute("database-inputmask-" + option.toLowerCase());
       null !== optionData && (optionData = "boolean" == typeof optionData ? optionData : optionData.toString(),
       "string" == typeof optionData && 0 === option.indexOf("on") && (optionData = eval("(" + optionData + ")")),
       "mask" === option && 0 === optionData.indexOf("[") ? (userOptions[option] = optionData.replace(/[\s[\]]/g, "").split(","),
       userOptions[option][0] = userOptions[option][0].replace("'", ""), userOptions[option][userOptions[option].length - 1] = userOptions[option][userOptions[option].length - 1].replace("'", "")) : userOptions[option] = optionData);
     }
-    var attrOptions = npt.getAttribute("data-inputmask");
+    var attrOptions = npt.getAttribute("database-inputmask");
     if (attrOptions && "" !== attrOptions) try {
       attrOptions = attrOptions.replace(new RegExp("'", "g"), '"');
       var dataoptions = $.parseJSON("{" + attrOptions + "}");

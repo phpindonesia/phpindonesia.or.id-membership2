@@ -160,7 +160,7 @@ class HomeController extends Controllers
             $emailAddress = $input['email'];
             $activationKey = md5(uniqid(rand(), true));
             $activationExpiredDate = date('Y-m-d H:i:s', time() + 172800); // 48 jam
-            $registerSuccessMsg = 'Haayy <strong>'.$input['fullname'].'</strong>,<br> Submission keanggotan sudah berhasil disimpan. Akan tetapi account anda tidak langsung aktif. Demi keamanan dan validitas data, maka sistem telah mengirimkan email ke email anda, untuk melakukan aktivasi account. Segera check email anda! Terimakasih ^_^';
+            $registerSuccessMsg = 'Haayy <strong>'.$input['fullname'].'</strong>,<br> Submission keanggotan sudah berhasil disimpan. Akan tetapi account anda tidak langsung aktif. Demi keamanan dan validitas database, maka sistem telah mengirimkan email ke email anda, untuk melakukan aktivasi account. Segera check email anda! Terimakasih ^_^';
 
             try {
                 $input['activation_key'] = $activationKey;

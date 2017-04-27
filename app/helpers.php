@@ -33,8 +33,7 @@ if (!function_exists('array_flatten')) {
      */
     function array_flatten(array $array)
     {
-        $array = array_values($array);
-        return call_user_func_array('array_merge', $array);
+        return call_user_func_array('array_merge', array_values($array));
     }
 }
 

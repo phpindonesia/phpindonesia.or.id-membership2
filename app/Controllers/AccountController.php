@@ -183,7 +183,7 @@ class AccountController extends Controllers
                     $memberProfile = $this->upload($photo, $memberProfile);
                 }
 
-                // Update profile data record
+                // Update profile database record
                 $profile->update($memberProfile, ['user_id' => $userId]);
 
                 $users->update([
