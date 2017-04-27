@@ -1,0 +1,145 @@
+/*
+ *  @author : Irfan Maualana <mazipanneh@gmail.com>
+ */
+.block{         display: block;}
+.inline-block{  display: inline-block;}
+
+.full{  width: 100%;}
+
+.font-11{  font-size: 11px;}
+.font-18{  font-size: 18px;}
+
+.bold{  font-weight: bold;}
+
+.va-middle{  vertical-align: middle;}
+
+.left{    text-align: left;}
+.right{   text-align: right;}
+.center{  text-align: center;}
+
+.text-grey{ color: #999;}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.box-list ul{
+  margin: 0;
+  width: 100%;
+}
+.box-list ul li{
+  background-color: #ccc;
+  color: #0074D9;
+  margin: 0 10px 13px 0;    
+  list-style: none;  
+  width: 15%;
+  display: inline-block;
+  vertical-align: top;
+  border-radius: 50%;
+  padding: 25px 0px;
+  text-align: center;
+
+  box-shadow: 0 0 0 5px #eaeaea;
+  -webkit-box-shadow: 0 0 0 5px #eaeaea;
+  -moz-box-shadow: 0 0 0 5px #eaeaea;
+
+
+}
+.box-list ul li:hover{  
+  -webkit-animation-duration: .75s;
+  animation-duration: .75s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: rubberBand;
+  animation-name: rubberBand;
+}
+.skill-name{  
+  display: block;
+  font-size: 1em;
+  font-weight: bold;    
+  margin: 40px 0 20px;
+  padding: 0 5px; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.skill-level{
+  font-size: 2em;
+  font-weight: bold;
+}
+
+@-webkit-keyframes rubberBand {
+  from {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+
+  30% {
+    -webkit-transform: scale3d(1.25, 0.75, 1);
+    transform: scale3d(1.25, 0.75, 1);
+  }
+
+  40% {
+    -webkit-transform: scale3d(0.75, 1.25, 1);
+    transform: scale3d(0.75, 1.25, 1);
+  }
+
+  50% {
+    -webkit-transform: scale3d(1.15, 0.85, 1);
+    transform: scale3d(1.15, 0.85, 1);
+  }
+
+  65% {
+    -webkit-transform: scale3d(.95, 1.05, 1);
+    transform: scale3d(.95, 1.05, 1);
+  }
+
+  75% {
+    -webkit-transform: scale3d(1.05, .95, 1);
+    transform: scale3d(1.05, .95, 1);
+  }
+
+  to {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes rubberBand {
+  from {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+
+  30% {
+    -webkit-transform: scale3d(1.25, 0.75, 1);
+    transform: scale3d(1.25, 0.75, 1);
+  }
+
+  40% {
+    -webkit-transform: scale3d(0.75, 1.25, 1);
+    transform: scale3d(0.75, 1.25, 1);
+  }
+
+  50% {
+    -webkit-transform: scale3d(1.15, 0.85, 1);
+    transform: scale3d(1.15, 0.85, 1);
+  }
+
+  65% {
+    -webkit-transform: scale3d(.95, 1.05, 1);
+    transform: scale3d(.95, 1.05, 1);
+  }
+
+  75% {
+    -webkit-transform: scale3d(1.05, .95, 1);
+    transform: scale3d(1.05, .95, 1);
+  }
+
+  to {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}

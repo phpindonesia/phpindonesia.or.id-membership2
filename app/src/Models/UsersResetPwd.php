@@ -21,6 +21,17 @@ class UsersResetPwd extends Models
     protected $authorize = false;
 
     /**
+     * {@inheritdoc}
+     */
+    public function delete($terms = null)
+    {
+        return $this->update([
+            'deleted' => 'Y',
+            'modified' => false,
+        ], $terms);
+    }
+
+    /**
      * Verify reset password $key for $userId
      *
      * @param int    $userId
@@ -33,8 +44,8 @@ class UsersResetPwd extends Models
             $query->where('user_id', '=', $userId)
                 ->where('reset_key', '=', $key)
                 ->where('deleted', '=', 'N')
-                ->where('email_sent', '=', 'Y')
-                ->where('expired_date', '>', date('d-m-Y H:i:s'));
+                // ->where('email_sent', '=', 'Y')
+                ->where('date(expired_date)', '>=', date('Y-m-d'));
         });
 
         return $count > 0;

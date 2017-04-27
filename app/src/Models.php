@@ -194,6 +194,16 @@ abstract class Models implements \Countable
     }
 
     /**
+     * Retrieve table primary key
+     *
+     * @return string
+     */
+    public function primary()
+    {
+        return $this->primary;
+    }
+
+    /**
      * Normalize query terms
      *
      * @param \Slim\PDO\Statement\StatementContainer $query
@@ -260,7 +270,6 @@ abstract class Models implements \Countable
             if ($type === 'create' && !isset($pairs['created'])) {
                 $pairs['created'] = $newDate;
             }
-
             if ($type === 'update' && !isset($pairs['modified'])) {
                 $pairs['modified'] = $newDate;
             }

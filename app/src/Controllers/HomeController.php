@@ -4,10 +4,7 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
-use Membership\Models\Users;
-use Membership\Models\Careers;
-use Membership\Models\Regionals;
-use Membership\Models\UsersActivations;
+use Membership\Models;
 
 class HomeController extends Controllers
 {
@@ -15,14 +12,18 @@ class HomeController extends Controllers
     {
         $this->setPageTitle('Membership', 'Keanggotaan');
 
-        /** @var Regionals $regionals */
-        $regionals  = $this->data(Regionals::class);
+        /** @var Models\Regionals $regionals */
+        $regionals  = $this->data(Models\Regionals::class);
         $provinceId = $request->getQueryParam('province_id');
 
+        /** @var Models\Users $users */
+        $users = $this->data(Models\Users::class);
+
         return $this->view->render('home-index', [
-            'members'   => $this->data(Users::class)->getMembers($request),
-            'provinces' => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
-            'cities'    => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
+            'members'     => $users->getMembers($request),
+            'totalMember' => $users->getTotalMember($request),
+            'provinces'   => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
+            'cities'      => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
         ]);
     }
 
@@ -43,8 +44,8 @@ class HomeController extends Controllers
 
     public function login(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var Models\Users $users */
+        $users = $this->data(Models\Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', ['login', 'password']);
 
@@ -68,15 +69,7 @@ class HomeController extends Controllers
 
         if ($user) {
             $_SESSION['MembershipAuth'] = [
-                'user_id'     => $user['user_id'],
-                'username'    => $user['username'],
-                'role_id'     => $user['role_id'],
-                'email'       => $user['email'],
-                'province_id' => $user['province_id'],
-                'city_id'     => $user['city_id'],
-                'photo'       => $user['photo'],
-                'fullname'    => $user['fullname'],
-                'job_id'      => $user['job_id'],
+                'user_id' => $user['user_id']
             ];
             $this->session->replace($_SESSION['MembershipAuth']);
 
@@ -99,21 +92,21 @@ class HomeController extends Controllers
             ],
         ], 'layouts::account');
 
-        /** @var Regionals $regionals */
-        $regionals = $this->data(Regionals::class);
+        /** @var Models\Regionals $regionals */
+        $regionals = $this->data(Models\Regionals::class);
         $provinceId = $request->getParam('province_id');
 
         return $this->view->render('home-register', [
             'provinces' => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
             'cities'    => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
-            'jobs'      => array_pairs($this->data(Careers::class)->getJobs(), 'job_id'),
+            'jobs'      => array_pairs($this->data(Models\Careers::class)->getJobs(), 'job_id'),
         ]);
     }
 
     public function register(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var Models\Users $users */
+        $users = $this->data(Models\Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', [
             'email', 'username', 'fullname', 'password', 'repassword',
@@ -175,38 +168,42 @@ class HomeController extends Controllers
                 $input['fullname'] = ucwords($input['fullname']);
                 $input['password'] = $this->salt($input['password']);
 
-                if ($userId = $users->create($input)) {
-                    $emailSettings = $this->settings->get('email');
-                    $message = \Swift_Message::newInstance('PHP Indonesia - Aktivasi Membership')
-                        ->setFrom([$emailSettings['sender_email'] => $emailSettings['sender_name']])
-                        ->setTo([$emailAddress => $member['fullname']])
-                        ->setBody(file_get_contents(APP_DIR.'views'._DS_.'email'._DS_.'activation.txt'));
-
-                    $this->mailer->registerPlugin(new \Swift_Plugins_DecoratorPlugin([
-                        $emailAddress  => [
-                            '{email_address}' => $emailAddress,
-                            '{fullname}' => $input['fullname'],
-                            '{registration_date}' => date('d-m-Y H:i:s'),
-                            '{activation_path}' => $this->router->pathFor('membership-activation', ['uid' => $userId, 'activation_key' => $activationKey]),
-                            '{activation_expired_date}' => $activationExpiredDate,
-                            '{base_url}' => $request->getUri()->getBaseUrl()
-                        ]
-                    ]));
-
-                    $this->mailer->send($message);
-
-                    // Update email sent status
-                    $this->data(UsersActivations::class)->update(['email_sent' => 'Y'], [
-                        'user_id' => $userId,
-                        'activation_key' => $activationKey
-                    ]);
-                }
-            } catch (\Swift_TransportException $e) {
-                $registerSuccessMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
+                $userId = $users->create($input);
             } catch (\PDOException $e) {
                 $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
 
                 return $response->withRedirect($this->router->pathFor('membership-register'));
+            }
+
+            if ($userId) {
+                try {
+                    $mail = $this->mailer->to($emailAddress, $input['fullname'])
+                        ->withSubject('PHP Indonesia - Aktivasi Membership')
+                        ->withBody('emails::activation', [
+                            'email' => $emailAddress,
+                            'fullname' => $input['fullname'],
+                            'regDate' => date('d-m-Y H:i:s'),
+                            'activationExp' => $activationExpiredDate,
+                            'activationUrl' => $request->getUri()->getBaseUrl().$this->router->pathFor('membership-activation', ['uid' => $userId, 'activation_key' => $activationKey]),
+                        ]);
+
+                    $mail->send();
+                } catch (\phpmailerException $e) {
+                    if ($this->settings['mode'] = 'development') {
+                        throw $e;
+                    }
+
+                    $mailSend = false;
+                    $registerSuccessMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
+                }
+
+                if ($mailSend) {
+                    // Update email sent status
+                    $this->data(Models\UsersActivations::class)->update(['email_sent' => 'Y'], [
+                        'user_id' => $userId,
+                        'activation_key' => $activationKey
+                    ]);
+                }
             }
 
             $this->addFormAlert('success', $registerSuccessMsg);

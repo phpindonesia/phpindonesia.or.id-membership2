@@ -8,6 +8,12 @@ class Middleware
 {
     use ContainerAware;
 
+    /**
+     * @param \Slim\Http\Request  $request
+     * @param \Slim\Http\Response $response
+     * @param callable            $next
+     * @return mixed
+     */
     public function sanitizeRequestBody(Request $request, Response $response, callable $next)
     {
         if ($inputs = $request->getParsedBody()) {
@@ -25,23 +31,35 @@ class Middleware
             $request = $request->withParsedBody($inputs);
         }
 
-        if ($request->getContentType() == 'application/json') {
+        if ($request->getHeaderLine('Accept') == 'application/json') {
             $request = $request->withHeader('X-Requested-With', 'XMLHttpRequest');
         }
 
         return $next($request, $response);
     }
 
-    public function authorizeAccountRoute(Request $request, Response $response, callable $next)
+    /**
+     * @param \Slim\Http\Request  $request
+     * @param \Slim\Http\Response $response
+     * @param callable            $next
+     * @return \Slim\Http\Response
+     */
+    public function authenticateRoute(Request $request, Response $response, callable $next)
     {
-        // Forward all XHR request
-        if ($request->isXhr() && $request->isGet()) {
-            return $next($request, $response);
+        $message = 'Permission denied, authentication required.';
+
+        // Forward all XHR GET request
+        if ($request->isXhr()) {
+            if ($this->getOwnerId($request) !== false) {
+                return $next($request, $response);
+            }
+
+            return $response->withJson(['message' => $message], 401);
         }
 
-        // Authorize account middleware
-        if (!$this->session->has('user_id')) {
-            $this->flash->addMessage('error', 'You are not authenticated');
+        // Check user session
+        if ($this->getOwnerId($request) === false) {
+            $this->flash->addMessage('error', $message);
 
             return $response->withRedirect($this->router->pathFor('membership-login'));
         }
@@ -49,65 +67,132 @@ class Middleware
         return $next($request, $response);
     }
 
+    /**
+     * @param \Slim\Http\Request  $request
+     * @param \Slim\Http\Response $response
+     * @param callable            $next
+     * @return \Slim\Http\Response
+     */
     public function authorizePorfolioRoute(Request $request, Response $response, callable $next)
     {
-        // Authorize portfolio middleware
-        $args = $request->getAttribute('routeInfo')[2];
-
-        if (!$args || ($request->isXhr() && $request->isGet())) {
+        // Is request acceptable?
+        if ($this->isAcceptable($request)) {
             return $next($request, $response);
         }
 
-        $count = $this->data(Models\MemberPortfolios::class)->count([
-            'member_portfolio_id' => (int) $args['id'],
-            'user_id' => $this->session->get('user_id'),
-        ]);
-
-        if ($count < 1) {
-            $this->flash->addMessage('warning', 'Permission denied.');
-
-            return $response->withRedirect($this->router->pathFor('membership-account'));
+        // Validate request with existing model
+        if (!$this->authorizeOwnership($request, Models\MemberPortfolios::class)) {
+            return $this->responseWithDenial($request, $response);
         }
 
         return $next($request, $response);
     }
 
+    /**
+     * @param \Slim\Http\Request  $request
+     * @param \Slim\Http\Response $response
+     * @param callable            $next
+     * @return \Slim\Http\Response
+     */
     public function authorizeSkillRoute(Request $request, Response $response, callable $next)
     {
-        // Authorize portfolio middleware
-        $args = $request->getAttribute('routeInfo')[2];
-
-        if (!$args || ($request->isXhr() && $request->isGet())) {
+        // Is request acceptable?
+        if ($this->isAcceptable($request)) {
             return $next($request, $response);
         }
 
-        $count = $this->data(Models\MemberSkills::class)->count([
-            'member_skill_id' => (int) $args['id'],
-            'user_id' => $this->session->get('user_id'),
-        ]);
-
-        if ($count < 1) {
-            $this->flash->addMessage('warning', 'Permission denied.');
-
-            return $response->withRedirect($this->router->pathFor('membership-account'));
+        // Validate request with existing model
+        if (!$this->authorizeOwnership($request, Models\MemberSkills::class)) {
+            return $this->responseWithDenial($request, $response);
         }
 
         return $next($request, $response);
     }
 
-    public function normalizeProfile(Request $request, Response $response, callable $next)
+    /**
+     * @param \Slim\Http\Request  $request
+     * @param \Slim\Http\Response $response
+     * @return \Slim\Http\Response
+     */
+    private function responseWithDenial(Request $request, Response $response)
     {
-        $routeInfo = $request->getAttribute('routeInfo');
-        $args = $routeInfo[2];
+        $message = 'Permission denied, authorization required.';
 
-        if (substr($args['username'], -5) == '.json') {
-            $routeInfo[2]['username'] = substr($args['username'], 0, -5);
-
-            $request = $request
-                ->withAttribute('routeInfo', $routeInfo)
-                ->withHeader('X-Requested-With', 'XMLHttpRequest');
+        // Response with json if XHR request
+        if ($request->isXhr()) {
+            return $response->withJson(['message' => $message], 401);
         }
 
-        return $next($request, $response);
+        // Response with redirect if otherwise
+        $this->flash->addMessage('error', $message);
+
+        return $response->withRedirect($this->router->pathFor('membership-account'));
+    }
+
+    /**
+     * @param \Slim\Http\Request $request
+     * @return bool
+     */
+    private function isAcceptable(Request $request)
+    {
+        $args = $request->getAttribute('routeInfo')[2];
+
+        return !$args || ($request->isXhr() && $request->isGet());
+    }
+
+    /**
+     * @param \Slim\Http\Request $request
+     * @param string             $model
+     * @return bool
+     */
+    private function authorizeOwnership(Request $request, $model)
+    {
+        $data = $this->data($model);
+        $args = $request->getAttribute('routeInfo')[2];
+
+        if (!$ownerId = $this->getOwnerId($request)) {
+            return false;
+        }
+
+        return (bool) $data->count([$data->primary() => (int) $args['id'], 'user_id' => $ownerId]);
+    }
+
+    /**
+     * @param \Slim\Http\Request $request
+     * @return bool|int
+     */
+    private function getOwnerId(Request $request)
+    {
+        // Simply grab it from session, if available :P
+        if ($this->session->has('user_id')) {
+            return (int) $this->session->get('user_id');
+        }
+
+        // Or use HTTP Basic Auth.
+        $serverParams = $request->getServerParams();
+        $username = isset($serverParams['PHP_AUTH_USER']) ? $serverParams['PHP_AUTH_USER'] : '';
+        $password = isset($serverParams['PHP_AUTH_PW'])   ? $serverParams['PHP_AUTH_PW']   : '';
+
+        if (isset($serverParams['HTTP_AUTHORIZATION'])) {
+            if (preg_match("/Basic\s+(.*)$/i", $serverParams['HTTP_AUTHORIZATION'], $matches)) {
+                list($username, $password) = explode(':', base64_decode($matches[1]));
+            }
+        }
+
+        $users = $this->data(Models\Users::class);
+        $user  = $users->get([$users->primary(), 'password', 'username'], ['username' => $username])->fetch();
+        $salt  = $this->settings->get('salt_pwd');
+
+        // TODO: We need better password hashing :sweat_smile:
+        if ($user['password'] === md5($salt . $password)) {
+            $userId = (int) $user[$users->primary()];
+
+            $this->session->set('user_id', $userId);
+            $this->session->set('username', $user['username']);
+
+            return $userId;
+        }
+
+        return false;
     }
 }

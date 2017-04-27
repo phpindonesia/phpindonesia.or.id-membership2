@@ -4,11 +4,7 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
-use Membership\Models\Users;
-use Membership\Models\UsersResetPwd;
-use Swift_Message;
-use Swift_Plugins_DecoratorPlugin;
-use Swift_TransportException;
+use Membership\Models;
 
 class PasswordController extends Controllers
 {
@@ -30,74 +26,65 @@ class PasswordController extends Controllers
 
     public function forgot(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', 'email');
         $validator->rule('email', 'email');
 
         $validator->addRule('assertNotEmailExists', function ($field, $value, array $params) use ($users) {
-            return !$users->assertEmailExists($value);
-        }, 'Email tersebut tidak terdaftar!');
+            return $users->assertEmailExists($value);
+        }, 'tersebut tidak terdaftar!');
 
         $validator->rule('assertNotEmailExists', 'email');
-
-        $success_msg = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda. Terimakasih ^_^';
-        $success_msg_alt = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda.<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong><br><br>Terimakasih ^_^';
 
         if ($validator->validate()) {
             $resetKey = md5(uniqid(rand(), true));
             $emailAddress = $input['email'];
             $resetExpiredDate = date('Y-m-d H:i:s', time() + 7200); // 2 jam
-            /** @var UsersResetPwd $usersResetPass */
-            $usersResetPass = $this->data(UsersResetPwd::class);
 
             $member = $users->get(
-                ['user_id', 'username'],
-                ['email' => $emailAddress]
+                ['u.user_id', 'u.username', 'u.email', 'm.fullname'],
+                function ($query) use ($emailAddress) {
+                    $query->from('users u')
+                        ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+                        ->where('u.email', '=', $emailAddress)
+                        ->where('u.deleted', '=', 'N');
+                }
             )->fetch();
 
-            $usersResetPass->create([
+            $doReset = $this->data(Models\UsersResetPwd::class)->create([
                 'user_id' => $member['user_id'],
                 'reset_key' => $resetKey,
                 'expired_date' => $resetExpiredDate,
                 'email_sent' => 'N',
             ]);
 
-            try {
-                $emailSettings = $this->settings->get('email');
-                $message = \Swift_Message::newInstance('PHP Indonesia - Konfirmasi lupa password')
-                    ->setFrom([$emailSettings['sender_email'] => $emailSettings['sender_name']])
-                    ->setTo([$emailAddress => $member['username']])
-                    ->setBody(file_get_contents(APP_DIR.'views'._DS_.'email'._DS_.'forgot-password-confirmation.txt'));
+            if ($doReset) {
+                $successMsg = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda';
 
-                $this->mailer->registerPlugin(new \Swift_Plugins_DecoratorPlugin([
-                    $emailAddress => [
-                        '{email_address}' => $emailAddress,
-                        '{request_reset_date}' => date('d-m-Y H:i:s'),
-                        '{reset_path}' => $this->router->pathFor('membership-reset-password', [
-                            'uid' => $member['user_id'],
-                            'reset_key' => $resetKey
-                        ]),
-                        '{reset_expired_date}' => date('d-m-Y H:i:s', strtotime($resetExpiredDate)),
-                        '{base_url}' => $request->getUri()->getBaseUrl()
-                    ]
-                ]));
+                try {
+                    $mail = $this->mailer->to($emailAddress, $member['fullname'])
+                        ->withSubject('PHP Indonesia - Konfirmasi lupa password')
+                        ->withBody('emails::forgot-password', [
+                            'email' => $emailAddress,
+                            'fullname' => $member['fullname'],
+                            'reqDate' => date('d-m-Y H:i:s'),
+                            'resetExp' => $resetExpiredDate,
+                            'resetUrl' => $request->getUri()->getBaseUrl().$this->router->pathFor('membership-reset-password', ['uid' => $member['user_id'], 'reset_key' => $resetKey]),
+                        ]);
 
-                $this->mailer->send($message);
+                    $mail->send();
+                } catch (\phpmailerException $e) {
+                    if ($this->settings['mode'] = 'development') {
+                        throw $e;
+                    }
 
-                // Update email sent status
-                $usersResetPass->update(['email_sent' => 'Y'], [
-                    'user_id' => $member['user_id'],
-                    'reset_key' => $resetKey
-                ]);
-
-                $this->addFormAlert('success', $success_msg);
-            } catch (\PDOException $e) {
-                $this->addFormAlert('error', 'System error'.$e->getMessage());
-            } catch (\Swift_TransportException $e) {
-                $this->addFormAlert('success', $success_msg_alt);
+                    $successMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
+                }
             }
+
+            $this->addFormAlert('success', $successMsg . '. Terima kasih ^_^.');
         } else {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
@@ -117,8 +104,8 @@ class PasswordController extends Controllers
 
     public function update(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users     = $this->data(Users::class);
+        /** @var \Membership\Models\Users $users */
+        $users     = $this->data(Models\Users::class);
         $saltPass  = $this->settings->get('salt_pwd');
         $password  = $request->getParsedBodyParam('password');
         $validator = $this->validator->rule('required', [
@@ -165,21 +152,12 @@ class PasswordController extends Controllers
 
     public function reset(Request $request, Response $response, array $args)
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
-        /** @var UsersResetPwd $usersResetPass */
-        $usersResetPass = $this->data(UsersResetPwd::class);
+        /** @var \Membership\Models\Users $users */
+        $users = $this->data(Models\Users::class);
+        /** @var \Membership\Models\UsersResetPwd $usersResetPass */
+        $usersResetPass = $this->data(Models\UsersResetPwd::class);
 
         if ($usersResetPass->verifyUserKey($args['uid'], $args['reset_key'])) {
-            $success_msg = 'Password baru sementara anda sudah dikirim ke email. Segera check email anda. Terimakasih ^_^';
-            $success_msg_alt = 'Password baru sementara anda sudah dikirim ke email.<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong><br><br>Terimakasih ^_^';
-
-            // Fetch member basic info
-            $member = $users->get(['username', 'email'], function ($query) use ($args) {
-                $query->where('user_id', '=', (int) $args['uid']);
-            })->fetch();
-            $emailAddress = $member['email'];
-
             // Create temporary password
             $tmpPass = substr(str_shuffle(md5(microtime())), 0, 10);
 
@@ -193,23 +171,37 @@ class PasswordController extends Controllers
                 'reset_key' => $args['reset_key']
             ]);
 
-            // Then send new temporary password to email
+            // Fetch member basic info
+            $member = $users->get(
+                ['u.user_id', 'u.username', 'u.email', 'm.fullname'],
+                function ($query) use ($args) {
+                    $query->from('users u')
+                        ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+                        ->where('u.user_id', '=', (int) $args['uid'])
+                        ->where('u.deleted', '=', 'N');
+                }
+            )->fetch();
+
             try {
-                $emailSettings = $this->settings->get('email');
-                $message = \Swift_Message::newInstance('PHP Indonesia - Password baru sementara')
-                    ->setFrom([$emailSettings['sender_email'] => $emailSettings['sender_name']])
-                    ->setTo([$emailAddress => $member['username']])
-                    ->setBody(file_get_contents(APP_DIR.'views'._DS_.'email'._DS_.'password-change-ok-confirmation.txt'));
+                $mail = $this->mailer->to($member['email'], $member['fullname'])
+                    ->withSubject('PHP Indonesia - Password baru sementara')
+                    ->withBody('emails::reset-password', [
+                        'tmpPass' => $tmpPass,
+                        'fullname' => $member['fullname'],
+                    ]);
 
-                $this->mailer->registerPlugin(new \Swift_Plugins_DecoratorPlugin([
-                    $emailAddress => ['{temp_pwd}' => $tmpPass]
-                ]));
-                $this->mailer->send($message);
+                $mail->send();
 
-                $this->addFormAlert('success', $success_msg);
-            } catch (\Swift_TransportException $e) {
-                $this->addFormAlert('success', $success_msg_alt);
+                $successMsg = 'Password baru sementara anda sudah dikirim ke email, Segera check email anda.';
+            } catch (\phpmailerException $e) {
+                if ($this->settings['mode'] = 'development') {
+                    throw $e;
+                }
+
+                $successMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
             }
+
+            $this->addFormAlert('success', $successMsg . '. Terima kasih ^_^.');
         } else {
             $this->addFormAlert('error', 'Bad Request');
         }

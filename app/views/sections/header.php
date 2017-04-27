@@ -8,9 +8,9 @@
         <div class="top-right">
             <span>Social Media PHP Indonesia</span>
             <ul class="dt-sc-social-icons">
-                <li><a href="https://www.facebook.com/groups/35688476100" title="facebook" target="_blank"><i class="fa fa-facebook"></i></a></li>
-                <li><a href="https://www.twitter.com/php_indonesia" title="twitter" target="_blank"><i class="fa fa-twitter"></i></a></li>
-                <li><a href="http://www.youtube.com/user/OurPHPIndonesia" title="youtube" target="_blank"><i class="fa fa-youtube"></i></a></li>
+                <li><a href="https://www.facebook.com/groups/35688476100" title="Facebook" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                <li><a href="https://twitter.com/php_indonesia" title="Twitter" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                <li><a href="https://www.youtube.com/user/OurPHPIndonesia" title="YouTube" target="_blank"><i class="fa fa-youtube"></i></a></li>
             </ul>
         </div>
     </div>
@@ -69,7 +69,7 @@
                             <a class="dt-menu-expand">+</a>
                         </li>
 
-                        <?php if (!isset($session['username'])): ?>
+                        <?php if (!isset($session['user_id'])): ?>
                         <li class="menu-item-simple-parent">
                             <a href="<?php echo $this->pathFor('membership-index') ?>">Anggota</a>
                             <ul class="sub-menu">
@@ -82,13 +82,13 @@
 
                         <li><a href="http://www.phpindonesia.or.id/contact">Kontak</a></li>
 
-                        <?php if (isset($session['username'])): ?>
+                        <?php if (isset($session['user_id'])): ?>
                         <li class="menu-item-simple-parent">
                             <a href="<?php echo $this->pathFor('membership-account'); ?>" style="text-decoration: underline; color:#478BCA;">
 
-                                <img src="<?php echo $this->userPhoto($session['photo'], ['width' => '40', 'height' => '40']) ?>" alt="user avatar" style="display: block; position: absolute; right: -40px; bottom: 21px; width: 40px; height: 40px;" />
+                                <img src="<?php echo $this->userPhoto($header_photo, ['width' => '40', 'height' => '40']) ?>" alt="user avatar" style="display: block; position: absolute; right: -40px; bottom: 21px; width: 40px; height: 40px;" />
 
-                                <?php echo '( '.$session['username'].' )'; ?>
+                                <?php echo '( '.$header_username.' )'; ?>
                             </a>
                             <ul class="sub-menu">
                                 <li><a href="<?php echo $this->pathFor('membership-account'); ?>">My Membership Area</a></li>

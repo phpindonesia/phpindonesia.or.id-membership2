@@ -2,12 +2,13 @@
 
 use Slim\Collection;
 use Slim\Container;
-use Slim\PDO\Database;
 use Slim\Handlers\Error as SlimError;
 use League\Plates\Extension\Asset as PlatesAsset;
 use Psr\Http\Message\UploadedFileInterface;
 use Valitron\Validator;
 use Membership\Models;
+use Membership\Libraries;
+use Membership\Libraries\PDO\Database;
 
 /**
  * Settings file
@@ -29,9 +30,9 @@ $container = new Container([
 /**
  * Setup session
  *
- * @return \SLim\Interfaces\CollectionInterface
+ * @return Collection
  */
-$container['session'] = function ($container) {
+$container['session'] = function () {
     if (!isset($_SESSION['MembershipAuth'])) {
         $_SESSION['MembershipAuth'] = [];
     }
@@ -42,7 +43,8 @@ $container['session'] = function ($container) {
 /**
  * Setup database container
  *
- * @return \Slim\PDO\Database
+ * @param Container $container
+ * @return Database
  */
 $container['db'] = function ($container) {
     $db = $container->get('settings')['db'];
@@ -133,16 +135,23 @@ Cloudinary::config($container->get('settings')['cloudinary']);
  */
 $container['view'] = function ($container) {
     $settings = $container->get('settings');
-    $request = $container->get('request');
-    $view = new Projek\Slim\Plates($settings['view'], $container->get('response'));
+    $view = new Projek\Slim\Plates(
+        $viewSettings = $settings->get('view'),
+        $container->get('response')
+    );
 
     // Add app view folders
-    $view->addFolder('layouts',  $settings['view']['directory'].'/layouts');
-    $view->addFolder('sections', $settings['view']['directory'].'/sections');
+    $view->addFolder('emails',   $viewSettings['directory'].'/emails');
+    $view->addFolder('layouts',  $viewSettings['directory'].'/layouts');
+    $view->addFolder('sections', $viewSettings['directory'].'/sections');
 
     // Load app view extensions
     $view->loadExtension(new PlatesAsset(WWW_DIR));
-    $view->loadExtension(new Membership\ViewExtension($request, $container->get('flash'), $settings['mode']));
+    $view->loadExtension(new Libraries\ViewExtension(
+        $request = $container->get('request'),
+        $container->get('flash'),
+        $settings->get('mode')
+    ));
     $view->loadExtension(new Projek\Slim\PlatesExtension($container->get('router'), $request->getUri()));
 
     return $view;
@@ -161,8 +170,8 @@ $container['upload'] = function ($container) {
     /**
      * Upload callabel
      *
-     * @param \Psr\Http\Message\UploadedFileInterface $photo
-     * @param string[]                                $memberData
+     * @param UploadedFileInterface $photo
+     * @param string[] $memberData
      * @return string[]
      */
     return function (UploadedFileInterface $photo, $memberData) use ($settings, $session) {
@@ -203,27 +212,22 @@ $container['upload'] = function ($container) {
 };
 
 /**
- * Setup mailer container
- *
- * TODO: will replaced with PHPMailer
+ * Setup smtp mailer container
  *
  * @param Container $container
- * @return Swift_Mailer
+ * @return Libraries\Mailer
  */
 $container['mailer'] = function ($container) {
-    $smtp_account = $container->get('settings')['smtp'];
-    $transport = null;
 
-    if ($smtp_account['ssl']) {
-        $transport = Swift_SmtpTransport::newInstance($smtp_account['host'], $smtp_account['port'], 'ssl');
-    } else {
-        $transport = Swift_SmtpTransport::newInstance($smtp_account['host'], $smtp_account['port']);
-    }
+    $view = $container->get('view')->getPlates();
+    $settings = $container->get('settings');
+    $appSetting = $settings->get('app');
 
-    $transport->setUsername($smtp_account['username']);
-    $transport->setPassword($smtp_account['password']);
+    $mailer = new Libraries\Mailer($settings->get('mailer'), $view);
 
-    $mailer = Swift_Mailer::newInstance($transport);
+    $mailer->debugMode($settings->get('mode'));
+    $mailer->setSender($appSetting['email'], $appSetting['name']);
+
     return $mailer;
 };
 
@@ -237,6 +241,11 @@ $container['mailer'] = function ($container) {
  */
 $container['errorHandler'] = function ($container) {
     if ($container->get('settings')['mode'] !== 'development') {
+        /**
+         * @param \Slim\Http\Request $request
+         * @param \Slim\Http\Response $response
+         * @param \Exception $exception
+         */
         return function ($request, $response, $exception) use ($container) {
             return $container->get('view')->render('errors/500', [
                 'message' => $exception->getMessage()

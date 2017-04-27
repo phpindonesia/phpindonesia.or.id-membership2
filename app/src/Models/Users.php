@@ -88,38 +88,6 @@ class Users extends Models
     }
 
     /**
-     * Activate user
-     *
-     * @param int $userId
-     * @param string $activationKey
-     * @return bool
-     */
-    public function activate($userId, $activationKey)
-    {
-        $this->db->beginTransaction();
-
-        try {
-            $userId = (int) $userId;
-
-            $this->update(['activated' => 'Y'], $userId);
-
-            $this->db->update(['deleted' => 'Y'])
-                ->table('users_activations')
-                ->where($this->primary, '=', $userId)
-                ->where('activation_key'. '=', $activationKey)
-                ->execute();
-
-            $this->db->commit();
-
-            return true;
-        } catch (Exception $e) {
-            $this->db->rollback();
-
-            return false;
-        }
-    }
-
-    /**
      * Update user login data
      *
      * @param int $userId User ID
@@ -131,9 +99,9 @@ class Users extends Models
     }
 
     /**
-     * Retrieve user profile
+     * Retrieve user profile by User Id
      *
-     * @param int|null $userId User ID
+     * @param string|null $userId User Id
      * @return array
      */
     public function getProfile($userId = null)
@@ -142,15 +110,42 @@ class Users extends Models
         !is_null($userId) || $userId = $this->current('user_id');
 
         return $profile->get([
-            'm.*',
+            'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*', 'r.religion_name',
             'reg_prv.regional_name province',
             'reg_cit.regional_name city'
         ], function ($query) use ($userId) {
-            $query->from('members_profiles m')
-                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+            $query->from('users u')
+                ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
                 ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
-                ->where('m.user_id', '=', $userId)
-                ->where('m.deleted', '=', 'N');
+                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+                ->leftJoin('religions r', 'r.religion_id', '=', 'm.religion_id')
+                ->where('u.user_id', '=', $userId)
+                ->where('u.deleted', '=', 'N');
+        })->fetch();
+    }
+
+    /**
+     * Retrieve user profile by Username
+     *
+     * @param string|null $username Username
+     * @return array
+     */
+    public function getProfileUsername($username = null)
+    {
+        $profile = new MemberProfile($this->db);
+
+        return $profile->get([
+            'u.user_id', 'u.username', 'u.email', 'u.created', 'm.*', 'r.religion_name',
+            'reg_prv.regional_name province',
+            'reg_cit.regional_name city'
+        ], function ($query) use ($username) {
+            $query->from('users u')
+                ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
+                ->leftJoin('regionals reg_cit', 'reg_cit.id', '=', 'm.city_id')
+                ->leftJoin('regionals reg_prv', 'reg_prv.id', '=', 'm.province_id')
+                ->leftJoin('religions r', 'r.religion_id', '=', 'm.religion_id')
+                ->where('u.username', '=', $username)
+                ->where('u.deleted', '=', 'N');
         })->fetch();
     }
 
@@ -295,25 +290,15 @@ class Users extends Models
     }
 
     /**
-     * List all members
+     * Get query statement to list all members
      *
-     * @param \Slim\Http\Request $request Filter by request
-     * @return array
+     * @param \Slim\Http\Request $request  Filter by request
+     * @param array $selector
+     * @return \Slim\PDO\Statement\StatementContainer
      */
-    public function getMembers($request)
+    private function createQueryMembers($request, array $selector)
     {
-        $query = $this->db->select([
-                'u.user_id',
-                'u.username',
-                'u.email',
-                'u.created',
-                'ur.role_id',
-                'm.fullname',
-                'm.gender',
-                'm.photo',
-                'reg_prv.regional_name province',
-                'reg_cit.regional_name city',
-            ])
+        $query = $this->db->select($selector)
             ->from('users u')
             ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
             ->leftJoin('users_roles ur', 'u.user_id', '=', 'ur.user_id')
@@ -322,21 +307,66 @@ class Users extends Models
             ->where('ur.role_id', '=', 'member')
             ->where('u.activated', '=', 'Y');
 
-        if ($request->getQueryParam('province_id')) {
-            $query->where('m.province_id', '=', (int) $request->getQueryParam('province_id'));
+        if ($nama = $request->getQueryParam('nama')) {
+            $combined = $query->combine()
+                ->whereLike('u.username', "%$nama%")
+                ->orWhereLike('m.fullname', "%$nama%");
+            $query->where($combined);
         }
 
-        if ($request->getQueryParam('city_id')) {
-            $query->where('m.city_id', '=', (int) $request->getQueryParam('city_id'));
+        if ($daerah = $request->getQueryParam('daerah')) {
+            $combined = $query->combine()
+                ->whereLike('m.area', "%$daerah%")
+                ->orWhereLike('reg_prv.regional_name',  "%$daerah%")
+                ->orWhereLike('reg_cit.regional_name', "%$daerah%");
+            $query->where($combined);
         }
 
-        if ($request->getQueryParam('area')) {
-            $query->whereLike('m.area', $request->getQueryParam('area'));
-        }
+        return $query;
+    }
 
-        $query->orderBy('u.created', 'DESC')->limit(18, $request->getQueryParam('page'));
+    /**
+     * List all members
+     *
+     * @param \Slim\Http\Request $request Filter by request
+     * @return array
+     */
+    function getMembers($request)
+    {
+        $selector = [
+            'u.user_id',
+            'u.username',
+            'u.email',
+            'u.created',
+            'ur.role_id',
+            'm.fullname',
+            'm.gender',
+            'm.photo',
+            'reg_prv.regional_name province',
+            'reg_cit.regional_name city',
+        ];
 
-        return $query->execute()->fetchAll();
+        $limit = 18;
+        $page  = (int) $request->getQueryParam('page') ?: 1;
+        $query = $this->createQueryMembers($request, $selector)
+            ->orderBy('u.created', 'DESC')
+            ->limit($limit, ($page - 1) * $limit)
+            ->execute();
+
+        return $query->fetchAll();
+    }
+
+    /**
+     * Get Total Member
+     *
+     * @param \Slim\Http\Request $request Filter by request
+     * @return integer
+     */
+    public function getTotalMember($request)
+    {
+        $query = $this->createQueryMembers($request, ['u.user_id']);
+
+        return $query->execute()->rowCount();
     }
 
     /**
@@ -366,25 +396,6 @@ class Users extends Models
         $email = strtolower($email);
         $count = $this->count(function ($query) use ($email) {
             $query->where('email', '=', $email);
-        });
-
-        return $count > 0;
-    }
-
-    /**
-     * Is activation $key for $userId already exists?
-     *
-     * @param string $userId
-     * @param string $key
-     * @return bool
-     */
-    public function assertActivationExists($userId, $key)
-    {
-        $count = $this->count(function ($query) use ($userId, $key) {
-            $query->where('user_id', '=', $userId)
-                ->where('activation_key', '=', $key)
-                ->where('deleted', '=', 'N')
-                ->where('expired_date', '>', date('Y-m-d'));
         });
 
         return $count > 0;

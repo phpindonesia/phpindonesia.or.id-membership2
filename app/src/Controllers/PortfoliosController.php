@@ -4,17 +4,16 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
-use Membership\Models\Careers;
-use Membership\Models\MemberPortfolios;
+use Membership\Models;
 
 class PortfoliosController extends Controllers
 {
     public function index(Request $request, Response $response, array $args)
     {
-        /** @var Careers $career */
-        $career = $this->data(Careers::class);
+        /** @var \Membership\Models\Careers $career */
+        $career = $this->data(Models\Careers::class);
         /** @var \PDOStatement $portfolio */
-        $portfolio = $this->data(MemberPortfolios::class)->find([
+        $portfolio = $this->data(Models\MemberPortfolios::class)->find([
             'member_portfolio_id' => (int) $args['id'],
             'user_id' => $this->session->get('user_id'),
             'deleted' => 'N',
@@ -24,12 +23,12 @@ class PortfoliosController extends Controllers
             return $response->withJson($portfolio->fetch());
         }
 
+        $this->setPageTitle('Membership', 'Update portfolio item');
+
         $this->view->addData([
             'career_levels' => array_pairs($career->getLevels(), 'career_level_id'),
             'industries'    => array_pairs($career->getIndustries(), 'industry_id', 'industry_name')
         ], 'sections::portfolio-form');
-
-        $this->setPageTitle('Membership', 'Update portfolio item');
 
         return $this->view->render('portfolio-edit', [
             'portfolio' => $portfolio->fetch(),
@@ -40,8 +39,8 @@ class PortfoliosController extends Controllers
     {
         $this->setPageTitle('Membership', 'Add new portfolio');
 
-        /** @var Careers $career */
-        $career = $this->data(Careers::class);
+        /** @var \Membership\Models\Careers $career */
+        $career = $this->data(Models\Careers::class);
 
         $this->view->addData([
             'career_levels' => array_pairs($career->getLevels(), 'career_level_id'),
@@ -54,8 +53,8 @@ class PortfoliosController extends Controllers
     public function add(Request $request, Response $response, array $args)
     {
         $input = $request->getParsedBody();
-        /** @var MemberPortfolios $portfolio */
-        $portfolio = $this->data(MemberPortfolios::class);
+        /** @var \Membership\Models\MemberPortfolios $portfolio */
+        $portfolio = $this->data(Models\MemberPortfolios::class);
 
         $validator = $this->validator->rule('required', [
             'company_name',
@@ -95,8 +94,8 @@ class PortfoliosController extends Controllers
     public function edit(Request $request, Response $response, array $args)
     {
         $input = $request->getParsedBody();
-        /** @var MemberPortfolios $portfolio */
-        $portfolio = $this->data(MemberPortfolios::class);
+        /** @var \Membership\Models\MemberPortfolios $portfolio */
+        $portfolio = $this->data(Models\MemberPortfolios::class);
         $validator = $this->validator->rule('required', [
             'company_name',
             'industry_id',

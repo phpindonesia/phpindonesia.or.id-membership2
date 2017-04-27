@@ -4,8 +4,7 @@ namespace Membership\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Membership\Controllers;
-use Membership\Models\Skills;
-use Membership\Models\MemberSkills;
+use Membership\Models;
 use Slim\Exception\NotFoundException;
 
 class SkillsController extends Controllers
@@ -13,10 +12,9 @@ class SkillsController extends Controllers
     public function index(Request $request, Response $response, array $args)
     {
         $this->assertXhrRequest($request, $response);
-        /** @var array|false $skills */
-        $skills = $this->data(Skills::class)->getChilds($args['id']);
 
-        if (!$skills) {
+        /** @var array|false $skills */
+        if (!$skills = $this->data(Models\Skills::class)->getChilds($args['id'])) {
             throw new NotFoundException($request, $response);
         }
 
@@ -27,8 +25,8 @@ class SkillsController extends Controllers
     {
         $this->setPageTitle('Membership', 'Add new techno skill item');
 
-        /** @var Skills $skills */
-        $skills = $this->data(Skills::class);
+        /** @var \Membership\Models\Skills $skills */
+        $skills = $this->data(Models\Skills::class);
         $provinceId = $request->getParam('province_id');
 
         return $this->view->render('skills-add', [
@@ -52,9 +50,7 @@ class SkillsController extends Controllers
         $validator = $this->validator->rule('required', $requiredFields);
 
         if ($validator->validate()) {
-            /** @var Skills $skills */
-            $skills = $this->data(MemberSkills::class);
-            $skills->create([
+            $this->data(Models\MemberSkills::class)->create([
                 'user_id'              => $this->session->get('user_id'),
                 'skill_id'             => $input['skill_id'] ?: $input['skill_parent_id'],
                 'skill_parent_id'      => $input['skill_parent_id'],
@@ -81,7 +77,7 @@ class SkillsController extends Controllers
     public function delete(Request $request, Response $response, array $args)
     {
         /** @var MemberSkills $skills */
-        $skills = $this->data(MemberSkills::class);
+        $skills = $this->data(Models\MemberSkills::class);
 
         if ($skills->delete((int) $args['id'])) {
             $this->addFormAlert('success', 'Item Skill berhasil dihapus.');

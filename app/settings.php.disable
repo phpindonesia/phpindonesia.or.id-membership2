@@ -2,6 +2,10 @@
 return [
     'mode' => 'development',
     'salt_pwd' => 'dev-spirit',
+    'app' => [
+        'name'  => 'PHP Indonesia - Membership App',
+        'email' => '',
+    ],
     'db' => [
         'host'     => 'localhost',
         'driver'   => 'mysql',
@@ -9,16 +13,11 @@ return [
         'password' => '',
         'dbname'   => '',
     ],
-    'smtp' => [
+    'mailer' => [
         'host'     => 'smtp.gmail.com',
-        'port'     => 465,
-        'ssl'      => true,
+        'port'     => 586,
         'username' => '',
-        'password' => ''
-    ],
-    'email' => [
-        'sender_email' => '',
-        'sender_name'  => 'PHP Indonesia - Membership App'
+        'password' => '',
     ],
     'view' => [
         'directory'     => APP_DIR.'views',
@@ -35,11 +34,11 @@ return [
         'api_secret' => '',
     ],
     'socmedias' => [
-        'facebook'  => ['Facebook',  'fa-facebook',    'http://facebook.com/'],
-        'twitter'   => ['Twitter',   'fa-twitter',     'http://twitter.com/'],
-        'linkedin'  => ['LinkedIn',  'fa-linkedin',    'http://linkedin.com/in/'],
-        'instagram' => ['Instagram', 'fa-instagram',   'http://instagram.com/'],
-        'path'      => ['Path',      'fa-pinterest-p', 'http://path.com/'],
-        'github'    => ['GitHub',    'fa-github',      'http://github.com/'],
+        'facebook'  => ['Facebook',  'fa-facebook',    'https://www.facebook.com/'],
+        'twitter'   => ['Twitter',   'fa-twitter',     'https://twitter.com/'],
+        'linkedin'  => ['LinkedIn',  'fa-linkedin',    'https://www.linkedin.com/in/'],
+        'instagram' => ['Instagram', 'fa-instagram',   'https://www.instagram.com/'],
+        'path'      => ['Path',      'fa-pinterest-p', 'https://path.com/'],
+        'github'    => ['GitHub',    'fa-github',      'https://github.com/'],
     ],
 ];
