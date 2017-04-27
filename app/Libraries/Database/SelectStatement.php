@@ -4,7 +4,9 @@
  * @license http://opensource.org/licenses/MIT
  */
 
-namespace Membership\Libraries\PDO;
+namespace Membership\Libraries\Database;
+
+use Membership\Libraries\Database;
 
 class SelectStatement extends \Slim\PDO\Statement\SelectStatement
 {
