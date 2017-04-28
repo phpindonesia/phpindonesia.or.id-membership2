@@ -7,7 +7,6 @@ use League\Plates\Extension\Asset as PlatesAsset;
 use Psr\Http\Message\UploadedFileInterface;
 use Valitron\Validator;
 use Membership\Models;
-use Membership\Libraries;
 
 /**
  * Settings file
@@ -58,6 +57,31 @@ $container['setting'] = function ($container) {
 };
 
 /**
+ * Custom error handler
+ *
+ * TODO: need more!!!
+ *
+ * @param Container $container
+ * @return callable
+ */
+$container['errorHandler'] = function ($container) {
+    if ($container->get('settings')['mode'] !== 'development') {
+        /**
+         * @param \Slim\Http\Request $request
+         * @param \Slim\Http\Response $response
+         * @param \Exception $exception
+         */
+        return function ($request, $response, $exception) use ($container) {
+            return $container->get('view')->render('error::500', [
+                'message' => $exception->getMessage()
+            ])->withStatus(500);
+        };
+    }
+
+    return new SlimError(true);
+};
+
+/**
  * Setup session
  *
  * @return Collection
@@ -74,7 +98,7 @@ $container['session'] = function () {
  * Setup database container
  *
  * @param Container $container
- * @return Libraries\Database
+ * @return Membership\Database
  */
 $container['database'] = function ($container) {
     $db = $container->get('settings')['db'];
@@ -82,7 +106,7 @@ $container['database'] = function ($container) {
         $db['dsn'] = sprintf('%s:host=%s;dbname=%s', $db['driver'], $db['host'], $db['dbname']);
     }
 
-    return new Libraries\Database($db['dsn'], $db['username'], $db['password']);
+    return new Membership\Database($db['dsn'], $db['username'], $db['password']);
 };
 
 /**
@@ -182,7 +206,7 @@ $container['view'] = function ($container) {
 
     // Load app view extensions
     $view->loadExtension(new PlatesAsset(ROOT_DIR));
-    $view->loadExtension(new Libraries\ViewExtension(
+    $view->loadExtension(new Membership\ViewExtension(
         $request = $container->get('request'),
         $container->get('flash'),
         $settings->get('mode')
@@ -250,44 +274,19 @@ $container['upload'] = function ($container) {
  * Setup smtp mailer container
  *
  * @param Container $container
- * @return Libraries\Mailer
+ * @return Membership\Mailer
  */
 $container['mailer'] = function ($container) {
     $view = $container->get('view')->getPlates();
     $settings = $container->get('settings');
     $appSetting = $settings->get('app');
 
-    $mailer = new Libraries\Mailer($settings->get('mailer'), $view);
+    $mailer = new Membership\Mailer($settings->get('mailer'), $view);
 
     $mailer->debugMode($settings->get('mode'));
     $mailer->setSender($appSetting['email'], $appSetting['name']);
 
     return $mailer;
-};
-
-/**
- * Custom error handler
- *
- * TODO: need more!!!
- *
- * @param Container $container
- * @return callable
- */
-$container['errorHandler'] = function ($container) {
-    if ($container->get('settings')['mode'] !== 'development') {
-        /**
-         * @param \Slim\Http\Request $request
-         * @param \Slim\Http\Response $response
-         * @param \Exception $exception
-         */
-        return function ($request, $response, $exception) use ($container) {
-            return $container->get('view')->render('error::500', [
-                'message' => $exception->getMessage()
-            ])->withStatus(500);
-        };
-    }
-
-    return new SlimError(true);
 };
 
 return $container;
