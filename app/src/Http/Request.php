@@ -2,8 +2,7 @@
 
 namespace Membership\Http;
 
-
-class Request
+class Request extends \Slim\Http\Request
 {
 
 }

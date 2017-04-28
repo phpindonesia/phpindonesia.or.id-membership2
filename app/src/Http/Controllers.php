@@ -5,8 +5,6 @@ namespace Membership\Http;
 use Membership\ContainerAware;
 use Membership\Models\Users;
 use Slim\Container;
-use Slim\Http\Request;
-use Slim\Http\Response;
 use Slim\Exception\NotFoundException;
 
 abstract class Controllers
@@ -44,9 +42,9 @@ abstract class Controllers
     /**
      * Assert is XHR request
      *
-     * @param \Slim\Http\Request  $request
-     * @param \Slim\Http\Response $response
-     * @throws \Slim\Exception\NotFoundException
+     * @param Request  $request
+     * @param Response $response
+     * @throws NotFoundException
      */
     protected function assertXhrRequest(Request $request, Response $response)
     {
@@ -58,8 +56,8 @@ abstract class Controllers
     /**
      * Assert is HTML request
      *
-     * @param \Slim\Http\Request  $request
-     * @param \Slim\Http\Response $response
+     * @param Request  $request
+     * @param Response $response
      * @throws \Slim\Exception\NotFoundException
      */
     protected function assertHTMLRequest(Request $request, Response $response)
@@ -167,10 +165,7 @@ abstract class Controllers
      */
     protected function setHeaderLogin()
     {
-        /** @var Users $users */
-        $users = $this->data(Users::class);
-
-        $profile = $users->getProfile();
+        $profile = (new Users())->getProfile();
 
         $this->view->addData([
             'header_photo' => $profile['photo'],

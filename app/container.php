@@ -167,8 +167,7 @@ Cloudinary::config($container->get('settings')['cloudinary']);
 $container['view'] = function ($container) {
     $settings = $container->get('settings');
     $view = new Projek\Slim\Plates(
-        $viewSettings = $settings->get('view'),
-        $container->get('response')
+        $viewSettings = $settings->get('view')
     );
 
     // Add app view folders
@@ -187,6 +186,33 @@ $container['view'] = function ($container) {
     $view->loadExtension(new Projek\Slim\PlatesExtension($container->get('router'), $request->getUri()));
 
     return $view;
+};
+
+/**
+ * PSR-7 Request object
+ *
+ * @param Container $container
+ *
+ * @return \Membership\Http\Request
+ */
+$container['request'] = function ($container) {
+    return \Membership\Http\Request::createFromEnvironment($container->get('environment'));
+};
+
+/**
+ * PSR-7 Response object
+ *
+ * @param Container $container
+ *
+ * @return \Membership\Http\Response
+ */
+$container['response'] = function ($container) {
+    $headers = new \Slim\Http\Headers(['Content-Type' => 'text/html; charset=UTF-8']);
+    $response = new \Membership\Http\Response(200, $headers);
+
+    $response->setView($container->get('view'));
+
+    return $response->withProtocolVersion($container->get('settings')['httpVersion']);
 };
 
 /**

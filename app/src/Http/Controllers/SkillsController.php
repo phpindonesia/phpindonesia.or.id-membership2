@@ -2,8 +2,8 @@
 
 namespace Membership\Http\Controllers;
 
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Membership\Http\Request;
+use Membership\Http\Response;
 use Membership\Http\Controllers;
 use Membership\Models;
 use Slim\Exception\NotFoundException;
@@ -28,7 +28,7 @@ class SkillsController extends Controllers
         $skills = new Models\Skills;
         $provinceId = $request->getParam('province_id');
 
-        return $this->view->render('skills-add', [
+        return $response->view('skills-add', [
             'skills_main' => array_pairs($skills->getParents(), 'skill_id', 'skill_name'),
             'skills'      => array_pairs($skills->getChilds($provinceId), 'skill_id', 'skill_name'),
         ]);

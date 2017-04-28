@@ -2,8 +2,8 @@
 
 namespace Membership\Http\Controllers;
 
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Membership\Http\Request;
+use Membership\Http\Response;
 use Membership\Http\Controllers;
 use Membership\Models;
 
@@ -29,7 +29,7 @@ class PortfoliosController extends Controllers
             'industries'    => array_pairs($career->getIndustries(), 'industry_id', 'industry_name')
         ], 'section::portfolio-form');
 
-        return $this->view->render('portfolio-edit', [
+        return $response->view('portfolio-edit', [
             'portfolio' => $portfolio->fetch(),
         ]);
     }
@@ -45,7 +45,7 @@ class PortfoliosController extends Controllers
             'industries'    => array_pairs($career->getIndustries(), 'industry_id', 'industry_name')
         ], 'section::portfolio-form');
 
-        return $this->view->render('portfolio-add');
+        return $response->view('portfolio-add');
     }
 
     public function add(Request $request, Response $response, array $args)

@@ -2,8 +2,8 @@
 
 namespace Membership\Http\Controllers;
 
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Membership\Http\Request;
+use Membership\Http\Response;
 use Slim\Exception\NotFoundException;
 use Membership\Http\Controllers;
 use Membership\Models;
@@ -22,7 +22,7 @@ class AccountController extends Controllers
             return $response->withJson($outputJson);
         }
 
-        return $this->view->render('account-index', [
+        return $response->view('account-index', [
             'member'            => $users->getProfile(),
             'member_portfolios' => $users->getPortfolios(),
             'member_skills'     => $users->getSkills(),
@@ -55,7 +55,7 @@ class AccountController extends Controllers
             return $response->withJson($outputJson);
         }
 
-        return $this->view->render('profile-index', [
+        return $response->view('profile-index', [
             'member'            => $user,
             'member_portfolios' => $users->getPortfolios($user['user_id']),
             'member_skills'     => $users->getSkills($user['user_id']),
@@ -73,7 +73,7 @@ class AccountController extends Controllers
         $religions = new Models\Religions;
         $provinceId = $users->getProfile()['province_id'];
 
-        return $this->view->render('account-edit', [
+        return $response->view('account-edit', [
             'member'         => $users->getProfile(),
             'member_socmeds' => $users->getSocmends(),
             'religions'      => array_pairs($religions->get()->fetchAll(), 'religion_id', 'religion_name'),
@@ -308,7 +308,7 @@ class AccountController extends Controllers
             ],
         ], 'layout::account');
 
-        return $this->view->render('account-reactivate');
+        return $response->view('account-reactivate');
     }
 
     public function reactivate(Request $request, Response $response, array $args)
@@ -357,7 +357,7 @@ class AccountController extends Controllers
             }
         }
 
-        return $this->view->render('account-javascript', [
+        return $response->view('account-javascript', [
             'open_portfolio' => $open_portfolio,
             'open_skill'     => $open_skill
         ])->withHeader('Content-Type', 'application/javascript');

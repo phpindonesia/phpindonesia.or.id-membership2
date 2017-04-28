@@ -2,8 +2,8 @@
 
 namespace Membership\Http\Controllers;
 
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Membership\Http\Request;
+use Membership\Http\Response;
 use Membership\Http\Controllers;
 use Membership\Models;
 
@@ -18,7 +18,7 @@ class HomeController extends Controllers
 
         $provinceId = $request->getQueryParam('province_id');
 
-        return $this->view->render('home-index', [
+        return $response->view('home-index', [
             'members'     => $users->getMembers($request),
             'totalMember' => $users->getTotalMember($request),
             'provinces'   => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
@@ -38,7 +38,7 @@ class HomeController extends Controllers
             ],
         ], 'layout::account');
 
-        return $this->view->render('home-login');
+        return $response->view('home-login');
     }
 
     public function login(Request $request, Response $response, array $args)
@@ -94,7 +94,7 @@ class HomeController extends Controllers
         $regionals = new Models\Regionals;
         $provinceId = $request->getParam('province_id');
 
-        return $this->view->render('home-register', [
+        return $response->view('home-register', [
             'provinces' => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
             'cities'    => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
             'jobs'      => array_pairs((new Models\Careers)->getJobs(), 'job_id'),

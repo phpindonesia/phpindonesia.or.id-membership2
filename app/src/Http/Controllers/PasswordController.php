@@ -2,8 +2,8 @@
 
 namespace Membership\Http\Controllers;
 
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Membership\Http\Request;
+use Membership\Http\Response;
 use Membership\Http\Controllers;
 use Membership\Models;
 
@@ -22,7 +22,7 @@ class PasswordController extends Controllers
             ],
         ], 'layout::account');
 
-        return $this->view->render('password-forgot');
+        return $response->view('password-forgot');
     }
 
     public function forgot(Request $request, Response $response, array $args)
@@ -99,7 +99,7 @@ class PasswordController extends Controllers
         $this->enableCaptcha();
         $this->setPageTitle('Membership', 'Update Password');
 
-        return $this->view->render('password-update');
+        return $response->view('password-update');
     }
 
     public function update(Request $request, Response $response, array $args)

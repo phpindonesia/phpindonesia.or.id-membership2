@@ -6,8 +6,6 @@ use Membership\ContainerAware;
 use Membership\Models\MemberPortfolios;
 use Membership\Models\MemberSkills;
 use Membership\Models\Users;
-use Slim\Http\Request;
-use Slim\Http\Response;
 
 class Middleware
 {
@@ -17,7 +15,7 @@ class Middleware
      * @param Request  $request
      * @param Response $response
      * @param callable $next
-     * @return mixed
+     * @return Response
      */
     public function sanitizeRequestBody(Request $request, Response $response, callable $next)
     {
@@ -44,10 +42,10 @@ class Middleware
     }
 
     /**
-     * @param \Slim\Http\Request  $request
-     * @param \Slim\Http\Response $response
-     * @param callable            $next
-     * @return \Slim\Http\Response
+     * @param Request  $request
+     * @param Response $response
+     * @param callable $next
+     * @return Response
      */
     public function authenticateRoute(Request $request, Response $response, callable $next)
     {
@@ -73,10 +71,10 @@ class Middleware
     }
 
     /**
-     * @param \Slim\Http\Request  $request
-     * @param \Slim\Http\Response $response
-     * @param callable            $next
-     * @return \Slim\Http\Response
+     * @param Request  $request
+     * @param Response $response
+     * @param callable $next
+     * @return Response
      */
     public function authorizePorfolioRoute(Request $request, Response $response, callable $next)
     {
@@ -94,10 +92,10 @@ class Middleware
     }
 
     /**
-     * @param \Slim\Http\Request  $request
-     * @param \Slim\Http\Response $response
-     * @param callable            $next
-     * @return \Slim\Http\Response
+     * @param Request  $request
+     * @param Response $response
+     * @param callable $next
+     * @return Response
      */
     public function authorizeSkillRoute(Request $request, Response $response, callable $next)
     {
@@ -115,9 +113,9 @@ class Middleware
     }
 
     /**
-     * @param \Slim\Http\Request  $request
-     * @param \Slim\Http\Response $response
-     * @return \Slim\Http\Response
+     * @param Request  $request
+     * @param Response $response
+     * @return Response
      */
     private function responseWithDenial(Request $request, Response $response)
     {
@@ -135,7 +133,7 @@ class Middleware
     }
 
     /**
-     * @param \Slim\Http\Request $request
+     * @param Request  $request
      * @return bool
      */
     private function isAcceptable(Request $request)
@@ -146,8 +144,8 @@ class Middleware
     }
 
     /**
-     * @param \Slim\Http\Request $request
-     * @param string             $model
+     * @param Request $request
+     * @param string  $model
      * @return bool
      */
     private function authorizeOwnership(Request $request, $model)
@@ -163,7 +161,7 @@ class Middleware
     }
 
     /**
-     * @param \Slim\Http\Request $request
+     * @param Request $request
      * @return bool|int
      */
     private function getOwnerId(Request $request)
