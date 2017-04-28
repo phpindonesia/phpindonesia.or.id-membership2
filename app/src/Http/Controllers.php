@@ -1,11 +1,13 @@
 <?php
-namespace Membership;
 
+namespace Membership\Http;
+
+use Membership\ContainerAware;
+use Membership\Models\Users;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Exception\NotFoundException;
-use Membership\Models\Users;
 
 abstract class Controllers
 {

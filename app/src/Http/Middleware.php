@@ -1,6 +1,8 @@
 <?php
-namespace Membership;
 
+namespace Membership\Http;
+
+use Membership\ContainerAware;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
