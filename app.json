@@ -1,0 +1,21 @@
+{
+    "name": "PHP.id Membership Reloaded",
+    "repository": "https://github.com/phpindonesia/phpindonesia.or.id-membership2",
+    "scripts": {
+        "postdeploy": "echo deployed; return 0;",
+        "pr-predestroy": "echo destroyng; return 0;"
+    },
+    "image": "heroku/php",
+    "buildpacks": [
+        { "url": "https://github.com/stomita/heroku-buildpack-phantomjs" }
+    ],
+    "env": {},
+
+    "environments": {
+        "test": {
+            "scripts": {
+                "test": "echo tested; return 0;"
+            }
+        }
+    }
+}
