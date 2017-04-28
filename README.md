@@ -42,11 +42,11 @@
    $ mysql -u[db-user] -p [db-name] < app/database/membership-schema.sql app/database/membership-values.sql
    ```
 
-5. Copy-Paste file `settings.php.disable` didalam folder `app` dan rename menjadi `settings.php` lalu buka dengan editor favorit anda dan sesuaikan isi konfigurasi didalamnya, misal Sublime Text: `subl`.
+5. Copy-Paste file `.env.example` didalam direktori projek dan rename menjadi `.env` lalu buka dengan editor favorit anda dan sesuaikan isi konfigurasi didalamnya, misal Sublime Text: `subl`.
 
    ```
-   $ cp app/settings.php.disable resources/settings.php
-   $ subl -a app/settings.php
+   $ cp .env.example .env
+   $ subl -a .env
    ```
 
 6. Jika anda menggunakan web server seperti Apache atau NginX, silahkan sesuaikan vhost -nya atau gunakan PHP built in server dan arahkan project root sebagai docroot.
