@@ -4,7 +4,7 @@
  * @license http://opensource.org/licenses/MIT
  */
 
-namespace Membership\Libraries\Database;
+namespace Membership\Database;
 
 class WhereClause extends \Slim\PDO\Clause\WhereClause
 {

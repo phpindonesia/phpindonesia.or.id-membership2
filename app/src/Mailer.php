@@ -1,6 +1,6 @@
 <?php
 
-namespace Membership\Libraries;
+namespace Membership;
 
 use League\Plates\Engine;
 

@@ -1,5 +1,6 @@
 <?php
-namespace Membership\Libraries;
+
+namespace Membership;
 
 use League\Plates\Engine;
 use League\Plates\Extension\ExtensionInterface;

@@ -1,10 +1,6 @@
 <?php
-/**
- * @license MIT
- * @license http://opensource.org/licenses/MIT
- */
 
-namespace Membership\Libraries;
+namespace Membership;
 
 use Slim\PDO\Database as SlimDatabase;
 

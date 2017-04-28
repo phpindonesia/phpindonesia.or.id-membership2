@@ -4,7 +4,7 @@
  * @license http://opensource.org/licenses/MIT
  */
 
-namespace Membership\Libraries\Database;
+namespace Membership\Database;
 
 class StatementCombination extends \Slim\PDO\Statement\StatementContainer
 {
