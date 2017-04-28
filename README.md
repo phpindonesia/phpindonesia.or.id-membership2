@@ -31,7 +31,7 @@
 
    **NOTE**: sesuaikan `[db-user]` anda, umumnya adalah `root`
 
-4. Import kedua file `.sql` yang ada dalam folder `resources/database` secara berurutan ke `[db-name]` yang telah anda buat:
+4. Import kedua file `.sql` yang ada dalam folder `app/database` secara berurutan ke `[db-name]` yang telah anda buat:
 
    1. `membership-schema.sql`
    2. `membership-values.sql`
@@ -39,20 +39,20 @@
    Dari terminal bisa dilakukan dengan cara
 
    ```bash
-   $ mysql -u[db-user] -p [db-name] < resources/database/membership-schema.sql resources/database/membership-values.sql
+   $ mysql -u[db-user] -p [db-name] < app/database/membership-schema.sql app/database/membership-values.sql
    ```
 
 5. Copy-Paste file `settings.php.disable` didalam folder `app` dan rename menjadi `settings.php` lalu buka dengan editor favorit anda dan sesuaikan isi konfigurasi didalamnya, misal Sublime Text: `subl`.
 
    ```
-   $ cp resources/settings.php.disable resources/settings.php
-   $ subl -a resources/settings.php
+   $ cp app/settings.php.disable resources/settings.php
+   $ subl -a app/settings.php
    ```
 
-6. Jika anda menggunakan web server seperti Apache atau NginX, silahkan sesuaikan vhost -nya atau gunakan PHP built in server dan arahkan ke folder `www` sebagai docroot.
+6. Jika anda menggunakan web server seperti Apache atau NginX, silahkan sesuaikan vhost -nya atau gunakan PHP built in server dan arahkan project root sebagai docroot.
 
    ```
-   $ php -S  localhost:8088 -t www/
+   $ php -S  localhost:8088
    ```
 
 7. Terakhir, buka url sesuai dengan konfigurasi lokal server anda. Misal [`http://localhost:8088/`](http://localhost:8088/).
@@ -62,10 +62,9 @@
 | Path | Keterangan |
 | --- | --- |
 | `app/` | Berisi source code utama aplikasi |
-| `resources/` | Berisi resources yang digunakan oleh aplikasi |
-| `resources/database/` | Berisi file database `*.sql` |
-| `resources/views/` | Direktori template |
-| `www/` | Direktori public (`document root`) |
+| `app/database/` | Berisi file database `*.sql` |
+| `app/views/` | Direktori template |
+| `assets/` | Asset directori |
 
 ### Cara berkontribusi:
 
