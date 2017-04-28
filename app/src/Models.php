@@ -2,14 +2,13 @@
 
 namespace Membership;
 
-use Slim\PDO\Database;
 use Slim\PDO\Statement\StatementContainer;
 use InvalidArgumentException;
 
 abstract class Models implements \Countable
 {
     /**
-     * @var \Slim\PDO\Database
+     * @var Database
      */
     protected $db;
 
@@ -44,7 +43,7 @@ abstract class Models implements \Countable
     private $session = null;
 
     /**
-     * @param \Slim\PDO\Database $db
+     * @param Database $db
      */
     public function __construct(Database $db, $session = null)
     {

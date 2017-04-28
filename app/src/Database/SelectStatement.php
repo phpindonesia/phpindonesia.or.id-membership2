@@ -1,8 +1,4 @@
 <?php
-/**
- * @license MIT
- * @license http://opensource.org/licenses/MIT
- */
 
 namespace Membership\Database;
 
@@ -31,12 +27,9 @@ class SelectStatement extends \Slim\PDO\Statement\SelectStatement
      */
     public function where($column, $operator = null, $value = null, $chainType = 'AND')
     {
-        if ($column instanceof StatementCombination)
-        {
+        if ($column instanceof StatementCombination) {
             $this->setValues($column->values);
-        }
-        else
-        {
+        } else {
             $this->values[] = $value;
         }
 
@@ -50,8 +43,6 @@ class SelectStatement extends \Slim\PDO\Statement\SelectStatement
      */
     public function combine()
     {
-        $stmt = new StatementCombination($this->dbh);
-
-        return $stmt;
+        return new StatementCombination($this->dbh);
     }
 }

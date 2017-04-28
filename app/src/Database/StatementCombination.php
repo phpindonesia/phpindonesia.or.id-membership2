@@ -1,13 +1,12 @@
 <?php
-/**
- * @license MIT
- * @license http://opensource.org/licenses/MIT
- */
 
 namespace Membership\Database;
 
 class StatementCombination extends \Slim\PDO\Statement\StatementContainer
 {
+    /**
+     * @inheritdoc
+     */
     public function __toString()
     {
         // Remove `WHERE` prefix in whereClause string

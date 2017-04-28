@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership;
 
 use Slim\Container;
