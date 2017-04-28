@@ -218,6 +218,33 @@ $container['response'] = function ($container) {
 /**
  * Setup upload handler container
  *
+ * @return \Http\Client\Curl\Client
+ */
+$container['httpClient'] = function () {
+    return new \Http\Client\Curl\Client(
+        new \Http\Message\MessageFactory\SlimMessageFactory(),
+        new \Http\Message\StreamFactory\SlimStreamFactory()
+    );
+};
+
+/**
+ * Setup upload handler container
+ *
+ * @param Container $container
+ * @return \SparkPost\SparkPost
+ */
+$container['sparkpost'] = function ($container) {
+    $settings = $container->get('settings')['sparkpost'];
+    $options = [
+        'key' => $settings['api_key']
+    ];
+
+    return new \SparkPost\SparkPost($container->get('httpClient'), $options);
+};
+
+/**
+ * Setup upload handler container
+ *
  * @param Container $container
  * @return callable
  */

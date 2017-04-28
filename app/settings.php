@@ -38,6 +38,10 @@ return [
         'api_secret' => env('CLOUDINARY_SECRET'),
     ],
 
+    'sparkpost' => [
+        'api_key' => env('SPARKPOST_API_KEY')
+    ],
+
     'view' => [
         'directory'     => APP_DIR.'views',
         'fileExtension' => 'php',

@@ -11,7 +11,9 @@
         "slim/flash": "~0.2.0",
         "slim/pdo": "~1.10",
         "vlucas/valitron": "~1.4",
-        "vlucas/phpdotenv": "~2.4"
+        "vlucas/phpdotenv": "~2.4",
+        "sparkpost/sparkpost": "^2.1",
+        "php-http/curl-client": "^1.7"
     },
     "autoload": {
         "psr-4": {
