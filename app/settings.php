@@ -6,7 +6,7 @@ return [
 
     'app' => [
         'name'  => 'PHP Indonesia - Membership App',
-        'email' => 'ferywardiyanto@gmail.com',
+        'email' => 'admin@phpindinesia.id',
         'url' => 'membership.phpindonesia.id',
         'home_url' => 'phpindonesia.id'
     ],
@@ -15,8 +15,8 @@ return [
         'driver'   => env('DB_DRIVER', 'mysql'),
         'host'     => env('DB_HOST', 'localhost'),
         'username' => env('DB_USER', 'root'),
-        'password' => env('DB_PASS', 'secret'),
-        'dbname'   => env('DB_NAME', 'contrib_phpid_membership'),
+        'password' => env('DB_PASS'),
+        'dbname'   => env('DB_NAME'),
     ],
 
     'mailer' => [
