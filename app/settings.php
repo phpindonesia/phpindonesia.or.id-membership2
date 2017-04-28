@@ -12,7 +12,7 @@ return [
     ],
 
     'db' => [
-        'driver'   => 'mysql',
+        'driver'   => env('DB_DRIVER', 'mysql'),
         'host'     => env('DB_HOST', 'localhost'),
         'username' => env('DB_USER', 'root'),
         'password' => env('DB_PASS', 'secret'),
