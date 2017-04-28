@@ -11,10 +11,8 @@ class PortfoliosController extends Controllers
 {
     public function index(Request $request, Response $response, array $args)
     {
-        /** @var \Membership\Models\Careers $career */
-        $career = $this->data(Models\Careers::class);
-        /** @var \PDOStatement $portfolio */
-        $portfolio = $this->data(Models\MemberPortfolios::class)->find([
+        $career = new Models\Careers;
+        $portfolio = (new Models\MemberPortfolios)->find([
             'member_portfolio_id' => (int) $args['id'],
             'user_id' => $this->session->get('user_id'),
             'deleted' => 'N',
@@ -40,8 +38,7 @@ class PortfoliosController extends Controllers
     {
         $this->setPageTitle('Membership', 'Add new portfolio');
 
-        /** @var \Membership\Models\Careers $career */
-        $career = $this->data(Models\Careers::class);
+        $career = new Models\Careers;
 
         $this->view->addData([
             'career_levels' => array_pairs($career->getLevels(), 'career_level_id'),
@@ -54,8 +51,7 @@ class PortfoliosController extends Controllers
     public function add(Request $request, Response $response, array $args)
     {
         $input = $request->getParsedBody();
-        /** @var \Membership\Models\MemberPortfolios $portfolio */
-        $portfolio = $this->data(Models\MemberPortfolios::class);
+        $portfolio = new Models\MemberPortfolios;
 
         $validator = $this->validator->rule('required', [
             'company_name',
@@ -95,8 +91,7 @@ class PortfoliosController extends Controllers
     public function edit(Request $request, Response $response, array $args)
     {
         $input = $request->getParsedBody();
-        /** @var \Membership\Models\MemberPortfolios $portfolio */
-        $portfolio = $this->data(Models\MemberPortfolios::class);
+        $portfolio = new Models\MemberPortfolios;
         $validator = $this->validator->rule('required', [
             'company_name',
             'industry_id',

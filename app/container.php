@@ -100,46 +100,19 @@ $container['session'] = function () {
  * @param Container $container
  * @return Membership\Database
  */
-$container['database'] = function ($container) {
-    $db = $container->get('settings')['db'];
-    if (!isset($db['dsn'])) {
-        $db['dsn'] = sprintf('%s:host=%s;dbname=%s', $db['driver'], $db['host'], $db['dbname']);
+$container['db'] = function ($container) {
+    $settings = $container->get('settings')->get('db');
+
+    if (!isset($settings['dsn'])) {
+        $settings['dsn'] = sprintf(
+            '%s:host=%s;dbname=%s',
+            $settings['driver'],
+            $settings['host'],
+            $settings['dbname']
+        );
     }
 
-    return new Membership\Database($db['dsn'], $db['username'], $db['password']);
-};
-
-/**
- * Setup database model container
- *
- * @param Container $container
- * @return callable
- */
-$container['data'] = function ($container) {
-    $database = $container->get('database');
-    $session = $container->get('session');
-
-    /**
-     * @param string $class
-     * @return Models|object
-     */
-    return function ($class) use ($database, $session) {
-        if (!class_exists($class)) {
-            throw new LogicException("Data model class {$class} not exists ");
-        }
-
-        $model = new ReflectionClass($class);
-
-        if (!$model->isSubclassOf(Models::class)) {
-            throw new InvalidArgumentException(sprintf(
-                'Data model must be instance of %s, %s given',
-                Models::class,
-                $model->getName()
-            ));
-        }
-
-        return $model->newInstance($database, $session);
-    };
+    return new Membership\Database($settings['dsn'], $settings['username'], $settings['password']);
 };
 
 /**

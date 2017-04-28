@@ -13,12 +13,10 @@ class HomeController extends Controllers
     {
         $this->setPageTitle('Membership', 'Keanggotaan');
 
-        /** @var Models\Regionals $regionals */
-        $regionals  = $this->data(Models\Regionals::class);
-        $provinceId = $request->getQueryParam('province_id');
+        $users = new Models\Users;
+        $regionals  = new Models\Regionals;
 
-        /** @var Models\Users $users */
-        $users = $this->data(Models\Users::class);
+        $provinceId = $request->getQueryParam('province_id');
 
         return $this->view->render('home-index', [
             'members'     => $users->getMembers($request),
@@ -45,8 +43,7 @@ class HomeController extends Controllers
 
     public function login(Request $request, Response $response, array $args)
     {
-        /** @var Models\Users $users */
-        $users = $this->data(Models\Users::class);
+        $users = new Models\Users;
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', ['login', 'password']);
 
@@ -94,20 +91,20 @@ class HomeController extends Controllers
         ], 'layout::account');
 
         /** @var Models\Regionals $regionals */
-        $regionals = $this->data(Models\Regionals::class);
+        $regionals = new Models\Regionals;
         $provinceId = $request->getParam('province_id');
 
         return $this->view->render('home-register', [
             'provinces' => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
             'cities'    => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
-            'jobs'      => array_pairs($this->data(Models\Careers::class)->getJobs(), 'job_id'),
+            'jobs'      => array_pairs((new Models\Careers)->getJobs(), 'job_id'),
         ]);
     }
 
     public function register(Request $request, Response $response, array $args)
     {
         /** @var Models\Users $users */
-        $users = $this->data(Models\Users::class);
+        $users = new Models\Users;
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', [
             'email', 'username', 'fullname', 'password', 'repassword',
@@ -189,6 +186,8 @@ class HomeController extends Controllers
                         ]);
 
                     $mail->send();
+
+                    $mailSend = true;
                 } catch (\phpmailerException $e) {
                     if ($this->settings['mode'] = 'development') {
                         throw $e;
@@ -200,7 +199,7 @@ class HomeController extends Controllers
 
                 if ($mailSend) {
                     // Update email sent status
-                    $this->data(Models\UsersActivations::class)->update(['email_sent' => 'Y'], [
+                    (new Models\UsersActivations)->update(['email_sent' => 'Y'], [
                         'user_id' => $userId,
                         'activation_key' => $activationKey
                     ]);

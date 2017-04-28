@@ -27,8 +27,7 @@ class PasswordController extends Controllers
 
     public function forgot(Request $request, Response $response, array $args)
     {
-        /** @var \Membership\Models\Users $users */
-        $users = $this->data(Models\Users::class);
+        $users = new Models\Users;
         $input = $request->getParsedBody();
         $validator = $this->validator->rule('required', 'email');
         $validator->rule('email', 'email');
@@ -54,7 +53,7 @@ class PasswordController extends Controllers
                 }
             )->fetch();
 
-            $doReset = $this->data(Models\UsersResetPwd::class)->create([
+            $doReset = (new Models\UsersResetPwd)->create([
                 'user_id' => $member['user_id'],
                 'reset_key' => $resetKey,
                 'expired_date' => $resetExpiredDate,
@@ -105,8 +104,7 @@ class PasswordController extends Controllers
 
     public function update(Request $request, Response $response, array $args)
     {
-        /** @var \Membership\Models\Users $users */
-        $users     = $this->data(Models\Users::class);
+        $users     = new Models\Users;
         $saltPass  = $this->settings->get('salt_pwd');
         $password  = $request->getParsedBodyParam('password');
         $validator = $this->validator->rule('required', [
@@ -153,10 +151,8 @@ class PasswordController extends Controllers
 
     public function reset(Request $request, Response $response, array $args)
     {
-        /** @var \Membership\Models\Users $users */
-        $users = $this->data(Models\Users::class);
-        /** @var \Membership\Models\UsersResetPwd $usersResetPass */
-        $usersResetPass = $this->data(Models\UsersResetPwd::class);
+        $users = new Models\Users;
+        $usersResetPass = (new Models\UsersResetPwd);
 
         if ($usersResetPass->verifyUserKey($args['uid'], $args['reset_key'])) {
             // Create temporary password
@@ -199,7 +195,7 @@ class PasswordController extends Controllers
                     throw $e;
                 }
 
-                $successMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
+                $successMsg = '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
             }
 
             $this->addFormAlert('success', $successMsg . '. Terima kasih ^_^.');

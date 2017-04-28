@@ -8,11 +8,6 @@ use InvalidArgumentException;
 abstract class Models implements \Countable
 {
     /**
-     * @var Database
-     */
-    protected $db;
-
-    /**
      * @var string
      */
     protected $table = '';
@@ -38,25 +33,34 @@ abstract class Models implements \Countable
     protected $authorize = false;
 
     /**
-     * @var \Slim\Interfaces\CollectionInterface|null
+     * @var Database
      */
-    private $session = null;
+    protected $db;
 
     /**
-     * @param Database $db
+     * @var \Slim\Interfaces\CollectionInterface|null
      */
-    public function __construct(Database $db, $session = null)
+    protected $session = null;
+
+    /**
+     * Create new model instance.
+     */
+    public function __construct()
     {
-        $this->db = $db;
-        $this->session = $session;
+        global $container;
+
+        if (! $this->db) {
+            $this->db = $container->get('db');
+            $this->session = $container->get('session');
+        }
     }
 
     /**
-     * Retrieve current user session
+     * Retrieve current user session.
      *
      * @param string $key
      * @param string $default
-     * @return int
+     * @return \Slim\Interfaces\CollectionInterface|mixed
      */
     protected function current($key = null, $default = null)
     {
@@ -142,7 +146,7 @@ abstract class Models implements \Countable
 
         $this->authorize('update', $pairs);
 
-        $query = $this->db->update(array_filter($pairs))->table($this->table);
+        $query = static::$conn->update(array_filter($pairs))->table($this->table);
 
         $this->normalizeTerms($query, $terms);
 

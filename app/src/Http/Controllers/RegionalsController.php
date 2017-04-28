@@ -15,7 +15,7 @@ class RegionalsController extends Controllers
         $this->assertXhrRequest($request, $response);
 
         /** @var array|false $cities */
-        if (!$cities = $this->data(Regionals::class)->getCities($args['province_id'])) {
+        if (!$cities = (new Regionals)->getCities($args['province_id'])) {
             throw new NotFoundException($request, $response);
         }
 
@@ -26,6 +26,6 @@ class RegionalsController extends Controllers
     {
         $this->assertXhrRequest($request, $response);
 
-        return $response->withJson($this->data(Regionals::class)->getProvinces());
+        return $response->withJson((new Regionals)->getProvinces());
     }
 }

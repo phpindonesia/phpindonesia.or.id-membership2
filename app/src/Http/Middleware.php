@@ -3,6 +3,9 @@
 namespace Membership\Http;
 
 use Membership\ContainerAware;
+use Membership\Models\MemberPortfolios;
+use Membership\Models\MemberSkills;
+use Membership\Models\Users;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -11,9 +14,9 @@ class Middleware
     use ContainerAware;
 
     /**
-     * @param \Slim\Http\Request  $request
-     * @param \Slim\Http\Response $response
-     * @param callable            $next
+     * @param Request  $request
+     * @param Response $response
+     * @param callable $next
      * @return mixed
      */
     public function sanitizeRequestBody(Request $request, Response $response, callable $next)
@@ -83,7 +86,7 @@ class Middleware
         }
 
         // Validate request with existing model
-        if (!$this->authorizeOwnership($request, Models\MemberPortfolios::class)) {
+        if (!$this->authorizeOwnership($request, MemberPortfolios::class)) {
             return $this->responseWithDenial($request, $response);
         }
 
@@ -104,7 +107,7 @@ class Middleware
         }
 
         // Validate request with existing model
-        if (!$this->authorizeOwnership($request, Models\MemberSkills::class)) {
+        if (!$this->authorizeOwnership($request, MemberSkills::class)) {
             return $this->responseWithDenial($request, $response);
         }
 
@@ -149,7 +152,7 @@ class Middleware
      */
     private function authorizeOwnership(Request $request, $model)
     {
-        $data = $this->data($model);
+        $data = new $model;
         $args = $request->getAttribute('routeInfo')[2];
 
         if (!$ownerId = $this->getOwnerId($request)) {
@@ -181,7 +184,7 @@ class Middleware
             }
         }
 
-        $users = $this->data(Models\Users::class);
+        $users = new Users;
         $user  = $users->get([$users->primary(), 'password', 'username'], ['username' => $username])->fetch();
         $salt  = $this->settings->get('salt_pwd');
 

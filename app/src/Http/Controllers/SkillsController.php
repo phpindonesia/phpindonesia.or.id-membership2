@@ -14,8 +14,7 @@ class SkillsController extends Controllers
     {
         $this->assertXhrRequest($request, $response);
 
-        /** @var array|false $skills */
-        if (!$skills = $this->data(Models\Skills::class)->getChilds($args['id'])) {
+        if (!$skills = (new Models\Skills)->getChilds($args['id'])) {
             throw new NotFoundException($request, $response);
         }
 
@@ -26,8 +25,7 @@ class SkillsController extends Controllers
     {
         $this->setPageTitle('Membership', 'Add new techno skill item');
 
-        /** @var \Membership\Models\Skills $skills */
-        $skills = $this->data(Models\Skills::class);
+        $skills = new Models\Skills;
         $provinceId = $request->getParam('province_id');
 
         return $this->view->render('skills-add', [
@@ -51,7 +49,7 @@ class SkillsController extends Controllers
         $validator = $this->validator->rule('required', $requiredFields);
 
         if ($validator->validate()) {
-            $this->data(Models\MemberSkills::class)->create([
+            (new Models\MemberSkills)->create([
                 'user_id'              => $this->session->get('user_id'),
                 'skill_id'             => $input['skill_id'] ?: $input['skill_parent_id'],
                 'skill_parent_id'      => $input['skill_parent_id'],
@@ -77,8 +75,7 @@ class SkillsController extends Controllers
 
     public function delete(Request $request, Response $response, array $args)
     {
-        /** @var Models\MemberSkills $skills */
-        $skills = $this->data(Models\MemberSkills::class);
+        $skills = new Models\MemberSkills();
 
         if ($skills->delete((int) $args['id'])) {
             $this->addFormAlert('success', 'Item Skill berhasil dihapus.');
