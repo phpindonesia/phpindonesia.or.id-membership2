@@ -4,7 +4,7 @@ namespace Membership\Http\Controllers;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Membership\Controllers;
+use Membership\Http\Controllers;
 use Membership\Models;
 use Slim\Exception\NotFoundException;
 

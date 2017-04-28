@@ -5,7 +5,7 @@ namespace Membership\Http\Controllers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Exception\NotFoundException;
-use Membership\Controllers;
+use Membership\Http\Controllers;
 use Membership\Models;
 
 class AccountController extends Controllers
