@@ -20,6 +20,7 @@ return [
     ],
 
     'mail' => [
+        'driver'   => '',
         'host'     => env('MAIL_HOST', 'mailtrap.io'),
         'port'     => env('MAIL_PORT', 2525),
         'username' => env('MAIL_USER'),

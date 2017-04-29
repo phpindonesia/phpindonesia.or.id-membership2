@@ -5,6 +5,8 @@ namespace Membership\Http\Controllers;
 use Membership\Http\Request;
 use Membership\Http\Response;
 use Membership\Http\Controllers;
+use Membership\Mail\MessageException;
+use Membership\Mail\MessageInterface;
 use Membership\Models;
 
 class HomeController extends Controllers
@@ -175,9 +177,9 @@ class HomeController extends Controllers
 
             if ($userId) {
                 try {
-                    $mail = $this->mail->to($emailAddress, $input['fullname'])
-                        ->withSubject('PHP Indonesia - Aktivasi Membership')
-                        ->withBody('email::activation', [
+                    $this->mail->to($emailAddress, $input['fullname'])
+                        ->subject('PHP Indonesia - Aktivasi Membership')
+                        ->send('email::activation', [
                             'email' => $emailAddress,
                             'fullname' => $input['fullname'],
                             'regDate' => date('d-m-Y H:i:s'),
@@ -185,10 +187,8 @@ class HomeController extends Controllers
                             'activationUrl' => $request->getUri()->getBaseUrl().$this->router->pathFor('membership-activation', ['uid' => $userId, 'activation_key' => $activationKey]),
                         ]);
 
-                    $mail->send();
-
                     $mailSend = true;
-                } catch (\phpmailerException $e) {
+                } catch (MessageException $e) {
                     if ($this->settings['mode'] = 'development') {
                         throw $e;
                     }

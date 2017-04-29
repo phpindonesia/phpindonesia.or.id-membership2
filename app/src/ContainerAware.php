@@ -10,7 +10,7 @@ use BadMethodCallException;
  * @property-read \Slim\Flash\Messages $flash
  * @property-read \Valitron\Validator $validator
  * @property-read \Projek\Slim\Plates $view
- * @property-read Mailer $mail
+ * @property-read Mail $mail
  * @property-read Database $db
  * @property-read callable $upload
  * @property-read callable $setting

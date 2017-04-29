@@ -300,19 +300,18 @@ $container['upload'] = function ($container) {
  * Setup smtp mailer container
  *
  * @param Container $container
- * @return Membership\Mailer
+ * @return Membership\Mail
  */
 $container['mail'] = function ($container) {
-    $view = $container->get('view')->getPlates();
-    $settings = $container->get('settings');
-    $appSetting = $settings->get('app');
+    $mail = new Membership\Mail(
+        $settings = $container->get('settings'),
+        $container->get('view')->getPlates()
+    );
 
-    $mailer = new Membership\Mailer($settings->get('mail'), $view);
+    //$mailer->debugMode($settings->get('mode'));
+    $mail->from($settings['app']['email'], $settings['app']['name']);
 
-    $mailer->debugMode($settings->get('mode'));
-    $mailer->setSender($appSetting['email'], $appSetting['name']);
-
-    return $mailer;
+    return $mail;
 };
 
 return $container;

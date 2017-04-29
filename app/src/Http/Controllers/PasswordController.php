@@ -5,6 +5,7 @@ namespace Membership\Http\Controllers;
 use Membership\Http\Request;
 use Membership\Http\Response;
 use Membership\Http\Controllers;
+use Membership\Mail\MessageException;
 use Membership\Models;
 
 class PasswordController extends Controllers
@@ -64,18 +65,16 @@ class PasswordController extends Controllers
                 $successMsg = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda';
 
                 try {
-                    $mail = $this->mail->to($emailAddress, $member['fullname'])
-                        ->withSubject('PHP Indonesia - Konfirmasi lupa password')
-                        ->withBody('email::forgot-password', [
+                    $this->mail->to($emailAddress, $member['fullname'])
+                        ->subject('PHP Indonesia - Konfirmasi lupa password')
+                        ->send('email::forgot-password', [
                             'email' => $emailAddress,
                             'fullname' => $member['fullname'],
                             'reqDate' => date('d-m-Y H:i:s'),
                             'resetExp' => $resetExpiredDate,
                             'resetUrl' => $request->getUri()->getBaseUrl().$this->router->pathFor('membership-reset-password', ['uid' => $member['user_id'], 'reset_key' => $resetKey]),
                         ]);
-
-                    $mail->send();
-                } catch (\phpmailerException $e) {
+                } catch (MessageException $e) {
                     if ($this->settings['mode'] = 'development') {
                         throw $e;
                     }
@@ -180,17 +179,15 @@ class PasswordController extends Controllers
             )->fetch();
 
             try {
-                $mail = $this->mail->to($member['email'], $member['fullname'])
-                    ->withSubject('PHP Indonesia - Password baru sementara')
-                    ->withBody('email::reset-password', [
+                $this->mail->to($member['email'], $member['fullname'])
+                    ->subject('PHP Indonesia - Password baru sementara')
+                    ->send('email::reset-password', [
                         'tmpPass' => $tmpPass,
                         'fullname' => $member['fullname'],
                     ]);
 
-                $mail->send();
-
                 $successMsg = 'Password baru sementara anda sudah dikirim ke email, Segera check email anda.';
-            } catch (\phpmailerException $e) {
+            } catch (MessageException $e) {
                 if ($this->settings['mode'] = 'development') {
                     throw $e;
                 }
