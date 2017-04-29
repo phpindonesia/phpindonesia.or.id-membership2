@@ -302,12 +302,12 @@ $container['upload'] = function ($container) {
  * @param Container $container
  * @return Membership\Mailer
  */
-$container['mailer'] = function ($container) {
+$container['mail'] = function ($container) {
     $view = $container->get('view')->getPlates();
     $settings = $container->get('settings');
     $appSetting = $settings->get('app');
 
-    $mailer = new Membership\Mailer($settings->get('mailer'), $view);
+    $mailer = new Membership\Mailer($settings->get('mail'), $view);
 
     $mailer->debugMode($settings->get('mode'));
     $mailer->setSender($appSetting['email'], $appSetting['name']);

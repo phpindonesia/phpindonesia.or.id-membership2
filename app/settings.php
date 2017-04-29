@@ -6,7 +6,7 @@ return [
 
     'app' => [
         'name'  => 'PHP Indonesia - Membership App',
-        'email' => 'admin@phpindinesia.id',
+        'email' => 'admin@membership.phpindinesia.id',
         'url' => 'membership.phpindonesia.id',
         'home_url' => 'phpindonesia.id'
     ],
@@ -19,7 +19,7 @@ return [
         'dbname'   => env('DB_NAME'),
     ],
 
-    'mailer' => [
+    'mail' => [
         'host'     => env('MAIL_HOST', 'mailtrap.io'),
         'port'     => env('MAIL_PORT', 2525),
         'username' => env('MAIL_USER'),

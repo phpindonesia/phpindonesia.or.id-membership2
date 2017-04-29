@@ -175,7 +175,7 @@ class HomeController extends Controllers
 
             if ($userId) {
                 try {
-                    $mail = $this->mailer->to($emailAddress, $input['fullname'])
+                    $mail = $this->mail->to($emailAddress, $input['fullname'])
                         ->withSubject('PHP Indonesia - Aktivasi Membership')
                         ->withBody('email::activation', [
                             'email' => $emailAddress,

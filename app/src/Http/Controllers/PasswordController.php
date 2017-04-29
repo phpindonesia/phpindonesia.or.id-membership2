@@ -64,7 +64,7 @@ class PasswordController extends Controllers
                 $successMsg = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda';
 
                 try {
-                    $mail = $this->mailer->to($emailAddress, $member['fullname'])
+                    $mail = $this->mail->to($emailAddress, $member['fullname'])
                         ->withSubject('PHP Indonesia - Konfirmasi lupa password')
                         ->withBody('email::forgot-password', [
                             'email' => $emailAddress,
@@ -180,7 +180,7 @@ class PasswordController extends Controllers
             )->fetch();
 
             try {
-                $mail = $this->mailer->to($member['email'], $member['fullname'])
+                $mail = $this->mail->to($member['email'], $member['fullname'])
                     ->withSubject('PHP Indonesia - Password baru sementara')
                     ->withBody('email::reset-password', [
                         'tmpPass' => $tmpPass,
