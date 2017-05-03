@@ -54,7 +54,10 @@ class Users extends Models
             ],
             'email' => 'email',
             'usable' => 'username',
-            'notExists' => ['email', 'username'],
+            'notExists' => [
+                ['email'],
+                ['username']
+            ],
             'dateFormat' => [
                 ['birth_date', 'Y-m-d']
             ],

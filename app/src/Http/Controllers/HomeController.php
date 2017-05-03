@@ -105,12 +105,10 @@ class HomeController extends Controllers
 
     public function register(Request $request, Response $response, array $args)
     {
-        $request->rules([
-            'required' => [
-                'email', 'username', 'fullname', 'password', 'repassword',
-                'job_id', 'gender_id', 'province_id', 'area',
-                // 'city_id', // disable it for now
-            ]
+        $request->rules('required', [
+            'email', 'username', 'fullname', 'password', 'repassword',
+            'job_id', 'gender_id', 'province_id', 'area',
+            // 'city_id', // disable it for now
         ]);
 
         try {
@@ -148,7 +146,9 @@ class HomeController extends Controllers
                     $this->addFormAlert('success', $registerSuccessMsg);
                 }
             });
-        } catch (\Throwable $e) {
+
+            return $response->withRedirect($this->router->pathFor('membership-index'));
+        } catch (\Exception $e) {
             if ($e instanceof ValidatorException) {
                 $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
             }
@@ -157,8 +157,6 @@ class HomeController extends Controllers
 
             return $response->withRedirect($this->router->pathFor('membership-register'));
         }
-
-        return $response->withRedirect($this->router->pathFor('membership-index'));
     }
 
     public function logout(Request $request, Response $response, array $args)

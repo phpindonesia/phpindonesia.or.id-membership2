@@ -118,13 +118,24 @@ $container['db'] = function ($container) {
 /**
  * Setup validator container
  *
+ * @return callable
+ */
+$container[Validator::class] = function () {
+    return function (\Slim\Http\Request $request) {
+        return new Validator($request->getParams(), [], 'id');
+    };
+};
+
+/**
+ * Setup validator container
+ *
  * @param Container $container
  * @return \Valitron\Validator
  */
 $container['validator'] = function ($container) {
-    $request = $container->get('request');
+    $instance = $container->get(Validator::class);
+    $validator = $instance($container->get('request')->getParams());
     $viewData = $container->get('view')->getPlates()->getData('section::captcha');
-    $validator = new Validator($request->getParams(), [], 'id');
 
     if ($viewData['gcaptchaEnable'] == true) {
         $remoteAddr = $container->get('environment')->get('REMOTE_ADDR');
@@ -151,6 +162,29 @@ $container['validator'] = function ($container) {
  */
 $container['flash'] = function () {
     return new Slim\Flash\Messages;
+};
+
+/**
+ * This service MUST return a SHARED instance
+ * of \Slim\Interfaces\InvocationStrategyInterface.
+ *
+ * @return \Slim\Interfaces\InvocationStrategyInterface
+ */
+$container['foundHandler'] = function () {
+    return new \Membership\Http\ActionResolver();
+};
+
+/**
+ * PSR-7 Request object
+ *
+ * @param Container $container
+ *
+ * @return \Membership\Http\Request
+ */
+$container['request'] = function ($container) {
+    $request = \Membership\Http\Request::createFromEnvironment($container->get('environment'));
+
+    return $request->setValidator($container->get(Validator::class));
 };
 
 /**
@@ -186,33 +220,6 @@ $container['view'] = function ($container) {
     $view->loadExtension(new Projek\Slim\PlatesExtension($container->get('router'), $request->getUri()));
 
     return $view;
-};
-
-/**
- * This service MUST return a SHARED instance
- * of \Slim\Interfaces\InvocationStrategyInterface.
- *
- * @return \Slim\Interfaces\InvocationStrategyInterface
- */
-$container['foundHandler'] = function () {
-    return new \Membership\Http\ActionResolver();
-};
-
-/**
- * PSR-7 Request object
- *
- * @param Container $container
- *
- * @return \Membership\Http\Request
- */
-$container['request'] = function ($container) {
-    $request = \Membership\Http\Request::createFromEnvironment($container->get('environment'));
-
-//    if ($container->has('validator')) {
-//        $request->setValidator($container->get('validator'));
-//    }
-
-    return $request;
 };
 
 /**

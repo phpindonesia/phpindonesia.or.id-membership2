@@ -14,20 +14,25 @@ class Request extends \Slim\Http\Request
     protected $validator = null;
 
     /**
-     * @var array
+     * @param callable $validator
+     * @return static
      */
-    protected $rules = [];
-
-    public function setValidator(Validator $validator)
+    public function setValidator($validator)
     {
-        $this->validator = $validator;
+        $this->validator = $validator($this);
 
         return $this;
     }
 
-    public function rules(array $rules = [])
+    public function rules($rules, $fields = [])
     {
-        $this->rules = $rules;
+        if (is_string($rules) && $fields) {
+            $this->validator->rule($rules, $fields);
+        } else {
+            $this->validator->rules($rules);
+        }
+
+        return $this;
     }
 
     /**
@@ -48,7 +53,7 @@ class Request extends \Slim\Http\Request
             ? $model->rules($this->validator)
             : [];
 
-        $this->validator->rules(array_merge($rules, $this->rules));
+        $this->validator->rules($rules);
 
         if (! $this->validator->validate()) {
             throw new ValidatorException('Invalid request', $this->validator->errors());

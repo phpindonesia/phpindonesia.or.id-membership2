@@ -2,6 +2,7 @@
 
 namespace Membership\Http\Controllers;
 
+use Membership\Collection;
 use Membership\Http\Request;
 use Membership\Http\Response;
 use Membership\Http\ValidatorException;
@@ -86,94 +87,89 @@ class AccountController extends Controllers
 
     public function edit(Request $request, Response $response, array $args)
     {
-        $request->rules([
-            'required' => ['email', 'username', 'fullname', 'province_id', 'city_id', 'area', 'job_id']
-        ]);
+        $request->rules('required', ['email', 'username', 'fullname', 'province_id', 'city_id', 'area', 'job_id']);
 
         try {
-            $users = new Models\Users;
+            $request->validate(new Models\Users, function (Collection $input, Models\Users $users) use ($request) {
+                $this->db->transaction(function () use ($request, $users, $input) {
+                    $userId = $this->session->get('user_id');
 
-            $request->validate($users);
+                    $users->update([
+                        'email'       => $input['email'],
+                        'username'    => $input['username'],
+                        'province_id' => $input['province_id'],
+                        'city_id'     => $input['city_id'],
+                        'area'        => $input['area'],
+                    ], ['user_id' => $userId]);
 
-            $this->db->transaction(function () use ($request, $users) {
-                $input = $request->getParsedBody();
-                $userId = $this->session->get('user_id');
+                    $memberProfile = [
+                        'fullname' => $input['fullname'],
+                        'contact_phone' => $input['contact_phone'],
+                        'birth_place' => $input['birth_place'],
+                        'birth_date' => $input['birth_date'],
+                        'identity_number' => $input['identity_number'],
+                        'identity_type' => $input['identity_type'],
+                        'religion_id' => $input['religion_id'],
+                        'province_id' => $input['province_id'],
+                        'city_id' => $input['city_id'],
+                        'area' => $input['area'],
+                        'job_id' => $input['job_id']
+                    ];
 
-                $users->update([
-                    'email'       => $input['email'],
-                    'username'    => $input['username'],
-                    'province_id' => $input['province_id'],
-                    'city_id'     => $input['city_id'],
-                    'area'        => $input['area'],
-                ], ['user_id' => $userId]);
+                    if ($photo = $request->getUploadedFiles()['photo']) {
+                        $memberProfile = $this->upload($photo, $memberProfile);
+                    }
 
-                $memberProfile = [
-                    'fullname' => $input['fullname'],
-                    'contact_phone' => $input['contact_phone'],
-                    'birth_place' => $input['birth_place'],
-                    'birth_date' => $input['birth_date'],
-                    'identity_number' => $input['identity_number'],
-                    'identity_type' => $input['identity_type'],
-                    'religion_id' => $input['religion_id'],
-                    'province_id' => $input['province_id'],
-                    'city_id' => $input['city_id'],
-                    'area' => $input['area'],
-                    'job_id' => $input['job_id']
-                ];
+                    // Update profile database record
+                    (new Models\MemberProfile)->update($memberProfile, ['user_id' => $userId]);
 
-                if ($photo = $request->getUploadedFiles()['photo']) {
-                    $memberProfile = $this->upload($photo, $memberProfile);
-                }
+                    $socmeds = new Models\MemberSocmeds;
 
-                // Update profile database record
-                (new Models\MemberProfile)->update($memberProfile, ['user_id' => $userId]);
+                    // Handle social medias
+                    if ($input['socmeds']) {
+                        $terms = ['user_id' => $userId, 'deleted' => 'N'];
 
-                $socmeds = new Models\MemberSocmeds;
+                        foreach ($input['socmeds'] as $item) {
+                            $terms['socmed_type'] = $item['socmed_type'];
 
-                // Handle social medias
-                if ($input['socmeds']) {
-                    $terms = ['user_id' => $userId, 'deleted' => 'N'];
+                            if ($socmedRow = $socmeds->get(['account_name', 'account_url'], $terms)->fetch()) {
+                                if ($socmedRow['account_name'] != $item['account_name']) {
+                                    $socmedRow['account_name'] = $item['account_name'];
+                                }
 
-                    foreach ($input['socmeds'] as $item) {
-                        $terms['socmed_type'] = $item['socmed_type'];
+                                if ($socmedRow['account_url'] != $item['account_url']) {
+                                    $socmedRow['account_url'] = $item['account_url'];
+                                }
 
-                        if ($socmedRow = $socmeds->get(['account_name', 'account_url'], $terms)->fetch()) {
-                            if ($socmedRow['account_name'] != $item['account_name']) {
-                                $socmedRow['account_name'] = $item['account_name'];
-                            }
-
-                            if ($socmedRow['account_url'] != $item['account_url']) {
-                                $socmedRow['account_url'] = $item['account_url'];
-                            }
-
-                            $socmeds->update($socmedRow, $terms);
-                        } else {
-                            $terms['deleted'] = 'Y';
-
-                            $socmedAdd = [
-                                'user_id'      => $userId,
-                                'socmed_type'  => $item['socmed_type'],
-                                'account_name' => $item['account_name'],
-                                'account_url'  => $item['account_url'],
-                            ];
-
-                            $socmedId = $socmeds->get(['member_socmed_id'], $terms)->fetch();
-
-                            if ($socmedId) {
-                                $socmedAdd['deleted'] = 'N';
-                                $socmeds->update($socmedAdd, $terms);
+                                $socmeds->update($socmedRow, $terms);
                             } else {
-                                $socmeds->create($socmedAdd);
+                                $terms['deleted'] = 'Y';
+
+                                $socmedAdd = [
+                                    'user_id'      => $userId,
+                                    'socmed_type'  => $item['socmed_type'],
+                                    'account_name' => $item['account_name'],
+                                    'account_url'  => $item['account_url'],
+                                ];
+
+                                $socmedId = $socmeds->get(['member_socmed_id'], $terms)->fetch();
+
+                                if ($socmedId) {
+                                    $socmedAdd['deleted'] = 'N';
+                                    $socmeds->update($socmedAdd, $terms);
+                                } else {
+                                    $socmeds->create($socmedAdd);
+                                }
                             }
                         }
                     }
-                }
 
-                if (isset($input['socmeds_delete'])) {
-                    foreach ($input['socmeds_delete'] as $item) {
-                        $socmeds->delete(['user_id' => $userId, 'socmed_type' => $item]);
+                    if (isset($input['socmeds_delete'])) {
+                        foreach ($input['socmeds_delete'] as $item) {
+                            $socmeds->delete(['user_id' => $userId, 'socmed_type' => $item]);
+                        }
                     }
-                }
+                });
             });
         } catch (\Throwable $e) {
             if ($e instanceof ValidatorException) {
