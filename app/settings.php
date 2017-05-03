@@ -1,4 +1,7 @@
 <?php
+
+$mail_url = parse_url(env('MAIL_URL', 'smtp://username:@mailrap.io:2525'));
+
 return [
     'mode' => 'development',
 
@@ -20,11 +23,11 @@ return [
     ],
 
     'mail' => [
-        'driver'   => '',
-        'host'     => env('MAIL_HOST', 'mailtrap.io'),
-        'port'     => env('MAIL_PORT', 2525),
-        'username' => env('MAIL_USER'),
-        'password' => env('MAIL_PASS'),
+        'driver'   => env('MAIL_DRIVER', $mail_url['scheme']),
+        'host'     => env('MAIL_HOST', $mail_url['host']),
+        'port'     => env('MAIL_PORT', $mail_url['port']),
+        'username' => env('MAIL_USER', $mail_url['user']),
+        'password' => env('MAIL_PASS', $mail_url['pass']),
     ],
 
     'gcaptcha' => [

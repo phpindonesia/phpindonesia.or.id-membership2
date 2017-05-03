@@ -2,10 +2,12 @@
 
 namespace Membership\Mail;
 
+use SparkPost\SparkPost;
+
 class SparkpostMessage implements MessageInterface
 {
     /**
-     * @var \SparkPost\SparkPost
+     * @var SparkPost
      */
     protected $mailer;
 
@@ -14,18 +16,9 @@ class SparkpostMessage implements MessageInterface
      */
     protected $payload;
 
-    public function __construct(array $settings = [])
+    public function __construct(SparkPost $mailer)
     {
-        $settings = array_merge($this->settings, $settings);
-
-        $client = new \Http\Client\Curl\Client(
-            new \Http\Message\MessageFactory\SlimMessageFactory(),
-            new \Http\Message\StreamFactory\SlimStreamFactory()
-        );
-
-        $this->mailer = new \SparkPost\SparkPost($client, [
-            'key' => $settings['sparkpost']['key']
-        ]);
+        $this->mailer = $mailer;
     }
 
     public function from($address, $name)

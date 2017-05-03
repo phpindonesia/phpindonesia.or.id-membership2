@@ -28,22 +28,19 @@ class Mail
     /**
      * Create new Mail instance.
      *
-     * @param CollectionInterface $settings
+     * @param Mail\MessageInterface $adapter
      * @param Plates $view
+     * @param array $appSettings
      * @throws \Exception
      */
-    public function __construct(CollectionInterface $settings, Plates $view)
+    public function __construct(Mail\MessageInterface $adapter, Plates $view, $appSettings = [])
     {
-        $driver = $settings['mail']['driver'];
-
-        if (! array_key_exists($driver, $this->adapters)) {
-            throw new \Exception('Email driver not found');
-        }
-
-        $adapter = new \ReflectionClass(new $this->adapters[$driver]);
-
-        $this->adapter = $adapter->newInstance($settings);
+        $this->adapter = $adapter;
         $this->view = $view->getPlates();
+
+        if ($appSettings) {
+            $this->from($appSettings['email'], $appSettings['name']);
+        }
     }
 
     /**

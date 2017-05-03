@@ -231,21 +231,6 @@ $container['httpClient'] = function () {
  * Setup upload handler container
  *
  * @param Container $container
- * @return \SparkPost\SparkPost
- */
-$container['sparkpost'] = function ($container) {
-    $settings = $container->get('settings')['sparkpost'];
-    $options = [
-        'key' => $settings['api_key']
-    ];
-
-    return new \SparkPost\SparkPost($container->get('httpClient'), $options);
-};
-
-/**
- * Setup upload handler container
- *
- * @param Container $container
  * @return callable
  */
 $container['upload'] = function ($container) {
@@ -297,21 +282,62 @@ $container['upload'] = function ($container) {
 };
 
 /**
- * Setup smtp mailer container
+ * Setup SparkPost mailer
+ *
+ * @param Container $container
+ * @return \Membership\Mail\SparkpostMessage
+ */
+$container[\Membership\Mail\SparkpostMessage::class] = function ($container) {
+    $mailer = new \SparkPost\SparkPost($container->get('httpClient'), [
+        'key' => $container->get('settings')['sparkpost']['api_key']
+    ]);
+
+    return new \Membership\Mail\SparkpostMessage($mailer);
+};
+
+/**
+ * Setup SMTP mailer
+ *
+ * @param Container $container
+ * @return \Membership\Mail\SmtpMessage
+ */
+$container[\Membership\Mail\SmtpMessage::class] = function ($container) {
+    $mailer = new \PHPMailer(true);
+    $settings = $container->get('settings')->get('mail');
+
+    $mailer->Host = $settings['host'];
+    $mailer->Port = $settings['port'];
+    $mailer->Username = $settings['username'];
+    $mailer->Password = $settings['password'];
+
+    $mailer->isSMTP();
+
+    $mailer->SMTPAuth = $settings['auth'];
+    $mailer->SMTPSecure = $settings['secure'];
+
+    return new \Membership\Mail\SmtpMessage($mailer);
+};
+
+/**
+ * Setup mailer container
  *
  * @param Container $container
  * @return Membership\Mail
  */
 $container['mail'] = function ($container) {
-    $mail = new Membership\Mail(
-        $settings = $container->get('settings'),
-        $container->get('view')->getPlates()
-    );
+    $settings = $container->get('settings');
+    $drivers = [
+        'smtp' => \Membership\Mail\SmtpMessage::class,
+        'sparkpost' => \Membership\Mail\SparkpostMessage::class,
+    ];
 
-    //$mailer->debugMode($settings->get('mode'));
-    $mail->from($settings['app']['email'], $settings['app']['name']);
+    if (! array_key_exists($settings['mail']['driver'], $drivers)) {
+        throw new InvalidArgumentException('No mail driver found');
+    }
 
-    return $mail;
+    $driver = $settings['mail']['driver'];
+
+    return new Membership\Mail($container->get($drivers[$driver]), $container->get('view'), $settings['app']);
 };
 
 return $container;

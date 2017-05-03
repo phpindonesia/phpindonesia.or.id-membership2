@@ -10,20 +10,6 @@ class SmtpMessage implements MessageInterface
     protected $mailer;
 
     /**
-     * @var array
-     */
-    protected $settings = [
-        'host' => '',
-        'port' => '',
-        'username' => '',
-        'password' => '',
-        'auth' => true,
-        'secure' => 'tsl',
-        'senderEmail' => '',
-        'senderName'  => '',
-    ];
-
-    /**
      * Debug mode
      *
      * @var array
@@ -35,21 +21,9 @@ class SmtpMessage implements MessageInterface
         'testing' => 0,
     ];
 
-    public function __construct(array $settings = [])
+    public function __construct(\PHPMailer $mailer)
     {
-        $settings = array_merge($this->settings, $settings);
-
-        $this->mailer = new \PHPMailer(true);
-
-        $this->mailer->Host = $settings['host'];
-        $this->mailer->Port = $settings['port'];
-        $this->mailer->Username = $settings['username'];
-        $this->mailer->Password = $settings['password'];
-
-        $this->mailer->isSMTP();
-
-        $this->mailer->SMTPAuth = $settings['auth'];
-        $this->mailer->SMTPSecure = $settings['secure'];
+        $this->mailer = $mailer;
     }
 
     public function debugMode($mode)
