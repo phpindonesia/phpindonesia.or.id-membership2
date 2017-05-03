@@ -20,6 +20,10 @@ class SparkpostMessage implements MessageInterface
      */
     protected $payload;
 
+    protected $content = [];
+
+    protected $recipients = [];
+
     protected $key;
 
     public function __construct(HttpClient $mailer, $key)
@@ -30,38 +34,30 @@ class SparkpostMessage implements MessageInterface
 
     public function from($address, $name)
     {
-        $this->payload['content']['from'] = [
-            'name' => $name,
-            'email' => $address,
-        ];
+        $this->content['from'] = ['name' => $name, 'email' => $address];
 
         return $this;
     }
 
     public function to($address, $name = '')
     {
-        $this->payload['recipients']['address'] = [
-            'name' => $name,
-            'email' => $address,
-        ];;
+        $this->recipients[] = [
+            'address' => ['name' => $name, 'email' => $address]
+        ];
 
         return $this;
     }
 
     public function subject($subject)
     {
-        $this->payload['subject'] = $subject;
+        $this->content['subject'] = $subject;
 
         return $this;
     }
 
     public function content($body)
     {
-        if (is_array($body)) {
-            $this->payload['subject'] = $body;
-        } else {
-            $this->payload['subject'] = ['html' => $body];
-        }
+        $this->content['html'] = $body;
 
         return $this;
     }
@@ -79,9 +75,19 @@ class SparkpostMessage implements MessageInterface
                 'Content-Type' => 'application/json'
             ];
 
+            $body = [
+                'recipients' => $this->recipients,
+                'content' => $this->content,
+                'options' => [
+                    'transactional' => true,
+                    'open_tracking' => true,
+                    'click_tracking' => true,
+                ],
+            ];
+
             /** @var \Psr\Http\Message\RequestInterface $request */
             $request = (new SlimMessageFactory)
-                ->createRequest('POST', self::ENDPOINT, $headers, json_encode($this->payload));
+                ->createRequest('POST', self::ENDPOINT, $headers, json_encode($body, true));
 
             /** @var \Psr\Http\Message\ResponseInterface $response */
             $response = $this->client->sendRequest($request);

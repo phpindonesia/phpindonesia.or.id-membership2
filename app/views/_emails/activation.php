@@ -4,7 +4,7 @@
 
 <p>Demi keamanan dan validitas data, maka kami mewajibkan setiap registrant untuk melakukan aktivasi account melalui email.</p>
 
-<p>Maka dari itu, anda dapat mengaktifkan account anda melalui akses url aktivasi berikut: <a href="<?php echo $this->e($activationUrl) ?>"><?php echo $this->e($activationUrl) ?></a>.<br>
+<p>Maka dari itu, anda dapat mengaktifkan account anda melalui akses url aktivasi berikut: <a href="<?php echo $this->baseUrl($activationUrl) ?>"><?php echo $this->baseUrl($activationUrl) ?></a>.<br>
 Url activation ini akan expired pada: <?php echo $this->e($activationExp) ?></p>
 
 <p>Jika anda tidak pernah merasa melakukan submission, maka anda dapat mengabaikan email ini.<br>

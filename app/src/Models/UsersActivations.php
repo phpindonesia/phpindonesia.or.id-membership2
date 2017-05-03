@@ -24,6 +24,11 @@ class UsersActivations extends Models
     /**
      * {@inheritdoc}
      */
+    protected $timestamps = false;
+
+    /**
+     * {@inheritdoc}
+     */
     public function delete($terms = null)
     {
         return $this->update([

@@ -35,12 +35,12 @@ class Mail
      */
     public function __construct(Mail\MessageInterface $adapter, Plates $view, $appSettings = [])
     {
+        if ($appSettings) {
+            $adapter->from($appSettings['email'], $appSettings['name']);
+        }
+
         $this->adapter = $adapter;
         $this->view = $view->getPlates();
-
-        if ($appSettings) {
-            $this->from($appSettings['email'], $appSettings['name']);
-        }
     }
 
     /**

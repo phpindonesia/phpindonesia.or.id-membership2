@@ -65,6 +65,8 @@ class PasswordController extends Controllers
                 $successMsg = 'Email konfirmasi lupa password sudah berhasil dikirim. Segera check email anda';
 
                 try {
+                    $data = ['uid' => $member['user_id'], 'reset_key' => $resetKey];
+
                     $this->mail->to($emailAddress, $member['fullname'])
                         ->subject('PHP Indonesia - Konfirmasi lupa password')
                         ->send('email::forgot-password', [
@@ -72,7 +74,7 @@ class PasswordController extends Controllers
                             'fullname' => $member['fullname'],
                             'reqDate' => date('d-m-Y H:i:s'),
                             'resetExp' => $resetExpiredDate,
-                            'resetUrl' => $request->getUri()->getBaseUrl().$this->router->pathFor('membership-reset-password', ['uid' => $member['user_id'], 'reset_key' => $resetKey]),
+                            'resetUrl' => $this->router->pathFor('membership-reset-password', $data),
                         ]);
                 } catch (MessageException $e) {
                     if ($this->settings['mode'] = 'development') {

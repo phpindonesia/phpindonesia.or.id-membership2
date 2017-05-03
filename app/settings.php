@@ -9,7 +9,7 @@ return [
 
     'app' => [
         'name'  => 'PHP Indonesia - Membership App',
-        'email' => 'admin@membership.phpindinesia.id',
+        'email' => 'admin@membership.phpindonesia.id',
         'url' => 'membership.phpindonesia.id',
         'home_url' => 'phpindonesia.id'
     ],
