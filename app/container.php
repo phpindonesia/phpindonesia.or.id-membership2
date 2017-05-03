@@ -189,6 +189,16 @@ $container['view'] = function ($container) {
 };
 
 /**
+ * This service MUST return a SHARED instance
+ * of \Slim\Interfaces\InvocationStrategyInterface.
+ *
+ * @return \Slim\Interfaces\InvocationStrategyInterface
+ */
+$container['foundHandler'] = function () {
+    return new \Membership\Http\ActionResolver();
+};
+
+/**
  * PSR-7 Request object
  *
  * @param Container $container
@@ -196,7 +206,13 @@ $container['view'] = function ($container) {
  * @return \Membership\Http\Request
  */
 $container['request'] = function ($container) {
-    return \Membership\Http\Request::createFromEnvironment($container->get('environment'));
+    $request = \Membership\Http\Request::createFromEnvironment($container->get('environment'));
+
+//    if ($container->has('validator')) {
+//        $request->setValidator($container->get('validator'));
+//    }
+
+    return $request;
 };
 
 /**
@@ -210,9 +226,8 @@ $container['response'] = function ($container) {
     $headers = new \Slim\Http\Headers(['Content-Type' => 'text/html; charset=UTF-8']);
     $response = new \Membership\Http\Response(200, $headers);
 
-    $response->setView($container->get('view'));
-
-    return $response->withProtocolVersion($container->get('settings')['httpVersion']);
+    return $response->setView($container->get('view'))
+        ->withProtocolVersion($container->get('settings')['httpVersion']);
 };
 
 /**

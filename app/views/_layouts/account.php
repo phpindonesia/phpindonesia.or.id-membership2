@@ -19,6 +19,7 @@
 
             <div class="page_info aligncenter">
                 <h4 class="title"><?php echo $helpTitle ?></h4>
+
                 <p><?php echo implode('</p><p>', $helpContent) ?></p>
             </div>
         </div>

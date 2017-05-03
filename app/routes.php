@@ -35,7 +35,7 @@ $app->post('/forgot-password', Controllers\PasswordController::class.':forgot');
 $app->get('/reset-password/{uid:[0-9]+}/{reset_key}', Controllers\PasswordController::class.':reset')->setName('membership-reset-password');
 
 // Account activation end-point
-$app->get('/activate/{uid:[0-9]+}/{activation_key}', Controllers\AccountController::class.':activate')->setName('membership-activation');
+$app->get('/activate/{user_id:[0-9]+}/{activation_key}', Controllers\AccountController::class.':activate')->setName('membership-activation');
 
 // Account reactivation end-point
 // TODO: need tobe done

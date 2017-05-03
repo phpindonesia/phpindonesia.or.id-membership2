@@ -2,9 +2,11 @@
 
 namespace Membership\Http\Controllers;
 
+use Membership\Collection;
 use Membership\Http\Request;
 use Membership\Http\Response;
 use Membership\Http\Controllers;
+use Membership\Http\ValidatorException;
 use Membership\Mail\MessageException;
 use Membership\Mail\MessageInterface;
 use Membership\Models;
@@ -45,35 +47,34 @@ class HomeController extends Controllers
 
     public function login(Request $request, Response $response, array $args)
     {
-        $users = new Models\Users;
-        $input = $request->getParsedBody();
-        $validator = $this->validator->rule('required', ['login', 'password']);
-
-        if (filter_var($input['login'], FILTER_VALIDATE_EMAIL)) {
-            $validator->rule('email', [$input['login']]);
-        }
-
-        if (!$validator->validate()) {
-            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
-
-            return $response->withRedirect($this->router->pathFor('membership-login'));
-        }
+        $request->rules([
+            'required' => ['login', 'password']
+        ]);
 
         try {
-            $user = $users->authenticate($input['login'], $this->salt($input['password']));
-        } catch (\InvalidArgumentException $e) {
+            $request->validate(new Models\Users, function (Collection $input, Models\Users $users) {
+                $user = $users->authenticate(
+                    $input->get('login'),
+                    $this->salt($input->get('password'))
+                );
+
+                if ($user) {
+                    $_SESSION['MembershipAuth'] = [
+                        'user_id' => $user['user_id']
+                    ];
+                    $this->session->replace($_SESSION['MembershipAuth']);
+
+                    $users->updateLogin($user['user_id']);
+                }
+            });
+        } catch (\Throwable $e) {
+            if ($e instanceof ValidatorException) {
+                $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
+            }
+
             $this->addFormAlert('error', $e->getMessage());
 
             return $response->withRedirect($this->router->pathFor('membership-login'));
-        }
-
-        if ($user) {
-            $_SESSION['MembershipAuth'] = [
-                'user_id' => $user['user_id']
-            ];
-            $this->session->replace($_SESSION['MembershipAuth']);
-
-            $users->updateLogin($user['user_id']);
         }
 
         return $response->withRedirect($this->router->pathFor('membership-account'));
@@ -92,7 +93,6 @@ class HomeController extends Controllers
             ],
         ], 'layout::account');
 
-        /** @var Models\Regionals $regionals */
         $regionals = new Models\Regionals;
         $provinceId = $request->getParam('province_id');
 
@@ -105,110 +105,55 @@ class HomeController extends Controllers
 
     public function register(Request $request, Response $response, array $args)
     {
-        /** @var Models\Users $users */
-        $users = new Models\Users;
-        $input = $request->getParsedBody();
-        $validator = $this->validator->rule('required', [
-            'email', 'username', 'fullname', 'password', 'repassword',
-            'job_id', 'gender_id', 'province_id', 'area',
-            // 'city_id', // disable it for now
+        $request->rules([
+            'required' => [
+                'email', 'username', 'fullname', 'password', 'repassword',
+                'job_id', 'gender_id', 'province_id', 'area',
+                // 'city_id', // disable it for now
+            ]
         ]);
 
-        $validator->addRule('assertEmailNotExists', function ($field, $value, array $params) use ($users) {
-            return !$users->assertEmailExists($value);
-        }, 'tersebut sudah terdaftar! Silahkan gunakan email lain');
+        try {
+            $request->validate(new Models\Users, function (Collection $input, Models\Users $model) {
+                $activationKey = md5(uniqid(rand(), true));
+                $activationExpiredDate = date('Y-m-d H:i:s', time() + 172800); // 48 jam
+                $registerSuccessMsg = 'Haayy <strong>'.$input['fullname'].'</strong>,<br> Submission keanggotan sudah berhasil disimpan. Akan tetapi account anda tidak langsung aktif. Demi keamanan dan validitas database, maka sistem telah mengirimkan email ke email anda, untuk melakukan aktivasi account. Segera check email anda! Terimakasih ^_^';
 
-        $validator->addRule('assertUsernameNotExists', function ($field, $value, array $params) use ($users) {
-            $protected = [
-                'admin',
-                'account', 'login', 'register', 'logout',
-                'activate', 'reactivate', 'regionals',
-                'forgot-password', 'reset-password'
-            ];
-            return !in_array($value, $protected) && !$users->assertUsernameExists($value);
-        }, 'tersebut sudah terdaftar! Silahkan gunakan username lain');
-
-        $validator->rules([
-            'regex' => [
-                ['fullname', ':^[A-z\s]+$:'],
-                ['username', ':^[A-z\d\-\_]+$:'],
-            ],
-            'email' => 'email',
-            'assertEmailNotExists' => 'email',
-            'assertUsernameNotExists' => 'username',
-            'dateFormat' => [
-                ['birth_date', 'Y-m-d']
-            ],
-            'equals' => [
-                ['repassword', 'password']
-            ],
-            'notIn' => [
-                ['username', 'password']
-            ],
-            'lengthMax' => [
-                ['username', 32],
-                ['fullname', 64],
-                ['area', 64],
-            ],
-            'lengthMin' => [
-                ['username', 6],
-                ['password', 6],
-            ],
-        ]);
-
-        if ($validator->validate()) {
-            $emailAddress = $input['email'];
-            $activationKey = md5(uniqid(rand(), true));
-            $activationExpiredDate = date('Y-m-d H:i:s', time() + 172800); // 48 jam
-            $registerSuccessMsg = 'Haayy <strong>'.$input['fullname'].'</strong>,<br> Submission keanggotan sudah berhasil disimpan. Akan tetapi account anda tidak langsung aktif. Demi keamanan dan validitas database, maka sistem telah mengirimkan email ke email anda, untuk melakukan aktivasi account. Segera check email anda! Terimakasih ^_^';
-
-            try {
                 $input['activation_key'] = $activationKey;
                 $input['expired_date'] = $activationExpiredDate;
                 $input['fullname'] = ucwords($input['fullname']);
                 $input['password'] = $this->salt($input['password']);
 
-                $userId = $users->create($input);
-            } catch (\PDOException $e) {
-                $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
+                if ($userId = $model->create($input)) {
+                    $address = $input->get('email');
+                    $data = [
+                        'user_id' => $userId,
+                        'activation_key' => $activationKey
+                    ];
 
-                return $response->withRedirect($this->router->pathFor('membership-register'));
-            }
-
-            if ($userId) {
-                try {
-                    $this->mail->to($emailAddress, $input['fullname'])
+                    $this->mail
+                        ->to($address, $input['fullname'])
                         ->subject('PHP Indonesia - Aktivasi Membership')
                         ->send('email::activation', [
-                            'email' => $emailAddress,
+                            'email' => $address,
                             'fullname' => $input['fullname'],
                             'regDate' => date('d-m-Y H:i:s'),
                             'activationExp' => $activationExpiredDate,
-                            'activationUrl' => $request->getUri()->getBaseUrl().$this->router->pathFor('membership-activation', ['uid' => $userId, 'activation_key' => $activationKey]),
+                            'activationUrl' => $this->router->pathFor('membership-activation', $data),
                         ]);
 
-                    $mailSend = true;
-                } catch (MessageException $e) {
-                    if ($this->settings['mode'] = 'development') {
-                        throw $e;
-                    }
-
-                    $mailSend = false;
-                    $registerSuccessMsg .= '<br><br><strong>Kemungkinan email akan sampai agak terlambat, karena email server kami sedang mengalami sedikit kendala teknis. Jika anda belum juga mendapatkan email, maka jangan ragu untuk laporkan kepada kami melalu email: report@phpindonesia.or.id</strong>';
-                }
-
-                if ($mailSend) {
                     // Update email sent status
-                    (new Models\UsersActivations)->update(['email_sent' => 'Y'], [
-                        'user_id' => $userId,
-                        'activation_key' => $activationKey
-                    ]);
+                    (new Models\UsersActivations)->update(['email_sent' => 'Y'], $data);
+
+                    $this->addFormAlert('success', $registerSuccessMsg);
                 }
+            });
+        } catch (\Throwable $e) {
+            if ($e instanceof ValidatorException) {
+                $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
             }
 
-            $this->addFormAlert('success', $registerSuccessMsg);
-        } else {
-            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
+            $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
 
             return $response->withRedirect($this->router->pathFor('membership-register'));
         }

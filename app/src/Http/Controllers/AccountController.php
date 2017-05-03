@@ -4,6 +4,7 @@ namespace Membership\Http\Controllers;
 
 use Membership\Http\Request;
 use Membership\Http\Response;
+use Membership\Http\ValidatorException;
 use Slim\Exception\NotFoundException;
 use Membership\Http\Controllers;
 use Membership\Models;
@@ -17,9 +18,9 @@ class AccountController extends Controllers
         $users = new Models\Users;
 
         if ($request->isXhr()) {
-            $outputJson = $this->normalizeUserJsonOutput($users);
-
-            return $response->withJson($outputJson);
+            return $response->withJson(
+                $this->normalizeUserJsonOutput($users)
+            );
         }
 
         return $response->view('account-index', [
@@ -36,23 +37,20 @@ class AccountController extends Controllers
         $this->setPageTitle('Membership', 'Detail Anggota');
 
         $users = new Models\Users;
-        $user = $users->getProfileUsername($args['username']);
 
-        if (!$user) {
+        if (! $user = $users->getProfileUsername($args['username'])) {
             throw new NotFoundException($request, $response);
         }
 
         if ($request->isXhr()) {
-            $outputJson = [
+            return $response->withJson([
                 'username' => $user['username'],
                 'fullname' => $user['fullname'],
                 'email'    => $user['email'],
                 'gender'   => $user['gender'],
                 'city'     => $user['city'],
                 'province' => $user['province'],
-            ];
-
-            return $response->withJson($outputJson);
+            ]);
         }
 
         return $response->view('profile-index', [
@@ -80,104 +78,26 @@ class AccountController extends Controllers
             'provinces'      => array_pairs($regionals->getProvinces(), 'id', 'regional_name'),
             'cities'         => array_pairs($regionals->getCities($provinceId), 'id', 'regional_name'),
             'jobs'           => array_pairs((new Models\Careers)->getJobs(), 'job_id'),
-            'genders'        => ['female' => 'Wanita', 'male' => 'Pria'],
-            'identity_types' => ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'],
+            'genders'        => Models\Users::GENDERS,
+            'identity_types' => Models\Users::IDENTITY_TYPES,
             'socmedias'      => $this->settings->get('socmedias'),
         ]);
     }
 
     public function edit(Request $request, Response $response, array $args)
     {
-        $users = new Models\Users;
-        $user = $users->get(['email', 'username'], $this->session->get('user_id'))->fetch();
-        $identityTypes = ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'];
-        $validator = $this->validator->rule('required', [
-            'email',
-            'username',
-            'fullname',
-            'province_id',
-            'city_id',
-            'area',
-            'job_id',
+        $request->rules([
+            'required' => ['email', 'username', 'fullname', 'province_id', 'city_id', 'area', 'job_id']
         ]);
 
-        $validator->addRule('assertEmailNotExists', function ($field, $value, array $params) use ($users, $user) {
-            return $user['email'] == $value || !$users->assertEmailExists($value);
-        }, 'tersebut sudah terdaftar!');
+        try {
+            $users = new Models\Users;
 
-        $validator->addRule('assertUsernameNotExists', function ($field, $value, array $params) use ($users, $user) {
-             $protected = [
-                'admin',
-                'account', 'login', 'register', 'logout',
-                'activate', 'reactivate', 'regionals',
-                'forgot-password', 'reset-password'
-            ];
-            return $user['username'] == $value || (!in_array($value, $protected) && !$users->assertUsernameExists($value));
-        }, 'tersebut sudah terdaftar!');
+            $request->validate($users);
 
-        $validator->rules([
-            'regex' => [
-                ['fullname', ':^[A-z\s]+$:'],
-                ['username', ':^[A-z\d\-\.\_]+$:'],
-                ['contact_phone', ':^[-\+\d]+$:'],
-                ['identity_number', ':^[^\W_]+$:'],
-            ],
-            'email' => 'email',
-            'assertEmailNotExists' => 'email',
-            'assertUsernameNotExists' => 'username',
-            'dateFormat' => [
-                ['birth_date', 'Y-m-d']
-            ],
-            'equals' => [
-                ['repassword', 'password']
-            ],
-            'in' => [
-                ['identity_type', array_keys($identityTypes)]
-            ],
-            'lengthMax' => [
-                ['fullname', 32],
-                ['username', 64],
-                ['contact_phone', 16],
-                ['area', 64],
-                ['identity_number', 32],
-                ['birth_place', 32],
-            ],
-            'lengthMin' => [
-                ['username', 6],
-                ['password', 6],
-            ],
-        ]);
-
-        if ($validator->validate()) {
-            $input = $request->getParsedBody();
-            $profile = new Models\MemberProfile;
-            $socmeds = new Models\MemberSocmeds;
-
-            $memberProfile = [
-                'fullname'        => $input['fullname'],
-                'contact_phone'   => $input['contact_phone'],
-                'birth_place'     => strtoupper($input['birth_place']),
-                'birth_date'      => $input['birth_date'],
-                'identity_number' => $input['identity_number'],
-                'identity_type'   => $input['identity_type'],
-                'religion_id'     => $input['religion_id'],
-                'province_id'     => $input['province_id'],
-                'city_id'         => $input['city_id'],
-                'area'            => $input['area'],
-                'job_id'          => $input['job_id']
-            ];
-
-            $this->db->beginTransaction();
-
-            try {
+            $this->db->transaction(function () use ($request, $users) {
+                $input = $request->getParsedBody();
                 $userId = $this->session->get('user_id');
-
-                if ($photo = $request->getUploadedFiles()['photo']) {
-                    $memberProfile = $this->upload($photo, $memberProfile);
-                }
-
-                // Update profile database record
-                $profile->update($memberProfile, ['user_id' => $userId]);
 
                 $users->update([
                     'email'       => $input['email'],
@@ -187,23 +107,37 @@ class AccountController extends Controllers
                     'area'        => $input['area'],
                 ], ['user_id' => $userId]);
 
+                $memberProfile = [
+                    'fullname' => $input['fullname'],
+                    'contact_phone' => $input['contact_phone'],
+                    'birth_place' => $input['birth_place'],
+                    'birth_date' => $input['birth_date'],
+                    'identity_number' => $input['identity_number'],
+                    'identity_type' => $input['identity_type'],
+                    'religion_id' => $input['religion_id'],
+                    'province_id' => $input['province_id'],
+                    'city_id' => $input['city_id'],
+                    'area' => $input['area'],
+                    'job_id' => $input['job_id']
+                ];
+
+                if ($photo = $request->getUploadedFiles()['photo']) {
+                    $memberProfile = $this->upload($photo, $memberProfile);
+                }
+
+                // Update profile database record
+                (new Models\MemberProfile)->update($memberProfile, ['user_id' => $userId]);
+
+                $socmeds = new Models\MemberSocmeds;
+
                 // Handle social medias
                 if ($input['socmeds']) {
-                    $terms = [
-                        'user_id' => $userId,
-                        'deleted' => 'N',
-                    ];
+                    $terms = ['user_id' => $userId, 'deleted' => 'N'];
 
                     foreach ($input['socmeds'] as $item) {
-                        $terms = [
-                            'user_id' => $userId,
-                            'deleted' => 'N',
-                            'socmed_type' => $item['socmed_type'],
-                        ];
+                        $terms['socmed_type'] = $item['socmed_type'];
 
-                        $socmedRow = $socmeds->get(['account_name', 'account_url'], $terms)->fetch();
-
-                        if ($socmedRow) {
+                        if ($socmedRow = $socmeds->get(['account_name', 'account_url'], $terms)->fetch()) {
                             if ($socmedRow['account_name'] != $item['account_name']) {
                                 $socmedRow['account_name'] = $item['account_name'];
                             }
@@ -214,12 +148,7 @@ class AccountController extends Controllers
 
                             $socmeds->update($socmedRow, $terms);
                         } else {
-
-                            $termsStatus = [
-                                'user_id' => $userId,
-                                'socmed_type' => $item['socmed_type'],
-                                'deleted' => 'Y',
-                            ];
+                            $terms['deleted'] = 'Y';
 
                             $socmedAdd = [
                                 'user_id'      => $userId,
@@ -228,11 +157,11 @@ class AccountController extends Controllers
                                 'account_url'  => $item['account_url'],
                             ];
 
-                            $socmedId = $socmeds->get(['member_socmed_id'], $termsStatus)->fetch();
+                            $socmedId = $socmeds->get(['member_socmed_id'], $terms)->fetch();
 
                             if ($socmedId) {
                                 $socmedAdd['deleted'] = 'N';
-                                $socmeds->update($socmedAdd, $termsStatus);
+                                $socmeds->update($socmedAdd, $terms);
                             } else {
                                 $socmeds->create($socmedAdd);
                             }
@@ -242,37 +171,16 @@ class AccountController extends Controllers
 
                 if (isset($input['socmeds_delete'])) {
                     foreach ($input['socmeds_delete'] as $item) {
-                        $terms = [
-                            'user_id' => $userId,
-                            'deleted' => 'N',
-                            'socmed_type' => $item,
-                        ];
-
-                        $socmedRow = $socmeds->get(['user_id'], $terms)->fetch();
-
-                        if ($socmedRow) {
-                            $socmeds->delete([
-                                'user_id' => $userId,
-                                'socmed_type' => $item
-                            ]);
-                        }
+                        $socmeds->delete(['user_id' => $userId, 'socmed_type' => $item]);
                     }
                 }
-
-                $this->db->commit();
-
-                $this->addFormAlert('success', 'Profile information successfuly updated! Congratulation!');
-            } catch (\PDOException $e) {
-                $this->db->rollback();
-
-                $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
-            } catch (\Exception $e) {
-                $this->db->rollback();
-
-                $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
+            });
+        } catch (\Throwable $e) {
+            if ($e instanceof ValidatorException) {
+                $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
             }
-        } else {
-            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
+
+            $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
 
             return $response->withRedirect($this->router->pathFor('membership-account-edit', $args));
         }
@@ -340,10 +248,8 @@ class AccountController extends Controllers
         $cookie = $request->getCookieParams();
         $open_portfolio = false;
         $open_skill = false;
-        $worker = ['KARYAWAN', 'FREELANCER', 'OWNER', 'MAHASISWA-KARYAWAN'];
-        $student = ['PELAJAR', 'MAHASISWA'];
 
-        if (in_array($this->session->get('job_id'), $worker)) {
+        if (in_array($this->session->get('job_id'), Models\Careers::WORKER_TYPES)) {
             if (!isset($cookie['portfolio-popup'])) {
                 $open_portfolio = $users->countPortfolios() === 0;
             }
@@ -351,7 +257,7 @@ class AccountController extends Controllers
             if (!isset($cookie['skill-popup'])) {
                 $open_skill = $users->countSkills() === 0;
             }
-        } elseif (in_array($this->session->get('job_id'), $student)) {
+        } elseif (in_array($this->session->get('job_id'), Models\Careers::STUDENT_TYPES)) {
             if (!isset($cookie['skill-popup'])) {
                 $open_skill = $users->countSkills() === 0;
             }

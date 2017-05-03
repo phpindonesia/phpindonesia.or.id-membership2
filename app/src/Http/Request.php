@@ -2,7 +2,64 @@
 
 namespace Membership\Http;
 
+use Membership\Collection;
+use Membership\Models;
+use Valitron\Validator;
+
 class Request extends \Slim\Http\Request
 {
+    /**
+     * @var Validator|null
+     */
+    protected $validator = null;
 
+    /**
+     * @var array
+     */
+    protected $rules = [];
+
+    public function setValidator(Validator $validator)
+    {
+        $this->validator = $validator;
+
+        return $this;
+    }
+
+    public function rules(array $rules = [])
+    {
+        $this->rules = $rules;
+    }
+
+    /**
+     * Validate request based on model rules
+     *
+     * @param Models $model
+     * @param callable|null $callback
+     * @return Collection
+     * @throws ValidatorException
+     */
+    public function validate(Models $model, callable $callback = null)
+    {
+        if (null === $this->validator) {
+            return null;
+        }
+
+        $rules = method_exists($model, 'rules') && is_callable([$model, 'rules'])
+            ? $model->rules($this->validator)
+            : [];
+
+        $this->validator->rules(array_merge($rules, $this->rules));
+
+        if (! $this->validator->validate()) {
+            throw new ValidatorException('Invalid request', $this->validator->errors());
+        }
+
+        $input = new Collection($this->getParsedBody());
+
+        if ($callback) {
+            return $callback($input, $model);
+        }
+
+        return $input;
+    }
 }

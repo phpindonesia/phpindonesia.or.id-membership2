@@ -14,7 +14,6 @@ class RegionalsController extends Controllers
     {
         $this->assertXhrRequest($request, $response);
 
-        /** @var array|false $cities */
         if (!$cities = (new Regionals)->getCities($args['province_id'])) {
             throw new NotFoundException($request, $response);
         }

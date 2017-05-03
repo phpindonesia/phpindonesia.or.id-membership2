@@ -4,9 +4,13 @@ namespace Membership\Models;
 
 use Membership\Models;
 use InvalidArgumentException;
+use Valitron\Validator;
 
 class Users extends Models
 {
+    const IDENTITY_TYPES = ['ktp' => 'KTP', 'sim' => 'SIM', 'ktm' => 'Kartu Mahasiswa'];
+    const GENDERS = ['female' => 'Wanita', 'male' => 'Pria'];
+
     /**
      * {@inheritdoc}
      */
@@ -23,12 +27,62 @@ class Users extends Models
     protected $authorize = true;
 
     /**
-     * Create new user database
-     *
-     * @param string[] $pairs user database
-     * @return int|false
+     * @param Validator|null $validator
+     * @return array
      */
-    public function create(array $pairs)
+    public function rules(Validator $validator = null)
+    {
+        $validator->addRule('notExists', function ($field, $value) {
+            return ! $this->isExists($field, $value);
+        }, 'tersebut sudah terdaftar!');
+
+        $validator->addRule('usable', function ($field, $value) {
+            return ! in_array($value, [
+                'admin',
+                'account', 'login', 'register', 'logout',
+                'activate', 'reactivate', 'regionals',
+                'forgot-password', 'reset-password'
+            ]);
+        }, 'tersebut tidak diijinkan!');
+
+        return [
+            'regex' => [
+                ['fullname', ':^[A-z\s]+$:'],
+                ['username', ':^[A-z\d\-\.\_]+$:'],
+                ['contact_phone', ':^[-\+\d]+$:'],
+                ['identity_number', ':^[^\W_]+$:'],
+            ],
+            'email' => 'email',
+            'usable' => 'username',
+            'notExists' => ['email', 'username'],
+            'dateFormat' => [
+                ['birth_date', 'Y-m-d']
+            ],
+            'equals' => [
+                ['repassword', 'password']
+            ],
+            'in' => [
+                ['identity_type', array_keys(static::IDENTITY_TYPES)]
+            ],
+            'lengthMax' => [
+                ['fullname', 32],
+                ['username', 64],
+                ['contact_phone', 16],
+                ['area', 64],
+                ['identity_number', 32],
+                ['birth_place', 32],
+            ],
+            'lengthMin' => [
+                ['username', 6],
+                ['password', 6],
+            ]
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function create($pairs)
     {
         $this->db->beginTransaction();
         $pairs['city_id'] = 0;

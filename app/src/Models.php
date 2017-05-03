@@ -4,6 +4,7 @@ namespace Membership;
 
 use Slim\PDO\Statement\StatementContainer;
 use InvalidArgumentException;
+use Valitron\Validator;
 
 abstract class Models implements \Countable
 {
@@ -56,6 +57,16 @@ abstract class Models implements \Countable
     }
 
     /**
+     * @return Database
+     */
+    protected static function db()
+    {
+        global $container;
+
+        return $container->get('db');
+    }
+
+    /**
      * Retrieve current user session.
      *
      * @param string $key
@@ -64,27 +75,31 @@ abstract class Models implements \Countable
      */
     protected function current($key = null, $default = null)
     {
-        if (is_null($this->session)) {
-            return $default;
+        global $container;
+
+        $session = $container->get('session');
+
+        if (! is_null($key)) {
+            return $session->get($key, $default);
         }
 
-        if (!is_null($key)) {
-            return $this->session->get($key, $default);
-        }
-
-        return $this->session;
+        return $session;
     }
 
     /**
      * Create new database
      *
-     * @param array $pairs column value pairs of database
+     * @param array|Collection $pairs column value pairs of database
      * @return int|false
      */
-    public function create(array $pairs)
+    public function create($pairs)
     {
         if (!$this->table) {
             return false;
+        }
+
+        if ($pairs instanceof Collection) {
+            $pairs = $pairs->all();
         }
 
         $this->authorize('create', $pairs);
@@ -93,7 +108,7 @@ abstract class Models implements \Countable
             $pairs['deleted'] = 'N';
         }
 
-        $query = $this->db->insert(array_keys($pairs))
+        $query = static::db()->insert(array_keys($pairs))
             ->into($this->table)
             ->values(array_values($pairs));
 
@@ -113,7 +128,7 @@ abstract class Models implements \Countable
             return false;
         }
 
-        $query = $this->db->select($columns)->from($this->table);
+        $query = static::db()->select($columns)->from($this->table);
 
         $this->normalizeTerms($query, $terms);
 
@@ -134,11 +149,11 @@ abstract class Models implements \Countable
     /**
      * Update existing item from table
      *
-     * @param array              $pairs column value pairs of database
+     * @param array|Collection $pairs column value pairs of database
      * @param callable|array|int $terms column value pairs of term database you wanna update to
      * @return int|false
      */
-    public function update(array $pairs, $terms = null)
+    public function update($pairs, $terms = null)
     {
         if (!$this->table) {
             return false;
@@ -146,7 +161,7 @@ abstract class Models implements \Countable
 
         $this->authorize('update', $pairs);
 
-        $query = static::$conn->update(array_filter($pairs))->table($this->table);
+        $query = static::db()->update(array_filter($pairs))->table($this->table);
 
         $this->normalizeTerms($query, $terms);
 
@@ -169,7 +184,7 @@ abstract class Models implements \Countable
             return $this->update(['deleted' => 'Y'], $terms);
         }
 
-        $query = $this->db->delete($this->table);
+        $query = static::db()->delete($this->table);
 
         $this->normalizeTerms($query, $terms);
 
@@ -190,11 +205,31 @@ abstract class Models implements \Countable
             return 0;
         }
 
-        $query = $this->db->select()->count(($column ?: '*'), 'count', $distinct)->from($this->table);
+        $query = static::db()->select()->count(($column ?: '*'), 'count', $distinct)->from($this->table);
 
         $this->normalizeTerms($query, $terms);
 
         return (int) $query->execute()->fetch()['count'];
+    }
+
+    /**
+     * Determine is $value is exists in $field
+     *
+     * @param string $field
+     * @param string|array $value
+     * @return bool
+     */
+    public function isExists($field, $value)
+    {
+        $count = $this->count(function (StatementContainer $query) use ($field, $value) {
+            if (is_array($value)) {
+                $query->whereIn($field, $value);
+            } else {
+                $query->where($field, '=', strtolower($value));
+            }
+        });
+
+        return $count > 0;
     }
 
     /**
