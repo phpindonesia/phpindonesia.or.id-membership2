@@ -2,23 +2,30 @@
 
 namespace Membership\Mail;
 
-use SparkPost\SparkPost;
+use Http\Client\Exception\RequestException;
+use Http\Client\HttpClient;
+use Http\Message\MessageFactory\SlimMessageFactory;
 
 class SparkpostMessage implements MessageInterface
 {
+    const ENDPOINT = 'https://api.sparkpost.com/api/v1/transmissions';
+
     /**
-     * @var SparkPost
+     * @var HttpClient
      */
-    protected $mailer;
+    protected $client;
 
     /**
      * @var array
      */
     protected $payload;
 
-    public function __construct(SparkPost $mailer)
+    protected $key;
+
+    public function __construct(HttpClient $mailer, $key)
     {
-        $this->mailer = $mailer;
+        $this->client = $mailer;
+        $this->key = $key;
     }
 
     public function from($address, $name)
@@ -53,7 +60,7 @@ class SparkpostMessage implements MessageInterface
         if (is_array($body)) {
             $this->payload['subject'] = $body;
         } else {
-            $this->payload['subject']['html'] = $body;
+            $this->payload['subject'] = ['html' => $body];
         }
 
         return $this;
@@ -66,11 +73,21 @@ class SparkpostMessage implements MessageInterface
 
     public function send()
     {
-        $this->mailer->setOptions(['async' => false]);
-
         try {
-            return $this->mailer->transmissions->post($this->payload);
-        } catch (\Exception $e) {
+            $headers = [
+                'Authorization' => $this->key,
+                'Content-Type' => 'application/json'
+            ];
+
+            /** @var \Psr\Http\Message\RequestInterface $request */
+            $request = (new SlimMessageFactory)
+                ->createRequest('POST', self::ENDPOINT, $headers, json_encode($this->payload));
+
+            /** @var \Psr\Http\Message\ResponseInterface $response */
+            $response = $this->client->sendRequest($request);
+
+            return $response->getStatusCode() === 200;
+        } catch (RequestException $e) {
             throw new MessageException($e->getMessage(), $e->getCode());
         }
     }

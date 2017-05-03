@@ -310,11 +310,16 @@ $container['upload'] = function ($container) {
  * @return \Membership\Mail\SparkpostMessage
  */
 $container[\Membership\Mail\SparkpostMessage::class] = function ($container) {
-    $mailer = new \SparkPost\SparkPost($container->get('httpClient'), [
-        'key' => $container->get('settings')['sparkpost']['api_key']
-    ]);
+    $options = [
+        CURLOPT_SSL_VERIFYPEER => false, // Stop cURL from verifying the peer's certificate
+        CURLOPT_SSL_VERIFYSTATUS => false, // Stop cURL from verifying the peer's certificate
+    ];
 
-    return new \Membership\Mail\SparkpostMessage($mailer);
+    return new \Membership\Mail\SparkpostMessage(
+        $container->get('httpClient'),
+        $container->get('settings')['sparkpost']['api_key'],
+        $options
+    );
 };
 
 /**
