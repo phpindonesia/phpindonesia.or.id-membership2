@@ -175,7 +175,7 @@ class AccountController extends Controllers
             return $response->withRedirectRoute('membership-account');
         } catch (\Throwable $e) {
             if ($e instanceof ValidatorException) {
-                $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
+                $this->addFormAlert('warning', $e->getMessage(), $e->getErrors());
             }
 
             $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
@@ -232,7 +232,7 @@ class AccountController extends Controllers
             return $response->withRedirectRoute('membership-account-reactivate');
         } catch (\Throwable $e) {
             if ($e instanceof ValidatorException) {
-                $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
+                $this->addFormAlert('warning', $e->getMessage(), $e->getErrors());
             }
 
             $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());

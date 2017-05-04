@@ -38,31 +38,35 @@ class Request extends \Slim\Http\Request
     /**
      * Validate request based on model rules
      *
-     * @param Models $model
+     * @param callable|Models $model
      * @param callable|null $callback
      * @return Collection
      * @throws ValidatorException
      */
-    public function validate(Models $model, callable $callback = null)
+    public function validate($model, callable $callback = null)
     {
         if (null === $this->validator) {
             return null;
         }
 
-        $rules = method_exists($model, 'rules') && is_callable([$model, 'rules'])
-            ? $model->rules($this->validator)
-            : [];
+        if ($model instanceof Models && is_callable($callback)) {
+            $rules = method_exists($model, 'rules') && is_callable([$model, 'rules'])
+                ? $model->rules($this->validator)
+                : [];
 
-        $this->validator->rules($rules);
+            $this->validator->rules($rules);
+        } elseif (is_callable($model)) {
+            $callback = $model;
+        }
 
         if (! $this->validator->validate()) {
-            throw new ValidatorException('Invalid request', $this->validator->errors());
+            throw new ValidatorException('Invalid request input', $this->validator->errors());
         }
 
         $input = new Collection($this->getParsedBody());
 
         if ($callback) {
-            return $callback($input, $model);
+            return $model instanceof Models ? $callback($input, $model) : $callback($input);
         }
 
         return $input;

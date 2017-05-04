@@ -67,17 +67,17 @@ class HomeController extends Controllers
                     $users->updateLogin($user['user_id']);
                 }
             });
+
+            return $response->withRedirectRoute('membership-account');
         } catch (\Throwable $e) {
             if ($e instanceof ValidatorException) {
-                $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
+                $this->addFormAlert('warning', $e->getMessage(), $e->getErrors());
             }
 
             $this->addFormAlert('error', $e->getMessage());
 
             $response->withRedirectRoute('membership-login');
         }
-
-        return $response->withRedirectRoute('membership-account');
     }
 
     public function registerPage(Request $request, Response $response, array $args)
@@ -150,7 +150,7 @@ class HomeController extends Controllers
             return $response->withRedirectRoute('membership-index');
         } catch (\Exception $e) {
             if ($e instanceof ValidatorException) {
-                $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
+                $this->addFormAlert('warning', $e->getMessage(), $e->getErrors());
             }
 
             $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
