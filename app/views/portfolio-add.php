@@ -1,8 +1,8 @@
 <?php
-$this->layout('layouts::system');
+$this->layout('layout::system');
 
 $this->appendJs([
-    $this->asset('/js/portfolio.js')
+    $this->asset('asset/js/portfolio.js')
 ]);
 ?>
 
@@ -13,10 +13,10 @@ $this->appendJs([
 
         <h3 style="border-bottom: 1px #000000 solid;">Add new portfolio item</h3>
 
-        <?php echo $this->insert('sections::alert') ?>
+        <?php echo $this->insert('section::alert') ?>
 
         <form action="<?php echo $this->pathFor('membership-portfolios-create'); ?>" method="post" class="checkout" novalidate>
-            <?php echo $this->insert('sections::portfolio-form', ['portfolio' => false]) ?>
+            <?php echo $this->insert('section::portfolio-form', ['portfolio' => false]) ?>
         </form>
 
     </div>

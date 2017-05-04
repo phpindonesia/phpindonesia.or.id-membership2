@@ -1,4 +1,4 @@
-<?php $this->layout('layouts::account') ?>
+<?php $this->layout('layout::account') ?>
 
 <form action="<?php echo $this->pathFor('membership-forgot-password'); ?>" method="post" novalidate>
 
@@ -16,7 +16,7 @@
     </div>
 
     <div class="form-group">
-        <?php echo $this->insert('sections::captcha') ?>
+        <?php echo $this->insert('section::captcha') ?>
 
         <input value="Confirm" type="submit" class="btn btn-primary" />
     </div>

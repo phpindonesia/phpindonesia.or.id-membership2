@@ -33,8 +33,7 @@ if (!function_exists('array_flatten')) {
      */
     function array_flatten(array $array)
     {
-        $array = array_values($array);
-        return call_user_func_array('array_merge', $array);
+        return call_user_func_array('array_merge', array_values($array));
     }
 }
 
@@ -136,5 +135,19 @@ if (!function_exists('days_range')) {
         }
 
         return $days_range;
+    }
+}
+
+if (! function_exists('env')) {
+    /**
+     * Get environment variable.
+     *
+     * @param string $name
+     * @param mixed $default
+     * @return string
+     */
+    function env($name, $default = null)
+    {
+        return getenv($name) ?: $default;
     }
 }

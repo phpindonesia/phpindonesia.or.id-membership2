@@ -3,7 +3,7 @@
 ### Kebutuhan
 
 - PHP 5.5 keatas.
-- HTTP Server, misal NginX or Apache.
+- HTTP Server, misal NginX atau Apache.
 - MySQL Server 5.x keatas untuk database utama.
 
 ### Instalasi
@@ -31,7 +31,7 @@
 
    **NOTE**: sesuaikan `[db-user]` anda, umumnya adalah `root`
 
-4. Import kedua file `.sql` yang ada dalam folder `app/data` secara berurutan ke `[db-name]` yang telah anda buat:
+4. Import kedua file `.sql` yang ada dalam folder `app/database` secara berurutan ke `[db-name]` yang telah anda buat:
 
    1. `membership-schema.sql`
    2. `membership-values.sql`
@@ -39,20 +39,20 @@
    Dari terminal bisa dilakukan dengan cara
 
    ```bash
-   $ mysql -u[db-user] -p [db-name] < app/data/membership-schema.sql app/data/membership-values.sql
+   $ mysql -u[db-user] -p [db-name] < app/database/membership-schema.sql app/database/membership-values.sql
    ```
 
-5. Copy-Paste file `settings.php.disable` didalam folder `app` dan rename menjadi `settings.php` lalu buka dengan editor favorit anda dan sesuaikan isi konfigurasi didalamnya, misal Sublime Text: `subl`.
+5. Copy-Paste file `.env.example` didalam direktori projek dan rename menjadi `.env` lalu buka dengan editor favorit anda dan sesuaikan isi konfigurasi didalamnya, misal Sublime Text: `subl`.
 
    ```
-   $ cp app/settings.php.disable app/settings.php
-   $ subl -a app/settings.php
+   $ cp .env.example .env
+   $ subl -a .env
    ```
 
-6. Jika anda menggunakan web server seperti Apache atau NginX, silahkan sesuaikan vhost -nya atau gunakan PHP built in server dan arahkan ke folder `www` sebagai docroot.
+6. Jika anda menggunakan web server seperti Apache atau NginX, silahkan sesuaikan vhost -nya atau gunakan PHP built in server dan arahkan project root sebagai docroot.
 
    ```
-   $ php -S  localhost:8088 -t www/
+   $ php -S  localhost:8088
    ```
 
 7. Terakhir, buka url sesuai dengan konfigurasi lokal server anda. Misal [`http://localhost:8088/`](http://localhost:8088/).
@@ -61,11 +61,10 @@
 
 | Path | Keterangan |
 | --- | --- |
-| `app/` | Direktori utama aplikasi |
-| `app/data/` | Direktori database |
-| `app/src/` | Direktori source code aplikasi |
+| `app/` | Berisi source code utama aplikasi |
+| `app/database/` | Berisi file database `*.sql` |
 | `app/views/` | Direktori template |
-| `www/` | Direktori public |
+| `assets/` | Asset directori |
 
 ### Cara berkontribusi:
 

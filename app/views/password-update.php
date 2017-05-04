@@ -1,4 +1,4 @@
-<?php $this->layout('layouts::account') ?>
+<?php $this->layout('layout::account') ?>
 
 <form action="<?php echo $this->pathFor('membership-account-password-update'); ?>" method="post" novalidate>
     <?php echo $this->formInputMethod('PUT') ?>
@@ -24,7 +24,7 @@
     </div>
 
     <div class="form-group">
-        <?php echo $this->insert('sections::captcha') ?>
+        <?php echo $this->insert('section::captcha') ?>
 
         <input value="Update" type="submit" class="btn btn-primary" />
     </div>

@@ -1,8 +1,8 @@
-<?php 
-$this->layout('layouts::system'); 
+<?php
+$this->layout('layout::system');
 
 $this->appendCss([
-    $this->asset('/css/profile.css')
+    $this->asset('asset/css/profile.css')
 ]);
 ?>
 

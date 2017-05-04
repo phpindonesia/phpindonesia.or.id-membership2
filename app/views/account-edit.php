@@ -1,10 +1,10 @@
 <?php
-$this->layout('layouts::system');
+$this->layout('layout::system');
 
 $this->appendJs([
-    $this->asset('/js/jquery.inputmask.bundle.js'),
-    $this->asset('/js/regional.js'),
-    $this->asset('/js/profile.js'),
+    $this->asset('asset/js/jquery.inputmask.bundle.js'),
+    $this->asset('asset/js/regional.js'),
+    $this->asset('asset/js/profile.js'),
 ]);
 ?>
 
@@ -15,7 +15,7 @@ $this->appendJs([
 
         <h3 style="border-bottom: 1px #000000 solid;">Update My Basic Profile</h3>
 
-        <?php echo $this->insert('sections::alert') ?>
+        <?php echo $this->insert('section::alert') ?>
 
         <form action="<?php echo $this->pathFor('membership-account-update'); ?>" method="post" enctype="multipart/form-data" class="checkout" novalidate>
             <?php echo $this->formInputMethod('PUT') ?>

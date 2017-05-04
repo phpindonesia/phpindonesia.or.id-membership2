@@ -1,20 +1,21 @@
 <?php
+
 namespace Membership;
 
 use Slim\Container;
 use BadMethodCallException;
 
 /**
- * @property-read \Slim\Interfaces\CollectionInterface session
- * @property-read \Slim\Flash\Messages flash
- * @property-read \Slim\PDO\Database db
- * @property-read \Valitron\Validator validator
- * @property-read \Projek\Slim\Plates view
- * @property-read \Membership\Libraries\Mailer mailer
- * @property-read callable data
- * @property-read callable upload
- * @method Models data(string $class)
- * @method string[] upload(\Psr\Http\Message\UploadedFileInterface $file, array $data)
+ * @property-read \Slim\Interfaces\CollectionInterface $session
+ * @property-read \Slim\Flash\Messages $flash
+ * @property-read \Valitron\Validator $validator
+ * @property-read \Projek\Slim\Plates $view
+ * @property-read Mail $mail
+ * @property-read Database $db
+ * @property-read callable $upload
+ * @property-read callable $setting
+ * @method array|string setting(string $name, $default = null)
+ * @method string[] upload(\Psr\Http\Message\UploadedFileInterface $file, array $database)
  */
 trait ContainerAware
 {
@@ -50,7 +51,8 @@ trait ContainerAware
     /**
      * Call \Slim\Container callable name
      *
-     * @param  string $method Container Name
+     * @param  string $method
+     * @param  array $params
      * @return mixed
      * @throws \BadMethodCallException
      */

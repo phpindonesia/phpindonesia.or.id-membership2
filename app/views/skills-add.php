@@ -1,8 +1,8 @@
 <?php
-$this->layout('layouts::system');
+$this->layout('layout::system');
 
 $this->appendJs([
-    $this->asset('/js/skill.js')
+    $this->asset('asset/js/skill.js')
 ]);
 ?>
 
@@ -13,7 +13,7 @@ $this->appendJs([
 
         <h3 style="border-bottom: 1px #000000 solid;">Add new techno skill item</h3>
 
-        <?php echo $this->insert('sections::alert') ?>
+        <?php echo $this->insert('section::alert') ?>
 
         <p style="color: blue; font-weight: bold;">
             Jika <strong>Skill Global</strong> tidak memunculkan <strong>Spesific Item</strong>, Maka silahkan langsung saja nilai menggunakan skill global.

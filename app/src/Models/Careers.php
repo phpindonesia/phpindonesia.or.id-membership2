@@ -1,10 +1,14 @@
 <?php
+
 namespace Membership\Models;
 
 use Membership\Models;
 
 class Careers extends Models
 {
+    const WORKER_TYPES = ['KARYAWAN', 'FREELANCER', 'OWNER', 'MAHASISWA-KARYAWAN'];
+    const STUDENT_TYPES = ['PELAJAR', 'MAHASISWA'];
+
     /**
      * {@inheritdoc}
      */

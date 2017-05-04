@@ -1,4 +1,5 @@
 <?php
+
 namespace Membership\Models;
 
 use Membership\Models;
@@ -19,6 +20,11 @@ class UsersActivations extends Models
      * {@inheritdoc}
      */
     protected $authorize = false;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $timestamps = false;
 
     /**
      * {@inheritdoc}
@@ -56,7 +62,7 @@ class UsersActivations extends Models
             $this->db->commit();
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->db->rollback();
 
             return false;

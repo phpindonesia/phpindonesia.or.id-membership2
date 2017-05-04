@@ -1,17 +1,13 @@
 <?php
+
 namespace Membership;
 
-use Slim\PDO\Database;
 use Slim\PDO\Statement\StatementContainer;
 use InvalidArgumentException;
+use Valitron\Validator;
 
 abstract class Models implements \Countable
 {
-    /**
-     * @var \Slim\PDO\Database
-     */
-    protected $db;
-
     /**
      * @var string
      */
@@ -38,49 +34,72 @@ abstract class Models implements \Countable
     protected $authorize = false;
 
     /**
-     * @var \Slim\Interfaces\CollectionInterface|null
+     * @var Database
      */
-    private $session = null;
+    protected $db;
 
     /**
-     * @param \Slim\PDO\Database $db
+     * @var \Slim\Interfaces\CollectionInterface|null
      */
-    public function __construct(Database $db, $session = null)
+    protected $session = null;
+
+    /**
+     * Create new model instance.
+     */
+    public function __construct()
     {
-        $this->db = $db;
-        $this->session = $session;
+        global $container;
+
+        if (! $this->db) {
+            $this->db = $container->get('db');
+            $this->session = $container->get('session');
+        }
     }
 
     /**
-     * Retrieve current user session
+     * @return Database
+     */
+    protected static function db()
+    {
+        global $container;
+
+        return $container->get('db');
+    }
+
+    /**
+     * Retrieve current user session.
      *
      * @param string $key
      * @param string $default
-     * @return int
+     * @return \Slim\Interfaces\CollectionInterface|mixed
      */
     protected function current($key = null, $default = null)
     {
-        if (is_null($this->session)) {
-            return $default;
+        global $container;
+
+        $session = $container->get('session');
+
+        if (! is_null($key)) {
+            return $session->get($key, $default);
         }
 
-        if (!is_null($key)) {
-            return $this->session->get($key, $default);
-        }
-
-        return $this->session;
+        return $session;
     }
 
     /**
-     * Create new data
+     * Create new database
      *
-     * @param array $pairs column value pairs of data
+     * @param array|Collection $pairs column value pairs of database
      * @return int|false
      */
-    public function create(array $pairs)
+    public function create($pairs)
     {
         if (!$this->table) {
             return false;
+        }
+
+        if ($pairs instanceof Collection) {
+            $pairs = $pairs->all();
         }
 
         $this->authorize('create', $pairs);
@@ -89,7 +108,7 @@ abstract class Models implements \Countable
             $pairs['deleted'] = 'N';
         }
 
-        $query = $this->db->insert(array_keys($pairs))
+        $query = static::db()->insert(array_keys($pairs))
             ->into($this->table)
             ->values(array_values($pairs));
 
@@ -97,10 +116,10 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Get basic data
+     * Get basic database
      *
      * @param string[]           $columns Array of column
-     * @param callable|array|int $terms   column value pairs of term data you wanna find to
+     * @param callable|array|int $terms   column value pairs of term database you wanna find to
      * @return \PDOStatement|false
      */
     public function get(array $columns = [], $terms = null)
@@ -109,7 +128,7 @@ abstract class Models implements \Countable
             return false;
         }
 
-        $query = $this->db->select($columns)->from($this->table);
+        $query = static::db()->select($columns)->from($this->table);
 
         $this->normalizeTerms($query, $terms);
 
@@ -119,7 +138,7 @@ abstract class Models implements \Countable
     /**
      * Find existing item(s) from table
      *
-     * @param callable|array|int $terms column value pairs of term data you wanna find to
+     * @param callable|array|int $terms column value pairs of term database you wanna find to
      * @return \PDOStatement|false
      */
     public function find($terms = null)
@@ -130,11 +149,11 @@ abstract class Models implements \Countable
     /**
      * Update existing item from table
      *
-     * @param array              $pairs column value pairs of data
-     * @param callable|array|int $terms column value pairs of term data you wanna update to
+     * @param array|Collection $pairs column value pairs of database
+     * @param callable|array|int $terms column value pairs of term database you wanna update to
      * @return int|false
      */
-    public function update(array $pairs, $terms = null)
+    public function update($pairs, $terms = null)
     {
         if (!$this->table) {
             return false;
@@ -142,7 +161,7 @@ abstract class Models implements \Countable
 
         $this->authorize('update', $pairs);
 
-        $query = $this->db->update(array_filter($pairs))->table($this->table);
+        $query = static::db()->update(array_filter($pairs))->table($this->table);
 
         $this->normalizeTerms($query, $terms);
 
@@ -165,7 +184,7 @@ abstract class Models implements \Countable
             return $this->update(['deleted' => 'Y'], $terms);
         }
 
-        $query = $this->db->delete($this->table);
+        $query = static::db()->delete($this->table);
 
         $this->normalizeTerms($query, $terms);
 
@@ -173,7 +192,7 @@ abstract class Models implements \Countable
     }
 
     /**
-     * Count all data
+     * Count all database
      *
      * @param callable|array|int $terms Use it if you want more terms
      * @param string             $column   Column to count
@@ -186,11 +205,31 @@ abstract class Models implements \Countable
             return 0;
         }
 
-        $query = $this->db->select()->count(($column ?: '*'), 'count', $distinct)->from($this->table);
+        $query = static::db()->select()->count(($column ?: '*'), 'count', $distinct)->from($this->table);
 
         $this->normalizeTerms($query, $terms);
 
         return (int) $query->execute()->fetch()['count'];
+    }
+
+    /**
+     * Determine is $value is exists in $field
+     *
+     * @param string $field
+     * @param string|array $value
+     * @return bool
+     */
+    public function isExists($field, $value)
+    {
+        $count = $this->count(function (StatementContainer $query) use ($field, $value) {
+            if (is_array($value)) {
+                $query->whereIn($field, $value);
+            } else {
+                $query->where($field, '=', strtolower($value));
+            }
+        });
+
+        return $count > 0;
     }
 
     /**
@@ -206,8 +245,8 @@ abstract class Models implements \Countable
     /**
      * Normalize query terms
      *
-     * @param \Slim\PDO\Statement\StatementContainer $query
-     * @param callable|array|int                     $terms
+     * @param StatementContainer $query
+     * @param callable|array|int $terms
      * @return void
      */
     protected function normalizeTerms(StatementContainer $query, &$terms)

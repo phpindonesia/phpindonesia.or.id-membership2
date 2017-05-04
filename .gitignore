@@ -12,13 +12,11 @@ Icon?
 
 # Development files
 # --------------------------
-app/settings.php
 .env
 
 # Dependency folders
 # --------------------------
 /vendor
-/.htaccess
 
 # IDE Project Configurations
 # --------------------------
@@ -30,5 +28,4 @@ nbproject/
 
 # But Keep these
 # --------------------------
-!/www/.htaccess
 !.gitkeep

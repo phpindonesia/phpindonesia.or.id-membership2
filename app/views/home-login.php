@@ -1,4 +1,4 @@
-<?php $this->layout('layouts::account') ?>
+<?php $this->layout('layout::account') ?>
 
 <form action="<?php echo $this->pathFor('membership-login'); ?>" method="post" novalidate class="form-horizontal">
     <h3 class="aligncenter"> <i class="fa fa-user"></i> Login Anggota</h3>

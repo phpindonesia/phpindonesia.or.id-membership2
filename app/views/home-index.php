@@ -1,13 +1,13 @@
 <?php
-$this->layout('layouts::system');
+$this->layout('layout::system');
 
 $this->appendJs([
-    $this->asset('/js/regional.js'),
-    $this->asset('/js/pencarian.js'),
+    $this->asset('asset/js/regional.js'),
+    $this->asset('asset/js/pencarian.js'),
 ]);
 
 $this->appendCss([
-    $this->asset('/css/chabibnr.css')
+    $this->asset('asset/css/chabibnr.css')
 ]);
 ?>
 
@@ -38,7 +38,7 @@ $this->appendCss([
         </div>
 
         <div class="column dt-sc-three-fourth">
-            <?php echo $this->insert('sections::alert'); $i = 0; ?>
+            <?php echo $this->insert('section::alert'); $i = 0; ?>
 
             <?php foreach ($members as $member): ?>
                 <div class="column dt-sc-one-third<?php echo ($i % 3 == 0) ? ' first' : '' ?>">

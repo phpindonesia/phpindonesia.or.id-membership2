@@ -1,8 +1,8 @@
 <?php
-$this->layout('layouts::account');
+$this->layout('layout::account');
 
 $this->appendJs([
-    $this->asset('/js/regional.js')
+    $this->asset('asset/js/regional.js')
 ]);
 ?>
 
@@ -112,7 +112,7 @@ $this->appendJs([
     </div>
 
     <div class="form-group">
-        <?php echo $this->insert('sections::captcha') ?>
+        <?php echo $this->insert('section::captcha') ?>
 
         <input value="Register" type="submit" class="btn btn-primary" />
     </div>

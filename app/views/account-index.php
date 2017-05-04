@@ -1,11 +1,11 @@
 <?php
-$this->layout('layouts::system');
+$this->layout('layout::system');
 
 $this->appendJs([
-    $this->asset('/js/jquery.popupoverlay.js'),
+    $this->asset('asset/js/jquery.popupoverlay.js'),
     $this->pathFor('membership-account-javascript'),
-    $this->asset('/js/portfolio.js'),
-    $this->asset('/js/skill.js')
+    $this->asset('asset/js/portfolio.js'),
+    $this->asset('asset/js/skill.js')
 ]);
 ?>
 
@@ -15,7 +15,7 @@ $this->appendJs([
     <div class="container">
 
         <div style="margin-bottom: 70px; padding: 0; margin-top: -60px;">
-            <?php echo $this->insert('sections::alert') ?>
+            <?php echo $this->insert('section::alert') ?>
         </div>
 
         <div class="column dt-sc-two-fifth first">

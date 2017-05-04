@@ -7,25 +7,79 @@ use League\Plates\Extension\Asset as PlatesAsset;
 use Psr\Http\Message\UploadedFileInterface;
 use Valitron\Validator;
 use Membership\Models;
-use Membership\Libraries;
-use Membership\Libraries\PDO\Database;
 
 /**
  * Settings file
  */
-$settingsFile = APP_DIR.'settings.php';
-file_exists($settingsFile) || die ('Setting file not available');
+file_exists($settingsFile = APP_DIR.'settings.php') || die ('Setting file not available');
 
 session_start();
 
 /**
+ * Load environment variables
+ */
+$envPath = null;
+foreach ([__DIR__.'/.env', dirname(__DIR__).'/.env'] as $envFile) {
+    if (file_exists($envFile)) {
+        $envPath = dirname($envFile);
+        break;
+    }
+}
+
+(new \Dotenv\Dotenv($envPath))->load();
+
+/**
  * Slim Container
  *
- * @var \Slim\Container $container
+ * @var Container $container
  */
 $container = new Container([
     'settings' => require $settingsFile
 ]);
+
+/**
+ * Application setting.
+ *
+ * @param Container $container
+ * @return callable
+ */
+$container['setting'] = function ($container) {
+    /**
+     * @param string $name
+     * @param mixed $default
+     * @return array|string
+     */
+    return function ($name, $default = null) use ($container) {
+        $settings = $container->get('settings');
+
+        return array_key_exists($name, $settings) ? $settings[$name] : $default;
+    };
+};
+
+/**
+ * Custom error handler
+ *
+ * TODO: need more!!!
+ *
+ * @param Container $container
+ * @return callable
+ */
+$container['errorHandler'] = function ($container) {
+    if ($container->get('settings')['mode'] !== 'development') {
+        /**
+         * @param \Slim\Http\Request $request
+         * @param \Slim\Http\Response $response
+         * @param \Exception $exception
+         */
+        return function ($request, $response, $exception) use ($container) {
+            return $container->get('view')->render('error::500', [
+                'message' => $exception->getMessage()
+            ])->withStatus(500);
+        };
+    }
+
+    return new SlimError(true);
+};
 
 /**
  * Setup session
@@ -44,43 +98,31 @@ $container['session'] = function () {
  * Setup database container
  *
  * @param Container $container
- * @return Database
+ * @return Membership\Database
  */
 $container['db'] = function ($container) {
-    $db = $container->get('settings')['db'];
-    if (!isset($db['dsn'])) {
-        $db['dsn'] = sprintf('%s:host=%s;dbname=%s', $db['driver'], $db['host'], $db['dbname']);
+    $settings = $container->get('settings')->get('db');
+
+    if (!isset($settings['dsn'])) {
+        $settings['dsn'] = sprintf(
+            '%s:host=%s;dbname=%s',
+            $settings['driver'],
+            $settings['host'],
+            $settings['dbname']
+        );
     }
 
-    return new Database($db['dsn'], $db['username'], $db['password']);
+    return new Membership\Database($settings['dsn'], $settings['username'], $settings['password']);
 };
 
 /**
- * Setup data model container
+ * Setup validator container
  *
- * @param Container $container
  * @return callable
  */
-$container['data'] = function ($container) {
-    $db = $container->get('db');
-    $session = $container->get('session');
-
-    return function ($class) use ($db, $session) {
-        if (!class_exists($class)) {
-            throw new LogicException("Data model class {$class} not exists ");
-        }
-
-        $model = new ReflectionClass($class);
-
-        if (!$model->isSubclassOf(Models::class)) {
-            throw new InvalidArgumentException(sprintf(
-                'Data model must be instance of %s, %s given',
-                Models::class,
-                $model->getName()
-            ));
-        }
-
-        return $model->newInstance($db, $session);
+$container[Validator::class] = function () {
+    return function (\Slim\Http\Request $request) {
+        return new Validator($request->getParams(), [], 'id');
     };
 };
 
@@ -91,9 +133,9 @@ $container['data'] = function ($container) {
  * @return \Valitron\Validator
  */
 $container['validator'] = function ($container) {
-    $request = $container->get('request');
-    $viewData = $container->get('view')->getPlates()->getData('sections::captcha');
-    $validator = new Validator($request->getParams(), [], 'id');
+    $instance = $container->get(Validator::class);
+    $validator = $instance($container->get('request')->getParams());
+    $viewData = $container->get('view')->getPlates()->getData('section::captcha');
 
     if ($viewData['gcaptchaEnable'] == true) {
         $remoteAddr = $container->get('environment')->get('REMOTE_ADDR');
@@ -123,6 +165,29 @@ $container['flash'] = function () {
 };
 
 /**
+ * This service MUST return a SHARED instance
+ * of \Slim\Interfaces\InvocationStrategyInterface.
+ *
+ * @return \Slim\Interfaces\InvocationStrategyInterface
+ */
+$container['foundHandler'] = function () {
+    return new \Membership\Http\ActionResolver();
+};
+
+/**
+ * PSR-7 Request object
+ *
+ * @param Container $container
+ *
+ * @return \Membership\Http\Request
+ */
+$container['request'] = function ($container) {
+    $request = \Membership\Http\Request::createFromEnvironment($container->get('environment'));
+
+    return $request->setValidator($container->get(Validator::class));
+};
+
+/**
  * Setup cloudinary config before view
  */
 Cloudinary::config($container->get('settings')['cloudinary']);
@@ -136,18 +201,18 @@ Cloudinary::config($container->get('settings')['cloudinary']);
 $container['view'] = function ($container) {
     $settings = $container->get('settings');
     $view = new Projek\Slim\Plates(
-        $viewSettings = $settings->get('view'),
-        $container->get('response')
+        $viewSettings = $settings->get('view')
     );
 
     // Add app view folders
-    $view->addFolder('emails',   $viewSettings['directory'].'/emails');
-    $view->addFolder('layouts',  $viewSettings['directory'].'/layouts');
-    $view->addFolder('sections', $viewSettings['directory'].'/sections');
+    $view->addFolder('email',   $viewSettings['directory'].DIRECTORY_SEPARATOR.'_emails');
+    $view->addFolder('error',   $viewSettings['directory'].DIRECTORY_SEPARATOR.'_errors');
+    $view->addFolder('layout',  $viewSettings['directory'].DIRECTORY_SEPARATOR.'_layouts');
+    $view->addFolder('section', $viewSettings['directory'].DIRECTORY_SEPARATOR.'_sections');
 
     // Load app view extensions
-    $view->loadExtension(new PlatesAsset(WWW_DIR));
-    $view->loadExtension(new Libraries\ViewExtension(
+    $view->loadExtension(new PlatesAsset(ROOT_DIR));
+    $view->loadExtension(new Membership\ViewExtension(
         $request = $container->get('request'),
         $container->get('flash'),
         $settings->get('mode')
@@ -155,6 +220,34 @@ $container['view'] = function ($container) {
     $view->loadExtension(new Projek\Slim\PlatesExtension($container->get('router'), $request->getUri()));
 
     return $view;
+};
+
+/**
+ * PSR-7 Response object
+ *
+ * @param Container $container
+ *
+ * @return \Membership\Http\Response
+ */
+$container['response'] = function ($container) {
+    $headers = new \Slim\Http\Headers(['Content-Type' => 'text/html; charset=UTF-8']);
+    $response = new \Membership\Http\Response(200, $headers);
+
+    return $response->setView($container->get('view'))
+        ->setRouter($container->get('router'))
+        ->withProtocolVersion($container->get('settings')['httpVersion']);
+};
+
+/**
+ * Setup upload handler container
+ *
+ * @return \Http\Client\Curl\Client
+ */
+$container['httpClient'] = function () {
+    return new \Http\Client\Curl\Client(
+        new \Http\Message\MessageFactory\SlimMessageFactory(),
+        new \Http\Message\StreamFactory\SlimStreamFactory()
+    );
 };
 
 /**
@@ -212,48 +305,67 @@ $container['upload'] = function ($container) {
 };
 
 /**
- * Setup smtp mailer container
+ * Setup SparkPost mailer
  *
  * @param Container $container
- * @return Libraries\Mailer
+ * @return \Membership\Mail\SparkpostMessage
  */
-$container['mailer'] = function ($container) {
+$container[\Membership\Mail\SparkpostMessage::class] = function ($container) {
+    $options = [
+        CURLOPT_SSL_VERIFYPEER => false, // Stop cURL from verifying the peer's certificate
+        CURLOPT_SSL_VERIFYSTATUS => false, // Stop cURL from verifying the peer's certificate
+    ];
 
-    $view = $container->get('view')->getPlates();
-    $settings = $container->get('settings');
-    $appSetting = $settings->get('app');
-
-    $mailer = new Libraries\Mailer($settings->get('mailer'), $view);
-
-    $mailer->debugMode($settings->get('mode'));
-    $mailer->setSender($appSetting['email'], $appSetting['name']);
-
-    return $mailer;
+    return new \Membership\Mail\SparkpostMessage(
+        $container->get('httpClient'),
+        $container->get('settings')['sparkpost']['api_key'],
+        $options
+    );
 };
 
 /**
- * Custom error handler
- *
- * TODO: need more!!!
+ * Setup SMTP mailer
  *
  * @param Container $container
- * @return callable
+ * @return \Membership\Mail\SmtpMessage
  */
-$container['errorHandler'] = function ($container) {
-    if ($container->get('settings')['mode'] !== 'development') {
-        /**
-         * @param \Slim\Http\Request $request
-         * @param \Slim\Http\Response $response
-         * @param \Exception $exception
-         */
-        return function ($request, $response, $exception) use ($container) {
-            return $container->get('view')->render('errors/500', [
-                'message' => $exception->getMessage()
-            ])->withStatus(500);
-        };
+$container[\Membership\Mail\SmtpMessage::class] = function ($container) {
+    $mailer = new \PHPMailer(true);
+    $settings = $container->get('settings')->get('mail');
+
+    $mailer->Host = $settings['host'];
+    $mailer->Port = $settings['port'];
+    $mailer->Username = $settings['username'];
+    $mailer->Password = $settings['password'];
+
+    $mailer->isSMTP();
+
+    $mailer->SMTPAuth = $settings['auth'];
+    $mailer->SMTPSecure = $settings['secure'];
+
+    return new \Membership\Mail\SmtpMessage($mailer);
+};
+
+/**
+ * Setup mailer container
+ *
+ * @param Container $container
+ * @return Membership\Mail
+ */
+$container['mail'] = function ($container) {
+    $settings = $container->get('settings');
+    $drivers = [
+        'smtp' => \Membership\Mail\SmtpMessage::class,
+        'sparkpost' => \Membership\Mail\SparkpostMessage::class,
+    ];
+
+    if (! array_key_exists($settings['mail']['driver'], $drivers)) {
+        throw new InvalidArgumentException('No mail driver found');
     }
 
-    return new SlimError(true);
+    $driver = $settings['mail']['driver'];
+
+    return new Membership\Mail($container->get($drivers[$driver]), $container->get('view'), $settings['app']);
 };
 
 return $container;
