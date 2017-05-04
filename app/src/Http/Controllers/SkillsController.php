@@ -21,7 +21,7 @@ class SkillsController extends Controllers
         return $response->withJson($skills);
     }
 
-    public function addPage(Request $request, Response $response, array $args)
+    public function addPage(Request $request, Response $response)
     {
         $this->setPageTitle('Membership', 'Add new techno skill item');
 
@@ -34,7 +34,7 @@ class SkillsController extends Controllers
         ]);
     }
 
-    public function add(Request $request, Response $response, array $args)
+    public function add(Request $request, Response $response)
     {
         $input = $request->getParsedBody();
         $requiredFields = [
@@ -66,14 +66,14 @@ class SkillsController extends Controllers
         return $response->withRedirectRoute('membership-account');
     }
 
-    public function edit(Request $request, Response $response, array $args)
+    public function edit(Response $response)
     {
         $this->addFormAlert('error', 'Page you just visited, not available at this time');
 
         return $response->withRedirectRoute('membership-account');
     }
 
-    public function delete(Request $request, Response $response, array $args)
+    public function delete(Response $response, array $args)
     {
         $skills = new Models\MemberSkills();
 

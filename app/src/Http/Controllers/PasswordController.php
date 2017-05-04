@@ -10,7 +10,7 @@ use Membership\Models;
 
 class PasswordController extends Controllers
 {
-    public function forgotPage(Request $request, Response $response, array $args)
+    public function forgotPage(Response $response)
     {
         $this->enableCaptcha();
         $this->setPageTitle('Membership', 'Forgot Password');
@@ -26,7 +26,7 @@ class PasswordController extends Controllers
         return $response->view('password-forgot');
     }
 
-    public function forgot(Request $request, Response $response, array $args)
+    public function forgot(Request $request, Response $response)
     {
         $users = new Models\Users;
         $input = $request->getParsedBody();
@@ -95,7 +95,7 @@ class PasswordController extends Controllers
         $response->withRedirectRoute('membership-login');
     }
 
-    public function updatePage(Request $request, Response $response, array $args)
+    public function updatePage(Response $response)
     {
         $this->enableCaptcha();
         $this->setPageTitle('Membership', 'Update Password');
@@ -103,7 +103,7 @@ class PasswordController extends Controllers
         return $response->view('password-update');
     }
 
-    public function update(Request $request, Response $response, array $args)
+    public function update(Request $request, Response $response)
     {
         $users     = new Models\Users;
         $saltPass  = $this->settings->get('salt_pwd');

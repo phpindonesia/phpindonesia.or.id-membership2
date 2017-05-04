@@ -13,7 +13,7 @@ use Membership\Models;
 
 class HomeController extends Controllers
 {
-    public function index(Request $request, Response $response, array $args)
+    public function index(Request $request, Response $response)
     {
         $this->setPageTitle('Membership', 'Keanggotaan');
 
@@ -30,7 +30,7 @@ class HomeController extends Controllers
         ]);
     }
 
-    public function loginPage(Request $request, Response $response, array $args)
+    public function loginPage(Response $response)
     {
         $this->setPageTitle('Membership', 'Login Anggota');
 
@@ -45,7 +45,7 @@ class HomeController extends Controllers
         return $response->view('home-login');
     }
 
-    public function login(Request $request, Response $response, array $args)
+    public function login(Request $request, Response $response)
     {
         $request->rules([
             'required' => ['login', 'password']
@@ -80,7 +80,7 @@ class HomeController extends Controllers
         }
     }
 
-    public function registerPage(Request $request, Response $response, array $args)
+    public function registerPage(Request $request, Response $response)
     {
         $this->enableCaptcha();
         $this->setPageTitle('Membership', 'Registrasi Anggota');
@@ -103,7 +103,7 @@ class HomeController extends Controllers
         ]);
     }
 
-    public function register(Request $request, Response $response, array $args)
+    public function register(Request $request, Response $response)
     {
         $request->rules('required', [
             'email', 'username', 'fullname', 'password', 'repassword',
@@ -159,7 +159,7 @@ class HomeController extends Controllers
         }
     }
 
-    public function logout(Request $request, Response $response, array $args)
+    public function logout(Request $request, Response $response)
     {
         $_SESSION = [];
 

@@ -34,7 +34,7 @@ class PortfoliosController extends Controllers
         ]);
     }
 
-    public function addPage(Request $request, Response $response, array $args)
+    public function addPage(Response $response)
     {
         $this->setPageTitle('Membership', 'Add new portfolio');
 
@@ -48,7 +48,7 @@ class PortfoliosController extends Controllers
         return $response->view('portfolio-add');
     }
 
-    public function add(Request $request, Response $response, array $args)
+    public function add(Request $request, Response $response)
     {
         $input = $request->getParsedBody();
         $portfolio = new Models\MemberPortfolios;
@@ -128,7 +128,7 @@ class PortfoliosController extends Controllers
         return $response->withRedirectRoute('membership-account');
     }
 
-    public function deleted(Request $request, Response $response, array $args)
+    public function deleted(Response $response)
     {
         $this->addFormAlert('warning', 'This feature is disabled');
 
