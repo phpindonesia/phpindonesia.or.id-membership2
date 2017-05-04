@@ -89,7 +89,7 @@ class ViewExtension implements ExtensionInterface
      */
     public function userPhoto($publicId = null, $options = [])
     {
-        $default = $this->template->asset('/images/team.png');
+        $default = $this->template->asset('asset/images/team.png');
         if (null === $publicId) {
             return $default;
         }

@@ -33,13 +33,13 @@ class AccountController extends Controllers
         ]);
     }
 
-    public function profile(Request $request, Response $response, array $args)
+    public function profile(Request $request, Response $response, $username)
     {
         $this->setPageTitle('Membership', 'Detail Anggota');
 
         $users = new Models\Users;
 
-        if (! $user = $users->getProfileUsername($args['username'])) {
+        if (! $user = $users->getProfileUsername($username)) {
             throw new NotFoundException($request, $response);
         }
 
@@ -63,7 +63,7 @@ class AccountController extends Controllers
         ]);
     }
 
-    public function editPage(Request $request, Response $response, array $args)
+    public function editPage(Response $response)
     {
         $this->setPageTitle('Membership', 'Update Profile Anggota');
 
@@ -171,6 +171,8 @@ class AccountController extends Controllers
                     }
                 });
             });
+
+            return $response->withRedirect($this->router->pathFor('membership-account'));
         } catch (\Throwable $e) {
             if ($e instanceof ValidatorException) {
                 $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
@@ -180,16 +182,14 @@ class AccountController extends Controllers
 
             return $response->withRedirect($this->router->pathFor('membership-account-edit', $args));
         }
-
-        return $response->withRedirect($this->router->pathFor('membership-account'));
     }
 
-    public function activate(Request $request, Response $response, array $args)
+    public function activate(Response $response, $uid, $activation_key)
     {
         $activation = new Models\UsersActivations;
 
-        if ($activation->isExists($args['uid'], $args['activation_key']) &&
-            $activation->activate($args['uid'], $args['activation_key'])
+        if ($activation->isExists($uid, $activation_key) &&
+            $activation->activate($uid, $activation_key)
         ) {
             $this->addFormAlert('success', 'Selamat! Account anda sudah aktif. Silahkan login...');
         } else {
@@ -199,7 +199,7 @@ class AccountController extends Controllers
         return $response->withRedirect($this->router->pathFor('membership-login'));
     }
 
-    public function reactivatePage(Request $request, Response $response, array $args)
+    public function reactivatePage(Response $response)
     {
         $this->enableCaptcha();
         $this->setPageTitle('Membership', 'Account Reactivation');
@@ -215,27 +215,30 @@ class AccountController extends Controllers
         return $response->view('account-reactivate');
     }
 
-    public function reactivate(Request $request, Response $response, array $args)
+    public function reactivate(Request $request, Response $response, $user_id, $activation_key)
     {
-        $users = new Models\Users;
-        $validator = $this->validator->rule('required', 'email');
+        $request->rules([
+            'required' => [['email']],
+            'notExists' => [['email']],
+        ]);
 
-        $validator->addRule('assertNotEmailExists', function ($field, $value, array $params) use ($users) {
-            return !$users->assertEmailExists($value);
-        }, 'Email tersebut tidak terdaftar!');
+        try {
+            $request->validate(new Models\Users, function (Collection $input, Models\Users $users) use ($user_id, $activation_key) {
+                $users->activate($user_id, $activation_key);
+            });
 
-        $validator->rule('assertNotEmailExists', 'email');
-
-        if ($validator->validate()) {
-            //
             $this->addFormAlert('error', 'Bad Request');
-        } else {
-            $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
+
+            return $response->withRedirect($this->router->pathFor('membership-account-reactivate'));
+        } catch (\Throwable $e) {
+            if ($e instanceof ValidatorException) {
+                $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
+            }
+
+            $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
 
             return $response->withRedirect($this->router->pathFor('membership-login'));
         }
-
-        return $response->withRedirect($this->router->pathFor('membership-account-reactivate'));
     }
 
     public function javascript(Request $request, Response $response, array $args)

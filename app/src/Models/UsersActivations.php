@@ -62,7 +62,7 @@ class UsersActivations extends Models
             $this->db->commit();
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->db->rollback();
 
             return false;
