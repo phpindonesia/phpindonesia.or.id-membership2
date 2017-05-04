@@ -89,10 +89,10 @@ class PasswordController extends Controllers
         } else {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
-            return $response->withRedirect($this->router->pathFor('membership-forgot-password'));
+            return $response->withRedirectRoute('membership-forgot-password');
         }
 
-        return $response->withRedirect($this->router->pathFor('membership-login'));
+        $response->withRedirectRoute('membership-login');
     }
 
     public function updatePage(Request $request, Response $response, array $args)
@@ -137,7 +137,7 @@ class PasswordController extends Controllers
         if (!$validator->validate()) {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
-            return $response->withRedirect($this->router->pathFor('membership-account-password-edit'));
+            return $response->withRedirectRoute('membership-account-password-edit');
         }
 
         $users->update(
@@ -147,41 +147,42 @@ class PasswordController extends Controllers
 
         $this->addFormAlert('success', 'Password anda berhasil diubah! Selamat!');
 
-        return $response->withRedirect($this->router->pathFor('membership-account'));
+        return $response->withRedirectRoute('membership-account');
     }
 
-    public function reset(Request $request, Response $response, array $args)
+    public function reset(Request $request, Response $response, $uid, $reset_key)
     {
         $users = new Models\Users;
         $usersResetPass = (new Models\UsersResetPwd);
 
-        if ($usersResetPass->verifyUserKey($args['uid'], $args['reset_key'])) {
+        if ($usersResetPass->verifyUserKey($uid, $reset_key)) {
             // Create temporary password
             $tmpPass = substr(str_shuffle(md5(microtime())), 0, 10);
 
             $users->update([
                 'password' => $this->salt($tmpPass),
                 'modified_by' => 0
-            ], (int) $args['uid']);
+            ], (int) $uid);
 
             $usersResetPass->delete([
-                'user_id' => (int) $args['uid'],
-                'reset_key' => $args['reset_key']
+                'user_id' => (int) $uid,
+                'reset_key' => $reset_key
             ]);
 
             // Fetch member basic info
             $member = $users->get(
                 ['u.user_id', 'u.username', 'u.email', 'm.fullname'],
-                function ($query) use ($args) {
+                function ($query) use ($uid) {
                     $query->from('users u')
                         ->leftJoin('members_profiles m', 'u.user_id', '=', 'm.user_id')
-                        ->where('u.user_id', '=', (int) $args['uid'])
+                        ->where('u.user_id', '=', (int) $uid)
                         ->where('u.deleted', '=', 'N');
                 }
             )->fetch();
 
             try {
-                $this->mail->to($member['email'], $member['fullname'])
+                $this->mail
+                    ->to($member['email'], $member['fullname'])
                     ->subject('PHP Indonesia - Password baru sementara')
                     ->send('email::reset-password', [
                         'tmpPass' => $tmpPass,
@@ -202,6 +203,6 @@ class PasswordController extends Controllers
             $this->addFormAlert('error', 'Bad Request');
         }
 
-        return $response->withRedirect($this->router->pathFor('membership-login'));
+        $response->withRedirectRoute('membership-login');
     }
 }

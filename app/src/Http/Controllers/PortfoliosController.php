@@ -82,10 +82,10 @@ class PortfoliosController extends Controllers
         } else {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
-            return $response->withRedirect($this->router->pathFor('membership-portfolios-add'));
+            return $response->withRedirectRoute('membership-portfolios-add');
         }
 
-        return $response->withRedirect($this->router->pathFor('membership-account'));
+        return $response->withRedirectRoute('membership-account');
     }
 
     public function edit(Request $request, Response $response, array $args)
@@ -122,20 +122,18 @@ class PortfoliosController extends Controllers
         } else {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
-            return $response->withRedirect($this->router->pathFor('membership-portfolios-edit', $args));
+            return $response->withRedirectRoute('membership-portfolios-edit', $args);
         }
 
-        return $response->withRedirect($this->router->pathFor('membership-account'));
+        return $response->withRedirectRoute('membership-account');
     }
 
     public function deleted(Request $request, Response $response, array $args)
     {
         $this->addFormAlert('warning', 'This feature is disabled');
 
-        return $response->withRedirect(
-            $this->router->pathFor('membership-profile', [
-                'username' => $this->session->get('username')
-            ])
-        );
+        return $response->withRedirectRoute('membership-profile', [
+            'username' => $this->session->get('username')
+        ]);
     }
 }

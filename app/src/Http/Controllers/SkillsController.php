@@ -60,17 +60,17 @@ class SkillsController extends Controllers
         } else {
             $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $validator->errors());
 
-            return $response->withRedirect($this->router->pathFor('membership-skills-add'));
+            return $response->withRedirectRoute('membership-skills-add');
         }
 
-        return $response->withRedirect($this->router->pathFor('membership-account'));
+        return $response->withRedirectRoute('membership-account');
     }
 
     public function edit(Request $request, Response $response, array $args)
     {
         $this->addFormAlert('error', 'Page you just visited, not available at this time');
 
-        return $response->withRedirect($this->router->pathFor('membership-account'));
+        return $response->withRedirectRoute('membership-account');
     }
 
     public function delete(Request $request, Response $response, array $args)
@@ -83,6 +83,6 @@ class SkillsController extends Controllers
             $this->addFormAlert('error', 'Sesuatu terjadi, skill gagal dihapus.');
         }
 
-        return $response->withRedirect($this->router->pathFor('membership-account'));
+        return $response->withRedirectRoute('membership-account');
     }
 }

@@ -172,7 +172,7 @@ class AccountController extends Controllers
                 });
             });
 
-            return $response->withRedirect($this->router->pathFor('membership-account'));
+            return $response->withRedirectRoute('membership-account');
         } catch (\Throwable $e) {
             if ($e instanceof ValidatorException) {
                 $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
@@ -180,7 +180,7 @@ class AccountController extends Controllers
 
             $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
 
-            return $response->withRedirect($this->router->pathFor('membership-account-edit', $args));
+            return $response->withRedirectRoute('membership-account-edit', $args);
         }
     }
 
@@ -196,7 +196,7 @@ class AccountController extends Controllers
             $this->addFormAlert('error', 'Bad Request');
         }
 
-        return $response->withRedirect($this->router->pathFor('membership-login'));
+        return $response->withRedirectRoute('membership-login');
     }
 
     public function reactivatePage(Response $response)
@@ -229,7 +229,7 @@ class AccountController extends Controllers
 
             $this->addFormAlert('error', 'Bad Request');
 
-            return $response->withRedirect($this->router->pathFor('membership-account-reactivate'));
+            return $response->withRedirectRoute('membership-account-reactivate');
         } catch (\Throwable $e) {
             if ($e instanceof ValidatorException) {
                 $this->addFormAlert('warning', 'Some of mandatory fields is empty!', $e->getErrors());
@@ -237,7 +237,7 @@ class AccountController extends Controllers
 
             $this->addFormAlert('error', 'System failed<br>'.$e->getMessage());
 
-            return $response->withRedirect($this->router->pathFor('membership-login'));
+            return $response->withRedirectRoute('membership-login');
         }
     }
 

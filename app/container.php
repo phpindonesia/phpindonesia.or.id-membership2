@@ -234,6 +234,7 @@ $container['response'] = function ($container) {
     $response = new \Membership\Http\Response(200, $headers);
 
     return $response->setView($container->get('view'))
+        ->setRouter($container->get('router'))
         ->withProtocolVersion($container->get('settings')['httpVersion']);
 };
 
