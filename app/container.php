@@ -150,7 +150,7 @@ $container['view'] = function ($container) {
     $view->loadExtension(new Libraries\ViewExtension(
         $request = $container->get('request'),
         $container->get('flash'),
-        $settings->get('mode')
+        $settings
     ));
     $view->loadExtension(new Projek\Slim\PlatesExtension($container->get('router'), $request->getUri()));
 

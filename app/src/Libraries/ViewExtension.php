@@ -24,15 +24,22 @@ class ViewExtension implements ExtensionInterface
     protected $mode;
 
     /**
+     * @var array
+     */
+    protected $settings;
+
+    /**
      * View Extention
      *
      * @param \Slim\Http\Request $request
      */
-    public function __construct(Request $request, FlashMessage $flash, $mode = 'development')
+    public function __construct(Request $request, FlashMessage $flash, $settings)
     {
         $this->request = $request;
         $this->flash = $flash;
-        $this->mode = $mode;
+        $this->settings = $settings;
+
+        $this->mode = $this->settings->get('mode');
     }
 
     /**
@@ -45,6 +52,8 @@ class ViewExtension implements ExtensionInterface
             'validation_errors' => [],
             'base_js'  => [],
             'base_css' => [],
+
+            'mainsite' => $this->settings->get('mainsite'),
         ]);
 
         // Form helpers
