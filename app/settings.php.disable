@@ -6,6 +6,9 @@ return [
         'name'  => 'PHP Indonesia - Membership App',
         'email' => '',
     ],
+    'mainsite' => [
+        'domain' => 'phpindonesia.id',
+    ],
     'db' => [
         'host'     => 'localhost',
         'driver'   => 'mysql',

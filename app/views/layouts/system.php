@@ -10,19 +10,19 @@
     <title>PHP Indonesia | Membership</title>
 
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic|Open+Sans:400,300,600,700,300italic,400italic,600italic,700italic">
-    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/style.css">
-    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/shortcodes.css">
-    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/skins/blue/style.css">
+    <link rel="stylesheet" href="http://www.<?php echo $mainsite['domain']; ?>/po-content/phpindo/style.css">
+    <link rel="stylesheet" href="http://www.<?php echo $mainsite['domain']; ?>/po-content/phpindo/shortcodes.css">
+    <link rel="stylesheet" href="http://www.<?php echo $mainsite['domain']; ?>/po-content/phpindo/skins/blue/style.css">
     <link rel="stylesheet" href="<?php echo $this->asset('/css/bootstrap.css') ?>">
     <link rel="stylesheet" href="<?php echo $this->asset('/css/font-awesome.css') ?>">
-    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/meanmenu.css">
-    <link rel="stylesheet" href="http://www.phpindonesia.or.id/po-content/phpindo/css/animations.css">
+    <link rel="stylesheet" href="http://www.<?php echo $mainsite['domain']; ?>/po-content/phpindo/css/meanmenu.css">
+    <link rel="stylesheet" href="http://www.<?php echo $mainsite['domain']; ?>/po-content/phpindo/css/animations.css">
 
     <?php if (isset($base_css)): foreach ($base_css as $css): ?>
         <link rel="stylesheet" href="<?php echo $css ?>">
     <?php endforeach; endif; ?>
 
-    <link rel="shortcut icon" href="http://www.phpindonesia.or.id/favicon.png" type="image/png">
+    <link rel="shortcut icon" href="http://www.<?php echo $mainsite['domain']; ?>/favicon.png" type="image/png">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -43,7 +43,7 @@
                         <div class="main-title">
                             <h1><?php echo $this->e($page_title); ?></h1>
                             <div class="breadcrumb">
-                                <a href="http://www.phpindonesia.or.id/">Home</a>
+                                <a href="http://www.<?php echo $mainsite['domain']; ?>/">Home</a>
                                 <span class="fa fa-angle-right"></span>
                                 <a href="<?php echo $this->pathFor('membership-index'); ?>"><?php echo $this->e($page_title); ?></a>
                                 <span class="fa fa-angle-right"></span>
@@ -67,12 +67,12 @@
         </div>
     </div>
 
-    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery-1.10.2.min.js"></script>
-    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/jquery-migrate.min.js"></script>
-    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/twitter/jquery.tweet.min.js"></script>
-    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/plugins.js"></script>
-    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/okzoom.min.js"></script>
-    <script src="http://www.phpindonesia.or.id/po-content/phpindo/js/custom.js"></script>
+    <script src="http://www.<?php echo $mainsite['domain']; ?>/po-content/phpindo/js/jquery-1.10.2.min.js"></script>
+    <script src="http://www.<?php echo $mainsite['domain']; ?>/po-content/phpindo/js/jquery-migrate.min.js"></script>
+    <script src="http://www.<?php echo $mainsite['domain']; ?>/po-content/phpindo/js/twitter/jquery.tweet.min.js"></script>
+    <script src="http://www.<?php echo $mainsite['domain']; ?>/po-content/phpindo/js/plugins.js"></script>
+    <script src="http://www.<?php echo $mainsite['domain']; ?>/po-content/phpindo/js/okzoom.min.js"></script>
+    <script src="http://www.<?php echo $mainsite['domain']; ?>/po-content/phpindo/js/custom.js"></script>
     <script src="<?php echo $this->asset('/js/jquery.formalize.min.js') ?>"></script>
     <script src="<?php echo $this->asset('/js/membership.js') ?>"></script>
 
